@@ -20,6 +20,11 @@ class Configuration {
       headers: authHeader(),
     });
   }
+  updateLogo(id, data) {
+    return axios.put(`${API_URL}/config/logo/${id}`, data, {
+      headers: authHeader(),
+    });
+  }
 }
 
 export default new Configuration();

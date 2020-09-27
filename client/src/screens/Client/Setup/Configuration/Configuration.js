@@ -7,15 +7,13 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Error from "./../../../../components/common/Error";
 import Select from "@material-ui/core/Select";
-import moment from "moment";
-import NumberFormat from "react-number-format";
-import PropTypes from "prop-types";
+import Logo from "../../../../assets/img/Logo.png";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import AuthService from "../../../../services/auth.service";
 import ConfigurationService from "../../../../services/configuration.service";
 import StateData from "./data/state";
-import Logo from "../../../../assets/img/Logo.png";
+
 import ConfigModal from "./modal";
 import SuccessAlert from "../../../../components/Alert/success";
 
@@ -150,7 +148,22 @@ export default function Configuration(props) {
     setSubmitting(true);
 
     try {
-      const _params = { ...formParams };
+      const _params = {
+        address: formParams.address,
+        address2: formParams.addressLineTwo,
+        city: formParams.city,
+        state: formParams.state,
+        website: formParams.clientWebsite,
+        country: formParams.country,
+        calendar_start_time: formParams.calendarStartTime,
+        calendar_end_time: formParams.calendarEndTime,
+        email: formParams.email,
+        ein: formParams.ein,
+        npi: formParams.npi,
+        postal: formParams.zipcode,
+        phone: formParams.phone,
+        fax: formParams.fax,
+      };
       const response = await ConfigurationService.updateConfig(
         currentUser.id,
         _params
@@ -163,14 +176,21 @@ export default function Configuration(props) {
     }
   };
 
-  const _onSelectLogo = (e) => {
+  const _onSelectLogo = async (e) => {
     console.log(e);
     if (e.target.files) {
-      console.log(e.target.files[0]);
       setFormParams({
         ...formParams,
         logo: URL.createObjectURL(e.target.files[0]),
       });
+      try {
+        let formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        const response = await ConfigurationService.updateLogo(
+          currentUser.id,
+          formData
+        );
+      } catch (e) {}
     }
   };
 
@@ -241,13 +261,11 @@ export default function Configuration(props) {
                     variant="outlined"
                     size="small"
                     disabled={true}
-                    margin="normal"
                     id="clientId"
                     label="Client Id"
                     name="clientId"
                     className={`${classes.textField} `}
                     autoComplete="clientId"
-                    autoFocus
                     onChange={(e) => _onChangeInput(e)}
                   />
                 </Grid>
@@ -256,14 +274,12 @@ export default function Configuration(props) {
                     value={formParams.clientCode}
                     variant="outlined"
                     size="small"
-                    margin="normal"
                     id="clientCode"
                     label="Client Code"
                     disabled={true}
                     className={`${classes.textField} `}
                     name="clientCode"
                     autoComplete="clientCode"
-                    autoFocus
                     onChange={(e) => _onChangeInput(e)}
                   />
                 </Grid>
@@ -315,7 +331,6 @@ export default function Configuration(props) {
                 className={classes.textField}
                 name="name"
                 autoComplete="name"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -331,7 +346,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="patientPortal"
                 autoComplete="patientPortal"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -346,8 +360,8 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="address"
                 autoComplete="address"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
+                autoFocus
               />
             </Grid>
 
@@ -361,7 +375,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="clientWebsite"
                 autoComplete="clientWebsite"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -376,7 +389,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="addressLineTwo"
                 autoComplete="addressLineTwo"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -391,7 +403,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="email"
                 autoComplete="email"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -406,7 +417,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="city"
                 autoComplete="city"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -421,7 +431,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="ein"
                 autoComplete="ein"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -463,7 +472,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="npi"
                 autoComplete="npi"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -478,7 +486,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="zipcode"
                 autoComplete="zipcode"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -487,6 +494,7 @@ export default function Configuration(props) {
               <TextField
                 variant="outlined"
                 id="calendarStartTime"
+                name={`calendarStartTime`}
                 label="Calendar Start Time"
                 value={formParams.calendarStartTime}
                 className={classes.textField}
@@ -524,6 +532,7 @@ export default function Configuration(props) {
               <TextField
                 variant="outlined"
                 id="calendarEndTime"
+                name={`calendarEndTime`}
                 label="Calendar End Time"
                 value={formParams.calendarEndTime}
                 className={classes.textField}
@@ -543,7 +552,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="phone"
                 autoComplete="phone"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -560,7 +568,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="fax"
                 autoComplete="fax"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>

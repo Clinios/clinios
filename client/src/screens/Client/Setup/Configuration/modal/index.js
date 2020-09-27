@@ -1,5 +1,5 @@
 import Modal from "@material-ui/core/Modal";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -8,11 +8,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles, withStyles } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
-import Fade from "@material-ui/core/Fade";
-import Backdrop from "@material-ui/core/Backdrop";
+
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import moment from "moment";
+import Dialog from "@material-ui/core/Dialog";
+
+import { colors } from "@material-ui/core";
+import DialogActions from "@material-ui/core/DialogActions";
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
@@ -20,10 +23,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   paper: {
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+  },
+  modalAction: {
+    borderTop: `1px solid ${theme.palette.background.default}`,
+    display: "flex",
+    justifyContent: "space-between",
   },
 }));
 
@@ -54,93 +59,155 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
+// const GetConfigTime = ({ timeStart, timeEnd }) => {
+//   const _timeStart = moment(timeStart, "HH:mm:ss: A").diff(
+//     moment().startOf("day"),
+//     "seconds"
+//   );
+//   const _timeEnd = moment(timeEnd, "HH:mm:ss: A").diff(
+//     moment().startOf("day"),
+//     "seconds"
+//   );
+//   const _time = moment
+//     .duration(_timeEnd - _timeStart, "seconds")
+//     .format("hh:mm:ss");
+//   return _time;
+// };
+
 export default function ConfigModal({ modal, setModal }) {
   const classes = useStyles();
-  console.log(modal);
+
   return (
-    <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      className={classes.modal}
+    <Dialog
       open={modal.isOpen}
       onClose={() => setModal({ ...modal, isOpen: false })}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      maxWidth={`lg`}
     >
-      <Fade in={modal.isOpen}>
-        <div className={classes.paper}>
-          <div
-            style={{
-              marginBottom: "20px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
+      <div className={classes.paper}>
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            component="h1"
+            variant="h2"
+            color="textPrimary"
+            className={classes.title}
           >
-            <Typography
-              component="h1"
-              variant="h2"
-              color="textPrimary"
-              className={classes.title}
-            >
-              Configuration History
-            </Typography>
-            <div>
+            Configuration History
+          </Typography>
+          <div>
+            <DialogActions className={classes.modalAction}>
               <Button
                 size="small"
-                type="button"
-                variant="contained"
-                color="secondary"
+                variant="outlined"
                 onClick={() => setModal({ ...modal, isOpen: false })}
+                style={{
+                  borderColor: colors.orange[600],
+                  color: colors.orange[600],
+                }}
               >
                 Cancel
               </Button>
-            </div>
+            </DialogActions>
           </div>
-          <TableContainer component={Paper} className={classes.tableContainer}>
-            <Table className={classes.table} aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Appointment Type</StyledTableCell>
-                  <StyledTableCell>Portal Name</StyledTableCell>
-                  <StyledTableCell>Minutes</StyledTableCell>
-                  <StyledTableCell>Patient Schedule</StyledTableCell>
-                  <StyledTableCell>Order</StyledTableCell>
-
-                  <StyledTableCell align="center">Note</StyledTableCell>
-                  <StyledTableCell>Status</StyledTableCell>
-                  <StyledTableCell>Created</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {modal.data.map((result, index) => (
-                  <StyledTableRow key={index}>
-                    <TableCell component="th" scope="row">
-                      -
-                    </TableCell>
-
-                    <TableCell>
-                      {`app.clinios.com/signup?c=${modal?.currentUser?.id}`}
-                    </TableCell>
-                    <TableCell>
-                      {`${result.calendar_start_time} ~ ${result.calendar_end_time}`}
-                    </TableCell>
-                    <TableCell>-</TableCell>
-                    <TableCell>{result.concierge_lab_ordering}</TableCell>
-                    <TableCell>{result?.note || `-`}</TableCell>
-                    <TableCell>{result?.status || `-`}</TableCell>
-                    <TableCell component="th" scope="row">
-                      {moment(result.dt).format("lll")}
-                    </TableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
         </div>
-      </Fade>
-    </Modal>
+        <TableContainer component={Paper} className={classes.tableContainer}>
+          <Table className={classes.table} aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Created</StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Code</StyledTableCell>
+                <StyledTableCell>Address</StyledTableCell>
+                <StyledTableCell>AddressLineTwo</StyledTableCell>
+                <StyledTableCell>City</StyledTableCell>
+                <StyledTableCell>State</StyledTableCell>
+                <StyledTableCell>Postal</StyledTableCell>
+                <StyledTableCell>Country</StyledTableCell>
+                <StyledTableCell>Phone</StyledTableCell>
+                <StyledTableCell>Fax</StyledTableCell>
+                <StyledTableCell>Email</StyledTableCell>
+                <StyledTableCell>Website</StyledTableCell>
+                <StyledTableCell>CalendarStartTime</StyledTableCell>
+                <StyledTableCell>CalendarEndTime</StyledTableCell>
+                <StyledTableCell>FunctionalRange</StyledTableCell>
+                <StyledTableCell>EIN</StyledTableCell>
+                <StyledTableCell>NPI</StyledTableCell>
+                <StyledTableCell>Order</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {modal.data.map((result, index) => (
+                <StyledTableRow key={index}>
+                  <TableCell component="th" scope="row">
+                    {moment(result.dt).format("lll")}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.name}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.code}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.address}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.address2}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.city}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.state}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.postal}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.country}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.phone}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.fax}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.email}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.website}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.calendar_start_time}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.calendar_end_time}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.functional_range}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.ein}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.npi}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {result.concierge_lab_ordering}
+                  </TableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    </Dialog>
   );
 }

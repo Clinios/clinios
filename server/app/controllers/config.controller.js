@@ -1,6 +1,41 @@
 "use strict";
 const { configuration, makeDb } = require("../db/db.js");
 const { errorMessage, successMessage, status } = require("../helpers/status");
+const { validationResult } = require("express-validator");
+const multer = require("multer");
+const fs = require("fs");
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    console.log("req:", req.body);
+    const dest = process.env.UPLOAD_DIR;
+    fs.access(dest, function (error) {
+      if (error) {
+        console.log("Directory does not exist.");
+        return fs.mkdir(dest, (error) => cb(error, dest));
+      } else {
+        console.log("Directory exists.");
+        return cb(null, dest);
+      }
+    });
+  },
+  filename: (req, file, cb) => {
+    const fileName = "c" + req.params.userId + "_" + "logo" + "." + "png";
+    cb(null, fileName);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5000000 },
+  fileFilter: (req, file, cb) => {
+    if (file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Allowed only image"));
+    }
+  },
+});
 
 const getInit = async (req, res) => {
   const db = makeDb(configuration, res);
@@ -81,6 +116,23 @@ const getHistory = async (req, res) => {
   }
 };
 
+const imageUpload = upload.single("file");
+
+const logoUpdate = async (req, res) => {
+  imageUpload(req, res, function (err) {
+    if (err) {
+      console.log("documentUpload Error:", err.message);
+      errorMessage.error = err.message;
+      return res.status(status.error).send(errorMessage);
+    }
+    if (!req.file) {
+      errorMessage.error = "File content can not be empty!";
+      return res.status(status.error).send(errorMessage);
+    }
+    return res.status(status.success).send("success");
+  });
+};
+
 const update = async (req, res) => {
   const errors = validationResult(req);
 
@@ -90,14 +142,14 @@ const update = async (req, res) => {
   }
 
   const db = makeDb(configuration, res);
-  let client = req.body.data;
+  let client = req.body;
 
   client.updated = new Date();
   client.updated_user_id = req.params.userId;
 
   try {
     const updateResponse = await db.query(
-      `update client set ? where id =${req.params.id}`,
+      `update client set ? where id =${req.params.userId}`,
       [client]
     );
 
@@ -120,6 +172,7 @@ const Config = {
   getInit,
   getHistory,
   update,
+  logoUpdate,
 };
 
 module.exports = Config;
