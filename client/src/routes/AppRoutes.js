@@ -14,7 +14,7 @@ import SignUp from "../screens/Auth/SignUp";
 import UserSignUp from "../screens/Auth/UserSignUp";
 import { DoctorHome } from "../screens/Client/Home";
 import Patient from "../screens/Patient";
-import { Reports, Myself } from "../screens/Client";
+import { Reports } from "../screens/Client";
 import {
   AccountingSearch,
   EmailPatients,
@@ -42,6 +42,12 @@ import {
   Schedule,
   Users,
 } from "../screens/Client/Setup";
+import {
+  MyActivityHistory,
+  MyLogins,
+  MyProfile,
+} from "../screens/Client/Myself";
+
 import Agreement from "../screens/Agreement";
 import ProcessLab from "../screens/ProcessLab";
 import ProcessMessage from "../screens/ProcessMessage";
@@ -265,12 +271,26 @@ class AppRouter extends Component {
               component={Reports}
               exact
             />
+            {/* Myself/... */}
             <PrivateRouteWithLayout
               layout={Dashboard}
-              path="/myself"
-              component={Myself}
+              path="/myself/my-activity-history"
+              component={MyActivityHistory}
               exact
             />
+            <PrivateRouteWithLayout
+              layout={Dashboard}
+              path="/myself/my-profile"
+              component={MyProfile}
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={Dashboard}
+              path="/myself/my-logins"
+              component={MyLogins}
+              exact
+            />
+            {/* End of Myself */}
             <PrivateRouteWithLayout
               layout={Dashboard}
               path="/process-lab/:user_id"

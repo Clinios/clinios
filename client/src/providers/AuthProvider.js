@@ -1,7 +1,7 @@
 import React from "react";
 import AuthService from "../services/auth.service";
 
-const AuthContext = React.createContext();
+export const AuthContext = React.createContext();
 
 class AuthProvider extends React.Component {
   state = { isAuth: false };

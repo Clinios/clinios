@@ -45,6 +45,10 @@ app.use("/api/v1", require("./app/routes/forms.routes"));
 app.use("/api/v1", require("./app/routes/process-lab.routes"));
 app.use("/api/v1", require("./app/routes/setup.routes"));
 app.use("/api/v1", require("./app/routes/search.routes"));
+app.use("/api/v1", require("./app/routes/my-activity-history.routes"));
+app.use("/api/v1", require("./app/routes/my-logins.routes"));
+app.use("/api/v1", require("./app/routes/my-profile.routes"));
+app.use("/api/v1", require("./app/routes/forward-email.routes"));
 
 app.listen(config.port).on("listening", () => {
   console.log(`API is live on ${config.port}`);
