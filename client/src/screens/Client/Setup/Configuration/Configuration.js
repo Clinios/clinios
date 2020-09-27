@@ -13,9 +13,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import AuthService from "../../../../services/auth.service";
 import ConfigurationService from "../../../../services/configuration.service";
 import StateData from "./data/state";
-
+import { useDispatch } from "react-redux";
 import ConfigModal from "./modal";
-import SuccessAlert from "../../../../components/Alert/success";
+import { setSuccess } from "./../../../../store/common/actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,10 +65,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Configuration(props) {
+  const dispatch = useDispatch();
   const currentUser = AuthService.getCurrentUser() || {};
   const classes = useStyles();
   const [isSubmitting, setSubmitting] = useState(false);
-  const [isSuccess, setSuccess] = useState(false);
+
   const [errors, setErrors] = React.useState([]);
   const [modalHistory, setModalHistory] = useState({
     isOpen: false,
@@ -169,10 +170,9 @@ export default function Configuration(props) {
         _params
       );
       setSubmitting(false);
-      setSuccess(true);
+      dispatch(setSuccess(`${response.data.message}`));
     } catch (e) {
       setSubmitting(false);
-      setSuccess(true);
     }
   };
 
@@ -589,15 +589,6 @@ export default function Configuration(props) {
               {isSubmitting ? `Saving...` : `Save`}
             </Button>
           </Grid>
-          {isSuccess && (
-            <div>
-              <SuccessAlert
-                isOpen={isSuccess}
-                text={`Save Successfully!`}
-                setOpen={setSuccess}
-              />
-            </div>
-          )}
         </div>
       </form>
     </div>
