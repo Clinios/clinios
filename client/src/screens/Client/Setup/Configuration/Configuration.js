@@ -7,22 +7,32 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Error from "./../../../../components/common/Error";
 import Select from "@material-ui/core/Select";
-import moment from "moment";
-import NumberFormat from "react-number-format";
-import PropTypes from "prop-types";
+import Logo from "../../../../assets/img/Logo.png";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import AuthService from "../../../../services/auth.service";
 import ConfigurationService from "../../../../services/configuration.service";
 import StateData from "./data/state";
-import Logo from "../../../../assets/img/Logo.png";
+import { useDispatch } from "react-redux";
 import ConfigModal from "./modal";
-import SuccessAlert from "../../../../components/Alert/success";
+import { setSuccess } from "./../../../../store/common/actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     padding: "40px 0px",
+  },
+  uploadButtons: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    maxWidth: "450px",
+    marginBottom: theme.spacing(2),
+    "& h1": {
+      [theme.breakpoints.up("md")]: {
+        marginRight: theme.spacing(4),
+      },
+    },
   },
   formControl: {
     margin: theme.spacing(1),
@@ -67,11 +77,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Configuration(props) {
+  const dispatch = useDispatch();
   const currentUser = AuthService.getCurrentUser() || {};
   const classes = useStyles();
   const [isSubmitting, setSubmitting] = useState(false);
-  const [isSuccess, setSuccess] = useState(false);
-  const [errors, setErrors] = React.useState([]);
+
+  const [errors] = React.useState([]);
   const [modalHistory, setModalHistory] = useState({
     isOpen: false,
     data: [],
@@ -150,27 +161,45 @@ export default function Configuration(props) {
     setSubmitting(true);
 
     try {
-      const _params = { ...formParams };
+      const _params = {
+        address: formParams.address,
+        address2: formParams.addressLineTwo,
+        city: formParams.city,
+        state: formParams.state,
+        website: formParams.clientWebsite,
+        country: formParams.country,
+        calendar_start_time: formParams.calendarStartTime,
+        calendar_end_time: formParams.calendarEndTime,
+        email: formParams.email,
+        ein: formParams.ein,
+        npi: formParams.npi,
+        postal: formParams.zipcode,
+        phone: formParams.phone,
+        fax: formParams.fax,
+      };
       const response = await ConfigurationService.updateConfig(
         currentUser.id,
         _params
       );
       setSubmitting(false);
-      setSuccess(true);
+      dispatch(setSuccess(`${response.data.message}`));
     } catch (e) {
       setSubmitting(false);
-      setSuccess(true);
     }
   };
 
-  const _onSelectLogo = (e) => {
+  const _onSelectLogo = async (e) => {
     console.log(e);
     if (e.target.files) {
-      console.log(e.target.files[0]);
       setFormParams({
         ...formParams,
         logo: URL.createObjectURL(e.target.files[0]),
       });
+      try {
+        let formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        await ConfigurationService.updateLogo(currentUser.id, formData);
+      } catch (e) {}
     }
   };
 
@@ -190,7 +219,13 @@ export default function Configuration(props) {
 
   useEffect(() => {
     _fetchConfig();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onKeyPress = (e) => {
+    if (e.which === 13) {
+      _onSubmitConfig();
+    }
+  };
 
   const _onChangeInput = (e) => {
     setFormParams({
@@ -201,31 +236,27 @@ export default function Configuration(props) {
 
   return (
     <div className={classes.root}>
-      <div
-        className={classes.paper}
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <Typography
-          component="h1"
-          variant="h2"
-          color="textPrimary"
-          className={classes.title}
-        >
-          Configuration
-        </Typography>
-        <Button
-          size="small"
-          type="button"
-          style={{ marginLeft: "20px" }}
-          variant="contained"
-          color="primary"
-          onClick={() => _onOpenModalHistory()}
-          className={classes.submit}
-        >
-          History
-        </Button>
+      <div className={classes.paper}>
+        <div className={classes.uploadButtons} style={{ paddingRight: "12px" }}>
+          <Typography component="h1" variant="h2" color="textPrimary">
+            Configuration
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            component="span"
+            onClick={() => _onOpenModalHistory()}
+          >
+            History
+          </Button>
+        </div>
       </div>
-      <Typography component="p" variant="body2" color="textPrimary">
+      <Typography
+        className={classes.title}
+        component="p"
+        variant="body2"
+        color="textPrimary"
+      >
         This page is used to manage basic client information
       </Typography>
       <ConfigModal modal={modalHistory} setModal={setModalHistory} />
@@ -239,15 +270,16 @@ export default function Configuration(props) {
                   <TextField
                     value={formParams.clientId}
                     variant="outlined"
+                    onKeyPress={(e) => {
+                      return onKeyPress(e);
+                    }}
                     size="small"
                     disabled={true}
-                    margin="normal"
                     id="clientId"
                     label="Client Id"
                     name="clientId"
                     className={`${classes.textField} `}
                     autoComplete="clientId"
-                    autoFocus
                     onChange={(e) => _onChangeInput(e)}
                   />
                 </Grid>
@@ -255,22 +287,23 @@ export default function Configuration(props) {
                   <TextField
                     value={formParams.clientCode}
                     variant="outlined"
+                    onKeyPress={(e) => {
+                      return onKeyPress(e);
+                    }}
                     size="small"
-                    margin="normal"
                     id="clientCode"
                     label="Client Code"
                     disabled={true}
                     className={`${classes.textField} `}
                     name="clientCode"
                     autoComplete="clientCode"
-                    autoFocus
                     onChange={(e) => _onChangeInput(e)}
                   />
                 </Grid>
               </Grid>
             </div>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={6} style={{ marginLeft: "-80px" }}>
             <div>
               <input
                 accept="image/*"
@@ -287,6 +320,7 @@ export default function Configuration(props) {
               </div>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
+                  alt={`logo`}
                   style={{ maxWidth: "200px", maxHeight: "50px" }}
                   src={formParams.logo}
                 />
@@ -308,6 +342,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.name}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="name"
                 disabled={true}
@@ -315,7 +352,6 @@ export default function Configuration(props) {
                 className={classes.textField}
                 name="name"
                 autoComplete="name"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -324,6 +360,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.patientPortal}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="patientPortal"
                 disabled={true}
@@ -331,7 +370,6 @@ export default function Configuration(props) {
                 className={`${classes.textField} `}
                 name="patientPortal"
                 autoComplete="patientPortal"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -340,14 +378,17 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.address}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="address"
                 label="Address"
                 className={`${classes.textField} `}
                 name="address"
                 autoComplete="address"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
+                autoFocus
               />
             </Grid>
 
@@ -355,13 +396,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.clientWebsite}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="clientWebsite"
                 label="Client Website"
                 className={`${classes.textField} `}
                 name="clientWebsite"
                 autoComplete="clientWebsite"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -370,13 +413,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.addressLineTwo}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="addressLineTwo"
                 label="addressLineTwo"
                 className={`${classes.textField} `}
                 name="addressLineTwo"
                 autoComplete="addressLineTwo"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -385,13 +430,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.email}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="email"
                 label="Email"
                 className={`${classes.textField} `}
                 name="email"
                 autoComplete="email"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -400,13 +447,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.city}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="city"
                 label="City"
                 className={`${classes.textField} `}
                 name="city"
                 autoComplete="city"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -415,13 +464,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.ein}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="ein"
                 label="EIN"
                 className={`${classes.textField} `}
                 name="ein"
                 autoComplete="ein"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -429,6 +480,9 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 className={classes.customSelect}
                 size="small"
               >
@@ -457,13 +511,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.npi}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="npi"
                 label="NPI"
                 className={`${classes.textField} `}
                 name="npi"
                 autoComplete="npi"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -472,13 +528,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.zipcode}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="zipcode"
                 label="Zipcode"
                 className={`${classes.textField} `}
                 name="zipcode"
                 autoComplete="zipcode"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -486,7 +544,11 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 id="calendarStartTime"
+                name={`calendarStartTime`}
                 label="Calendar Start Time"
                 value={formParams.calendarStartTime}
                 className={classes.textField}
@@ -499,6 +561,9 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 className={classes.customSelect}
                 size="small"
               >
@@ -523,7 +588,11 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 id="calendarEndTime"
+                name={`calendarEndTime`}
                 label="Calendar End Time"
                 value={formParams.calendarEndTime}
                 className={classes.textField}
@@ -537,13 +606,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.phone}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="phone"
                 label="Phone"
                 className={`${classes.textField} `}
                 name="phone"
                 autoComplete="phone"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -554,13 +625,15 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.fax}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="fax"
                 label="Fax"
                 className={`${classes.textField} `}
                 name="fax"
                 autoComplete="fax"
-                autoFocus
                 onChange={(e) => _onChangeInput(e)}
               />
             </Grid>
@@ -582,15 +655,6 @@ export default function Configuration(props) {
               {isSubmitting ? `Saving...` : `Save`}
             </Button>
           </Grid>
-          {isSuccess && (
-            <div>
-              <SuccessAlert
-                isOpen={isSuccess}
-                text={`Save Successfully!`}
-                setOpen={setSuccess}
-              />
-            </div>
-          )}
         </div>
       </form>
     </div>
