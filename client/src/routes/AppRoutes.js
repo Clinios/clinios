@@ -25,8 +25,10 @@ import {
   Support,
 } from "../screens/Client/Manage";
 import {
+  ManageUsers,
   AccountingTypes,
   AppointmentTypes,
+  // ReportFinance,
   AppointmentTypesUser,
   Backup,
   Configuration,
@@ -54,223 +56,241 @@ const history = createBrowserHistory();
 class AppRouter extends Component {
   render() {
     return (
-      <Router history={history}>
+      <Router history={ history }>
         <AuthProvider>
           <Switch>
-            <RouteWithLayout layout={Main} path="/" component={Home} exact />
+            <RouteWithLayout layout={ Main } path="/" component={ Home } exact />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/agreement"
-              component={Agreement}
+              component={ Agreement }
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/contact"
-              component={Contact}
+              component={ Contact }
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/forgot-password"
-              component={ForgetPassword}
+              component={ ForgetPassword }
               exact
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/password/reset/:userId/:token"
-              component={ResetPassword}
+              component={ ResetPassword }
               exact
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/email/confirmation/:userId/:token"
-              component={EmailConfirmation}
+              component={ EmailConfirmation }
               exact
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/signup_client"
-              component={SignUp}
+              component={ SignUp }
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/signup"
-              component={UserSignUp}
+              component={ UserSignUp }
             />
             <RouteWithLayout
-              layout={Main}
+              layout={ Main }
               path="/login_client"
-              component={Login}
+              component={ Login }
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/dashboard"
-              component={DoctorHome}
+              component={ DoctorHome }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Plain}
+              layout={ Plain }
               path="/patient"
-              component={Patient}
+              component={ Patient }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/accounting-search"
-              component={AccountingSearch}
+              component={ AccountingSearch }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/email-patients"
-              component={EmailPatients}
+              component={ EmailPatients }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/fax"
-              component={Fax}
+              component={ Fax }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/merge-patient"
-              component={MergePatient}
+              component={ MergePatient }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/delete-patient"
-              component={DeletePatient}
+              component={ DeletePatient }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/patient-search"
-              component={PatientSearch}
+              component={ PatientSearch }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/manage/support"
-              component={Support}
+              component={ Support }
               exact
             />
-            {/* Setup/... */}
+            {/* Setup/... */ }
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
+              path="/setup/manage-users"
+              component={ ManageUsers }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
               path="/setup/accounting-types"
-              component={AccountingTypes}
+              component={ AccountingTypes }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/setup/appointment-types"
-              component={AppointmentTypes}
+              component={ AppointmentTypes }
               exact
             />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/appoinment-user-types"
-              component={AppointmentTypesUser}
+            {/* <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/report-finance"
+              component={ ReportFinance }
               exact
-            />
+            /> */}
             <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/backup"
-              component={Backup}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/configuration"
-              component={Configuration}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/ctp-codes"
-              component={CTPcodes}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/drugs"
-              component={Drugs}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/forms"
-              component={Forms}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/handouts"
-              component={Handouts}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
-              path="/setup/icd-codes"
-              component={ICDcodes}
-              exact
-            />
-            <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/setup/integrations"
-              component={Integrations}
+              component={ Integrations }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
+              path="/setup/appoinment-user-types"
+              component={ AppointmentTypesUser }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/backup"
+              component={ Backup }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/configuration"
+              component={ Configuration }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/ctp-codes"
+              component={ CTPcodes }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/drugs"
+              component={ Drugs }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/forms"
+              component={ Forms }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/handouts"
+              component={ Handouts }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/icd-codes"
+              component={ ICDcodes }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
+              path="/setup/integrations"
+              component={ Integrations }
+              exact
+            />
+            <PrivateRouteWithLayout
+              layout={ Dashboard }
               path="/setup/lab-ranges"
-              component={LabRanges}
+              component={ LabRanges }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/setup/patient-portal-header"
-              component={PortalHeader}
+              component={ PortalHeader }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/setup/schedule"
-              component={Schedule}
+              component={ Schedule }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/setup/users"
-              component={Users}
+              component={ Users }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/reports"
-              component={Reports}
+              component={ Reports }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/myself"
-              component={Myself}
+              component={ Myself }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/process-lab/:user_id"
-              component={ProcessLab}
+              component={ ProcessLab }
               exact
             />
             <PrivateRouteWithLayout
-              layout={Dashboard}
+              layout={ Dashboard }
               path="/process-message/:user_id"
-              component={ProcessMessage}
+              component={ ProcessMessage }
               exact
             />
-            <Route path="*" component={NotFound} />
+            <Route path="*" component={ NotFound } />
           </Switch>
         </AuthProvider>
       </Router>

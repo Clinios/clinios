@@ -164,6 +164,10 @@ const pages = [
     href: "/setup",
     subMenus: [
       {
+        title: "Manage Users",
+        href: "/setup/manage-users",
+      },
+      {
         title: "Accounting Types",
         href: "/setup/accounting-types",
       },
@@ -285,78 +289,78 @@ const Topbar = (props) => {
   };
 
   return (
-    <AppBar {...rest} className={clsx(classes.root, className)}>
-      <Toolbar className={classes.toolbar}>
-        <div className={classes.headerWithNav}>
-          <Typography className={classes.title} variant="h6" noWrap>
-            <RouterLink to="/dashboard" className={classes.titleAsLogo}>
+    <AppBar { ...rest } className={ clsx(classes.root, className) }>
+      <Toolbar className={ classes.toolbar }>
+        <div className={ classes.headerWithNav }>
+          <Typography className={ classes.title } variant="h6" noWrap>
+            <RouterLink to="/dashboard" className={ classes.titleAsLogo }>
               Clinios
             </RouterLink>
           </Typography>
           <Hidden mdDown>
-            <div className={classes.navs}>
-              {pages.map((page, index) =>
+            <div className={ classes.navs }>
+              { pages.map((page, index) =>
                 page["subMenus"] ? (
                   <DropdownItems
-                    parentItem={page.title}
-                    menuItems={page["subMenus"]}
-                    key={index}
+                    parentItem={ page.title }
+                    menuItems={ page["subMenus"] }
+                    key={ index }
                   />
                 ) : (
-                  <Button key={page.title}>
-                    <RouterLink
-                      to={page.href}
-                      className={classes.link}
-                      onClick={page.logout && handleLogout}
-                    >
-                      {page.title}
-                    </RouterLink>
-                  </Button>
-                )
-              )}
+                    <Button key={ page.title }>
+                      <RouterLink
+                        to={ page.href }
+                        className={ classes.link }
+                        onClick={ page.logout && handleLogout }
+                      >
+                        { page.title }
+                      </RouterLink>
+                    </Button>
+                  )
+              ) }
             </div>
           </Hidden>
         </div>
         <Hidden mdDown>
-          <div className={classes.grow} />
-          <div className={classes.headerWithSearchBar}>
-            <div className={classes.sectionDesktop}>
-              <div className={classes.name}>
-                {user && `${user.firstname} ${user.lastname}`}
+          <div className={ classes.grow } />
+          <div className={ classes.headerWithSearchBar }>
+            <div className={ classes.sectionDesktop }>
+              <div className={ classes.name }>
+                { user && `${user.firstname} ${user.lastname}` }
               </div>
-              <div className={classes.date}>
-                {moment().format("ddd, MMM Do")}
+              <div className={ classes.date }>
+                { moment().format("ddd, MMM Do") }
               </div>
             </div>
 
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
+            <div className={ classes.search }>
+              <div className={ classes.searchIcon }>
                 <SearchIcon />
               </div>
               <InputBase
                 placeholder="Search…"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                classes={{
+                onChange={ (e) => setSearchTerm(e.target.value) }
+                classes={ {
                   root: classes.inputRoot,
                   input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
+                } }
+                inputProps={ { "aria-label": "search" } }
               />
-              {!!searchTerm && (
+              { !!searchTerm && (
                 <SearchResults
-                  open={open}
-                  handleClose={handleClose}
-                  results={results}
+                  open={ open }
+                  handleClose={ handleClose }
+                  results={ results }
                   noContent={
                     !!searchTerm && results.length < 1 && "Nothing found!"
                   }
                 />
-              )}
+              ) }
             </div>
           </div>
         </Hidden>
         <Hidden lgUp>
-          <IconButton color="inherit" onClick={onSidebarOpen}>
+          <IconButton color="inherit" onClick={ onSidebarOpen }>
             <MenuIcon />
           </IconButton>
         </Hidden>
