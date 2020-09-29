@@ -39,6 +39,14 @@ const Form = (props) => {
     }
   }, [encounter]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // const updateFields = () => {
+  //   formFields.title = encounter.title;
+  //   formFields.type = encounter.encounter_type;
+  //   formFields.name = encounter.name;
+  //   formFields.date = moment(encounter.dt).format("YYYY-MM-DD");
+  //   setFormFields({ ...formFields });
+  // }
+
   const handleInputChnage = (e) => {
     const { value, name } = e.target;
     setFormFields({

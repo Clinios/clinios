@@ -10,7 +10,7 @@ const Diagnoses = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { onClose } = props;
-  const [, setDiagnosis] = useState([]);
+  const [diagnosis, setDiagnosis] = useState([]);
 
   useEffect(() => {
     fetchDiagnosis("");
@@ -86,13 +86,15 @@ const Diagnoses = (props) => {
               size="small"
               className={classes.heading}
             />
-            {[...Array(3)].map((item, index) => (
-              <Grid key={index}>
-                <Typography gutterBottom variant="body1">
-                  Chronic Fatigue (Un-specified)
-                </Typography>
-              </Grid>
-            ))}
+            {diagnosis.length
+              ? diagnosis.map((item, index) => (
+                  <Grid key={index}>
+                    <Typography gutterBottom variant="body1">
+                      Chronic Fatigue (Un-specified)
+                    </Typography>
+                  </Grid>
+                ))
+              : null}
           </Grid>
         </Grid>
         <Grid item lg={8}>

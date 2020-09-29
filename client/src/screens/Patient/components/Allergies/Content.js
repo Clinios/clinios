@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 
@@ -7,13 +7,13 @@ export default function AllergiesContent(props) {
 
   const { data } = props;
 
-  const [, setElement] = useState(null);
-  const [, setSelectedItem] = useState(null);
+  // const [, setElement] = useState(null);
+  // const [, setSelectedItem] = useState(null);
 
-  const menuHandler = (e, item) => {
-    setElement(e.currentTarget);
-    setSelectedItem(item);
-  };
+  // const menuHandler = (e, item) => {
+  //   setElement(e.currentTarget);
+  //   setSelectedItem(item);
+  // };
 
   // const onItemDelete = () => {
   //   const drugId = selectedItem.drug_id;
@@ -43,11 +43,7 @@ export default function AllergiesContent(props) {
   return (
     <>
       {data.map((item) => (
-        <Grid
-          key={item.drug_id}
-          className={classes.inputRow}
-          onContextMenu={(e) => menuHandler(e, item)}
-        >
+        <Grid key={item.drug_id} className={classes.inputRow}>
           <Grid component="span">{item.name}</Grid>
         </Grid>
       ))}

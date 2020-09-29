@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -40,6 +41,17 @@ const EventCalendar = ({ events, onDayClick, onEventClick }) => {
       eventClick={(info) => onEventClick(info)}
     />
   );
+};
+
+EventCalendar.propTypes = {
+  onDayClick: PropTypes.func.isRequired,
+  onEventClick: PropTypes.func.isRequired,
+  events: PropTypes.arrayOf(
+    PropTypes.shape({
+      start_dt: PropTypes.string.isRequired,
+      end_dt: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default EventCalendar;

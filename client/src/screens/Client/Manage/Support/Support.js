@@ -174,11 +174,11 @@ export default function Support() {
           <Table className={classes.table} aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>Case Id</StyledTableCell>
+                <StyledTableCell>Case ID</StyledTableCell>
                 <StyledTableCell>Client</StyledTableCell>
                 <StyledTableCell>Subject</StyledTableCell>
                 <StyledTableCell>Status</StyledTableCell>
-                <StyledTableCell>Created At</StyledTableCell>
+                <StyledTableCell>Created</StyledTableCell>
                 <StyledTableCell>Created By</StyledTableCell>
                 <StyledTableCell>Updated</StyledTableCell>
               </TableRow>
@@ -190,7 +190,7 @@ export default function Support() {
                     {result.id}
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {result.name}
+                    {result.client_name}
                   </TableCell>
                   {result.subject.length > 40 ? (
                     <LightTooltip
@@ -211,7 +211,7 @@ export default function Support() {
                     </TableCell>
                   )}
                   <TableCell component="th" scope="row">
-                    {result.status_id}
+                    {result.case_status}
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {moment(result.created).format("lll")}

@@ -68,13 +68,13 @@ const resetPasswordTemplate = (user, url) => {
  * @param {string} providerName
  * @returns {object} from, to, subject, html
  */
-const newAppointmentTemplate = (patient, appointmentDate, providerName) => {
+const newAppointmentTemplate = (patient, appointmentDate, provider) => {
   const from = process.env.EMAIL_LOGIN;
   const to = patient.email;
   const subject = "New Appointment | Clinios";
   const html = `
     <p>Hi ${patient.firstname},</p>
-    <p>A new appointment was created for you on <b>${appointmentDate}</b> with ${providerName}.</p>
+    <p>A new appointment was created for you on <b>${appointmentDate}</b> with ${provider.name}.</p>
   `;
   return { from, to, subject, html };
 };
