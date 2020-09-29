@@ -10,11 +10,11 @@ const Diagnoses = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { onClose } = props;
-  const [diagnosis, setDiagnosis] = useState([]);
+  const [, setDiagnosis] = useState([]);
 
   useEffect(() => {
     fetchDiagnosis("");
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleInputChnage = (e) => {
     const { value } = e.target;

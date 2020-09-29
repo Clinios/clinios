@@ -43,7 +43,7 @@ import {
 import {
   HandoutsForm,
   HandoutsCardContent,
-  HandoutsDetails
+  HandoutsDetails,
 } from "./components/Handouts";
 import { DocumentsCardContent } from "./components/Documents";
 import MedicationsForm from "./Medications";
@@ -75,7 +75,7 @@ export default function Patient() {
   const classes = useStyles();
   const inputFile = useRef(null);
   const dispatch = useDispatch();
-  const history =  useHistory();
+  const history = useHistory();
 
   //dialog states
   const [showPatientInfoDialog, setShowPatientInfoDialog] = useState(false);
@@ -87,9 +87,7 @@ export default function Patient() {
 
   const [showFormsExpandDialog, setShowFormsExpandDialog] = useState(false);
 
-  const [showBillingExpandDialog, setShowBillingExpandDialog] = useState(
-    false
-  );
+  const [showBillingExpandDialog, setShowBillingExpandDialog] = useState(false);
   const [showNewTransactionDialog, setShowNewTransactionDialog] = useState(
     false
   );
@@ -99,7 +97,9 @@ export default function Patient() {
   const [showAllergyExpandDialog, setShowAllergyExpandDialog] = useState(false);
 
   const [showHandoutsDialog, setShowHandoutsDialog] = useState(false);
-  const [showHandoutsExpandDialog, setShowHandoutsExpandDialog] = useState(false);
+  const [showHandoutsExpandDialog, setShowHandoutsExpandDialog] = useState(
+    false
+  );
 
   const [showEncountersDialog, setShowEncountersDialog] = useState(false);
   const [showEncountersExpandDialog, setShowEncountersExpandDialog] = useState(
@@ -139,7 +139,7 @@ export default function Patient() {
   //data states
   const [patientData, setPatientData] = useState(null);
   const [patientHistory, setPatientHistory] = useState([]);
-  const [patients, setPatients] = useState([]);
+  const [, setPatients] = useState([]);
   const [allergies, setAllergies] = useState([]);
   const [handouts, setHandouts] = useState([]);
   const [billings, setBillings] = useState([]);
@@ -471,7 +471,7 @@ export default function Patient() {
 
   const redirectToPatientPortal = () => {
     history.push("/manage/patient-search");
-  }
+  };
 
   const mapIconHandlers = (value) => {
     if (value === "Patient") {
@@ -514,7 +514,7 @@ export default function Patient() {
     console.log("files", files);
     let fd = new FormData();
     fd.append("file", files[0]);
-    fd.append("patient_id", 1)
+    fd.append("patient_id", 1);
     createDocument(fd);
   };
 
@@ -587,7 +587,9 @@ export default function Patient() {
       <Dialog
         open={showBillingExpandDialog}
         title={" "}
-        message={<BillingDetails data={billings} onClose={toggleBillngExpandDialog} />}
+        message={
+          <BillingDetails data={billings} onClose={toggleBillngExpandDialog} />
+        }
         applyForm={() => toggleBillngExpandDialog()}
         cancelForm={() => toggleBillngExpandDialog()}
         hideActions={true}
@@ -628,7 +630,12 @@ export default function Patient() {
       <Dialog
         open={showHandoutsDialog}
         title={" "}
-        message={<HandoutsForm onClose={toggleHandoutsDialog} reloadData={fetchPatientHandouts} />}
+        message={
+          <HandoutsForm
+            onClose={toggleHandoutsDialog}
+            reloadData={fetchPatientHandouts}
+          />
+        }
         applyForm={() => toggleHandoutsDialog()}
         cancelForm={() => toggleHandoutsDialog()}
         hideActions={true}

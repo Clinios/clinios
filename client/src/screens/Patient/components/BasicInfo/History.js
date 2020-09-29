@@ -11,7 +11,7 @@ import TableRow from "@material-ui/core/TableRow";
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
     minWidth: 650,
-  }
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -43,7 +43,7 @@ const StyledTableRow = withStyles((theme) => ({
 }))(TableRow);
 
 const BasicInfoHistory = (props) => {
-  const { data, reloadData } = props;
+  const { data } = props;
   const classes = useStyles();
 
   return (

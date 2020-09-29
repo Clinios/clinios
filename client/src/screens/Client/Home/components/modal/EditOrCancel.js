@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { useDispatch } from "react-redux";
+
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -54,7 +54,7 @@ const EditOrCancel = ({
 }) => {
   const classes = useStyles();
   const [changeTime, handleChangeTime] = useState(false);
-  const [eventId, setEventId] = useState(null);
+
   const [startDate, handleStartDateChange] = useState(new Date());
   const [endDate, handleEndDateChange] = useState(new Date());
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import _ from "lodash";
+
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -106,7 +106,7 @@ const NewAppointment = ({
   const classes = useStyles();
   const { providers } = props;
   const [title, setTitle] = useState("");
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState([]); // eslint-disable-line
   const [startDate, handleStartDateChange] = useState(selectedDate);
   const [endDate, handleEndDateChange] = useState(new Date(selectedDate));
   const [status, setStatus] = React.useState("R");

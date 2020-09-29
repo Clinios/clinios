@@ -1,4 +1,3 @@
-import Modal from "@material-ui/core/Modal";
 import React from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";

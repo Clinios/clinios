@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [errors, setErrors] = useState([]);
+  const [, setErrors] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState("");
   const [providerDetails, setProviderDetails] = useState("");
   const [messagesUnread, setMessagesUnread] = useState([]);
@@ -142,7 +142,7 @@ export default function Home() {
           start: item.start_dt,
           end: item.end_dt,
           backgroundColor:
-            item.status && item.status == "D" ? "#ffab40" : "#2196f3",
+            item.status && item.status === "D" ? "#ffab40" : "#2196f3",
         },
       ];
     }, []);
@@ -159,7 +159,7 @@ export default function Home() {
     fetchProviders();
     fetchAppointments();
     fetchProviderDetails();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchAppointments() {
     const { data } = await Appointments.getAll();
@@ -211,7 +211,7 @@ export default function Home() {
 
   const handleEventClick = (calEvent) => {
     const eventClicked = events.filter(
-      (event) => event.id == calEvent.event.id
+      (event) => event.id == calEvent.event.id // eslint-disable-line
     );
     setSelectedEvent(eventClicked[0]);
     setIsEditOrCancelOpen(true);

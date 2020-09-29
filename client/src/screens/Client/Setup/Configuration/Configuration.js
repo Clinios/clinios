@@ -70,7 +70,7 @@ export default function Configuration(props) {
   const classes = useStyles();
   const [isSubmitting, setSubmitting] = useState(false);
 
-  const [errors, setErrors] = React.useState([]);
+  const [errors] = React.useState([]);
   const [modalHistory, setModalHistory] = useState({
     isOpen: false,
     data: [],
@@ -186,10 +186,7 @@ export default function Configuration(props) {
       try {
         let formData = new FormData();
         formData.append("file", e.target.files[0]);
-        const response = await ConfigurationService.updateLogo(
-          currentUser.id,
-          formData
-        );
+        await ConfigurationService.updateLogo(currentUser.id, formData);
       } catch (e) {}
     }
   };
@@ -210,7 +207,13 @@ export default function Configuration(props) {
 
   useEffect(() => {
     _fetchConfig();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onKeyPress = (e) => {
+    if (e.which === 13) {
+      _onSubmitConfig();
+    }
+  };
 
   const _onChangeInput = (e) => {
     setFormParams({
@@ -245,7 +248,12 @@ export default function Configuration(props) {
           History
         </Button>
       </div>
-      <Typography component="p" variant="body2" color="textPrimary">
+      <Typography
+        className={classes.title}
+        component="p"
+        variant="body2"
+        color="textPrimary"
+      >
         This page is used to manage basic client information
       </Typography>
       <ConfigModal modal={modalHistory} setModal={setModalHistory} />
@@ -259,6 +267,9 @@ export default function Configuration(props) {
                   <TextField
                     value={formParams.clientId}
                     variant="outlined"
+                    onKeyPress={(e) => {
+                      return onKeyPress(e);
+                    }}
                     size="small"
                     disabled={true}
                     id="clientId"
@@ -273,6 +284,9 @@ export default function Configuration(props) {
                   <TextField
                     value={formParams.clientCode}
                     variant="outlined"
+                    onKeyPress={(e) => {
+                      return onKeyPress(e);
+                    }}
                     size="small"
                     id="clientCode"
                     label="Client Code"
@@ -303,6 +317,7 @@ export default function Configuration(props) {
               </div>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
+                  alt={`logo`}
                   style={{ maxWidth: "200px", maxHeight: "50px" }}
                   src={formParams.logo}
                 />
@@ -324,6 +339,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.name}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="name"
                 disabled={true}
@@ -339,6 +357,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.patientPortal}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="patientPortal"
                 disabled={true}
@@ -354,6 +375,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.address}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="address"
                 label="Address"
@@ -369,6 +393,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.clientWebsite}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="clientWebsite"
                 label="Client Website"
@@ -383,6 +410,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.addressLineTwo}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="addressLineTwo"
                 label="addressLineTwo"
@@ -397,6 +427,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.email}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="email"
                 label="Email"
@@ -411,6 +444,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.city}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="city"
                 label="City"
@@ -425,6 +461,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.ein}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="ein"
                 label="EIN"
@@ -438,6 +477,9 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 className={classes.customSelect}
                 size="small"
               >
@@ -466,6 +508,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.npi}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="npi"
                 label="NPI"
@@ -480,6 +525,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.zipcode}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="zipcode"
                 label="Zipcode"
@@ -493,6 +541,9 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 id="calendarStartTime"
                 name={`calendarStartTime`}
                 label="Calendar Start Time"
@@ -507,6 +558,9 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <FormControl
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 className={classes.customSelect}
                 size="small"
               >
@@ -531,6 +585,9 @@ export default function Configuration(props) {
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 id="calendarEndTime"
                 name={`calendarEndTime`}
                 label="Calendar End Time"
@@ -546,6 +603,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.phone}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="phone"
                 label="Phone"
@@ -562,6 +622,9 @@ export default function Configuration(props) {
               <TextField
                 value={formParams.fax}
                 variant="outlined"
+                onKeyPress={(e) => {
+                  return onKeyPress(e);
+                }}
                 size="small"
                 id="fax"
                 label="Fax"
