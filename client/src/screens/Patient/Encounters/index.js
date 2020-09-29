@@ -19,13 +19,18 @@ const Form = (props) => {
 
   useEffect(() => {
     if (!!encounter) {
-      formFields.title = encounter.title;
-      formFields.type = encounter.encounter_type;
-      formFields.name = encounter.name;
-      formFields.date = moment(encounter.dt).format("YYYY-MM-DD");
-      setFormFields({ ...formFields })
+      updateFields();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter])
+
+  const updateFields = () => {
+    formFields.title = encounter.title;
+    formFields.type = encounter.encounter_type;
+    formFields.name = encounter.name;
+    formFields.date = moment(encounter.dt).format("YYYY-MM-DD");
+    setFormFields({ ...formFields })
+  }
 
   const handleInputChnage = (e) => {
     const { value, name } = e.target;
@@ -141,7 +146,7 @@ const Form = (props) => {
             <Button variant="outlined" onClick={() => onClose()}>Exit</Button>
           </Grid>
           <Typography gutterBottom>Created {moment().format("MMM, DD, YYYY")}</Typography>
-          <Typography gutterBottom>Created By {!!encounter && encounter.name || "Mark Hyman MD"}</Typography>
+          <Typography gutterBottom>Created By {!!encounter && encounter.name}</Typography>
         </Grid>
       </Grid>
     </>

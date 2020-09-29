@@ -5,24 +5,24 @@ const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const search = async (req, res) => {
   const db = makeDb(configuration, res);
-  let { searchTerm, checkBox } = req.body;
+  const { searchTerm, checkBox } = req.body;
   let $sql;
 
   try {
-    $sql = `select d.id, d.name, cd.favorite, cd.updated, concat(u.firstname, ' ', u.lastname) updated_name
-            from drug d
-            left join client_drug cd on cd.client_id=1
-            and cd.drug_id=d.id
-            left join user u on u.id=cd.updated_user_id
+    $sql = `select i.id, i.name, ci.favorite, ci.updated, concat(u.firstname, ' ', u.lastname) updated_name
+            from icd i
+            left join client_icd ci on ci.icd_id=i.id and ci.client_id=${req.client_id}
+            left join user u on u.id=ci.updated_user_id
             where 1 \n`;
     if (searchTerm) {
-      $sql = $sql + `and d.name like '${searchTerm}%' \n`;
+      $sql = $sql + `and i.name like '${searchTerm}%' \n`;
     }
     if (checkBox == true) {
-      $sql = $sql + `and cd.favorite = true \n`;
+      $sql = $sql + `and ci.favorite = true \n`;
     }
-    $sql = $sql + `order by d.name \n`;
-    $sql = $sql + `limit 20 \n`;
+
+    $sql = $sql + `order by i.name \n`;
+    $sql = $sql + `limit 100 \n`;
 
     const dbResponse = await db.query($sql);
 
@@ -47,25 +47,24 @@ const addFavorite = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const db = makeDb(configuration, res);
-  let client_drug = req.body;
+  let client_icd = req.body;
 
-  (client_drug.client_id = req.client_id),
-    (client_drug.drug_id = req.body.drug_id),
-    (client_drug.favorite = true),
-    (client_drug.created = new Date());
-  (client_drug.created_user_id = req.user_id),
-    (client_drug.updated = new Date());
-  client_drug.updated_user_id = req.user_id;
+  (client_icd.client_id = req.client_id),
+    (client_icd.icd_id = req.body.icd_id),
+    (client_icd.favorite = true),
+    (client_icd.created = new Date());
+  (client_icd.created_user_id = req.user_id), (client_icd.updated = new Date());
+  client_icd.updated_user_id = req.user_id;
 
   try {
     const dbResponse = await db.query(
-      "insert into client_drug set ?",
-      client_drug
+      "insert into client_icd set ?",
+      client_icd
     );
 
     if (!dbResponse) {
       errorMessage.error = "Creation not successful";
-      return res.status(status.notfound).send(errorMessage);
+      res.status(status.notfound).send(errorMessage);
     }
 
     successMessage.data = dbResponse;
@@ -88,7 +87,7 @@ const deleteFavorite = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const deleteResponse = await db.query(
-      `delete from client_drug where client_id=${req.client_id} and drug_id=${req.params.id}`
+      `delete from client_icd where client_id=${req.client_id} and icd_id='${req.params.id}'`
     );
     if (!deleteResponse.affectedRows) {
       errorMessage.error = "Deletion not successful";
@@ -105,10 +104,10 @@ const deleteFavorite = async (req, res) => {
   }
 };
 
-const drug = {
+const icd = {
   search,
   addFavorite,
   deleteFavorite,
 };
 
-module.exports = drug;
+module.exports = icd;

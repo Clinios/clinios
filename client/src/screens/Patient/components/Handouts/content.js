@@ -6,10 +6,6 @@ import {
 } from "@material-ui/core";
 import moment from "moment";
 
-import PatientService from "../../../../services/patient.service";
-import { setError, setSuccess } from "../../../../store/common/actions";
-import { useDispatch } from "react-redux";
-
 const useStyles = makeStyles((theme) => ({
   button: {
     padding: 9,
@@ -36,34 +32,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const HandoutsContent = (props) => {
-  const { data, reloadData } = props;
-  const dispatch = useDispatch();
+  const { data, /* reloadData */ } = props;
   const classes = useStyles();
-
-  const onItemDelete = (selectedItem) => {
-    const documentId = selectedItem.id || 1;
-    const tab = "Labs";
-    PatientService.deleteDocument(documentId, tab)
-      .then((response) => {
-        dispatch(setSuccess(`${response.data.message}`));
-        reloadData();
-      })
-      .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
-        dispatch(
-          setError({
-            severity: severity,
-            message: resMessage,
-          })
-        );
-      });
-  };
 
   return (
     <>

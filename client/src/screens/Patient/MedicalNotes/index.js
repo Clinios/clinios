@@ -1,10 +1,5 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Grid,
-  Typography,
-  TextField
-} from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Button, Grid, Typography, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PatientService from "../../../services/patient.service";
 import { setError, setSuccess } from "../../../store/common/actions";
@@ -14,18 +9,24 @@ const MedicalNotes = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { onClose, reloadData } = props;
-  const [medicalNote, setMedicalNote] = useState('')
+  const [oldMedicalNote, setOldMedicalNote] = useState("");
+  const [medicalNote, setMedicalNote] = useState("");
+
+  useEffect(() => {
+    setOldMedicalNote(props.oldMedicalNote);
+    setMedicalNote(props.oldMedicalNote);
+  }, [props.oldMedicalNote]);
 
   const onFormSubmit = (e) => {
     e.preventDefault();
     // TODO:: static for the time being - discussion required
     let noteId = 1;
     const reqBody = {
-      "data": {
-        "old_medical_note": "Patient is hashimotos",
-        "medical_note": medicalNote
-      }
-    }
+      data: {
+        old_medical_note: oldMedicalNote,
+        medical_note: medicalNote,
+      },
+    };
     PatientService.updateMedicalNotes(reqBody, noteId)
       .then((response) => {
         dispatch(setSuccess(`${response.data.message}`));
@@ -33,8 +34,12 @@ const MedicalNotes = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage = (error.response && error.response.data &&
-          error.response.data.message) || error.message || error.toString();
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
         let severity = "error";
         dispatch(
           setError({
@@ -42,8 +47,8 @@ const MedicalNotes = (props) => {
             message: resMessage,
           })
         );
-      })
-  }
+      });
+  };
 
   return (
     <>
@@ -57,11 +62,14 @@ const MedicalNotes = (props) => {
           justify="space-between"
         >
           <Grid item lg={2}>
-            <Typography gutterBottom variant="body1" color="textPrimary">Notes</Typography>
+            <Typography gutterBottom variant="body1" color="textPrimary">
+              Notes
+            </Typography>
           </Grid>
           <Grid className={classes.formInput} item md={12}>
             <TextField
               required
+              value={medicalNote}
               variant="outlined"
               name="medicalNote"
               id="medicalNote"
@@ -97,4 +105,3 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default MedicalNotes;
-

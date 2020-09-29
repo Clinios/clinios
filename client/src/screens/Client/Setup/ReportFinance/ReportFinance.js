@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
-import _ from "lodash";
 import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
 import { Reports } from "./components";
 import ReportFinanceService from "./../../../../services/reportFinance.service";
 import { AuthConsumer } from "../../../../providers/AuthProvider";
-import Video from "../../../../components/videos/Video";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,6 +77,7 @@ export default function ReportFinance(props) {
 
   useEffect(() => {
     fetchReportFinance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDateChangeFrom = (event) => {
@@ -154,18 +151,6 @@ export default function ReportFinance(props) {
                 <Grid item md={12} xs={12}>
                   <Reports reports={reports} />
                 </Grid>
-
-                {/*
-                <Grid item md={12} xs={12}>
-                  <Card className={classes.card}>
-                    <CardContent>
-                      <Typography variant="h4" gutterBottom>
-                        <Video url="https://www.youtube.com/watch?v=ysz5S6PUM-U" />
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                */}
               </Grid>
             </Container>
           </div>

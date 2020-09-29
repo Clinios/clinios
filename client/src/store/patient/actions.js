@@ -11,9 +11,8 @@ export const setEncounter = (encounter) => {
   };
 };
 
-export const resetEncounter = (encounter) => {
+export const resetEncounter = () => {
   return {
-    type: RESET_SELECTED_ENCOUNTER,
-    payload: encounter,
+    type: RESET_SELECTED_ENCOUNTER
   };
 };

@@ -49,13 +49,13 @@ const StyledTableRow = withStyles((theme) => ({
     },
     "& td": {
       fontSize: 12,
-      height: "50px"
+      height: "50px",
     },
   },
 }))(TableRow);
 
 const MedicalNotesDetails = (props) => {
-  const { data, reloadData } = props;
+  const { data /* reloadData */ } = props;
   const classes = useStyles();
 
   return (

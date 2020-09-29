@@ -34,7 +34,6 @@ const getHistory = async (req, res) => {
   try {
     $sql = `select 
       ch.created
-      ,concat(u.firstname, ' ', u.lastname) created_user
       ,ch.name
       ,ch.code
       ,ch.address
@@ -52,15 +51,8 @@ const getHistory = async (req, res) => {
       ,ch.functional_range
       ,ch.ein
       ,ch.npi
-      ,ch.labcorp_api_key
-      ,ch.quest_api_key
-      ,ch.doctors_data_username
-      ,ch.doctors_data_password
-      ,ch.stripe_api_key
-      ,ch.bluefin_api_key
       ,ch.concierge_lab_ordering
       from client_history ch
-      left join user u on u.id=ch.created_user_id
       where ch.id=${req.client_id}
       order by ch.created desc
       limit 50`;
@@ -83,7 +75,6 @@ const getHistory = async (req, res) => {
 
 const update = async (req, res) => {
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
     errorMessage.error = errors.array();
     return res.status(status.error).send(errorMessage);

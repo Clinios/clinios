@@ -1,0 +1,19 @@
+.react-grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.react-grid-item > div {
+    height: 100%;
+}
+
+/* Just in the future we decide to hide the resize icon we can uncomment these lines */
+
+/* .react-grid-item > .react-resizable-handle {
+    background-image: unset
+}
+
+.react-grid-item > .react-resizable-handle::after {
+    content: none;
+} */
+

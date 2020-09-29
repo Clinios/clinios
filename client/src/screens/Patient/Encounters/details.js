@@ -13,7 +13,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import PatientService from "../../../services/patient.service";
 import { setError, setSuccess } from "../../../store/common/actions";
-import { setEncounter, resetEncounter } from "../../../store/patient/actions";
+import { setEncounter } from "../../../store/patient/actions";
 import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({

@@ -14,8 +14,8 @@ const getInit = async (req, res) => {
       left join case_status cs on cs.id=s.status_id
       left join user u on u.id=s.created_user_id
       where s.client_id=${req.client_id} \n`;
-    if (!!cStatus) {
-      $sql = $sql + `and s.status_id in ('WD', 'WC') \n`;
+    if (cStatus) {
+      $sql = $sql + `and s.status_id='${cStatus}' \n`;
     }
     $sql = $sql + `order by s.created desc \n`;
     $sql = $sql + `limit 100 \n`;

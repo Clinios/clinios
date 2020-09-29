@@ -1,24 +1,15 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Grid,
-  Typography
-} from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 
 export default function MedicalNotesContent(props) {
   const classes = useStyles();
   const { data } = props;
 
   return (
-    <>
-      {
-        data.map((item, index) => (
-          <Grid key={`${item.medical_note}_${index}`}>
-            <Typography className={classes.text12} color="textPrimary">{item.medical_note}</Typography>
-          </Grid>
-        ))
-      }
-    </>
+    <Typography className={classes.text12} color="textPrimary">
+      {data}
+    </Typography>
   );
 }
 
@@ -27,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   text12: {
-    fontSize: 12
-  }
+    fontSize: 12,
+    whiteSpace: "pre-line",
+  },
 }));

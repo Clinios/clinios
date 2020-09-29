@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PatientService from "./../../../../services/patient.service";
@@ -9,7 +9,7 @@ const AdminNotes = (props) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const { onClose, reloadData } = props;
-
+  const [oldAdminNote, setOldAdminNote] = useState("");
   const [formFields, setFormFields] = useState({
     notes: "",
   });
@@ -22,12 +22,21 @@ const AdminNotes = (props) => {
     });
   };
 
+  useEffect(() => {
+    setOldAdminNote(props.oldAdminNote);
+    let fieldName = "notes";
+    setFormFields({
+      ...formFields,
+      [fieldName]: props.oldAdminNote,
+    });
+  }, [props.oldAdminNote]);
+
   const onFormSubmit = (e) => {
     e.preventDefault();
     const reqBody = {
       data: {
         admin_note: formFields.notes,
-        old_admin_note: "Always late update",
+        old_admin_note: oldAdminNote,
       },
     };
     // TODO:: static for the time being - discussion required
@@ -70,6 +79,7 @@ const AdminNotes = (props) => {
           <Grid className={classes.formInput} item md={12}>
             <TextField
               variant="outlined"
+              value={formFields.notes}
               name="notes"
               id="notes"
               type="text"

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import _ from "lodash";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -23,12 +22,14 @@ import Alert from "@material-ui/lab/Alert";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import FormLabel from "@material-ui/core/FormLabel";
 import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-import { colors } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Select from "@material-ui/core/Select";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import clsx from "clsx";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import { makeStyles } from "@material-ui/core/styles";
+import { colors } from "@material-ui/core";
 import useDebounce from "./../../../../../hooks/useDebounce";
 import * as API from "./../../../../../utils/API";
 
@@ -38,6 +39,12 @@ const useStyles = makeStyles((theme) => ({
     "& h2": {
       color: "#fff",
     },
+  },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1 / 2),
+    top: theme.spacing(1 / 2),
+    color: "#ffffff",
   },
   content: {
     paddingTop: theme.spacing(2),
@@ -94,27 +101,47 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(3),
   },
 }));
-const NewAppointment = ({
+
+const NewOrEditEvent = ({
   isOpen,
   onClose,
   selectedDate,
+  selectedProvider,
   user,
-  isNewAppointment,
+  onCancel,
+  onEventUpdate,
+  onSave,
+  isNewEvent,
   isLoading,
   ...props
 }) => {
   const classes = useStyles();
-  const { providers } = props;
-  const [title, setTitle] = useState("");
-  const [errors, setErrors] = useState([]);
-  const [startDate, handleStartDateChange] = useState(selectedDate);
-  const [endDate, handleEndDateChange] = useState(new Date(selectedDate));
-  const [status, setStatus] = React.useState("R");
+  const { providers, errors } = props;
   const [provider, setProvider] = React.useState("");
   const [patients, setPatients] = React.useState([]);
   const [selectedPatient, setSelectedPatient] = React.useState("");
-  const [notes, setNotes] = React.useState("");
   const [patientSearchTerm, setPatientSearchTerm] = useState("");
+  const [calEvent, setCalEvent] = useState("");
+
+  useEffect(() => {
+    if (isNewEvent) {
+      setCalEvent("");
+      setProvider("selectedProvider");
+      setPatientSearchTerm("");
+    } else {
+      setCalEvent(props.event);
+      setPatientSearchTerm(`${props.event.firstname} ${props.event.firstname}`);
+      setProvider(selectedProvider);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.event, isNewEvent]);
+
+  const handleOnChange = (event) => {
+    setCalEvent({
+      ...calEvent,
+      [event.target.name]: event.target.value,
+    });
+  };
 
   const debouncedSearchTerm = useDebounce(patientSearchTerm, 500);
   useEffect(
@@ -152,20 +179,62 @@ const NewAppointment = ({
     setProvider(p[0]);
   };
 
-  const handleSaveAppointment = () => {
+  const handleSaveOrUpdate = () => {
+    if (isNewEvent) {
+      const payload = {
+        data: {
+          title: calEvent.title,
+          provider: provider,
+          patient: selectedPatient,
+          ApptStatus: calEvent.status,
+          notes: calEvent.notes,
+          start_dt: calEvent.start_dt,
+          end_dt: calEvent.start_dt,
+        },
+      };
+      onSave(payload);
+    } else {
+      const payload = {
+        data: {
+          id: props.event.id,
+          title: calEvent.title,
+          providerName: calEvent.provider_name,
+          provider: provider,
+          patient: selectedPatient
+            ? selectedPatient
+            : {
+                id: props.event.patient_id,
+                firstname: props.event.firstname,
+                email: props.event.email,
+              },
+          ApptStatus: calEvent.status,
+          notes: calEvent.notes,
+          old_start_dt: moment(props.event.start_dt).format("YYYY-MM-DD HH:mm"),
+          old_end_dt: moment(props.event.end_dt).format("YYYY-MM-DD HH:mm"),
+          new_start_dt: moment(calEvent.start_dt).format("YYYY-MM-DD HH:mm"),
+          new_end_dt: moment(calEvent.end_dt).format("YYYY-MM-DD HH:mm"),
+        },
+      };
+      onEventUpdate(payload);
+    }
+  };
+
+  const handleEventCancel = () => {
     const payload = {
       data: {
-        title: title,
-        providerName: provider.name,
-        patient: selectedPatient,
-        ApptStatus: status,
-        notes: notes,
-        start_dt: startDate,
-        end_dt: endDate,
+        id: props.event.id,
+        providerName: props.event.provider_name,
+        patient: {
+          id: props.event.patient_id,
+          firstname: props.event.firstname,
+          email: props.event.email,
+        },
+        appointmentDate: moment(props.event.start).format("YYYY-MM-DD HH:mm"),
       },
     };
-    props.onSave(payload);
+    onCancel(payload);
   };
+
   return (
     <Dialog
       open={isOpen}
@@ -174,7 +243,18 @@ const NewAppointment = ({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title" className={classes.title}>
-        New Appointment - {moment(selectedDate).format("YYYY.MM.DD")}
+        {isNewEvent
+          ? `New Appointment - ${moment(selectedDate).format("YYYY.MM.DD")}`
+          : "Edit Appointment"}
+        {onClose ? (
+          <IconButton
+            aria-label="Close"
+            className={classes.closeButton}
+            onClick={onClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
       </DialogTitle>
       <DialogContent className={classes.content}>
         {isLoading && (
@@ -186,14 +266,15 @@ const NewAppointment = ({
             <CircularProgress />
           </div>
         )}
-        <DialogContentText
-          id="alert-dialog-description"
+        <div
           className={clsx({
-            [classes.modalConent]: true, //always apply
+            [classes.modalConentBelow]: true, //always apply
             [classes.contentWithLoading]: isLoading, //only when isLoading === true
           })}
         >
-          This page is used to create a new appointment
+          <DialogContentText id="alert-dialog-description">
+            This page is used to create a new appointment
+          </DialogContentText>
           {errors &&
             errors.map((error, index) => (
               <Alert severity="error" key={index}>
@@ -203,7 +284,7 @@ const NewAppointment = ({
           <div className={classes.root}>
             <FormControl component="div" className={classes.formControl}>
               <TextField
-                value={title}
+                value={calEvent.title}
                 variant="outlined"
                 margin="normal"
                 size="small"
@@ -214,7 +295,7 @@ const NewAppointment = ({
                 name="title"
                 autoComplete="title"
                 autoFocus
-                onChange={(event) => setTitle(event.target.value)}
+                onChange={(event) => handleOnChange(event)}
               />
             </FormControl>
             <div className={classes.datePickers}>
@@ -222,11 +303,17 @@ const NewAppointment = ({
                 className={classes.startdatePicker}
                 ampm={false}
                 clearable
-                id="date-picker-inline"
+                id="start-date-picker-inline"
                 label="Start"
-                value={startDate}
+                value={calEvent.start_dt}
                 placeholder="2020/10/10 10:00"
-                onChange={(date) => handleStartDateChange(date)}
+                onChange={(date) => {
+                  let property = "start_dt";
+                  setCalEvent({
+                    ...calEvent,
+                    [property]: date,
+                  })
+                }}
                 minDate={new Date()}
                 onError={console.log}
                 disablePast
@@ -238,11 +325,17 @@ const NewAppointment = ({
               <KeyboardDateTimePicker
                 clearable
                 variant="outlined"
-                id="date-picker-inline"
+                id="start-date-picker-inline"
                 label="End"
-                value={endDate}
+                value={calEvent.end_dt}
                 placeholder="2020/10/10 11:00"
-                onChange={(date) => handleEndDateChange(date)}
+                onChange={(date) => {
+                  let property = "end_dt";
+                  setCalEvent({
+                    ...calEvent,
+                    [property]: date,
+                  })
+                }}
                 minDate={new Date()}
                 onError={console.log}
                 disablePast
@@ -257,8 +350,8 @@ const NewAppointment = ({
               <RadioGroup
                 aria-label="status"
                 name="status"
-                value={status}
-                onChange={(event) => setStatus(event.target.value)}
+                value={calEvent.status ? calEvent.status : "R"}
+                onChange={(event) => handleOnChange(event)}
                 className={classes.statusList}
               >
                 <FormControlLabel
@@ -297,7 +390,9 @@ const NewAppointment = ({
                   <em>None</em>
                 </MenuItem>
                 {providers.map((provider) => (
-                  <MenuItem value={provider.id}>{provider.name}</MenuItem>
+                  <MenuItem key={provider.id} value={provider.id}>
+                    {provider.name}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -313,7 +408,6 @@ const NewAppointment = ({
                 label="Patient"
                 name="patient"
                 autoComplete="patient"
-                autoFocus
                 onChange={(event) => setPatientSearchTerm(event.target.value)}
               />
               {patients.length > 0 && !selectedPatient && (
@@ -326,6 +420,7 @@ const NewAppointment = ({
                           onClick={(event) =>
                             handlePatientChange(event, patient)
                           }
+                          key={patient.id}
                         >
                           <ListItemText
                             primary={`${patient.firstname} ${patient.lastname}`}
@@ -344,35 +439,46 @@ const NewAppointment = ({
               className={classes.textArea}
               aria-label="minimum height"
               placeholder="Notes..."
-              onChange={(event) => setNotes(event.target.value)}
+              name="notes"
+              value={calEvent.notes}
+              onChange={(event) => handleOnChange(event)}
             />
           </div>
-        </DialogContentText>
+        </div>
       </DialogContent>
       <DialogActions className={classes.modalAction}>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => onClose()}
-          style={{
-            borderColor: colors.orange[600],
-            color: colors.orange[600],
-          }}
-        >
-          Cancel
+        <Button size="small" variant="outlined" onClick={() => onClose()}>
+          close
         </Button>
-        <Button
-          disabled={!status || !selectedPatient || !provider}
-          variant="outlined"
-          color="primary"
-          size="small"
-          onClick={() => handleSaveAppointment()}
-        >
-          Save
-        </Button>
+        <div>
+          {!isNewEvent && (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleEventCancel()}
+              style={{
+                borderColor: colors.orange[600],
+                color: colors.orange[600],
+                marginRight: "16px",
+              }}
+            >
+              Cancel this appointment
+            </Button>
+          )}
+
+          <Button
+            disabled={!calEvent}
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={() => handleSaveOrUpdate()}
+          >
+            {isNewEvent ? "Save" : "Update"}
+          </Button>
+        </div>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default NewAppointment;
+export default NewOrEditEvent;

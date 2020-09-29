@@ -7,15 +7,15 @@ export default function AdminNotesContent(props) {
   const { data } = props;
 
   return (
-    <>
-      {data.map((item, index) => (
-        <Grid key={index} className={classes.inputRow}>
-          <Typography variant="body1" className={classes.text12} color="textPrimary">
-            {item.admin_note}
-          </Typography>
-        </Grid>
-      ))}
-    </>
+    <Grid className={classes.inputRow}>
+      <Typography
+        variant="body1"
+        className={classes.text12}
+        color="textPrimary"
+      >
+        {data}
+      </Typography>
+    </Grid>
   );
 }
 
@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 0,
   },
   text12: {
-    fontSize: 12
-  }
+    fontSize: 12,
+    whiteSpace: "pre-line",
+  },
 }));
