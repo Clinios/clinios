@@ -64,7 +64,9 @@ const useStyles = makeStyles((theme) => ({
 export default function ReportFinance(props) {
   const classes = useStyles();
   const [dateFrom, setDateFrom] = useState(
-    moment().subtract(3, "months").format("YYYY-MM-DD")
+    moment()
+      .subtract(3, "months")
+      .format("YYYY-MM-DD")
   );
   const [dateTo, setDateTo] = useState(moment().format("YYYY-MM-DD"));
   const [reports, setReports] = useState([]);

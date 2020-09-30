@@ -136,11 +136,11 @@ const update = async (req, res) => {
   let client = req.body;
 
   client.updated = new Date();
-  client.updated_user_id = req.params.userId;
+  client.updated_user_id = req.params.clientId;
 
   try {
     const updateResponse = await db.query(
-      `update client set ? where id =${req.params.userId}`,
+      `update client set ? where id =${req.params.clientId}`,
       [client]
     );
 
