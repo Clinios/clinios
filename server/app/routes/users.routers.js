@@ -1,32 +1,32 @@
 "use strict";
 const express = require("express");
 const { authJwt } = require("../middlewares");
-const Manageusers = require("../controllers/manage-users.controller");
+const users = require("../controllers/users.controller");
 const fieldValidation = require("../helpers/fieldValidation");
 const router = express.Router();
 
 router.get(
-    "/manage-users",
+    "/users",
     [authJwt.verifyToken],
-    Manageusers.getAll
+    users.getAll
 );
 
 router.get(
-    "/manage-users/forward", 
+    "/users/forward", 
     [authJwt.verifyToken],
-    Manageusers.getForward
+    users.getForward
 );
 
 router.post(
-    "/manage-users",
-    [fieldValidation.validate("manageUser"), authJwt.verifyToken],
-    Manageusers.create
+    "/users",
+    [fieldValidation.validate("User"), authJwt.verifyToken],
+    users.create
 );
 
 router.put(
-    "/manage-users/:userId",
+    "/users/:userId",
     [authJwt.verifyToken],
-    Manageusers.update
+    users.update
 );
 
 module.exports = router;

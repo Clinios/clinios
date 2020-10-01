@@ -55,7 +55,7 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
-const Manage = ({ users, onEdit, onDelete, ...props }) => {
+const UsersList = ({ users, onEdit, onDelete, ...props }) => {
 
     const classes = useStyles();
     return (
@@ -128,4 +128,4 @@ const Manage = ({ users, onEdit, onDelete, ...props }) => {
     );
 };
 
-export default Manage;
+export default UsersList;

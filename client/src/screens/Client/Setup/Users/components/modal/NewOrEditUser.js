@@ -20,8 +20,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import { colors } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { setSuccess } from "../../../../../../store/common/actions";
+import { setError } from "../../../../../../store/common/actions";
 import { removeEmpty } from "../../../../../../utils/helpers";
-import manageUsersService from "../../../../../../services/manageUsers.service";
+import usersService from "../../../../../../services/users.service";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     "& h2": {
       color: "#fff",
     },
+  },
+  spaceLeft: {
+    marginLeft: '-13px',
   },
   content: {
     paddingTop: theme.spacing(2),
@@ -64,6 +68,9 @@ const useStyles = makeStyles((theme) => ({
   },
   adjacentField: {
     flex: 0.45,
+  },
+  spacingLeft: {
+    marginLeft: '0px'
   },
   halfField: {
     flex: 0.5,
@@ -140,8 +147,10 @@ const NewOrEditUser = ({
   const [user, setUser] = useState([]);
   const [errors, setErrors] = useState([]);
 
+
   useEffect(() => {
     let appt = null;
+    setErrors([]);
     if (!isNewUser) {
       appt = {
         ...props.selectedUser,
@@ -156,8 +165,8 @@ const NewOrEditUser = ({
         title: '',
         email: '',
         status: 'Active',
-        updated: new Date() ,
-        created: new Date() ,
+        updated: new Date(),
+        created: new Date(),
         type: 'Primary Provider',
         appointments: true,
         admin: false,
@@ -166,13 +175,11 @@ const NewOrEditUser = ({
         comment: '',
       }
     }
-    console.log(appt)
     setUser(appt);
 
   }, [props.selectedUser]);
 
   const handleOnChange = (event) => {
-    console.log(event.target.name, " " ,event.target.value.trim())
     setUser({
       ...user,
       [event.target.name]: event.target.value.trim(),
@@ -180,7 +187,6 @@ const NewOrEditUser = ({
   };
 
   const handleFormSubmission = () => {
-    console.log(prevuser)
     const formedData = {
       userReq: removeEmpty({
         firstname: user.firstname,
@@ -204,53 +210,105 @@ const NewOrEditUser = ({
     };
     if (isNewUser) {
       createNewUser(formedData);
-      console.log("new");
     } else {
       delete formedData.userReq.created_user_id;
-      console.log("Update", user);
+      const errorData = [];
+      if (props.selectedUser.id === prevuser.id && formedData.userReq.status === 'A') {
 
-      manageUsersService.update(formedData, prevuser.id).then(
-        (response) => {
-          dispatch(setSuccess(`${response.data.message}`));
-          onClose();
-        },
-        (error) => {
-          const errorData = [];
-          errorData.push({ msg: error.response.data.error });
-          console.log(errorData)
+        errorData.push({ msg: "You cant remove yourself!!" });
+        setErrors(errorData);
+        dispatch(setError({
+          severity: "error",
+          message: "You cant remove yourself!!",
+        }));
+        onClose();
 
-          setErrors(errorData);
-        }
-      );
+      } else {
+        usersService.update(formedData, prevuser.id).then(
+          (response) => {
+            dispatch(setSuccess(`${response.data.message}`));
+            onClose();
+          },
+          (error) => {
+            let errorData = [];
+
+            if (Array.isArray(error.response.data.error) && error.response.data.error.length > 0) {
+              errorData = (error.response.data.error)
+            } else {
+              errorData.push({ msg: error.response.data.error });
+
+              dispatch(setError({
+                severity: "error",
+                message: error.response.data.error
+              }));
+              onClose();
+
+            }
+            setErrors(errorData);
+
+          }
+        )
+      }
+      ;
     }
   };
 
   const createNewUser = (data) => {
-      
-    data.userReq.status  = data.userReq.status == undefined ? 'Active' : data.userReq.status;
-    data.userReq.type = data.userReq.type == undefined ?  'Primary Provider': data.userReq.type;
-    data.userReq.appointments  = data.userReq.appointments == undefined ?  true: data.userReq.appointments ;
-    data.userReq.admin = data.userReq.admin == undefined ?  false : data.userReq.admin;
-    data.userReq.schedule = data.userReq.schedule == undefined ? 'Full' : data.userReq.schedule;
-    // data.userReq.forward = data.userReq.forward == undefined ? forward : data.userReq.forward;
-    
-    console.log(data);
 
-    manageUsersService.create(data).then(
+    data.userReq.status = data.userReq.status == undefined ? 'Active' : data.userReq.status;
+    data.userReq.type = data.userReq.type == undefined ? 'Primary Provider' : data.userReq.type;
+    data.userReq.appointments = data.userReq.appointments == undefined ? true : data.userReq.appointments;
+    data.userReq.admin = data.userReq.admin == undefined ? false : data.userReq.admin;
+    data.userReq.schedule = data.userReq.schedule == undefined ? 'Full' : data.userReq.schedule;
+
+
+    usersService.create(data).then(
       (response) => {
         dispatch(setSuccess(`${response.data.message}`));
+        resetUser();
         onClose();
       },
       (error) => {
-        const errorData = [];
-        errorData.push({msg:error.response.data.error});
-        console.log(errorData)
+        let errorData = [];
 
+        if (Array.isArray(error.response.data.error) && error.response.data.error.length > 0) {
+          errorData = (error.response.data.error)
+        } else {
+
+          errorData.push({ msg: error.response.data.error })
+
+          dispatch(setError({
+            severity: "error",
+            message: error.response.data.error
+          }));
+          onClose();
+
+        }
         setErrors(errorData);
+
+
       }
     );
   };
 
+  const resetUser = () => {
+    const removeUser = {
+      firstname: '',
+      lastname: '',
+      title: '',
+      email: '',
+      status: 'Active',
+      updated: new Date(),
+      created: new Date(),
+      type: 'Primary Provider',
+      appointments: true,
+      admin: false,
+      schedule: 'Full',
+      email_forward_user_id: props.forward,
+      comment: '',
+    };
+    setUser(removeUser);
+  }
   return (
     <div>
       <Dialog
@@ -273,7 +331,7 @@ const NewOrEditUser = ({
           </DialogContentText>
           { errors &&
             errors.map((error, index) => (
-              <Alert severity="error" key={ index }>
+              <Alert severity="error" key={ index + error.msg }>
                 {error.msg }
               </Alert>
             )) }
@@ -281,7 +339,7 @@ const NewOrEditUser = ({
             <FormControl component="div" className={ classes.formControl }>
 
               <TextField
-                className={ classes.subject }
+                className={ classes.adjacentField }
                 value={ user.firstname }
                 variant="outlined"
                 margin="dense"
@@ -293,13 +351,14 @@ const NewOrEditUser = ({
                 onChange={ (event) => handleOnChange(event) }
               />
 
-              <FormGroup aria-label="position" row className={ classes.formgroup}>
+              <FormGroup aria-label="position" row className={ classes.adjacentField }>
                 <FormControlLabel
+                  className={ classes.spacingLeft }
                   value="appointments"
                   control={ <Switch
+                    className={ classes.spacingLeft }
                     checked={ user.appointments }
-                    onChange={ (event) =>
-                      {
+                    onChange={ (event) => {
                       setUser({
                         ...user,
                         [event.target.name]: !user.appointments,
@@ -376,7 +435,7 @@ const NewOrEditUser = ({
                 name="schedule"
                 className={ classes.adjacentField }
                 value={ user.schedule }
-                onChange={ (event) => {handleOnChange(event)} }
+                onChange={ (event) => { handleOnChange(event) } }
                 SelectProps={ {
                   native: true,
                   MenuProps: {
@@ -460,13 +519,13 @@ const NewOrEditUser = ({
 
             </FormControl>
 
-            <FormControl component="div" className={ classes.formControl } ml={ -13 }>
+            <FormControl component="div" className={ [classes.formControl, classes.spaceLeft].join(' ') } >
               <FormGroup aria-label="position" row >
                 <FormControlLabel
                   value="admin"
                   control={ <Switch
                     checked={ user.admin }
-                    onChange={ (event) =>{
+                    onChange={ (event) => {
                       setUser({
                         ...user,
                         [event.target.name]: !user.admin,
@@ -493,8 +552,12 @@ const NewOrEditUser = ({
                 label="Updated"
                 id="updated"
                 autoComplete="updated"
-                onChange={ (event) => handleOnChange(event) }
-                value={ user.updated !=undefined ? moment(user.updated).format("lll") : "-"  }
+                //onChange={ (event) => handleOnChange(event) }
+                defaultValue={ user.updated != undefined ? moment(user.updated).format("lll") : "-" }
+                inputProps={
+                  { readOnly: true, }
+                }
+
               />
 
             </FormControl>
@@ -509,8 +572,11 @@ const NewOrEditUser = ({
                 label="Created"
                 id="created"
                 autoComplete="created"
-                onChange={ (event) => handleOnChange(event) }
-                value={ user.created != undefined ? moment(user.created).format("lll") : "-" }
+                // onChange={ (event) => handleOnChange(event) }
+                defaultValue={ user.created != undefined ? moment(user.created).format("lll") : "-" }
+                inputProps={
+                  { readOnly: true, }
+                }
               />
               <TextField
                 size={ 'medium' }
@@ -537,9 +603,10 @@ const NewOrEditUser = ({
           <Button
             size="small"
             variant="outlined"
-            onClick={ () =>{ 
+            onClick={ () => {
               setErrors([])
-              onClose() }}
+              onClose()
+            } }
             style={ {
               borderColor: colors.orange[600],
               color: colors.orange[600],

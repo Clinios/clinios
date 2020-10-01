@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 
   res.send(help);
 });
-app.use("/api/v1", require("./app/routes/manage-users.routers"));
+app.use("/api/v1", require("./app/routes/users.routers"));
 
 app.use("/api/v1", require("./app/routes/accounting-search.routes"));
 app.use("/api/v1", require("./app/routes/appointment-type-user.routes"));

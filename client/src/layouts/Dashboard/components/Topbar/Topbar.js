@@ -164,10 +164,6 @@ const pages = [
     href: "/setup",
     subMenus: [
       {
-        title: "Manage Users",
-        href: "/setup/manage-users",
-      },
-      {
         title: "Accounting Types",
         href: "/setup/accounting-types",
       },

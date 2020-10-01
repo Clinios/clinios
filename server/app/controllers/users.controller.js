@@ -181,11 +181,11 @@ const update = async (req, res) => {
 
 
 
-const manageUsers = {
+const users = {
   getAll,
   getForward,
   create,
   update,
 };
 
-module.exports = manageUsers;
+module.exports = users;

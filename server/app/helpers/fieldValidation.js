@@ -68,53 +68,53 @@ exports.validate = (method) => {
           .isEmpty(),
       ];
     }
-    case "manageUser": {
+    case "User": {
       return [
         check("userReq.firstname", "User firstname can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.lastname", "User lastname can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.title", "User title can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.email", "User email can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.comment", "User note can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.status", "User status can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.appointments", "User Appointment can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.type", "User type can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.schedule", "User schedule can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.admin", "User admin can not empty!")
-          .exists()
-          .not()
-          .isEmpty(),
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
         check("userReq.email_forward_user_id", "forward name should be selected!")
-          .exists()
-          .not()
-          .isEmpty(),
-
+          .exists().bail()
+          .not().bail()
+          .isEmpty().bail(),
+        
       ];
     }
     case "sendConfirmationEmail": {

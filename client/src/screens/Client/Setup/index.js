@@ -13,4 +13,3 @@ export { default as LabRanges } from "./LabRanges";
 export { default as PortalHeader } from "./PortalHeader";
 export { default as Schedule } from "./Schedule";
 export { default as Users } from "./Users";
-export { default as ManageUsers } from "./ManageUsers";
