@@ -78,18 +78,18 @@ exports.validate = (method) => {
           .exists().bail()
           .not().bail()
           .isEmpty().bail(),
-        check("userReq.title", "User title can not empty!")
+       /*  check("userReq.title", "User title can not empty!")
           .exists().bail()
           .not().bail()
-          .isEmpty().bail(),
+          .isEmpty().bail(), */
         check("userReq.email", "User email can not empty!")
           .exists().bail()
           .not().bail()
           .isEmpty().bail(),
-        check("userReq.comment", "User note can not empty!")
+        /* check("userReq.comment", "User note can not empty!")
           .exists().bail()
           .not().bail()
-          .isEmpty().bail(),
+          .isEmpty().bail(), */
         check("userReq.status", "User status can not empty!")
           .exists().bail()
           .not().bail()

@@ -92,10 +92,16 @@ const UsersList = ({ users, onEdit, onDelete, ...props }) => {
                             <TableCell>{ user.title }</TableCell>
                             <TableCell>{ user.email }</TableCell>
                             <TableCell>
-                                { user.status }
+                                { user.status === 'A' ? 'Active' 
+                                    : user.status === 'I' ? 'Inactive' : user.status === 'D' ? 'Deleted' : ''}
                             </TableCell>
-                            <TableCell>{ user.type }</TableCell>
-                            <TableCell align="center">{ user.schedule }</TableCell>
+                            <TableCell>{ user.type === 'PP' ? 'Primary Provider' 
+                            : user.type === 'SP' ? 'Secondary Provider' 
+                            : user.type === 'A' ? 'Administrative' 
+                            : user.type === 'L' ? 'Limited' : ''  }</TableCell>
+                            <TableCell align="center">{ user.schedule === 'F' ? 'Full' 
+                            :user.schedule === 'H' ? 'Half' 
+                            :user.schedule === 'Q' ? 'Quarter' : '' }</TableCell>
                             <TableCell>{ user.appointments ? "Yes" : "No" }</TableCell>
                             <TableCell>{ user.admin ? "Yes" : "No" }</TableCell>
                             <TableCell>{ user.note }</TableCell>
