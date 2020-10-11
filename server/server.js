@@ -49,6 +49,7 @@ app.use(baseAPIPath, require("./app/routes/search.routes"));
 app.use(baseAPIPath, require("./app/routes/icd.routes"));
 app.use(baseAPIPath, require("./app/routes/message-to-patient.routes"));
 app.use("/api/v1", require("./app/routes/cpt.routes"));
+app.use("/api/v1", require("./app/routes/schedule.routes"));
 
 //Patient Portal
 app.use(baseAPIPath, require("./app/routes/patient/signup.routes"));

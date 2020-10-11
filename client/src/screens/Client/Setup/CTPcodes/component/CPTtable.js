@@ -78,10 +78,6 @@ const CPTtable = ({ searchResult, user, fetchCptCodeSearch }) => {
     billable: cpt_billable,
     fee: cpt_fee,
     notes: cpt_notes,
-    updatedFavorite: cpt_favorite,
-    updatedBillable: cpt_billable,
-    updatedFee: cpt_fee,
-    updatedNotes: cpt_notes,
   };
 
   const handleIsOpen = (id, desc, fee, fav, bill) => {

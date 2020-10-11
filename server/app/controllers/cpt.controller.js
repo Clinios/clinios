@@ -54,7 +54,7 @@ const search = async (req, res) => {
         left join client cl on cl.id=c.client_id
         where 1 \n`;
     if (cptId) {
-      $sql = $sql + `and c.id like '%${cptId}%' \n`;
+      $sql = $sql + `and c.id = '${cptId}' \n`;
     }
     if (cptDescription) {
       $sql = $sql + `and c.name like '%${cptDescription}%' \n`;
@@ -110,26 +110,18 @@ const updateClientCpt = async (req, res) => {
     billable,
     fee,
     notes,
-    updatedFavorite,
-    updatedBillable,
-    updatedFee,
-    updatedNotes,
   } = req.body;
   let $sql;
   try {
     $sql = `insert into client_cpt (client_id, cpt_id, favorite, billable, fee, notes, created, created_user_id, updated, updated_user_id )
         values (${req.client_id}, '${cptId}', ${favorite}, ${billable}, ${
       fee > 0 ? fee : 0
-    } /*TODO if fee is "" then set fee to null*/, '${notes}', now(), ${
-      req.user_id
-    }, now(), ${req.user_id} ) 
+    }, '${notes}', now(), ${req.user_id}, now(), ${req.user_id} ) 
          on duplicate key update 
-            favorite=${updatedFavorite},
-            billable=${updatedBillable},
-            fee=${
-              updatedFee > 0 ? updatedFee : 0
-            },  /*TODO if fee is "" then set fee to null*/
-            notes='${updatedNotes}',
+            favorite=${favorite},
+            billable=${billable},
+            fee=${fee > 0 ? fee : 0}, 
+            notes='${notes}',
             created=now(),
             created_user_id=${req.user_id},
             updated=now(),

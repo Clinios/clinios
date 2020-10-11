@@ -1,24 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import {
-  Button,
-  Card,
-  CardContent,
-  Container,
-  CssBaseline,
-  makeStyles
-} from "@material-ui/core";
-import Video from "./../../../../components/videos/Video";
+import { Button, Container, CssBaseline, makeStyles } from "@material-ui/core";
 import { AuthConsumer } from "../../../../providers/AuthProvider";
 import ScheduleSearchForm from "./component/ScheduleSearchForm";
 import ScheduleSearchResultTable from "./component/ScheduleSearchResultTable";
 import NewOrEditSchedule from "./component/modal/NewOrEditSchedule";
+import ScheduleService from "../../../../services/schedule.service";
+import DeleteSchedule from "./component/modal/DeleteSchedule";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    padding: "40px 0px"
+    padding: "40px 0px",
   },
   uploadButtons: {
     display: "flex",
@@ -27,34 +22,69 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "480px",
     "& h1": {
       [theme.breakpoints.up("md")]: {
-        marginRight: theme.spacing(1)
-      }
-    }
+        marginRight: theme.spacing(1),
+      },
+    },
   },
   card: {
     minHeight: 300,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 }));
 
 const Schedule = () => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(false);
   const [isNewSchedule, setIsNewSchedule] = useState(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [userList, setUserList] = useState([]);
+  const [userId, setUserId] = useState("");
+
+  const [selectedScheduleValues, setSelectedScheduleValues] = useState("");
+  const [selectedScheduleId, setSelectedScheduleId] = useState("");
+
+  const [searchResult, setSearchResult] = useState([]);
+  const payload = {
+    userId,
+  };
+
+  const getUserList = () => {
+    ScheduleService.getAllUsers().then((res) => {
+      setUserList(res.data.data);
+    });
+  };
+  useEffect(() => {
+    getUserList();
+  }, []);
+
+  const fetchScheduleSearch = () => {
+    ScheduleService.search(payload).then((res) => {
+      setSearchResult(res.data.data);
+    });
+  };
+
+  const handleChangeOfUserId = (e) => {
+    setUserId(e.target.value);
+  };
 
   const handleOnNewClick = () => {
     setIsOpen(true);
     setIsNewSchedule(true);
+    setSelectedScheduleValues("");
   };
-  const handleOnEditClick = () => {
+  const handleOnEditClick = (id) => {
     setIsOpen(true);
     setIsNewSchedule(false);
+    const scheduleById = searchResult.filter((result) => result.id === id);
+    scheduleById && setSelectedScheduleValues(_.head(scheduleById));
   };
 
-  const handleOnClose = () => {
-    setIsOpen(false);
+  const handleDeleteSchedule = (id) => {
+    setIsDeleteModalOpen(true);
+    setSelectedScheduleId(id);
   };
 
   return (
@@ -82,25 +112,38 @@ const Schedule = () => {
                     This page is used to set availability for patient
                     appointments.
                   </Typography>
-                  <ScheduleSearchForm />
-                  <ScheduleSearchResultTable
-                    handleOnEditClick={handleOnEditClick}
+                  <ScheduleSearchForm
+                    userList={userList}
+                    userId={userId}
+                    handleChangeOfUserId={handleChangeOfUserId}
+                    fetchScheduleSearch={fetchScheduleSearch}
                   />
-                </Grid>
-                <Grid item md={12} xs={12}>
-                  <Card className={classes.card}>
-                    <CardContent>
-                      <Typography variant="h4" gutterBottom>
-                        <Video url="https://www.youtube.com/watch?v=ysz5S6PUM-U" />
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                  {searchResult.length > 0 && (
+                    <ScheduleSearchResultTable
+                      handleOnEditClick={handleOnEditClick}
+                      searchResult={searchResult}
+                      fetchScheduleSearch={fetchScheduleSearch}
+                      handleDeleteSchedule={handleDeleteSchedule}
+                    />
+                  )}
                 </Grid>
               </Grid>
               <NewOrEditSchedule
+                user={user}
                 isOpen={isOpen}
-                handleOnClose={handleOnClose}
+                handleOnClose={() => setIsOpen(false)}
                 isNewSchedule={isNewSchedule}
+                userList={userList}
+                userId={userId}
+                handleChangeOfUserId={handleChangeOfUserId}
+                fetchScheduleSearch={fetchScheduleSearch}
+                schedule={selectedScheduleValues}
+              />
+              <DeleteSchedule
+                isDeleteModalOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                fetchScheduleSearch={fetchScheduleSearch}
+                id={selectedScheduleId}
               />
             </Container>
           </CssBaseline>

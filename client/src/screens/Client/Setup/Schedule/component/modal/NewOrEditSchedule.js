@@ -16,7 +16,11 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { green, grey } from "@material-ui/core/colors";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import { setSuccess } from "./../../../../../../store/common/actions";
+import ScheduleService from "../../../../../../services/schedule.service";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -85,8 +89,84 @@ const GreenSwitch = withStyles({
   track: {},
 })(Switch);
 
-const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
+const NewOrEditSchedule = ({
+  user,
+  isNewSchedule,
+  isOpen,
+  handleOnClose,
+  userId,
+  userList,
+  handleChangeOfUserId,
+  fetchScheduleSearch,
+  ...props
+}) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [schedule, setSchedule] = useState([]);
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    const tempSchedule = {
+      ...props.schedule,
+    };
+    setSchedule(tempSchedule);
+  }, [props.schedule]);
+
+  useEffect(() => {
+    if (moment(schedule.date_start) > moment()) {
+      setStatus("Future");
+    } else if (moment(schedule.date_end) < moment()) {
+      setStatus("Past");
+    } else {
+      setStatus("Current");
+    }
+  }, [schedule]);
+
+  const payload = {
+    user_id: schedule.user_id,
+    date_start: schedule.date_start,
+    date_end: schedule.date_end,
+    time_start: schedule.time_start,
+    time_end: schedule.time_end,
+    active: schedule.active,
+    note: schedule.note,
+  };
+
+  const handleCreateNewOrEditSchedule = () => {
+    if (isNewSchedule) {
+      ScheduleService.createNewSchedule(payload).then((res) => {
+        setTimeout(() => {
+          dispatch(setSuccess(res.data.message));
+        }, 300);
+      });
+    } else {
+      ScheduleService.updateSchedule(schedule.id, user.id, payload).then(
+        (res) => {
+          setTimeout(() => {
+            dispatch(setSuccess(res.data.message));
+          }, 300);
+        }
+      );
+    }
+    handleOnClose();
+    setTimeout(() => {
+      fetchScheduleSearch();
+    }, 200);
+  };
+
+  const handleOnChange = (event) => {
+    setSchedule({
+      ...schedule,
+      [event.target.name]: event.target.value.trim(),
+    });
+  };
+
+  const handleKeyUp = (event) => {
+    if (event.keyCode === 13) {
+      handleCreateNewOrEditSchedule();
+    }
+  };
+
   return (
     <div>
       <Dialog
@@ -111,11 +191,13 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
               <Grid item xs={12} md={6} className={classes.gridMargin}>
                 <TextField
                   fullWidth={true}
-                  id="outlined-select-currency"
+                  autoFocus
+                  id="userId"
+                  name="user_id"
                   select
                   label="User"
-                  // value={labCompanyId}
-                  // onChange={handleChangeOfLabCompanyId}
+                  value={schedule.user_id}
+                  onChange={handleOnChange}
                   variant="outlined"
                   size="small"
                   InputLabelProps={{
@@ -125,12 +207,14 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
                     native: true,
                   }}
                 >
-                  <option aria-label="None" value="" />
-                  {/* {lebCompanyList.map((lab) => (
-                        <option key={lab.id} value={lab.id}>
-                          {lab.name}
-                        </option>
-                      ))} */}
+                  {!schedule.user_name && (
+                    <option aria-label="None" value=""></option>
+                  )}
+                  {userList.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.firstname + " " + user.lastname}
+                    </option>
+                  ))}
                 </TextField>
               </Grid>
               <p className={classes.formHelperText}>
@@ -149,6 +233,14 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  name="date_start"
+                  value={
+                    schedule.date_start
+                      ? moment(schedule.date_start).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={handleOnChange}
+                  onKeyUp={handleKeyUp}
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -167,6 +259,14 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  name="date_end"
+                  value={
+                    schedule.date_end
+                      ? moment(schedule.date_end).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={handleOnChange}
+                  onKeyUp={handleKeyUp}
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -185,6 +285,10 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  name="time_start"
+                  value={schedule.time_start ? schedule.time_start : ""}
+                  onChange={handleOnChange}
+                  onKeyUp={handleKeyUp}
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -203,6 +307,10 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  name="time_end"
+                  value={schedule.time_end ? schedule.time_end : ""}
+                  onChange={handleOnChange}
+                  onKeyUp={handleKeyUp}
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -213,18 +321,23 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
               <FormControlLabel
                 control={
                   <GreenSwitch
-                    // checked={Boolean(cpt_favorite)}
+                    checked={Boolean(schedule.active)}
                     size="small"
-                    name="switchBox"
-                    // onChange={handleChangeFavorite}
-                    // onKeyUp={handleKeyUp}
+                    name="active"
+                    onChange={(event) => {
+                      setSchedule({
+                        ...schedule,
+                        [event.target.name]: !schedule.active,
+                      });
+                    }}
+                    onKeyUp={handleKeyUp}
                   />
                 }
                 label="Active / Inactive"
                 className={classes.root}
               />
               <p className={classes.statusText}>
-                <span style={{ fontWeight: "500" }}>Status:</span> {"Crrent"}
+                <span style={{ fontWeight: "500" }}>Status:</span> {status}
               </p>
             </FormGroup>
 
@@ -242,9 +355,9 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
                 InputProps={{
                   rows: 6,
                 }}
-                // value={cpt_notes}
-                // onChange={handleChangeNotes}
-                // onKeyUp={handleKeyUp}
+                value={schedule.note}
+                onChange={handleOnChange}
+                onKeyUp={handleKeyUp}
               />
             </FormControl>
           </div>
@@ -265,9 +378,9 @@ const NewOrEditSchedule = ({ isNewSchedule, isOpen, handleOnClose }) => {
             variant="outlined"
             color="primary"
             size="small"
-            // onClick={handleEditCptCode}
+            onClick={handleCreateNewOrEditSchedule}
           >
-            Save
+            {isNewSchedule ? "Save" : "Update"}
           </Button>
         </DialogActions>
       </Dialog>

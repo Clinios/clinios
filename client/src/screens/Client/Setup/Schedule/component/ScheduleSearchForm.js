@@ -12,17 +12,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ScheduleSearchForm = () => {
+const ScheduleSearchForm = ({
+  userList,
+  userId,
+  handleChangeOfUserId,
+  fetchScheduleSearch,
+}) => {
   const classes = useStyles();
+
   return (
     <Grid item xs={12} md={2} className={classes.gridMargin}>
       <TextField
         fullWidth={true}
+        autoFocus
         id="outlined-select-currency"
         select
         label="User"
-        // value={labCompanyId}
-        // onChange={handleChangeOfLabCompanyId}
+        value={userId}
+        onChange={handleChangeOfUserId}
         variant="outlined"
         size="small"
         InputLabelProps={{
@@ -33,11 +40,11 @@ const ScheduleSearchForm = () => {
         }}
       >
         <option aria-label="None" value="" />
-        {/* {lebCompanyList.map((lab) => (
-                        <option key={lab.id} value={lab.id}>
-                          {lab.name}
-                        </option>
-                      ))} */}
+        {userList.map((user) => (
+          <option key={user.id} value={user.id}>
+            {user.firstname + " " + user.lastname}
+          </option>
+        ))}
       </TextField>
       <Button
         size="medium"
@@ -45,7 +52,7 @@ const ScheduleSearchForm = () => {
         variant="contained"
         color="primary"
         className={classes.submit}
-        // onClick={fetchCptCodeSearch}
+        onClick={fetchScheduleSearch}
       >
         Search
       </Button>
