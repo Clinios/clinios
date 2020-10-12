@@ -13,7 +13,7 @@ import {
   makeStyles,
   Switch,
   TextField,
-  withStyles,
+  withStyles
 } from "@material-ui/core";
 import { green, grey } from "@material-ui/core/colors";
 import React, { useEffect, useState } from "react";
@@ -24,21 +24,21 @@ import ScheduleService from "../../../../../../services/schedule.service";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
-    margin: "8px 0px",
+    margin: "8px 0px"
   },
   noteMargin: {
-    margin: "15px 0px",
+    margin: "15px 0px"
   },
   title: {
     backgroundColor: theme.palette.primary.light,
     "& h2": {
-      color: "#fff",
-    },
+      color: "#fff"
+    }
   },
   content: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    fontSize: "18px",
+    fontSize: "18px"
   },
   formControl: {
     display: "flex",
@@ -46,23 +46,23 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     color: theme.palette.text.secondary,
     "& .MuiSelect-select": {
-      minWidth: 120,
-    },
+      minWidth: 120
+    }
   },
   root: {
     paddingLeft: "5px",
     "& .MuiTypography-root": {
-      marginLeft: "5px",
-    },
+      marginLeft: "5px"
+    }
   },
   formHelperText: {
     width: "220px",
     fontSize: "12px",
-    paddingLeft: "10px",
+    paddingLeft: "10px"
   },
   statusText: {
     width: "220px",
-    fontSize: "14px",
+    fontSize: "14px"
   },
   modalAction: {
     borderTop: `1px solid ${theme.palette.background.default}`,
@@ -71,22 +71,22 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
-  },
+    paddingRight: theme.spacing(3)
+  }
 }));
 const GreenSwitch = withStyles({
   switchBase: {
     color: grey[300],
     "&$checked": {
-      color: green[500],
+      color: green[500]
     },
     "&$checked + $track": {
-      backgroundColor: green[500],
-    },
+      backgroundColor: green[500]
+    }
   },
 
   checked: {},
-  track: {},
+  track: {}
 })(Switch);
 
 const NewOrEditSchedule = ({
@@ -107,7 +107,7 @@ const NewOrEditSchedule = ({
 
   useEffect(() => {
     const tempSchedule = {
-      ...props.schedule,
+      ...props.schedule
     };
     setSchedule(tempSchedule);
   }, [props.schedule]);
@@ -129,7 +129,7 @@ const NewOrEditSchedule = ({
     time_start: schedule.time_start,
     time_end: schedule.time_end,
     active: schedule.active,
-    note: schedule.note,
+    note: schedule.note ? schedule.note : ""
   };
 
   const handleCreateNewOrEditSchedule = () => {
@@ -157,7 +157,7 @@ const NewOrEditSchedule = ({
   const handleOnChange = (event) => {
     setSchedule({
       ...schedule,
-      [event.target.name]: event.target.value.trim(),
+      [event.target.name]: event.target.value.trim()
     });
   };
 
@@ -192,6 +192,7 @@ const NewOrEditSchedule = ({
                 <TextField
                   fullWidth={true}
                   autoFocus
+                  required
                   id="userId"
                   name="user_id"
                   select
@@ -201,10 +202,10 @@ const NewOrEditSchedule = ({
                   variant="outlined"
                   size="small"
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   SelectProps={{
-                    native: true,
+                    native: true
                   }}
                 >
                   {!schedule.user_name && (
@@ -225,13 +226,14 @@ const NewOrEditSchedule = ({
               <Grid item xs={12} md={4} className={classes.gridMargin}>
                 <TextField
                   fullWidth={true}
+                  required
                   variant="outlined"
                   label="Date Start"
                   type="date"
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   name="date_start"
                   value={
@@ -250,14 +252,15 @@ const NewOrEditSchedule = ({
             <FormControl component="div" className={classes.formControl}>
               <Grid item xs={12} md={4} className={classes.gridMargin}>
                 <TextField
-                  fullWidth={true}
+                  fullWidth
+                  required
                   variant="outlined"
                   label="Date End"
                   type="date"
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   name="date_end"
                   value={
@@ -276,14 +279,15 @@ const NewOrEditSchedule = ({
             <FormControl component="div" className={classes.formControl}>
               <Grid item xs={12} md={4} className={classes.gridMargin}>
                 <TextField
-                  fullWidth={true}
+                  fullWidth
+                  required
                   variant="outlined"
                   label="Time Start"
                   type="time"
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   name="time_start"
                   value={schedule.time_start ? schedule.time_start : ""}
@@ -298,14 +302,15 @@ const NewOrEditSchedule = ({
             <FormControl component="div" className={classes.formControl}>
               <Grid item xs={12} md={4} className={classes.gridMargin}>
                 <TextField
-                  fullWidth={true}
+                  fullWidth
+                  required
                   variant="outlined"
                   label="Time End"
                   type="time"
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   name="time_end"
                   value={schedule.time_end ? schedule.time_end : ""}
@@ -327,7 +332,7 @@ const NewOrEditSchedule = ({
                     onChange={(event) => {
                       setSchedule({
                         ...schedule,
-                        [event.target.name]: !schedule.active,
+                        [event.target.name]: !schedule.active
                       });
                     }}
                     onKeyUp={handleKeyUp}
@@ -344,16 +349,17 @@ const NewOrEditSchedule = ({
             <FormControl component="div" className={classes.formControl}>
               <TextField
                 className={classes.noteMargin}
-                fullWidth={true}
+                fullWidth
+                required
                 variant="outlined"
                 multiline
                 name="note"
                 label="Notes"
                 InputLabelProps={{
-                  shrink: true,
+                  shrink: true
                 }}
                 InputProps={{
-                  rows: 6,
+                  rows: 6
                 }}
                 value={schedule.note}
                 onChange={handleOnChange}
@@ -369,7 +375,7 @@ const NewOrEditSchedule = ({
             onClick={handleOnClose}
             style={{
               borderColor: colors.orange[600],
-              color: colors.orange[600],
+              color: colors.orange[600]
             }}
           >
             Cancel

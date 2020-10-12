@@ -3,20 +3,20 @@ import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
-    marginTop: "15px",
+    marginTop: "15px"
   },
   submit: {
     paddingLeft: "30px",
     paddingRight: "30px",
-    marginTop: "10px",
-  },
+    marginTop: "10px"
+  }
 }));
 
 const ScheduleSearchForm = ({
   userList,
   userId,
   handleChangeOfUserId,
-  fetchScheduleSearch,
+  fetchScheduleSearch
 }) => {
   const classes = useStyles();
 
@@ -33,10 +33,10 @@ const ScheduleSearchForm = ({
         variant="outlined"
         size="small"
         InputLabelProps={{
-          shrink: true,
+          shrink: true
         }}
         SelectProps={{
-          native: true,
+          native: true
         }}
       >
         <option aria-label="None" value="" />

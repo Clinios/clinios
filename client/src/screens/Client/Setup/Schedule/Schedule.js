@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 import _ from "lodash";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -13,7 +14,7 @@ import DeleteSchedule from "./component/modal/DeleteSchedule";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    padding: "40px 0px",
+    padding: "40px 0px"
   },
   uploadButtons: {
     display: "flex",
@@ -22,16 +23,16 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "480px",
     "& h1": {
       [theme.breakpoints.up("md")]: {
-        marginRight: theme.spacing(1),
-      },
-    },
+        marginRight: theme.spacing(1)
+      }
+    }
   },
   card: {
     minHeight: 300,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"
+  }
 }));
 
 const Schedule = () => {
@@ -48,7 +49,7 @@ const Schedule = () => {
 
   const [searchResult, setSearchResult] = useState([]);
   const payload = {
-    userId,
+    userId
   };
 
   const getUserList = () => {
@@ -73,7 +74,15 @@ const Schedule = () => {
   const handleOnNewClick = () => {
     setIsOpen(true);
     setIsNewSchedule(true);
-    setSelectedScheduleValues("");
+    setSelectedScheduleValues({
+      user_id: userId,
+      date_start: moment().format("YYYY-MM-DD"),
+      date_end: `${moment().add(3, "M").format("YYYY-MM-DD")}`,
+      time_start: "09:00",
+      time_end: "15:00",
+      active: true,
+      note: ""
+    });
   };
   const handleOnEditClick = (id) => {
     setIsOpen(true);

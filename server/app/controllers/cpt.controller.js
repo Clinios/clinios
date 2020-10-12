@@ -54,7 +54,7 @@ const search = async (req, res) => {
         left join client cl on cl.id=c.client_id
         where 1 \n`;
     if (cptId) {
-      $sql = $sql + `and c.id = '${cptId}' \n`;
+      $sql = $sql + `and c.id like '%${cptId}%' \n`;
     }
     if (cptDescription) {
       $sql = $sql + `and c.name like '%${cptDescription}%' \n`;
@@ -104,13 +104,7 @@ const updateClientCpt = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
   const db = makeDb(configuration, res);
-  const {
-    cptId,
-    favorite,
-    billable,
-    fee,
-    notes,
-  } = req.body;
+  const { cptId, favorite, billable, fee, notes } = req.body;
   let $sql;
   try {
     $sql = `insert into client_cpt (client_id, cpt_id, favorite, billable, fee, notes, created, created_user_id, updated, updated_user_id )
