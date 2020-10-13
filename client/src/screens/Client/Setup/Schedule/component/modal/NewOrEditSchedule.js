@@ -8,12 +8,11 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
-  FormGroup,
   Grid,
   makeStyles,
   Switch,
   TextField,
-  withStyles
+  withStyles,
 } from "@material-ui/core";
 import { green, grey } from "@material-ui/core/colors";
 import React, { useEffect, useState } from "react";
@@ -21,24 +20,25 @@ import moment from "moment";
 import { useDispatch } from "react-redux";
 import { setSuccess } from "./../../../../../../store/common/actions";
 import ScheduleService from "../../../../../../services/schedule.service";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
-    margin: "8px 0px"
+    margin: "8px 0px",
   },
   noteMargin: {
-    margin: "15px 0px"
+    margin: "15px 0px",
   },
   title: {
     backgroundColor: theme.palette.primary.light,
     "& h2": {
-      color: "#fff"
-    }
+      color: "#fff",
+    },
   },
   content: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    fontSize: "18px"
+    fontSize: "18px",
   },
   formControl: {
     display: "flex",
@@ -46,23 +46,23 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     color: theme.palette.text.secondary,
     "& .MuiSelect-select": {
-      minWidth: 120
-    }
+      minWidth: 120,
+    },
   },
   root: {
     paddingLeft: "5px",
     "& .MuiTypography-root": {
-      marginLeft: "5px"
-    }
+      marginLeft: "5px",
+    },
   },
   formHelperText: {
     width: "220px",
     fontSize: "12px",
-    paddingLeft: "10px"
+    paddingLeft: "10px",
   },
   statusText: {
     width: "220px",
-    fontSize: "14px"
+    fontSize: "14px",
   },
   modalAction: {
     borderTop: `1px solid ${theme.palette.background.default}`,
@@ -71,22 +71,22 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3)
-  }
+    paddingRight: theme.spacing(3),
+  },
 }));
 const GreenSwitch = withStyles({
   switchBase: {
     color: grey[300],
     "&$checked": {
-      color: green[500]
+      color: green[500],
     },
     "&$checked + $track": {
-      backgroundColor: green[500]
-    }
+      backgroundColor: green[500],
+    },
   },
 
   checked: {},
-  track: {}
+  track: {},
 })(Switch);
 
 const NewOrEditSchedule = ({
@@ -104,10 +104,11 @@ const NewOrEditSchedule = ({
   const dispatch = useDispatch();
   const [schedule, setSchedule] = useState([]);
   const [status, setStatus] = useState("");
+  const [errors, setErrors] = useState([]);
 
   useEffect(() => {
     const tempSchedule = {
-      ...props.schedule
+      ...props.schedule,
     };
     setSchedule(tempSchedule);
   }, [props.schedule]);
@@ -129,21 +130,33 @@ const NewOrEditSchedule = ({
     time_start: schedule.time_start,
     time_end: schedule.time_end,
     active: schedule.active,
-    note: schedule.note ? schedule.note : ""
+    note: schedule.note ? schedule.note : "",
   };
 
   const handleCreateNewOrEditSchedule = () => {
     if (isNewSchedule) {
-      ScheduleService.createNewSchedule(payload).then((res) => {
-        setTimeout(() => {
-          dispatch(setSuccess(res.data.message));
-        }, 300);
-      });
-    } else {
-      ScheduleService.updateSchedule(schedule.id, user.id, payload).then(
-        (res) => {
+      ScheduleService.createNewSchedule(payload).then(
+        (response) => {
           setTimeout(() => {
-            dispatch(setSuccess(res.data.message));
+            dispatch(setSuccess(response.data.message));
+          }, 300);
+        },
+        (error) => {
+          setTimeout(() => {
+            setErrors(error.response.error);
+          }, 300);
+        }
+      );
+    } else {
+      ScheduleService.updateSchedule(user.id, schedule.id, payload).then(
+        (response) => {
+          setTimeout(() => {
+            dispatch(setSuccess(response.data.message));
+          }, 300);
+        },
+        (error) => {
+          setTimeout(() => {
+            setErrors(error.response.error);
           }, 300);
         }
       );
@@ -155,9 +168,12 @@ const NewOrEditSchedule = ({
   };
 
   const handleOnChange = (event) => {
+    const isCheckbox = event.target.type === "checkbox";
     setSchedule({
       ...schedule,
-      [event.target.name]: event.target.value.trim()
+      [event.target.name]: isCheckbox
+        ? event.target.checked
+        : event.target.value.trim(),
     });
   };
 
@@ -186,6 +202,12 @@ const NewOrEditSchedule = ({
               ? "This page is used to Create new schedule entry"
               : "This page is used to Edit existing schedule entry"}
           </DialogContentText>
+          {errors &&
+            errors.map((error, index) => (
+              <Alert severity="error" key={index}>
+                {error.msg}
+              </Alert>
+            ))}
           <div className={classes.root}>
             <FormControl component="div" className={classes.formControl}>
               <Grid item xs={12} md={6} className={classes.gridMargin}>
@@ -202,10 +224,10 @@ const NewOrEditSchedule = ({
                   variant="outlined"
                   size="small"
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   {!schedule.user_name && (
@@ -233,7 +255,7 @@ const NewOrEditSchedule = ({
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   name="date_start"
                   value={
@@ -243,6 +265,11 @@ const NewOrEditSchedule = ({
                   }
                   onChange={handleOnChange}
                   onKeyUp={handleKeyUp}
+                  error={schedule.date_start > schedule.date_end}
+                  helperText={
+                    schedule.date_start > schedule.date_end &&
+                    "date start can't be after date end"
+                  }
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -260,7 +287,7 @@ const NewOrEditSchedule = ({
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   name="date_end"
                   value={
@@ -270,6 +297,11 @@ const NewOrEditSchedule = ({
                   }
                   onChange={handleOnChange}
                   onKeyUp={handleKeyUp}
+                  error={schedule.date_end < schedule.date_start}
+                  helperText={
+                    schedule.date_end < schedule.date_start &&
+                    "date end can't be before date start"
+                  }
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -287,12 +319,17 @@ const NewOrEditSchedule = ({
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   name="time_start"
                   value={schedule.time_start ? schedule.time_start : ""}
                   onChange={handleOnChange}
                   onKeyUp={handleKeyUp}
+                  error={schedule.time_start > schedule.time_end}
+                  helperText={
+                    schedule.time_start > schedule.time_end &&
+                    "time start can't be after time end"
+                  }
                 />
               </Grid>
               <p className={classes.formHelperText}>
@@ -310,41 +347,39 @@ const NewOrEditSchedule = ({
                   size="small"
                   className={classes.textField}
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   name="time_end"
                   value={schedule.time_end ? schedule.time_end : ""}
                   onChange={handleOnChange}
                   onKeyUp={handleKeyUp}
+                  error={schedule.time_end < schedule.time_start}
+                  helperText={
+                    schedule.time_end < schedule.time_start &&
+                    "time end can't be before time start"
+                  }
                 />
               </Grid>
               <p className={classes.formHelperText}>
                 The name shown in the Appointment
               </p>
             </FormControl>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <GreenSwitch
-                    checked={Boolean(schedule.active)}
-                    size="small"
-                    name="active"
-                    onChange={(event) => {
-                      setSchedule({
-                        ...schedule,
-                        [event.target.name]: !schedule.active
-                      });
-                    }}
-                    onKeyUp={handleKeyUp}
-                  />
-                }
-                label="Active / Inactive"
-                className={classes.root}
-              />
-              <p className={classes.statusText}>
-                <span style={{ fontWeight: "500" }}>Status:</span> {status}
-              </p>
-            </FormGroup>
+            <FormControlLabel
+              control={
+                <GreenSwitch
+                  checked={Boolean(schedule.active)}
+                  size="small"
+                  name="active"
+                  onChange={handleOnChange}
+                  onKeyUp={handleKeyUp}
+                />
+              }
+              label="Active / Inactive"
+              className={classes.root}
+            />
+            <p className={classes.statusText}>
+              <span style={{ fontWeight: "500" }}>Status:</span> {status}
+            </p>
 
             <FormControl component="div" className={classes.formControl}>
               <TextField
@@ -356,14 +391,24 @@ const NewOrEditSchedule = ({
                 name="note"
                 label="Notes"
                 InputLabelProps={{
-                  shrink: true
+                  shrink: true,
                 }}
                 InputProps={{
-                  rows: 6
+                  rows: 6,
                 }}
                 value={schedule.note}
                 onChange={handleOnChange}
                 onKeyUp={handleKeyUp}
+                error={
+                  String(schedule.note).length === 0 ||
+                  String(schedule.note).length > 1000
+                }
+                helperText={
+                  (String(schedule.note).length === 0 &&
+                    "Note can't be empty") ||
+                  (String(schedule.note).length > 1000 &&
+                    "Note can't be grater than 1000 Chars")
+                }
               />
             </FormControl>
           </div>
@@ -375,7 +420,7 @@ const NewOrEditSchedule = ({
             onClick={handleOnClose}
             style={{
               borderColor: colors.orange[600],
-              color: colors.orange[600]
+              color: colors.orange[600],
             }}
           >
             Cancel

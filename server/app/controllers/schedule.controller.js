@@ -120,7 +120,7 @@ const updateSchedule = async (req, res) => {
 
   try {
     const updateResponse = await db.query(
-      `update user_schedule set ? where id =${req.params.id}`,
+      `update user_schedule set ? where id =${req.params.scheduleId}`,
       [user_schedule]
     );
 

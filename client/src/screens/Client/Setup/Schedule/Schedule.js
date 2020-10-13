@@ -14,7 +14,7 @@ import DeleteSchedule from "./component/modal/DeleteSchedule";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    padding: "40px 0px"
+    padding: "40px 0px",
   },
   uploadButtons: {
     display: "flex",
@@ -23,16 +23,16 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "480px",
     "& h1": {
       [theme.breakpoints.up("md")]: {
-        marginRight: theme.spacing(1)
-      }
-    }
+        marginRight: theme.spacing(1),
+      },
+    },
   },
   card: {
     minHeight: 300,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 }));
 
 const Schedule = () => {
@@ -49,7 +49,7 @@ const Schedule = () => {
 
   const [searchResult, setSearchResult] = useState([]);
   const payload = {
-    userId
+    userId,
   };
 
   const getUserList = () => {
@@ -81,7 +81,7 @@ const Schedule = () => {
       time_start: "09:00",
       time_end: "15:00",
       active: true,
-      note: ""
+      note: "Leave your note here...!",
     });
   };
   const handleOnEditClick = (id) => {

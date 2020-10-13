@@ -7,7 +7,11 @@ const router = express.Router();
 router.get("/users", [authJwt.verifyToken], Schedule.getAllUser);
 router.post("/schedule/search", [authJwt.verifyToken], Schedule.search);
 router.post("/schedule", [authJwt.verifyToken], Schedule.createNewSchedule);
-router.put("/schedule/:id/:userId", [authJwt.verifyToken], Schedule.updateSchedule);
+router.put(
+  "/schedule/:userId/:scheduleId",
+  [authJwt.verifyToken],
+  Schedule.updateSchedule
+);
 router.delete("/schedule/:id", [authJwt.verifyToken], Schedule.deleteSchedule);
 
 module.exports = router;

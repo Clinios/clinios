@@ -15,8 +15,8 @@ class Schedule {
   createNewSchedule(data) {
     return axios.post(API_URL + `/schedule`, data, { headers: authHeader() });
   }
-  updateSchedule(id, userId, data) {
-    return axios.put(API_URL + `/schedule/${id}/${userId}`, data, {
+  updateSchedule(userId, scheduleId, data) {
+    return axios.put(API_URL + `/schedule/${userId}/${scheduleId}`, data, {
       headers: authHeader(),
     });
   }
