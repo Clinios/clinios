@@ -12,19 +12,19 @@ import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    padding: 9
+    padding: 9,
   },
   tableContainer: {
-    minWidth: 650
+    minWidth: 650,
   },
   actions: {
     display: "flex",
     justifyContent: "center",
     border: "none",
     "& button": {
-      fontSize: "12px"
-    }
-  }
+      fontSize: "12px",
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -34,28 +34,28 @@ const StyledTableCell = withStyles((theme) => ({
     fontSize: "12px",
     whiteSpace: "nowrap",
     fontWeight: 700,
-    padding: "6px 24px 6px 2px"
+    padding: "6px 24px 6px 2px",
   },
   body: {
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     fontSize: 14,
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover
+      backgroundColor: theme.palette.action.hover,
     },
     "& th": {
       fontSize: 12,
       whiteSpace: "nowrap",
-      padding: "2px 16px 2px 2px"
+      padding: "2px 16px 2px 2px",
     },
     "& td": {
       fontSize: 12,
       whiteSpace: "nowrap",
-      padding: "2px 16px 2px 2px"
+      padding: "2px 16px 2px 2px",
     },
   },
 }))(TableRow);
@@ -82,8 +82,8 @@ const TestsContent = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!!data && data.length ?
-            data.map((row) => (
+          {!!data && data.length
+            ? data.map((row) => (
               <StyledTableRow key={row.name}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>
@@ -99,15 +99,15 @@ const TestsContent = (props) => {
                 <TableCell>{row.detail}</TableCell>
               </StyledTableRow>
             ))
-            :
-            <StyledTableRow>
-              <TableCell colSpan={10}>
-                <Typography align="center" variant="body1">
-                No Records Found...
-                </Typography>
-              </TableCell>
-            </StyledTableRow>
-          }
+            : (
+              <StyledTableRow>
+                <TableCell colSpan={10}>
+                  <Typography align="center" variant="body1">
+                    No Records Found...
+                  </Typography>
+                </TableCell>
+              </StyledTableRow>
+            )}
         </TableBody>
       </Table>
     </TableContainer>

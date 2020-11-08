@@ -22,7 +22,7 @@ export default function EncountersContent(props) {
 
             <Grid className={classes.inputRow}>
               <Typography className={classes.text12} color="textPrimary">
-              Notes:
+                Notes:
               </Typography>
               <Typography className={classes.text12} color="textPrimary">
                 {item.notes ? item.notes : "No notes found..."}
@@ -31,7 +31,7 @@ export default function EncountersContent(props) {
 
             <Grid className={classes.inputRow}>
               <Typography className={classes.text12} color="textPrimary">
-              Treatment Plan:
+                Treatment Plan:
               </Typography>
               <Typography className={classes.text12} color="textPrimary">
                 {item.treatment
@@ -42,14 +42,15 @@ export default function EncountersContent(props) {
 
             {index + 1 !== data.length && <Divider className={classes.divider} />}
           </Grid>
-        ))}
+        ))
+      }
     </>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    marginBottom: theme.spacing(0.5)
+    marginBottom: theme.spacing(0.5),
   },
   block: {
     width: 90,
@@ -58,9 +59,9 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: "ellipsis",
   },
   divider: {
-    margin: theme.spacing(1, 0)
+    margin: theme.spacing(1, 0),
   },
   text12: {
     fontSize: 12,
-  }
+  },
 }));

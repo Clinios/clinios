@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
-import { TextField, Button, Grid, Typography } from "@material-ui/core";
+import {
+  TextField, Button, Grid, Typography,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   KeyboardDatePicker,
@@ -18,7 +20,7 @@ const NewMessage = (props) => {
 
   const [formFields, setFormFields] = useState({
     subject: "",
-    message: ""
+    message: "",
   });
   const [selectedDate, setSelectedDate] = React.useState(null);
   const currentDate = new Date();
@@ -31,7 +33,7 @@ const NewMessage = (props) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -42,7 +44,7 @@ const NewMessage = (props) => {
         message: formFields.message,
         subject: formFields.subject,
         unread_notify_dt: moment(selectedDate).format("YYYY-MM-DD"),
-      }
+      },
     };
     PatientService.createMessage(patientId, reqBody)
       .then((response) => {
@@ -51,18 +53,17 @@ const NewMessage = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -81,7 +82,7 @@ const NewMessage = (props) => {
               name="subject"
               id="subject"
               label="Subject"
-              type={"text"}
+              type="text"
               fullWidth
               onChange={(e) => handleInputChange(e)}
             />
@@ -100,7 +101,7 @@ const NewMessage = (props) => {
               type="text"
               fullWidth
               onChange={(e) => handleInputChange(e)}
-              multiline={true}
+              multiline
               rows={5}
             />
           </Grid>
@@ -122,7 +123,9 @@ const NewMessage = (props) => {
         {
           !!selectedDate && (
             <Typography variant="h6" color="textSecondary" gutterBottom>
-              Notify me if not read by {moment(selectedDate).format("MMM DD, YYYY")}
+              Notify me if not read by
+              {" "}
+              {moment(selectedDate).format("MMM DD, YYYY")}
             </Typography>
           )
         }
@@ -146,17 +149,17 @@ const NewMessage = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   formInput: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
   },
   dateInput: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   actionContainer: {
-    marginTop: theme.spacing(4)
-  }
+    marginTop: theme.spacing(4),
+  },
 }));
 
 export default NewMessage;

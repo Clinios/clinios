@@ -8,7 +8,7 @@ import {
   MenuItem,
   Checkbox,
   FormControlLabel,
-  Divider
+  Divider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import SignatureCanvas from "react-signature-canvas";
@@ -42,14 +42,14 @@ const Form = (props) => {
     state: "",
     city: "",
     zipPostal: "",
-    contactPreference: ""
+    contactPreference: "",
   });
 
   const handleInputChnage = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -57,13 +57,13 @@ const Form = (props) => {
     if (identifier === "country") {
       setFormFields({
         ...formFields,
-        [identifier]: value
+        [identifier]: value,
       });
     } else if (identifier === "region") {
-      let identifier = "state";
+      const identifier = "state";
       setFormFields({
         ...formFields,
-        [identifier]: value
+        [identifier]: value,
       });
     }
   };
@@ -119,13 +119,11 @@ const Form = (props) => {
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
                   >
-                    {item.options.map((option, index) => {
-                      return (
-                        <MenuItem key={index} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      );
-                    })}
+                    {item.options.map((option, index) => (
+                      <MenuItem key={index} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </TextField>
                 )}
               </Grid>
@@ -157,31 +155,27 @@ const Form = (props) => {
             <Grid item lg={4}>
               <CountrySelect
                 size="small"
-                id={"country-select"}
+                id="country-select"
                 error={null}
-                name={"country-select"}
-                helperText={""}
-                label={"Country"}
-                outlined={true}
-                handleChange={(identifier, value) =>
-                  handleCountryRegion(identifier, value)
-                }
+                name="country-select"
+                helperText=""
+                label="Country"
+                outlined
+                handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
                 country={formFields.country}
               />
             </Grid>
             <Grid item lg={4}>
               <RegionSelect
                 size="small"
-                id={"state-select"}
+                id="state-select"
                 error={null}
-                name={"state-select"}
-                helperText={""}
-                label={"State"}
-                outlined={true}
-                handleChange={(identifier, value) =>
-                  handleCountryRegion(identifier, value)
-                }
-                country={formFields["country"]}
+                name="state-select"
+                helperText=""
+                label="State"
+                outlined
+                handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
+                country={formFields.country}
                 region={formFields.state}
               />
             </Grid>
@@ -222,13 +216,11 @@ const Form = (props) => {
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
                   >
-                    {item.options.map((option, index) => {
-                      return (
-                        <MenuItem key={index} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      );
-                    })}
+                    {item.options.map((option, index) => (
+                      <MenuItem key={index} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </TextField>
                 )}
               </Grid>
@@ -314,7 +306,7 @@ const Form = (props) => {
                   type={item.type}
                   fullWidth
                   onChange={(e) => handleInputChnage(e)}
-                  multiline={true}
+                  multiline
                   rows={5}
                 />
               </Grid>
@@ -350,13 +342,13 @@ const Form = (props) => {
 
         <FormControlLabel
           value="end"
-          control={
+          control={(
             <Checkbox
               checked={termsChecked}
               onChange={(e) => handleCheckboxChange(e)}
               color="primary"
             />
-          }
+          )}
           label="I have read and accept the terms of the privacy policy below."
           labelPlacement="end"
         />
@@ -369,12 +361,12 @@ const Form = (props) => {
             <Grid item>
               <SignatureCanvas
                 ref={(ref) => setSignatureRef(ref)}
-                on={true}
+                on
                 penColor="black"
                 canvasProps={{
                   width: 500,
                   height: 200,
-                  className: classes.sigCanvas
+                  className: classes.sigCanvas,
                 }}
               />
             </Grid>
@@ -392,14 +384,14 @@ const Form = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   sigCanvas: {
-    border: "1px solid grey"
+    border: "1px solid grey",
   },
   sigCanvasActions: {
-    padding: "0 15px"
-  }
+    padding: "0 15px",
+  },
 }));
 
 export default Form;

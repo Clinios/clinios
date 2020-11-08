@@ -19,15 +19,16 @@ export default function FormContent(props) {
             <Typography component="span" className={`${classes.text12} ${classes.block}`} color="textPrimary">{moment(item.created).format("MMM D YYYY")}</Typography>
             {
               !!item.title && item.title.length > 40
-                ?
-                <Tooltip title={item.title}>
-                  <Typography component="span" className={`${classes.text12} ${classes.fullWidth}`} color="textPrimary">{item.title}</Typography>
-                </Tooltip>
-                :
-                <Typography component="span" className={`${classes.text12} ${classes.fullWidth}`} color="textPrimary">{item.title}</Typography>
+                ? (
+                  <Tooltip title={item.title}>
+                    <Typography component="span" className={`${classes.text12} ${classes.fullWidth}`} color="textPrimary">{item.title}</Typography>
+                  </Tooltip>
+                )
+                : <Typography component="span" className={`${classes.text12} ${classes.fullWidth}`} color="textPrimary">{item.title}</Typography>
             }
           </Grid>
-        ))}
+        ))
+      }
     </>
   );
 }
@@ -38,19 +39,19 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "nowrap",
   },
   text12: {
-    fontSize: 12
+    fontSize: 12,
   },
   block: {
     width: 90,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    padding: theme.spacing(0, 0.5, 0, 0)
+    padding: theme.spacing(0, 0.5, 0, 0),
   },
   fullWidth: {
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    padding: theme.spacing(0, 0.5, 0, 0)
-  }
+    padding: theme.spacing(0, 0.5, 0, 0),
+  },
 }));

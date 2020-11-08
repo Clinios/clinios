@@ -12,8 +12,8 @@ import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
-    minWidth: 650
-  }
+    minWidth: 650,
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -21,27 +21,27 @@ const StyledTableCell = withStyles((theme) => ({
     backgroundColor: theme.palette.grey,
     color: theme.palette.grey,
     fontSize: "12px",
-    fontWeight: 700
+    fontWeight: 700,
   },
   body: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     fontSize: 14,
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover
+      backgroundColor: theme.palette.action.hover,
     },
     "& th": {
-      fontSize: 12
+      fontSize: 12,
     },
     "& td": {
       fontSize: 12,
-      height: "50px"
-    }
-  }
+      height: "50px",
+    },
+  },
 }))(TableRow);
 
 const FormsDetails = (props) => {
@@ -59,10 +59,9 @@ const FormsDetails = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!!data &&
-            data.length
-            ?
-            data.map((row, index) => (
+          {!!data
+            && data.length
+            ? data.map((row, index) => (
               <StyledTableRow key={`${row.created}_${index}`}>
                 <TableCell component="th" scope="row">
                   {moment(row.created).format("MMM D YYYY")}
@@ -71,15 +70,15 @@ const FormsDetails = (props) => {
                 <TableCell>{row.title || ""}</TableCell>
               </StyledTableRow>
             ))
-            :
-            <StyledTableRow>
-              <TableCell colSpan={3}>
-                <Typography align="center" variant="body1">
-                  No Records Found...
-                </Typography>
-              </TableCell>
-            </StyledTableRow>
-          }
+            : (
+              <StyledTableRow>
+                <TableCell colSpan={3}>
+                  <Typography align="center" variant="body1">
+                    No Records Found...
+                  </Typography>
+                </TableCell>
+              </StyledTableRow>
+            )}
         </TableBody>
       </Table>
     </TableContainer>

@@ -5,7 +5,7 @@ import {
   Button,
   Grid,
   Typography,
-  MenuItem
+  MenuItem,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
@@ -15,7 +15,7 @@ import Card from "../../../components/common/Card";
 import PatientService from "../../../services/patient.service";
 import {
   EncountersFormFields,
-  EncountersCards
+  EncountersCards,
 } from "../../../static/encountersForm";
 import { setError, setSuccess } from "../../../store/common/actions";
 import { resetEncounter } from "../../../store/patient/actions";
@@ -31,15 +31,15 @@ const Form = (props) => {
     name: "",
     date: "",
     notes: "",
-    treatment: ""
+    treatment: "",
   });
   const encounter = useSelector(
     (state) => state.patient.selectedEncounter,
-    shallowEqual
+    shallowEqual,
   );
 
   useEffect(() => {
-    if (!!encounter) {
+    if (encounter) {
       updateFields();
     }
     return () => !!encounter && dispatch(resetEncounter());
@@ -60,14 +60,14 @@ const Form = (props) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
-      [name]: value
+      [name]: value,
     });
   };
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    if (!!encounter) {
-      let encounterId = encounter.id;
+    if (encounter) {
+      const encounterId = encounter.id;
       const reqBody = {
         data: {
           dt: formFields.date,
@@ -77,7 +77,7 @@ const Form = (props) => {
           name: formFields.name,
           notes: formFields.notes,
           treatment: formFields.treatment,
-        }
+        },
       };
       PatientService.updateEncounters(patientId, encounterId, reqBody)
         .then((response) => {
@@ -86,18 +86,17 @@ const Form = (props) => {
           onClose();
         })
         .catch((error) => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          let severity = "error";
+          const resMessage = (error.response
+              && error.response.data
+              && error.response.data.message)
+            || error.message
+            || error.toString();
+          const severity = "error";
           dispatch(
             setError({
-              severity: severity,
-              message: resMessage
-            })
+              severity,
+              message: resMessage,
+            }),
           );
         });
     } else {
@@ -109,7 +108,7 @@ const Form = (props) => {
           name: formFields.name,
           notes: formFields.notes,
           treatment: formFields.treatment,
-        }
+        },
       };
       PatientService.createEncounter(patientId, reqBody)
         .then((response) => {
@@ -118,18 +117,17 @@ const Form = (props) => {
           onClose();
         })
         .catch((error) => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          let severity = "error";
+          const resMessage = (error.response
+              && error.response.data
+              && error.response.data.message)
+            || error.message
+            || error.toString();
+          const severity = "error";
           dispatch(
             setError({
-              severity: severity,
-              message: resMessage
-            })
+              severity,
+              message: resMessage,
+            }),
           );
         });
     }
@@ -159,7 +157,7 @@ const Form = (props) => {
                   <Grid item md={4}>
                     {item.baseType === "input" ? (
                       <TextField
-                        variant={"standard"}
+                        variant="standard"
                         name={item.name}
                         id={item.id}
                         type={item.type}
@@ -179,13 +177,11 @@ const Form = (props) => {
                         onChange={(e) => handleInputChnage(e)}
                         required
                       >
-                        {item.options.map((option, index) => {
-                          return (
-                            <MenuItem key={index} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          );
-                        })}
+                        {item.options.map((option, index) => (
+                          <MenuItem key={index} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
                       </TextField>
                     )}
                   </Grid>
@@ -200,13 +196,13 @@ const Form = (props) => {
                 <Grid item md={12}>
                   <TextField
                     variant="outlined"
-                    name={"notes"}
-                    id={"notes"}
-                    type={"text"}
+                    name="notes"
+                    id="notes"
+                    type="text"
                     fullWidth
                     value={formFields.notes}
                     onChange={(e) => handleInputChnage(e)}
-                    multiline={true}
+                    multiline
                     rows={5}
                     required
                   />
@@ -223,13 +219,13 @@ const Form = (props) => {
               <Grid item md={12}>
                 <TextField
                   variant="outlined"
-                  name={"treatment"}
-                  id={"treatment"}
-                  type={"text"}
+                  name="treatment"
+                  id="treatment"
+                  type="text"
                   fullWidth
                   value={formFields.treatment}
                   onChange={(e) => handleInputChnage(e)}
-                  multiline={true}
+                  multiline
                   rows={5}
                   required
                 />
@@ -247,7 +243,7 @@ const Form = (props) => {
                 primaryButtonText={item.primaryButtonText}
                 secondaryButtonText={item.secondaryButtonText}
                 iconHandler={() => console.log(item.title)}
-                hasMinHeight={true}
+                hasMinHeight
               />
             ))}
 
@@ -260,10 +256,14 @@ const Form = (props) => {
               </Button>
             </Grid>
             <Typography gutterBottom>
-              Created {moment().format("MMM D YYYY")}
+              Created
+              {" "}
+              {moment().format("MMM D YYYY")}
             </Typography>
             <Typography gutterBottom>
-              Created By {!!encounter && encounter.name}
+              Created By
+              {" "}
+              {!!encounter && encounter.name}
             </Typography>
           </Grid>
         </Grid>
@@ -274,14 +274,14 @@ const Form = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   formInput: {
-    margin: theme.spacing(2, 0)
+    margin: theme.spacing(2, 0),
   },
   cardsContainer: {
-    padding: theme.spacing(0, 2)
-  }
+    padding: theme.spacing(0, 2),
+  },
 }));
 
 export default Form;

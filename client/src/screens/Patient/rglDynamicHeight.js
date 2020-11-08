@@ -11,6 +11,7 @@ export default function heightHOC(COMPONENT) {
   return class HeightLayerHOC extends React.PureComponent {
     // Ref used to identify own DOM element
     self = React.createRef();
+
     currentHeight = 0;
 
     // We update the height on any potential change

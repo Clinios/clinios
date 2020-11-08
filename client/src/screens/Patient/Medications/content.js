@@ -47,13 +47,13 @@ export default function MedicationsContent(props) {
 
 const useStyles = makeStyles((theme) => ({
   text12: {
-    fontSize: 12
+    fontSize: 12,
   },
   block: {
     width: 90,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    padding: theme.spacing(0, 0.5, 0, 0)
-  }
+    padding: theme.spacing(0, 0.5, 0, 0),
+  },
 }));

@@ -19,10 +19,10 @@ import { setEncounter } from "../../../store/patient/actions";
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    padding: 9
+    padding: 9,
   },
   tableContainer: {
-    minWidth: 650
+    minWidth: 650,
   },
   actions: {
     textAlign: "center",
@@ -30,9 +30,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     border: "none",
     "& button": {
-      fontSize: "12px"
-    }
-  }
+      fontSize: "12px",
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -40,31 +40,33 @@ const StyledTableCell = withStyles((theme) => ({
     backgroundColor: theme.palette.grey,
     color: theme.palette.grey,
     fontSize: "12px",
-    fontWeight: 700
+    fontWeight: 700,
   },
   body: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     fontSize: 14,
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover
+      backgroundColor: theme.palette.action.hover,
     },
     "& th": {
-      fontSize: 12
+      fontSize: 12,
     },
     "& td": {
       fontSize: 12,
-      height: "50px"
-    }
-  }
+      height: "50px",
+    },
+  },
 }))(TableRow);
 
 const EncountersDetails = (props) => {
-  const { data, patientId, reloadData, toggleEncountersDialog } = props;
+  const {
+    data, patientId, reloadData, toggleEncountersDialog,
+  } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -81,18 +83,17 @@ const EncountersDetails = (props) => {
         reloadData();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };

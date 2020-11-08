@@ -6,7 +6,7 @@ import {
   Typography,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
@@ -22,7 +22,7 @@ const Medications = (props) => {
   const dispatch = useDispatch();
   const { onClose, patientId } = props;
   const [medications, setMedications] = useState([]);
-  const [selectedMedication, setSelectedMedication] = useState([])
+  const [selectedMedication, setSelectedMedication] = useState([]);
 
   useEffect(() => {
     fetchMedications("");
@@ -38,8 +38,8 @@ const Medications = (props) => {
     e.preventDefault();
     const reqBody = {
       data: {
-        drug_id: selectedMedication.id
-      }
+        drug_id: selectedMedication.id,
+      },
     };
     PatientService.createMedication(patientId, reqBody)
       .then((response) => {
@@ -47,18 +47,17 @@ const Medications = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -79,7 +78,7 @@ const Medications = (props) => {
             getOptionValue={(option) => option.id}
             onChange={(value) => setSelectedMedication(value)}
             styles={SelectCustomStyles}
-            isClearable={true}
+            isClearable
           />
 
           <List component="ul">
@@ -87,7 +86,7 @@ const Medications = (props) => {
               <ListItem
                 onClick={() => setSelectedMedication(medication)}
                 key={medication.id}
-                disableGutters={true}
+                disableGutters
                 button
               >
                 <ListItemText primary={medication.name} />
@@ -102,17 +101,14 @@ const Medications = (props) => {
             </Typography>
           </Grid>
           {(!!medications && medications.length)
-            ?
-            medications.map((item, index) => (
+            ? medications.map((item, index) => (
               <Grid key={index}>
                 <Typography gutterBottom variant="body1" align="center">
                   {item.name}
                 </Typography>
               </Grid>
             ))
-            :
-            null
-          }
+            : null}
         </Grid>
         <Grid item md={4}>
           <Grid className={classes.header}>
@@ -152,21 +148,21 @@ const Medications = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   heading: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
   },
   inputHeading: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   header: {
     minHeight: 38,
     marginBottom: theme.spacing(1),
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 }));
 
 export default Medications;

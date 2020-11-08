@@ -12,7 +12,7 @@ import {
   FormLabel,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
@@ -22,7 +22,7 @@ import PatientService from "../../../services/patient.service";
 import {
   BillSelectionFields,
   LabortoriesSelectionFields,
-  FavoritesSelectionFields
+  FavoritesSelectionFields,
 } from "../../../static/requisitionform";
 import { setError, setSuccess } from "../../../store/common/actions";
 import SelectCustomStyles from "../../../styles/SelectCustomStyles";
@@ -34,7 +34,7 @@ const Requisitions = (props) => {
   const [billSelection, setBillSelection] = useState("physician");
   const [labsSelection, setLabsSelection] = useState("");
   const [tests, setTests] = useState([]);
-  const [selectedTest, setSelectedTest] = useState([])
+  const [selectedTest, setSelectedTest] = useState([]);
 
   const fetchTests = useCallback(() => {
     PatientService.getTests(patientId).then((res) => {
@@ -58,8 +58,8 @@ const Requisitions = (props) => {
     const reqBody = {
       data: {
         cpt_id: selectedTest.cpt_id,
-        encounter_id: 1 //hard coded for the time being: discussion required
-      }
+        encounter_id: 1, // hard coded for the time being: discussion required
+      },
     };
     PatientService.createRequisition(patientId, reqBody)
       .then((response) => {
@@ -68,18 +68,17 @@ const Requisitions = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -150,7 +149,7 @@ const Requisitions = (props) => {
               getOptionValue={(option) => option.id}
               onChange={(value) => setSelectedTest(value)}
               styles={SelectCustomStyles}
-              isClearable={true}
+              isClearable
               isLoading={!tests.length}
             />
           </Grid>
@@ -160,7 +159,7 @@ const Requisitions = (props) => {
               <ListItem
                 onClick={() => setSelectedTest(medication)}
                 key={medication.id}
-                disableGutters={true}
+                disableGutters
                 button
               >
                 <ListItemText primary={medication.name} />
@@ -239,27 +238,27 @@ const Requisitions = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   section: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   heading: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   border: {
     border: "1px solid grey",
-    padding: 10
+    padding: 10,
   },
   height100: {
-    height: "100%"
+    height: "100%",
   },
   actionContainer: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   mr2: {
-    marginRight: theme.spacing(2)
-  }
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export default Requisitions;

@@ -13,18 +13,18 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 
-import PatientService from "./../../../../services/patient.service";
-import { setError, setSuccess } from "./../../../../store/common/actions";
+import PatientService from "../../../../services/patient.service";
+import { setError, setSuccess } from "../../../../store/common/actions";
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    padding: 9
+    padding: 9,
   },
   textCenter: {
-    textAlign: "center"
+    textAlign: "center",
   },
   tableContainer: {
-    minWidth: 650
+    minWidth: 650,
   },
   actions: {
     textAlign: "center",
@@ -32,9 +32,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     border: "none",
     "& button": {
-      fontSize: "12px"
-    }
-  }
+      fontSize: "12px",
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -42,27 +42,27 @@ const StyledTableCell = withStyles((theme) => ({
     backgroundColor: theme.palette.grey,
     color: theme.palette.grey,
     fontSize: "12px",
-    fontWeight: 700
+    fontWeight: 700,
   },
   body: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     fontSize: 14,
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover
+      backgroundColor: theme.palette.action.hover,
     },
     "& th": {
-      fontSize: 12
+      fontSize: 12,
     },
     "& td": {
       fontSize: 12,
-      height: "50px"
-    }
-  }
+      height: "50px",
+    },
+  },
 }))(TableRow);
 
 const AllergiesDetails = (props) => {
@@ -78,18 +78,17 @@ const AllergiesDetails = (props) => {
         reloadData();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -129,7 +128,7 @@ const AllergiesDetails = (props) => {
             <StyledTableRow>
               <TableCell colSpan={5}>
                 <Typography align="center" variant="body1">
-                    No Records Found...
+                  No Records Found...
                 </Typography>
               </TableCell>
             </StyledTableRow>

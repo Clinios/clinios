@@ -13,7 +13,7 @@ const MedicalNotes = (props) => {
   const dispatch = useDispatch();
   const currentEditorText = useSelector(
     (state) => state.patient.editorText,
-    shallowEqual
+    shallowEqual,
   );
   const { onClose, reloadData, patientId } = props;
   const [oldMedicalNote, setOldMedicalNote] = useState("");
@@ -29,12 +29,12 @@ const MedicalNotes = (props) => {
   const onFormSubmit = (e) => {
     e.preventDefault();
     // TODO:: static for the time being - discussion required
-    let noteId = 1;
+    const noteId = 1;
     const reqBody = {
       data: {
         old_medical_note: oldMedicalNote,
-        medical_note: medicalNote
-      }
+        medical_note: medicalNote,
+      },
     };
     PatientService.updateMedicalNotes(patientId, reqBody, noteId)
       .then((response) => {
@@ -43,18 +43,17 @@ const MedicalNotes = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -75,9 +74,9 @@ const MedicalNotes = (props) => {
               setMedicalNote(e.target.value);
             }}
             onBlur={() => currentEditorText !== medicalNote && dispatch(setEditorText(medicalNote))}
-            multiline={true}
+            multiline
             rows={6}
-            autoFocus={true}
+            autoFocus
             onKeyDown={(event) => {
               if (event.key === "Escape") {
                 onClose();
@@ -93,19 +92,19 @@ const MedicalNotes = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   formInput: {
     marginBottom: theme.spacing(1),
 
     "& .MuiOutlinedInput-multiline": {
       padding: 5,
-      fontSize: 12
-    }
+      fontSize: 12,
+    },
   },
   actionContainer: {
-    marginTop: theme.spacing(1)
-  }
+    marginTop: theme.spacing(1),
+  },
 }));
 
 export default MedicalNotes;

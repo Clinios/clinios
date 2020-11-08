@@ -16,10 +16,10 @@ export default function MedicalNotesContent(props) {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   text12: {
     fontSize: 12,
-    whiteSpace: "pre-line"
-  }
+    whiteSpace: "pre-line",
+  },
 }));

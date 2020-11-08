@@ -17,10 +17,10 @@ import { setError, setSuccess } from "../../../store/common/actions";
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    padding: 9
+    padding: 9,
   },
   tableContainer: {
-    minWidth: 650
+    minWidth: 650,
   },
   actions: {
     textAlign: "center",
@@ -28,9 +28,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     border: "none",
     "& button": {
-      fontSize: "12px"
-    }
-  }
+      fontSize: "12px",
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -38,27 +38,27 @@ const StyledTableCell = withStyles((theme) => ({
     backgroundColor: theme.palette.grey,
     color: theme.palette.grey,
     fontSize: "12px",
-    fontWeight: 700
+    fontWeight: 700,
   },
   body: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     fontSize: 14,
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover
+      backgroundColor: theme.palette.action.hover,
     },
     "& th": {
-      fontSize: 12
+      fontSize: 12,
     },
     "& td": {
       fontSize: 12,
-      height: "50px"
-    }
-  }
+      height: "50px",
+    },
+  },
 }))(TableRow);
 
 const DocumentsDetails = (props) => {
@@ -70,27 +70,26 @@ const DocumentsDetails = (props) => {
     const documentId = selectedItem.id || 1;
     const reqBody = {
       data: {
-        type: status
-      }
-    }
+        type: status,
+      },
+    };
     PatientService.updateDocument(patientId, documentId, reqBody)
       .then((response) => {
         dispatch(setSuccess(`${response.data.message}`));
         reloadData();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };

@@ -11,20 +11,20 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TableCell
+  TableCell,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
 
-import { calculateAge } from "../../../../utils/helpers";
-import CountrySelect from "./../../../../components/common/CountrySelect";
-import RegionSelect from "./../../../../components/common/RegionSelect";
+import CountrySelect from "../../../../components/common/CountrySelect";
+import RegionSelect from "../../../../components/common/RegionSelect";
 import {
   BasicInfoForm,
   InsuranceForm,
   Pharmacies,
-  PaymentData
-} from "./../../../../static/patientBasicInfoForm";
+  PaymentData,
+} from "../../../../static/patientBasicInfoForm";
+import { calculateAge } from "../../../../utils/helpers";
 
 export default function BasicInfo(props) {
   const classes = useStyles();
@@ -59,15 +59,15 @@ export default function BasicInfo(props) {
   });
 
   useEffect(() => {
-    formData.status = !!formData.status ? formData.status : "active";
-    setBasicInfo({ ...formData })
-  }, [formData])
+    formData.status = formData.status ? formData.status : "active";
+    setBasicInfo({ ...formData });
+  }, [formData]);
 
   const handleInputChnage = (e) => {
     const { value, name } = e.target;
     setBasicInfo({
       ...basicInfo,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -114,13 +114,11 @@ export default function BasicInfo(props) {
                         fullWidth
                         onChange={(e) => handleInputChnage(e)}
                       >
-                        {item.options.map((option, index) => {
-                          return (
-                            <MenuItem key={index} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          );
-                        })}
+                        {item.options.map((option, index) => (
+                          <MenuItem key={index} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
                       </TextField>
                     )}
                   </Grid>
@@ -155,19 +153,20 @@ export default function BasicInfo(props) {
                         fullWidth
                         onChange={(e) => handleInputChnage(e)}
                       >
-                        {item.options.map((option, index) => {
-                          return (
-                            <MenuItem key={index} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          );
-                        })}
+                        {item.options.map((option, index) => (
+                          <MenuItem key={index} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
                       </TextField>
                     )}
                   </Grid>
                 ))}
                 <Grid item md={2}>
-                  <Typography>&nbsp;&nbsp;Age: {calculateAge(basicInfo.dob)}</Typography>
+                  <Typography>
+&nbsp;&nbsp;Age:
+                    {calculateAge(basicInfo.dob)}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={1} className={classes.inputRow}>
@@ -194,13 +193,11 @@ export default function BasicInfo(props) {
                         fullWidth
                         onChange={(e) => handleInputChnage(e)}
                       >
-                        {item.options.map((option, index) => {
-                          return (
-                            <MenuItem key={index} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          );
-                        })}
+                        {item.options.map((option, index) => (
+                          <MenuItem key={index} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
                       </TextField>
                     )}
                   </Grid>
@@ -208,14 +205,17 @@ export default function BasicInfo(props) {
               </Grid>
               <Grid container spacing={1} alignItems="flex-end">
                 <Grid item md={2}>
-                  <Typography>Last Login: {`Jan 1, 2020`}</Typography>
+                  <Typography>
+                    Last Login:
+                    Jan 1, 2020
+                  </Typography>
                 </Grid>
                 <Grid item md={2}>
                   <TextField
-                    label={"Password"}
-                    name={"password"}
-                    id={"password"}
-                    type={"password"}
+                    label="Password"
+                    name="password"
+                    id="password"
+                    type="password"
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
                   />
@@ -240,7 +240,7 @@ export default function BasicInfo(props) {
                 <Grid item lg={12}>
                   <TextField
                     label="Address"
-                    name={"address"}
+                    name="address"
                     value={basicInfo.address}
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
@@ -249,7 +249,7 @@ export default function BasicInfo(props) {
                 <Grid item lg={12}>
                   <TextField
                     label="Address Line 2"
-                    name={"address2"}
+                    name="address2"
                     value={basicInfo.address2}
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
@@ -258,7 +258,7 @@ export default function BasicInfo(props) {
                 <Grid item lg={3}>
                   <TextField
                     label="City"
-                    name={"city"}
+                    name="city"
                     value={basicInfo.city}
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
@@ -267,7 +267,7 @@ export default function BasicInfo(props) {
                 <Grid item lg={3}>
                   <TextField
                     label="Zip/Postal"
-                    name={"zipPostal"}
+                    name="zipPostal"
                     value={basicInfo.postal}
                     fullWidth
                     onChange={(e) => handleInputChnage(e)}
@@ -275,27 +275,23 @@ export default function BasicInfo(props) {
                 </Grid>
                 <Grid item lg={3}>
                   <CountrySelect
-                    id={"country-select"}
+                    id="country-select"
                     error={null}
-                    name={"country-select"}
-                    helperText={""}
-                    label={"Country"}
-                    handleChange={(identifier, value) =>
-                      handleCountryRegion(identifier, value)
-                    }
+                    name="country-select"
+                    helperText=""
+                    label="Country"
+                    handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
                     country={country}
                   />
                 </Grid>
                 <Grid item lg={3}>
                   <RegionSelect
-                    id={"state-select"}
+                    id="state-select"
                     error={null}
-                    name={"state-select"}
-                    helperText={""}
-                    label={"State"}
-                    handleChange={(identifier, value) =>
-                      handleCountryRegion(identifier, value)
-                    }
+                    name="state-select"
+                    helperText=""
+                    label="State"
+                    handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
                     country={country}
                     region={region}
                   />
@@ -410,27 +406,27 @@ export default function BasicInfo(props) {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   sectionCard: {
-    padding: theme.spacing(1.5, 1)
+    padding: theme.spacing(1.5, 1),
   },
   halfSectionCard: {
     padding: theme.spacing(1.5, 1),
-    minHeight: 198
+    minHeight: 198,
   },
   root: {
     border: "1px solid",
     margin: theme.spacing(0, 0, 1, 0),
-    borderRadius: 0
+    borderRadius: 0,
   },
   inputTextRow: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   select: {
-    lineHeight: "2.30em"
+    lineHeight: "2.30em",
   },
   table: {
-    background: "white"
-  }
+    background: "white",
+  },
 }));

@@ -6,15 +6,15 @@ import {
   Typography,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 
+import PatientService from "../../../../services/patient.service";
+import { setError, setSuccess } from "../../../../store/common/actions";
 import SelectCustomStyles from "../../../../styles/SelectCustomStyles";
-import PatientService from "./../../../../services/patient.service";
-import { setError, setSuccess } from "./../../../../store/common/actions";
 
 
 const Allergies = (props) => {
@@ -31,8 +31,8 @@ const Allergies = (props) => {
   const fetchAllergies = (searchText) => {
     const reqBody = {
       data: {
-        text: searchText
-      }
+        text: searchText,
+      },
     };
     PatientService.searchAllergies(reqBody).then((res) => {
       setAllergies(res.data);
@@ -43,8 +43,8 @@ const Allergies = (props) => {
     e.preventDefault();
     const reqBody = {
       data: {
-        drug_id: selectedAllergy.id
-      }
+        drug_id: selectedAllergy.id,
+      },
     };
     PatientService.createAllergy(patientId, reqBody)
       .then((response) => {
@@ -53,18 +53,17 @@ const Allergies = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -87,7 +86,7 @@ const Allergies = (props) => {
           getOptionValue={(option) => option.id}
           onChange={(value) => setSelectedAllergy(value)}
           styles={SelectCustomStyles}
-          isClearable={true}
+          isClearable
         />
 
         <List component="ul">
@@ -95,7 +94,7 @@ const Allergies = (props) => {
             <ListItem
               onClick={() => setSelectedAllergy(allergy)}
               key={allergy.id}
-              disableGutters={true}
+              disableGutters
               button
             >
               <ListItemText primary={allergy.name} />
@@ -126,11 +125,11 @@ const Allergies = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   heading: {
-    marginBottom: theme.spacing(2)
-  }
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 export default Allergies;

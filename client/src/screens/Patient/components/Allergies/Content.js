@@ -20,9 +20,9 @@ export default function AllergiesContent(props) {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    marginBottom: theme.spacing(0.5)
+    marginBottom: theme.spacing(0.5),
   },
   text12: {
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 }));

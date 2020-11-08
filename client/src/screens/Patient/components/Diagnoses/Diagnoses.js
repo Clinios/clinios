@@ -6,22 +6,22 @@ import {
   Button,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 
+import PatientService from "../../../../services/patient.service";
+import { setError, setSuccess } from "../../../../store/common/actions";
 import SelectCustomStyles from "../../../../styles/SelectCustomStyles";
-import PatientService from "./../../../../services/patient.service";
-import { setError, setSuccess } from "./../../../../store/common/actions";
 
 const Diagnoses = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { onClose, patientId, reloadData } = props;
   const [diagnosis, setDiagnosis] = useState([]);
-  const [selectedDiagnosis, setSelectedDiagnoses] = useState([])
+  const [selectedDiagnosis, setSelectedDiagnoses] = useState([]);
 
   useEffect(() => {
     fetchDiagnosis("");
@@ -37,8 +37,8 @@ const Diagnoses = (props) => {
     e.preventDefault();
     const reqBody = {
       data: {
-        icd_id: selectedDiagnosis.id
-      }
+        icd_id: selectedDiagnosis.id,
+      },
     };
     PatientService.createDiagnoses(patientId, reqBody)
       .then((response) => {
@@ -47,18 +47,17 @@ const Diagnoses = (props) => {
         onClose();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -81,7 +80,7 @@ const Diagnoses = (props) => {
               getOptionValue={(option) => option.id}
               onChange={(value) => setSelectedDiagnoses(value)}
               styles={SelectCustomStyles}
-              isClearable={true}
+              isClearable
             />
 
             <List component="ul">
@@ -89,7 +88,7 @@ const Diagnoses = (props) => {
                 <ListItem
                   onClick={() => setSelectedDiagnoses(diagnose)}
                   key={diagnose.id}
-                  disableGutters={true}
+                  disableGutters
                   button
                 >
                   <ListItemText primary={diagnose.name} />
@@ -152,21 +151,21 @@ const Diagnoses = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    margin: theme.spacing(3, 0)
+    margin: theme.spacing(3, 0),
   },
   heading: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   border: {
     border: "1px solid grey",
-    padding: 10
+    padding: 10,
   },
   height100: {
-    height: "100%"
+    height: "100%",
   },
   actionContainer: {
-    paddingTop: theme.spacing(2)
-  }
+    paddingTop: theme.spacing(2),
+  },
 }));
 
 export default Diagnoses;

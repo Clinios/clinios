@@ -16,7 +16,7 @@ const useContextMenu = () => {
       setYPos(`${e.pageY}px`);
       setShowMenu(true);
     },
-    [setXPos, setYPos]
+    [setXPos, setYPos],
   );
 
   const handleClick = useCallback(() => {
@@ -54,7 +54,7 @@ const ContextMenu = (props) => {
           className="menu-container"
           style={{
             top: yPos,
-            left: xPos
+            left: xPos,
           }}
         >
           <Menu
@@ -72,8 +72,8 @@ const ContextMenu = (props) => {
             //   horizontal: 'center',
             // }}
           >
-            {menu.length &&
-              menu.map((item, index) => (
+            {menu.length
+              && menu.map((item, index) => (
                 <MenuItem
                   key={index}
                   onClick={() => onActionHandler(item.value)}
@@ -92,8 +92,8 @@ const ContextMenu = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    marginBottom: theme.spacing(1)
-  }
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 export default ContextMenu;

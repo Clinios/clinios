@@ -14,7 +14,7 @@ export default function MessagesContent(props) {
       {data.map((item, index) => (
         <Grid key={item.id}>
           <Grid container spacing={1}>
-            <Grid item md={!!item.user_to_from ? 3 : 4}>
+            <Grid item md={item.user_to_from ? 3 : 4}>
               <Typography
                 component="span"
                 variant="body1"
@@ -34,7 +34,7 @@ export default function MessagesContent(props) {
             </Grid>
             {
               !!item.user_to_from && (
-                <Grid item md={!!item.user_to_name ? 3 : 4}>
+                <Grid item md={item.user_to_name ? 3 : 4}>
                   <Typography
                     component="span"
                     variant="body1"
@@ -56,7 +56,7 @@ export default function MessagesContent(props) {
             }
             {
               !!item.user_to_name && (
-                <Grid item md={!!item.user_to_from ? 3 : 4}>
+                <Grid item md={item.user_to_from ? 3 : 4}>
                   <Typography
                     component="span"
                     variant="body1"
@@ -113,15 +113,15 @@ export default function MessagesContent(props) {
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
-    marginBottom: theme.spacing(0.5)
+    marginBottom: theme.spacing(0.5),
   },
   text12: {
-    fontSize: 12
+    fontSize: 12,
   },
   label: {
-    fontWeight: 500
+    fontWeight: 500,
   },
   divider: {
-    margin: theme.spacing(1, 0)
-  }
+    margin: theme.spacing(1, 0),
+  },
 }));

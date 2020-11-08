@@ -14,46 +14,46 @@ import moment from "moment";
 import { useDispatch } from "react-redux";
 
 import Tooltip from "../../../../components/common/CustomTooltip";
-import PatientService from "./../../../../services/patient.service";
-import { setError, setSuccess } from "./../../../../store/common/actions";
+import PatientService from "../../../../services/patient.service";
+import { setError, setSuccess } from "../../../../store/common/actions";
 
 const useStyles = makeStyles((theme) => ({
   tab: {
     paddingBottom: 5,
     margin: "5px 10px 5px 0",
     fontSize: 12,
-    cursor: "pointer"
+    cursor: "pointer",
   },
   tabSelected: {
     paddingBottom: 5,
     margin: "5px 10px 5px 0",
     fontSize: 12,
     cursor: "pointer",
-    borderBottom: `2px solid ${theme.palette.primary.main}`
+    borderBottom: `2px solid ${theme.palette.primary.main}`,
   },
   tableContainer: {
-    minWidth: 650
+    minWidth: 650,
   },
   actions: {
     display: "flex",
     justifyContent: "center",
     border: "none",
     "& button": {
-      fontSize: "12px"
-    }
+      fontSize: "12px",
+    },
   },
   overFlowControl: {
     maxWidth: "30px",
     textOverflow: "ellipsis",
     overflow: "hidden",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
   },
   resMessage: {
-    fontSize: 12
+    fontSize: 12,
   },
   icon: {
-    cursor: "pointer"
-  }
+    cursor: "pointer",
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -63,30 +63,30 @@ const StyledTableCell = withStyles((theme) => ({
     whiteSpace: "nowrap",
     fontSize: "12px",
     fontWeight: 700,
-    padding: "6px 24px 6px 2px"
+    padding: "6px 24px 6px 2px",
   },
   body: {
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 }))(TableCell);
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
     fontSize: 14,
     "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover
+      backgroundColor: theme.palette.action.hover,
     },
     "& th": {
       fontSize: 12,
       whiteSpace: "nowrap",
-      padding: "2px 16px 2px 2px"
+      padding: "2px 16px 2px 2px",
     },
     "& td": {
       fontSize: 12,
       whiteSpace: "nowrap",
-      padding: "2px 16px 2px 2px"
-    }
-  }
+      padding: "2px 16px 2px 2px",
+    },
+  },
 }))(TableRow);
 
 const DocumentsContent = (props) => {
@@ -97,23 +97,23 @@ const DocumentsContent = (props) => {
   const [tableData, setTableData] = useState([]);
 
   const fetchDocuments = useCallback((selectedTab) => {
-    if (selectedTab === 0) { //(All)
-      let allData = data.filter(x => x.status !== "D")
+    if (selectedTab === 0) { // (All)
+      const allData = data.filter((x) => x.status !== "D");
       setTableData([...allData]);
-    } else if (selectedTab === 1) { //(Labs)
-      let labsData = data.filter(x => x.type === "L" && x.status !== "D")
+    } else if (selectedTab === 1) { // (Labs)
+      const labsData = data.filter((x) => x.type === "L" && x.status !== "D");
       setTableData([...labsData]);
-    } else if (selectedTab === 2) { //(Imaging)
-      let imagingData = data.filter(x => x.type === "I" && x.status !== "D")
+    } else if (selectedTab === 2) { // (Imaging)
+      const imagingData = data.filter((x) => x.type === "I" && x.status !== "D");
       setTableData([...imagingData]);
-    } else if (selectedTab === 3) { //(Un-Categorized)
-      let uncategorizedData = data.filter(x => (x.type !== "L" && x.type !== "M" && x.type !== "I" && x.status !== "D"))
+    } else if (selectedTab === 3) { // (Un-Categorized)
+      const uncategorizedData = data.filter((x) => (x.type !== "L" && x.type !== "M" && x.type !== "I" && x.status !== "D"));
       setTableData([...uncategorizedData]);
-    } else if (selectedTab === 4) { //(Declined/Deleted)
-      let deletedData = data.filter(x => x.status === "D")
+    } else if (selectedTab === 4) { // (Declined/Deleted)
+      const deletedData = data.filter((x) => x.status === "D");
       setTableData([...deletedData]);
     }
-  }, [data])
+  }, [data]);
 
   useEffect(() => {
     fetchDocuments(tabValue);
@@ -122,27 +122,26 @@ const DocumentsContent = (props) => {
   const updateDocumentStatusHandler = (selectedItemId, status) => {
     const reqBody = {
       data: {
-        type: status
-      }
-    }
+        type: status,
+      },
+    };
     PatientService.updateDocument(patientId, selectedItemId, reqBody)
       .then((response) => {
         dispatch(setSuccess(`${response.data.message}`));
         reloadData();
       })
       .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        let severity = "error";
+        const resMessage = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
+        const severity = "error";
         dispatch(
           setError({
-            severity: severity,
-            message: resMessage
-          })
+            severity,
+            message: resMessage,
+          }),
         );
       });
   };
@@ -225,16 +224,16 @@ const DocumentsContent = (props) => {
                   <TableCell>{row.physician}</TableCell>
                   {
                     !!row.note && row.note.length > 10
-                      ?
-                      <Tooltip title={row.note}>
-                        <TableCell
-                          className={classes.overFlowControl}
-                        >
-                          {row.note}
-                        </TableCell>
-                      </Tooltip>
-                      :
-                      <TableCell>{row.note}</TableCell>
+                      ? (
+                        <Tooltip title={row.note}>
+                          <TableCell
+                            className={classes.overFlowControl}
+                          >
+                            {row.note}
+                          </TableCell>
+                        </Tooltip>
+                      )
+                      : <TableCell>{row.note}</TableCell>
                   }
                   <TableCell className={classes.actions}>
                     {row.status === "D"
@@ -259,7 +258,7 @@ const DocumentsContent = (props) => {
               <StyledTableRow>
                 <TableCell colSpan={10}>
                   <Typography className={classes.resMessage} align="center">
-                      No Documents Found...
+                    No Documents Found...
                   </Typography>
                 </TableCell>
               </StyledTableRow>
