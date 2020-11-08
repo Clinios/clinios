@@ -5,6 +5,7 @@
  * do not want to allow users to resize your component
  */
 
+/* eslint-disable */
 import React from "react";
 
 export default function heightHOC(COMPONENT) {
@@ -55,3 +56,5 @@ export default function heightHOC(COMPONENT) {
     }
   };
 }
+
+/* eslint-disable */
