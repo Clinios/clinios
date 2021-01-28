@@ -55,6 +55,11 @@ router.get(
   [authJwt.verifyToken],
   PatientEncounter.encountersPrescriptionsEdit
 );
+router.get(
+  "/patient/encounters/recent-profiles",
+  [authJwt.verifyToken],
+  PatientEncounter.encountersRecentProfiles
+);
 router.post(
   "/patient/:patient_id/encounters-icd",
   [authJwt.verifyToken],

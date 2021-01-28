@@ -118,6 +118,42 @@ const encountersPrescriptionsEdit = async (req, res) => {
   }
 };
 
+const encountersRecentProfiles = async (req, res) => {
+  const db = makeDb(configuration, res);
+
+  try {
+    const dbResponse = await db.query(
+      `select d.name, concat(ds.strength, ds.unit) strength, case when ds.form='T' then 'Tablets' end form, df.descr, pd.expires, pd.amount, pd.refills, pd.generic, pd.patient_instructions, pd.pharmacy_instructions, pd.created last_used_dt, pd.count from (
+        select drug_id, drug_strength_id, drug_frequency_id, expires, amount, refills, generic, patient_instructions, pharmacy_instructions, max(created) created, count(*) count
+        from patient_drug pd
+        where pd.client_id=1
+        and pd.drug_id=1
+        and pd.encounter_id<>1
+        and pd.created > date_sub(now(), interval 90 day)
+        group by drug_id, drug_strength_id, drug_frequency_id, expires, amount, refills, generic, patient_instructions, pharmacy_instructions
+        ) pd
+        left join drug d on d.id=pd.drug_id
+        left join drug_strength ds on ds.drug_id=d.id 
+            and ds.id=pd.drug_strength_id
+        left join drug_frequency df on df.id=pd.drug_frequency_id
+        order by count desc
+        limit 10`
+    );
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
   const { title } = req.body.data;
@@ -412,6 +448,7 @@ const patientEncounter = {
   getEncountersPrescriptions,
   getEncountersPrescriptionsFrequencies,
   encountersPrescriptionsEdit,
+  encountersRecentProfiles,
   createEncounter,
   updateEncounter,
   deleteEncounter,
