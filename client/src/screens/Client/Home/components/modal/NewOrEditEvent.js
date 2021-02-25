@@ -353,8 +353,6 @@ const EventModal = ({
     });
   };
 
-  // Todo: for test only
-
   const handleProviderChange = (event) => {
     const pd = providers.filter((p) => p.id === event.target.value);
     setProvider(pd[0]);
@@ -859,6 +857,11 @@ EventModal.propTypes = {
   event: PropTypes.shape({
     firstname: PropTypes.string,
     lastname: PropTypes.string,
+    start: PropTypes.string,
+    end: PropTypes.string,
+    eventTitle: PropTypes.string,
+    status: PropTypes.string,
+    notes: PropTypes.string,
     email: PropTypes.string,
     patient_id: PropTypes.number,
   }),
