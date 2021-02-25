@@ -1,8 +1,16 @@
 name: Lint
 
+#######################################
+# Start the job on all push to master #
+#######################################
+#############################
+# Start the job on all push #
+#############################
 on:
+  push:
+    branches-ignore: [master]
   pull_request:
-    branches: [master]
+    branches-ignore: []
 
 jobs:
   run-linters:
