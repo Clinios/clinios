@@ -353,7 +353,7 @@ const EventModal = ({
     });
   };
 
-  // TSdo: for test only
+  // Todo: for test only
 
   const handleProviderChange = (event) => {
     const pd = providers.filter((p) => p.id === event.target.value);
