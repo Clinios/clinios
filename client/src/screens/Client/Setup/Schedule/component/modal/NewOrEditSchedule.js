@@ -123,7 +123,7 @@ const NewOrEditSchedule = ({
       time_end: schedule.time_end ? moment(schedule.time_end, "HH:mm:ss").format("HH:mm:ss") : null,
       active: schedule.active,
       note: schedule.note ? schedule.note : "",
-    }
+    },
   };
 
   const handleCreateNewOrEditSchedule = () => {

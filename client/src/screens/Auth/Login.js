@@ -106,7 +106,8 @@ const Login = () => {
         <form
           className={classes.form}
           noValidate
-          onSubmit={(event) => onFormSubmit(event)} >
+          onSubmit={(event) => onFormSubmit(event)}
+        >
           <TextField
             value={email}
             variant="outlined"
@@ -123,7 +124,7 @@ const Login = () => {
             helperText={`${email.length >= 255
               ? "Enter an email between 255 charecter"
               : ""
-              }`}
+            }`}
           />
           <TextField
             value={password}
@@ -141,7 +142,7 @@ const Login = () => {
             helperText={`${password.length >= 128
               ? "Enter a password between 128 charecter"
               : ""
-              }`}
+            }`}
           />
           <FormControlLabel
             control={(
