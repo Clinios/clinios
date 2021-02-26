@@ -343,7 +343,7 @@ const EventModal = ({
     // value (searchTerm) hasn't changed for more than 500ms.
     [debouncedSearchTerm],
   );
-//TODO ::
+
   const handlePatientChange = (_, patient) => {
     const sp = patients.filter((p) => p.id === patient.id);
     setSelectedPatient(sp[0]);
