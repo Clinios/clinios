@@ -795,12 +795,14 @@ const EventModal = ({
               <div className={classes.eventMeta}>
                 {calEvent.status === "A" && (
                   <p className={classes.eventStatusInfo}>
-                    {/* {`Approved: ${moment(calEvent.approved).format("ll")}, ${calEvent.approved_user}`} Commented out David Feb 2021*/}
+                    {/* {`Approved: ${moment(calEvent.approved).format("ll")}, ${calEvent.approved_user}`}
+                     Commented out David Feb 2021 */}
                   </p>
                 )}
                 {calEvent.status === "D" && (
                   <p className={classes.eventStatusInfo}>
-                    {/* {`Rejected: ${moment(calEvent.declined).format("ll")}, ${calEvent.declined_user}`} Commented out David Feb 2021*/}
+                    {/* {`Rejected: ${moment(calEvent.declined).format("ll")}, ${calEvent.declined_user}`}
+                     Commented out David Feb 2021 */}
                   </p>
                 )}
               </div>

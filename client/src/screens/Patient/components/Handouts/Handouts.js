@@ -6,7 +6,6 @@ import {
   Button,
   Grid,
   TextField,
-  Typography,
   List,
   ListItem,
   ListItemText,
@@ -78,7 +77,7 @@ const HandoutsForm = (props) => {
 
   return (
     <>
-      {/*Commented out David Feb 2021
+      {/* Commented out David Feb 2021
       <Grid className={classes.mb2}>
         <Typography variant="h3" color="textSecondary" gutterBottom>
           Patient Handouts
