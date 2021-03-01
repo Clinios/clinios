@@ -128,6 +128,13 @@ const routes = [
     component: lazy(() => import("./screens/Auth/SignUp")),
   },
   {
+    path: "/test-results",
+    guard: AdminGuard,
+    layout: DashboardLayout,
+    component: lazy(() => import("./screens/TestChart")),
+    permission: ["ADMIN"],
+  },
+  {
     path: "/manage",
     guard: AuthGuard,
     layout: DashboardLayout,
