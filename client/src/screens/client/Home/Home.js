@@ -15,7 +15,6 @@ import { statusToColorCode, isEmpty } from "../../../utils/helpers";
 import {
   AppointmentRequests,
   Calendar,
-  MessagesUnread,
   MessageToPatient,
   NewOrEditEvent,
   ProviderCards,
@@ -50,7 +49,7 @@ export default function Home() {
   const [errors, setErrors] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState({});
   const [providerDetails, setProviderDetails] = useState({});
-  const [messagesUnread, setMessagesUnread] = useState([]);
+  // const [messagesUnread, setMessagesUnread] = useState([]);
   const [appointmentRequests, setAppointmentRequests] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
@@ -95,10 +94,10 @@ export default function Home() {
     const { data } = await DashboardHome.getProviderDetails(providerId);
     setProviderDetails(data);
   }
-  async function fetchUnreadPatientMessages(providerId) {
+/*   async function fetchUnreadPatientMessages(providerId) {
     const { data } = await DashboardHome.getPatientUnreadMessages(providerId);
-    setMessagesUnread(data);
-  }
+   setMessagesUnread(data);
+  } */
   async function fetchPatientApptRequests(providerId) {
     const { data } = await DashboardHome.getPatientApptRequests(providerId);
     setAppointmentRequests(data);
@@ -226,7 +225,7 @@ export default function Home() {
         (response) => {
           setIsLoading(false);
           setIsMessageToPatientOpen(false);
-          fetchUnreadPatientMessages(selectedProvider.id);
+          // fetchUnreadPatientMessages(selectedProvider.id); // Comment out by Ruhul as per #CLIN-18
           enqueueSnackbar(`${response.data.message}`, {
             variant: "success",
           });
@@ -243,7 +242,7 @@ export default function Home() {
         (response) => {
           setIsLoading(false);
           setIsMessageToPatientOpen(false);
-          fetchUnreadPatientMessages(selectedProvider.id);
+          // fetchUnreadPatientMessages(selectedProvider.id); // Comment out by Ruhul as per #CLIN-18
           enqueueSnackbar(`${response.data.message}`, {
             variant: "success",
           });
@@ -259,7 +258,7 @@ export default function Home() {
 
   const handleProviderClick = (provider) => {
     setSelectedProvider(provider);
-    fetchUnreadPatientMessages(provider.id);
+    // fetchUnreadPatientMessages(provider.id); //Comment out by Ruhul as per #CLIN-18
   };
   const handleMessageClick = (_, patientIdTo) => {
     setPatient_id_to(patientIdTo);
@@ -267,11 +266,12 @@ export default function Home() {
     setIsNewMessage(true);
   };
 
-  const handleMessageEditClick = (_, msg) => {
+  // Comment out by Ruhul as per #CLIN-18
+/*   const handleMessageEditClick = (_, msg) => {
     setIsMessageToPatientOpen(true);
     setIsNewMessage(false);
     setSelectedMsg(msg);
-  };
+  }; */
 
   const handleEventsType = async (event) => {
     setIsCancelEventsVisible(event.target.checked);
@@ -318,11 +318,12 @@ export default function Home() {
           <ProviderDetailsCard selectedProvider={selectedProvider} providerDetails={providerDetails} />
           {!!selectedProvider && (
             <>
-              <MessagesUnread
+              {/*     Comment out by Ruhul as per #CLIN-18
+      <MessagesUnread
                 appointmentRequests={appointmentRequests}
                 messagesUnread={messagesUnread}
                 onMessageEdit={handleMessageEditClick}
-              />
+              /> */}
               <AppointmentRequests
                 selectedProvider={selectedProvider}
                 appointmentRequests={appointmentRequests}
