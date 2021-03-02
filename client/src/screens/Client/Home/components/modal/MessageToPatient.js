@@ -15,9 +15,9 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Alert from "@material-ui/lab/Alert";
-import { KeyboardDatePicker } from "@material-ui/pickers";
+// import { KeyboardDatePicker } from "@material-ui/pickers";
 import clsx from "clsx";
-import moment from "moment";
+// import moment from "moment";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
@@ -116,7 +116,7 @@ const MessageToPatient = ({
   const { onModalEnter } = props;
   // const [selectedDate, handleDateChange] = useState(new Date());
   const [message, setMessage] = useState("");
-  const unread_notify_dt = "unread_notify_dt";
+  // const unread_notify_dt = "unread_notify_dt";
 
   /* eslint-disable */
   useEffect(() => {
@@ -211,7 +211,7 @@ const MessageToPatient = ({
               onChange={(event) => handleOnChange(event)}
             />
           </div>
-          <div className={classes.NotifyInfo}>
+          {/*           <div className={classes.NotifyInfo}>
             <Typography component="p" variant="body2" color="textPrimary">
               Notify me if not read by:
               {" "}
@@ -281,7 +281,7 @@ const MessageToPatient = ({
                 4 weeks
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </DialogContent>
       <DialogActions className={classes.modalAction}>
