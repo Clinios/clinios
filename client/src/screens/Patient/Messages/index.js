@@ -4,6 +4,7 @@ import {
   TextField, Button, Grid, Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { KeyboardDatePicker } from "@material-ui/pickers";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dateInput: {
     marginBottom: theme.spacing(2),
+    display: "none", // Comment out by Ruhul as per #CLIN-18
   },
   actionContainer: {
     marginTop: theme.spacing(4),
@@ -137,6 +139,27 @@ const NewMessage = (props) => {
             />
           </Grid>
         </Grid>
+        <Grid className={classes.dateInput}>
+          <KeyboardDatePicker
+            required
+            margin="dense"
+            id="date-picker-dialog"
+            label="Notification Date"
+            format="dd/MM/yyyy"
+            value={selectedDate}
+            onChange={handleDateChange}
+            minDate={currentDate}
+          />
+        </Grid>
+        {
+          !!selectedDate && (
+            <Typography variant="h6" color="textSecondary" gutterBottom>
+              Notify me if not read by
+              {" "}
+              {moment(selectedDate).format("MMM DD, YYYY")}
+            </Typography>
+          )
+        }
 
         <Grid
           className={classes.actionContainer}

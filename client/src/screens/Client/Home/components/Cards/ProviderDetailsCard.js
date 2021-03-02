@@ -142,7 +142,7 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
             }
           </li>
 
-          <li>
+          <li style={{ display: "none" }}>
             <Link to={`/process-message/${selectedProvider.id}`}>
               <div>Messages from Patients</div>
               <div className={classes.count}>
