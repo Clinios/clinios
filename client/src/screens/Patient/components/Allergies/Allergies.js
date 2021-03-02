@@ -4,7 +4,6 @@ import {
   Button,
   Grid,
   TextField,
-  Typography,
   List,
   ListItem,
   ListItemText,
@@ -78,6 +77,7 @@ const Allergies = (props) => {
 
   return (
     <>
+      {/* Commented out David Feb 2021
       <Grid className={classes.mb2}>
         <Typography
           variant="h3"
@@ -86,6 +86,7 @@ const Allergies = (props) => {
           Select Allergy
         </Typography>
       </Grid>
+      */}
       <Grid container alignItems="center">
         <form onSubmit={(e) => fetchAllergies(e, searchText)}>
           <TextField

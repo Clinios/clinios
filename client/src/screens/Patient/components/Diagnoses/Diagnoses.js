@@ -110,11 +110,13 @@ const Diagnoses = (props) => {
 
   return (
     <>
+      {/* Commented out David Feb 2021
       <Grid className={classes.mb2} container justify="space-between">
         <Typography variant="h3" color="textSecondary">
           Diagnoses
         </Typography>
       </Grid>
+      */}
 
       <Grid item xs={4}>
         <form onSubmit={(e) => fetchDiagnosis(e, searchText)}>

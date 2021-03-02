@@ -83,11 +83,13 @@ const Medications = (props) => {
 
   return (
     <>
+      {/*
       <Grid className={classes.heading}>
         <Typography variant="h3" color="textSecondary">
           Select Drug
         </Typography>
       </Grid>
+      */}
       <Grid container spacing={2}>
         <Grid item md={4}>
           <Select

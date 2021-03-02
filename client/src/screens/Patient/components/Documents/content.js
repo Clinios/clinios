@@ -236,13 +236,13 @@ const DocumentsContent = (props) => {
               <StyledTableCell>Created</StyledTableCell>
               <StyledTableCell>Filename</StyledTableCell>
               <StyledTableCell align="center">
-                Conventional Flag
+                Conv Flag
               </StyledTableCell>
-              <StyledTableCell>Functional Flag</StyledTableCell>
+              <StyledTableCell>Func Flag</StyledTableCell>
               <StyledTableCell>Notes</StyledTableCell>
               {
                 actionsEnable && (
-                  <StyledTableCell align="center">Actions</StyledTableCell>
+                  <StyledTableCell align="center">Delete</StyledTableCell>
                 )
               }
             </TableRow>

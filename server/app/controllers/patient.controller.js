@@ -895,7 +895,7 @@ const searchAllergies = async (req, res) => {
     const dbResponse = await db.query(
       `select d.id, d.name
         from drug d
-        where d.name like '${text}%'
+        where d.name like '%${text}%'
         order by d.name
         limit 50
       `
@@ -957,7 +957,7 @@ const getDocuments = async (req, res) => {
     let $sql;
 
     $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
-      , group_concat('"', c.name, '" ', lc.value, ' ', lc.range_low, ' ', lc.range_high separator ' | ') tests
+      , group_concat('"', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
       from lab l
       left join lab_cpt lc on lc.lab_id=l.id
       left join cpt c on c.id=lc.cpt_id
