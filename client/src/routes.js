@@ -131,7 +131,7 @@ const routes = [
     path: "/test-results",
     guard: AdminGuard,
     layout: DashboardLayout,
-    component: lazy(() => import("./screens/TestChart")),
+    component: lazy(() => import("./screens/TestGraph")),
     permission: ["ADMIN"],
   },
   {
