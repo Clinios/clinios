@@ -12,15 +12,14 @@ import Appointments from "../../../services/appointments.service";
 import DashboardHome from "../../../services/DashboardHome.service";
 import Messages from "../../../services/message-to-patient.service";
 import { statusToColorCode, isEmpty } from "../../../utils/helpers";
-import {
-  AppointmentRequests,
-  Calendar,
-  MessagesUnread,
-  MessageToPatient,
-  NewOrEditEvent,
-  ProviderCards,
-  ProviderDetailsCard,
-} from "./components";
+import Calendar from "./components/Calendar/EventCalendar";
+import AppointmentRequests from "./components/Cards/AppointmentRequests";
+import MessagesUnread from "./components/Cards/MessagesUnread";
+import ProviderCards from "./components/Cards/ProviderCards";
+import ProviderDetailsCard from "./components/Cards/ProviderDetailsCard";
+import MessageHistory from "./components/modal/MessageHistory";
+import MessageToPatient from "./components/modal/MessageToPatient";
+import NewOrEditEvent from "./components/modal/NewOrEditEvent";
 
 const useStyles = makeStyles((theme) => ({
   pageTitle: {
@@ -64,6 +63,7 @@ export default function Home() {
   const [patient_id_to, setPatient_id_to] = useState(null);
   const [isMessageToPatientOpen, setIsMessageToPatientOpen] = useState(false);
   const [isCancelEventsVisible, setIsCancelEventsVisible] = useState(false);
+  const [isAppointmentHistoryOpen, setIsAppointmentHistoryOpen] = useState(false);
 
 
   const getMapFromArray = (data) => {
@@ -327,6 +327,7 @@ export default function Home() {
                 selectedProvider={selectedProvider}
                 appointmentRequests={appointmentRequests}
                 onMessageClick={handleMessageClick}
+                onHistoryClick={() => setIsAppointmentHistoryOpen(true)}
                 onAccept={(payload) => handleEventUpdate(payload)}
                 onReject={(payload) => handleEventCancellation(payload)}
               />
@@ -360,6 +361,13 @@ export default function Home() {
           onSubmit={handleMessageToPatientFormSubmit}
           onClose={() => setIsMessageToPatientOpen(false)}
           errors={errors}
+        />
+      )}
+      {isAppointmentHistoryOpen && (
+        <MessageHistory
+          isLoading={isLoading}
+          isOpen={isAppointmentHistoryOpen}
+          onClose={() => setIsAppointmentHistoryOpen(false)}
         />
       )}
     </div>

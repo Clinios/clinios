@@ -9,7 +9,7 @@ app.use(cors());
 // Add middleware for parsing JSON and urlencoded data and populating `req.body`
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use("/static", express.static("app"));
+app.use("/static", express.static("app/static"));
 app.set("trust proxy", true);
 
 app.get("/", (req, res) => {
@@ -88,6 +88,7 @@ app.use(baseAPIPath, require("./app/routes/corporate/login.routes"));
 app.use(baseAPIPath, require("./app/routes/corporate/password-reset.routes"));
 app.use(baseAPIPath, require("./app/routes/corporate/index.routes"));
 app.use(baseAPIPath, require("./app/routes/corporate/myself.routes"));
+app.use(baseAPIPath, require("./app/routes/corporate/case.routes"));
 
 app.listen(config.port).on("listening", () => {
   console.log(`API is live on ${config.port}`);

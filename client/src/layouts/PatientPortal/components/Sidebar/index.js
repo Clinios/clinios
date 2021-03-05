@@ -8,10 +8,9 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import {
   mdiChartBox,
   mdiAccount,
-  mdiMessage,
+  mdiMessageOutline,
   mdiHome,
   mdiTestTube,
-  mdiAllergy,
   mdiPrescription,
   mdiPharmacy,
   mdiCalendar,
@@ -64,7 +63,7 @@ const Sidebar = (props) => {
       id: 2,
       title: "Messages",
       href: "/patient/messages",
-      icon: <Icon path={mdiMessage} size={1} horizontal vertical rotate={180} />,
+      icon: <Icon path={mdiMessageOutline} size={1} horizontal vertical rotate={180} />,
     },
     {
       id: 3,
@@ -97,6 +96,14 @@ const Sidebar = (props) => {
       ),
     },
     {
+      id: 12,
+      title: "Appointments",
+      href: "/patient/appointments",
+      icon: (
+        <Icon path={mdiCalendar} size={1} horizontal vertical rotate={180} />
+      ),
+    },
+    {
       id: 7,
       title: "Billing",
       href: "/patient/billing",
@@ -108,12 +115,12 @@ const Sidebar = (props) => {
       href: "/patient/payment-methods",
       icon: <PaymentIcon />,
     },
-    {
-      id: 9,
-      title: "Allergies",
-      href: "/patient/allergies",
-      icon: <Icon path={mdiAllergy} size={1} horizontal vertical rotate={180} />,
-    },
+    // {
+    // id: 9,
+    // title: "Allergies",
+    // href: "/patient/allergies",
+    // icon: <Icon path={mdiAllergy} size={1} horizontal vertical rotate={180} />,
+    // },
     {
       id: 10,
       title: "Prescriptions",
@@ -134,14 +141,6 @@ const Sidebar = (props) => {
       href: "/patient/pharmacies",
       icon: (
         <Icon path={mdiPharmacy} size={1} horizontal vertical rotate={180} />
-      ),
-    },
-    {
-      id: 12,
-      title: "Appointments",
-      href: "/patient/appointments",
-      icon: (
-        <Icon path={mdiCalendar} size={1} horizontal vertical rotate={180} />
       ),
     },
     {

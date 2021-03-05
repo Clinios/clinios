@@ -40,7 +40,6 @@ const HandoutsForm = (props) => {
   const { reloadData } = props;
   const [searchText, setSearchText] = useState("");
   const [allHandouts, setAllHandouts] = useState([]);
-  const [selectedHandout, setSelectedHandout] = useState(null);
   const { state, dispatch } = usePatientContext();
   const { patientId } = state;
 
@@ -57,22 +56,18 @@ const HandoutsForm = (props) => {
     }
   }, [searchText]);
 
-  const createPatientHandoutHandler = () => {
-    if (selectedHandout) {
-      const reqBody = {
-        data: {
-          handout_id: selectedHandout.id,
-        },
-      };
-      PatientService.createPatientHandout(patientId, reqBody)
-        .then((response) => {
-          enqueueSnackbar(`${response.data.message}`, { variant: "success" });
-          reloadData();
-          dispatch(toggleHandoutsDialog());
-        });
-    } else {
-      enqueueSnackbar("Handout selection is required", { variant: "error" });
-    }
+  const createPatientHandoutHandler = (item) => {
+    const reqBody = {
+      data: {
+        handout_id: item.id,
+      },
+    };
+    PatientService.createPatientHandout(patientId, reqBody)
+      .then((response) => {
+        enqueueSnackbar(`${response.data.message}`, { variant: "success" });
+        reloadData();
+        dispatch(toggleHandoutsDialog());
+      });
   };
 
   return (
@@ -89,7 +84,6 @@ const HandoutsForm = (props) => {
         <form onSubmit={(e) => fetchAllHandouts(e, searchText)}>
           <TextField
             autoFocus
-            required
             size="small"
             variant="outlined"
             value={searchText}
@@ -105,16 +99,12 @@ const HandoutsForm = (props) => {
         </form>
       </Grid>
 
-      <Grid item lg={4} className={classes.root}>
+      <Grid item lg={4} className={`${classes.root} ${classes.mb2}`}>
         <List component="ul">
           {allHandouts.map((handout) => (
             <ListItem
-              onClick={() => {
-                setSearchText(handout.filename);
-                setSelectedHandout(handout);
-              }}
+              onClick={() => createPatientHandoutHandler(handout)}
               key={handout.id}
-              selected={!!selectedHandout && selectedHandout.filename === handout.filename}
               disableGutters
               button
             >
@@ -122,23 +112,6 @@ const HandoutsForm = (props) => {
             </ListItem>
           ))}
         </List>
-      </Grid>
-
-      <Grid
-        className={classes.actionContainer}
-        container
-        justify="space-between"
-      >
-        <Button
-          variant="outlined"
-          onClick={() => createPatientHandoutHandler()}
-          type="submit"
-        >
-          Save
-        </Button>
-        <Button variant="outlined" onClick={() => dispatch(toggleHandoutsDialog())}>
-          Cancel
-        </Button>
       </Grid>
     </>
   );

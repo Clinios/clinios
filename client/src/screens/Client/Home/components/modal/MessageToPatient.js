@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   NotifyInfo: {
-    display: "flex",
+    display: "none", // Comment out by Ruhul as per #CLIN-18
     marginTop: theme.spacing(1),
   },
   datePicker: {

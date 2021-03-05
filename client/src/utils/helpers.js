@@ -127,6 +127,19 @@ export const statusToColorCode = (status) => {
   }
 };
 
+export const mapAppointmentStatus = (status) => {
+  switch (status) {
+    case "R":
+      return "Requested";
+    case "A":
+      return "Approved";
+    case "D":
+      return "Declined";
+    default:
+      return "";
+  }
+};
+
 export const encounterTypeToLetterConversion = (encounter) => {
   switch (encounter) {
     case "Office Visit":

@@ -17,11 +17,15 @@ import SaveIcon from "@material-ui/icons/CheckCircle";
 import CardIcon from "@material-ui/icons/CreditCard";
 import DesktopIcon from "@material-ui/icons/DesktopMac";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import SaveLayoutIcon from "@material-ui/icons/Save";
+import SaveLayoutIcon from "@material-ui/icons/SaveOutlined";
+import { mdiCalendarBlankOutline } from "@mdi/js";
+import Icon from "@mdi/react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 
 import useDidMountEffect from "../../hooks/useDidMountEffect";
+import usePatientContext from "../../hooks/usePatientContext";
+import { togglePatientAppointmentHistoryDialog } from "../../providers/Patient/actions";
 import Colors from "../../theme/colors";
 
 const useStyles = makeStyles((theme) => ({
@@ -119,6 +123,7 @@ const PatientCard = (props) => {
     hasMinHeight,
   } = props;
 
+  const { dispatch } = usePatientContext();
   const [contentTogglerState, setContentTogglerState] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -183,6 +188,12 @@ const PatientCard = (props) => {
               <SaveLayoutIcon
                 className={classes.icon}
                 onClick={() => updateLayoutHandler()}
+              />
+              <Icon
+                className={classes.icon}
+                onClick={() => dispatch(togglePatientAppointmentHistoryDialog())}
+                path={mdiCalendarBlankOutline}
+                size={1}
               />
             </>
           )}

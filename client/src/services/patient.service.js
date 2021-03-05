@@ -48,6 +48,22 @@ class Patient {
       .then((res) => res.data);
   }
 
+  getBillingTransactionTypes(patientId) {
+    return axios
+      .get(`${API_BASE}/patient/${patientId}/billing/transactionTypes`, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
+  getBillingPaymentOptions(patientId) {
+    return axios
+      .get(`${API_BASE}/patient/${patientId}/billing/paymentOptions`, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
   getDocuments(patientId, tab) {
     return axios
       .get(`${API_BASE}/patient/${patientId}/documents/?tab=${tab}`, {
@@ -65,6 +81,14 @@ class Patient {
   getNextAppointment(patientId) {
     return axios
       .get(`${API_BASE}/patient/${patientId}/next-appointment`, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
+  getAppointmentHistory(patientId) {
+    return axios
+      .get(`${API_BASE}/patient/${patientId}/appointment/history`, {
         headers: authHeader(),
       })
       .then((res) => res.data);
@@ -393,6 +417,12 @@ class Patient {
         headers: authHeader(),
       },
     );
+  }
+
+  updateMessage(patientId, messageId, data) {
+    return axios.put(`${API_BASE}/patient/${patientId}/messages/${messageId}`, data, {
+      headers: authHeader(),
+    });
   }
 
   updateDiagnoses(patient_id, icd_id, data) {

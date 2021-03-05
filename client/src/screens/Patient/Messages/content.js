@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 
-import { Grid, Typography, Divider } from "@material-ui/core";
+import {
+  Grid, Typography, Divider, Menu, MenuItem,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import moment from "moment";
+import { useSnackbar } from "notistack";
+import PropTypes from "prop-types";
 
+import Alert from "../../../components/Alert";
+import useAuth from "../../../hooks/useAuth";
 import usePatientContext from "../../../hooks/usePatientContext";
+import {
+  setSelectedMessage, resetSelectedMessage, toggleMessageDialog, setMessageType,
+} from "../../../providers/Patient/actions";
+import PatientService from "../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
@@ -24,15 +35,121 @@ const useStyles = makeStyles((theme) => ({
   dateText: {
     minWidth: 80,
   },
+  icon: {
+    cursor: "pointer",
+    marginTop: 5,
+  },
 }));
 
-const MessagesContent = () => {
+const MessagesContent = (props) => {
+  const { reloadData } = props;
   const classes = useStyles();
-  const { state } = usePatientContext();
-  const { data } = state.messages;
+  const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuth();
+  const { state, dispatch } = usePatientContext();
+  const { data, selectedMessage } = state.messages;
+  const { patientId } = state;
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const openDeleteDialog = () => {
+    setShowDeleteDialog((prevstate) => !prevstate);
+  };
+
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog((prevstate) => !prevstate);
+    dispatch(resetSelectedMessage());
+  };
+
+  const openMenu = (event, item) => {
+    setAnchorEl(event.currentTarget);
+    dispatch(setSelectedMessage(item));
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const deleteItemHandler = (item) => {
+    const messageId = item.id;
+    PatientService.deleteMessages(patientId, messageId)
+      .then((response) => {
+        enqueueSnackbar(`${response.data.message}`, { variant: "success" });
+        closeDeleteDialog();
+        reloadData();
+      });
+  };
+
+  const isDeletDisabled = useMemo(() => {
+    if (selectedMessage && selectedMessage.user_id_from === user.id) {
+      return false;
+    }
+    return true;
+  }, [selectedMessage, user.id]);
+
+  const isEditDisabled = useMemo(() => {
+    if (selectedMessage && selectedMessage.user_id_from === user.id) {
+      return false;
+    }
+    return true;
+  }, [selectedMessage, user.id]);
+
+  const isReplyDisabled = useMemo(() => {
+    if (selectedMessage && selectedMessage.user_id_from === null) {
+      return false;
+    }
+    return true;
+  }, [selectedMessage]);
 
   return (
     <>
+      <Alert
+        open={showDeleteDialog}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this message?"
+        applyButtonText="Delete"
+        cancelButtonText="Cancel"
+        applyForm={() => deleteItemHandler(selectedMessage)}
+        cancelForm={closeDeleteDialog}
+      />
+      <Menu
+        anchorEl={anchorEl}
+        keepMounted
+        open={isMenuOpen}
+        onClose={closeMenu}
+      >
+        <MenuItem
+          disabled={isDeletDisabled}
+          onClick={() => {
+            openDeleteDialog();
+            closeMenu();
+          }}
+        >
+          Delete
+        </MenuItem>
+        <MenuItem
+          disabled={isEditDisabled}
+          onClick={() => {
+            dispatch(setMessageType("Edit"));
+            dispatch(toggleMessageDialog());
+            closeMenu();
+          }}
+        >
+          Edit
+        </MenuItem>
+        <MenuItem
+          disabled={isReplyDisabled}
+          onClick={() => {
+            dispatch(setMessageType("Reply To"));
+            dispatch(toggleMessageDialog());
+            closeMenu();
+          }}
+        >
+          Reply
+        </MenuItem>
+      </Menu>
       {data.map((item, index) => (
         <Grid key={item.id}>
           <Grid container spacing={1}>
@@ -117,6 +234,11 @@ const MessagesContent = () => {
                 </Grid>
               </Grid>
             </Grid>
+            <MoreVertIcon
+              fontSize="small"
+              className={classes.icon}
+              onClick={(e) => openMenu(e, item)}
+            />
           </Grid>
           <Grid key={item.id}>
             <Typography
@@ -132,6 +254,14 @@ const MessagesContent = () => {
       ))}
     </>
   );
+};
+
+MessagesContent.defaultProps = {
+  reloadData: () => { },
+};
+
+MessagesContent.propTypes = {
+  reloadData: PropTypes.func,
 };
 
 export default MessagesContent;

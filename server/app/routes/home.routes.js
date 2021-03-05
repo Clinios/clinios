@@ -4,24 +4,25 @@ const homeController = require("../controllers/home.controller.js");
 
 const router = express.Router();
 
-router.get("/appointments", [authJwt.verifyToken], homeController.getAll);
+router.get("/appointments/events", [authJwt.verifyToken], homeController.getAll);
+router.get("/appointments/history", [authJwt.verifyToken], homeController.getAppointmentHistory);
 router.get(
-  "/appointments/:providerId",
+  "/appointments/events/:providerId",
   [authJwt.verifyToken],
   homeController.getEventsByProvider
 );
 router.post(
-  "/appointments",
+  "/appointments/events",
   [authJwt.verifyToken],
   homeController.createAppointment
 );
 router.put(
-  "/appointments/cancel/:id",
+  "/appointments/events/cancel/:id",
   [authJwt.verifyToken],
   homeController.cancelAppointment
 );
 router.put(
-  "/appointments/update/:id",
+  "/appointments/events/update/:id",
   [authJwt.verifyToken],
   homeController.updateAppointment
 );

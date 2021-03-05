@@ -107,7 +107,7 @@ export const FourthColumnPatientCards = [
     data: [],
     primaryButtonText: "New",
     secondaryButtonText: "Expand",
-    icon: "CardIcon",
+    icon: null,
     cardInfo: "Balance $100",
   },
   {

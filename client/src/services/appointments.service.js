@@ -6,25 +6,31 @@ import authHeader from "./auth-header";
 class Appointments {
   getAll() {
     return axios
-      .get(`${API_BASE}/appointments`, { headers: authHeader() })
+      .get(`${API_BASE}/appointments/events`, { headers: authHeader() })
+      .then((res) => res.data);
+  }
+
+  getHistory() {
+    return axios
+      .get(`${API_BASE}/appointments/history`, { headers: authHeader() })
       .then((res) => res.data);
   }
 
   getAllByProvider(providerId) {
     return axios
-      .get(`${API_BASE}/appointments/${providerId}`, { headers: authHeader() })
+      .get(`${API_BASE}/appointments/events/${providerId}`, { headers: authHeader() })
       .then((res) => res.data);
   }
 
   create(payload) {
-    return axios.post(`${API_BASE}/appointments`, payload, {
+    return axios.post(`${API_BASE}/appointments/events`, payload, {
       headers: authHeader(),
     });
   }
 
   update(payload) {
     return axios.put(
-      `${API_BASE}/appointments/update/${payload.data.id}`,
+      `${API_BASE}/appointments/events/update/${payload.data.id}`,
       payload,
       {
         headers: authHeader(),
@@ -34,7 +40,7 @@ class Appointments {
 
   cancelEvent(payload) {
     return axios.put(
-      `${API_BASE}/appointments/cancel/${payload.data.id}`,
+      `${API_BASE}/appointments/events/cancel/${payload.data.id}`,
       payload,
       {
         headers: authHeader(),

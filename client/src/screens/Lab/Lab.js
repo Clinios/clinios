@@ -472,8 +472,8 @@ const Lab = () => {
                   >
                     {assigneeUsers.length
                       ? assigneeUsers.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
+                        <MenuItem key={option.name} value={option.name}>
+                          {option.name}
                         </MenuItem>
                       ))
                       : (

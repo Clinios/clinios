@@ -20,13 +20,19 @@ import AuthService from "../../../services/patient_portal/auth.service";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
   Logo: {
-    backgroundColor: "grey",
+    backgroundColor: "#ededed",
+    textAlign: "center",
+    marginTop: theme.spacing(2),
+    "& img": {
+      width: "100%",
+      maxWidth: "200px",
+    },
   },
   avatar: {
     margin: theme.spacing(1),

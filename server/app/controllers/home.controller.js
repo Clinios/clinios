@@ -46,6 +46,39 @@ const getAll = async (req, res) => {
   }
 };
 
+const getAppointmentHistory = async (req, res) => {
+  const db = makeDb(configuration, res);
+
+  try {
+    const dbResponse = await db.query(
+      `select concat(p.firstname, ' ', p.lastname) patient, concat(u2.firstname, ' ', u2.lastname) provider
+      , uc.start_dt, uc.end_dt, uc.status
+      , uc.updated, concat(u.firstname, ' ', u.lastname) updated_by
+      from user_calendar uc
+      left join patient p on p.id=uc.patient_id
+      left join user u on u.id=uc.updated_user_id
+      left join user u2 on u2.id=uc.user_id
+      where uc.updated_user_id=${req.user_id}
+      order by uc.updated desc
+      limit 50
+      `
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    console.log("err", err);
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
 const getEventsByProvider = async (req, res) => {
   const db = makeDb(configuration, res);
   const { providerId } = req.params;
@@ -478,6 +511,7 @@ const getProviderDetails = async (req, res) => {
 
 const appointmentTypes = {
   getAll,
+  getAppointmentHistory,
   getEventsByProvider,
   createAppointment,
   cancelAppointment,

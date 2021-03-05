@@ -75,7 +75,8 @@ const createLab = async (req, res) => {
     }
 
     await db.query(
-      `insert into lab_history (id, patient_id, type, user_id, note_assign, created, created_user_id) values (${lab_id}, ${patient_id}, '${type}', ${user_id}, '${note_assign}', now(), ${req.user_id})`
+      `insert into lab_history (id, user_id, patient_id, type, note_assign, created, created_user_id) values 
+        (${lab_id}, ${user_id}, ${patient_id}, '${type}', '${note_assign}', now(), ${req.user_id})`
     );
 
     let $sql;

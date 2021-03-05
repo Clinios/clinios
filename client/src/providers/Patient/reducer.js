@@ -18,6 +18,9 @@ import {
   SET_HANDOUTS,
   SET_ENCOUNTERS,
   SET_MEDICAL_NOTES,
+  SET_SELECTED_MESSAGE,
+  RESET_SELECTED_MESSAGE,
+  SET_MESSAGE_TYPE,
   SET_MESSAGES,
   SET_MEDICATIONS,
   SET_DIAGNOSES,
@@ -31,6 +34,7 @@ import {
   // Togglers
   TOGGLE_PATIENT_INFO_EDIT_DIALOG,
   TOGGLE_PATIENT_INFO_HISORY_DIALOG,
+  TOGGLE_PATIENT_APPOINTMENT_HISORY_DIALOG,
   TOGGLE_ADMIN_NOTES_EDIT_FORM,
   TOGGLE_ADMIN_NOTES_HISTORY_DIALOG,
   TOGGLE_FORM_EXPAND_DIALOG,
@@ -180,6 +184,31 @@ const reducer = (state = initialState, action) => {
           data: [...action.payload],
         },
       };
+    case SET_SELECTED_MESSAGE:
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          selectedMessage: action.payload,
+        },
+      };
+    case RESET_SELECTED_MESSAGE:
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          selectedMessage: null,
+          messageType: "New",
+        },
+      };
+    case SET_MESSAGE_TYPE:
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          messageType: action.payload,
+        },
+      };
     case SET_REQUISITIONS:
       return {
         ...state,
@@ -261,6 +290,14 @@ const reducer = (state = initialState, action) => {
         patientInfo: {
           ...state.patientInfo,
           historyDialog: !state.patientInfo.historyDialog,
+        },
+      };
+    case TOGGLE_PATIENT_APPOINTMENT_HISORY_DIALOG:
+      return {
+        ...state,
+        patientInfo: {
+          ...state.patientInfo,
+          appointmentHistoryDialog: !state.patientInfo.appointmentHistoryDialog,
         },
       };
     case TOGGLE_ADMIN_NOTES_HISTORY_DIALOG:

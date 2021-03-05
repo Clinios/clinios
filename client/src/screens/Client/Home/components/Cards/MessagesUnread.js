@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: 47,
   },
   messageToPatientsUnread: {
+    display: "none", // Comment out by Ruhul as per #CLIN-18
     marginTop: theme.spacing(4),
     "& li": {
       fontSize: "13px",

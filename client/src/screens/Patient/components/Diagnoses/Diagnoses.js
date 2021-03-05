@@ -15,6 +15,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
+import Tooltip from "../../../../components/common/CustomTooltip";
 import { StyledTableRowSm, StyledTableCellSm } from "../../../../components/common/StyledTable";
 import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
@@ -47,8 +48,10 @@ const useStyles = makeStyles((theme) => ({
   pointer: {
     cursor: "pointer",
   },
-  hidden: {
-    color: theme.palette.common.white,
+  overFlowControl: {
+    maxWidth: "130px",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
   },
 }));
 
@@ -118,36 +121,45 @@ const Diagnoses = (props) => {
       </Grid>
       */}
 
-      <Grid item xs={4}>
-        <form onSubmit={(e) => fetchDiagnosis(e, searchText)}>
-          <Grid container alignItems="center" className={classes.mb2}>
-            <Grid item xs>
-              <TextField
-                autoFocus
-                fullWidth
-                required
-                size="small"
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={4}>
+          <form onSubmit={(e) => fetchDiagnosis(e, searchText)}>
+            <Grid container alignItems="center">
+              <Grid item xs>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  required
+                  size="small"
+                  variant="outlined"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+              </Grid>
+              <Button
                 variant="outlined"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-              />
+                type="submit"
+                className={classes.ml2}
+              >
+                Search
+              </Button>
             </Grid>
-            <Button
-              variant="outlined"
-              type="submit"
-              className={classes.ml2}
-            >
-              Search
-            </Button>
-          </Grid>
-        </form>
+          </form>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography variant="h4" color="textPrimary">
+            Recently Used
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography variant="h4" color="textPrimary">
+            Favorites
+          </Typography>
+        </Grid>
       </Grid>
 
       <Grid container spacing={2} className={classes.mb2}>
         <Grid item lg={4}>
-          <Typography variant="h4" className={classes.hidden}>
-            Search Results
-          </Typography>
           <TableContainer>
             <Table size="small">
               <TableHead>
@@ -165,9 +177,19 @@ const Diagnoses = (props) => {
                       className={classes.pointer}
                       onClick={() => onFormSubmit(item)}
                     >
-                      <StyledTableCellSm>{item.name}</StyledTableCellSm>
+                      {!!item.name && item.name.length > 30
+                        ? (
+                          <Tooltip title={item.name}>
+                            <StyledTableCellSm
+                              className={classes.overFlowControl}
+                            >
+                              {item.name}
+                            </StyledTableCellSm>
+                          </Tooltip>
+                        )
+                        : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
                       <StyledTableCellSm>{item.id}</StyledTableCellSm>
-                      <StyledTableCellSm>{item.favorite ? "Yes" : "-"}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
                   : (
@@ -184,9 +206,6 @@ const Diagnoses = (props) => {
           </TableContainer>
         </Grid>
         <Grid item lg={4}>
-          <Typography variant="h4" color="textPrimary">
-            Recently Used
-          </Typography>
           <TableContainer>
             <Table size="small">
               <TableHead>
@@ -204,9 +223,19 @@ const Diagnoses = (props) => {
                       className={classes.pointer}
                       onClick={() => onFormSubmit(item)}
                     >
-                      <StyledTableCellSm>{item.name}</StyledTableCellSm>
+                      {!!item.name && item.name.length > 30
+                        ? (
+                          <Tooltip title={item.name}>
+                            <StyledTableCellSm
+                              className={classes.overFlowControl}
+                            >
+                              {item.name}
+                            </StyledTableCellSm>
+                          </Tooltip>
+                        )
+                        : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
                       <StyledTableCellSm>{item.id}</StyledTableCellSm>
-                      <StyledTableCellSm>{item.favorite ? "Yes" : "-"}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
                   : (
@@ -223,9 +252,6 @@ const Diagnoses = (props) => {
           </TableContainer>
         </Grid>
         <Grid item lg={4}>
-          <Typography variant="h4" color="textPrimary">
-            Favorites
-          </Typography>
           <TableContainer>
             <Table size="small">
               <TableHead>
@@ -243,9 +269,19 @@ const Diagnoses = (props) => {
                       className={classes.pointer}
                       onClick={() => onFormSubmit(item)}
                     >
-                      <StyledTableCellSm>{item.name}</StyledTableCellSm>
+                      {!!item.name && item.name.length > 30
+                        ? (
+                          <Tooltip title={item.name}>
+                            <StyledTableCellSm
+                              className={classes.overFlowControl}
+                            >
+                              {item.name}
+                            </StyledTableCellSm>
+                          </Tooltip>
+                        )
+                        : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
                       <StyledTableCellSm>{item.id}</StyledTableCellSm>
-                      <StyledTableCellSm>{item.favorite ? "Yes" : "-"}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
                   : (

@@ -85,15 +85,15 @@ const createBilling = async (req, res) => {
 
   const db = makeDb(configuration, res);
 
-  if (!payment_type) {
-    payment_type = null;
-  } else {
+  if (!payment_type && typeof payment_type !== "undefined") {
     payment_type = `'${payment_type}'`;
+  } else {
+    payment_type = null;
   }
   try {
     const insertResponse = await db.query(
-      `insert into tran (patient_id, user_id, client_id, dt, type_id, amount, payment_type, note, created, created_user_id) values 
-        (${patient_id}, ${req.user_id}, ${client_id}, '${dt}', ${type_id}, ${amount}, ${payment_type}, '${note}', now(), ${req.user_id})`
+      `insert into tran (dt, type_id, payment_type, amount, client_id, user_id, patient_id, note, created, created_user_id) values 
+        ('${dt}', ${type_id}, ${payment_type}, ${amount}, ${client_id}, ${req.user_id}, ${patient_id}, '${note}', now(), ${req.user_id})`
     );
 
     if (!insertResponse.affectedRows) {

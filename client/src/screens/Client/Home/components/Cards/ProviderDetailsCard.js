@@ -159,7 +159,8 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
               </div>
             </Link>
           </li>
-          <li>
+          { /* Comment out by Ruhul as per #CLIN-18 */ }
+          <li style={{ display: "none" }}>
             <div>Messages To Patients Unread</div>
             <div className={classes.count}>
               {!!providerDetails

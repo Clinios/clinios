@@ -2,7 +2,6 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useMemo,
   useCallback,
   useReducer,
   createContext,
@@ -71,6 +70,7 @@ import {
   toggleBillngExpandDialog,
   toggleNewTransactionDialog,
   togglePaymentDialog,
+  togglePatientAppointmentHistoryDialog,
 } from "../../providers/Patient/actions";
 import initialState from "../../providers/Patient/initialState";
 import PatientService from "../../services/patient.service";
@@ -90,6 +90,7 @@ import {
   AllergiesCardContent,
   AllergiesDetails,
 } from "./components/Allergies";
+import AppointmentHistory from "./components/AppointmentHistory";
 import {
   BasicInfo,
   PatientCardContent,
@@ -112,7 +113,6 @@ import {
   HandoutsCardContent,
   HandoutsDetails,
 } from "./components/Handouts";
-import SearchResults from "./components/SearchResults";
 import EncountersForm from "./Encounters";
 import EncountersCardContent from "./Encounters/content";
 import EncountersDetails from "./Encounters/details";
@@ -166,6 +166,8 @@ const Patient = () => {
     allergies, messages, requisitions, tests, diagnoses, medications, billing,
   } = state;
 
+  const { messageType } = messages;
+
   // patient ID authenticity
   const [hasPatientIderror, setHasPatientIderror] = useState(true);
 
@@ -175,7 +177,6 @@ const Patient = () => {
   const [isLayoutUpdated, setIsLayoutUpdated] = useState(false);
 
   // data states
-  const [patientsSearchResults, setPatientsSearchResults] = useState([]);
   const patientData = patientInfo.data;
   const patientBalance = billing.balance;
 
@@ -448,21 +449,9 @@ const Patient = () => {
         text: searchText,
       },
     };
-    PatientService.searchPatient(patientId, reqBody).then((res) => {
-      setPatientsSearchResults(res.data);
-      if (res.data.length) {
-        enqueueSnackbar(`${res.data.length} entity(s) found`, { variant: "success" });
-      } else {
-        enqueueSnackbar(`No record found`, { variant: "error" });
-      }
+    PatientService.searchPatient(patientId, reqBody).then(() => {
     });
   };
-
-  const debouncedSearchPatients = _.debounce((query) => {
-    if (query.length > 1) {
-      searchPatientHandler(query);
-    }
-  }, 1000);
 
   const mapPrimaryButtonHandlers = (value) => {
     switch (value) {
@@ -706,10 +695,6 @@ const Patient = () => {
     }
   };
 
-  const closeSearchResultsDialog = () => {
-    setPatientsSearchResults([]);
-  };
-
   const updateMinHeight = (key, newHeight) => {
     const calculatedHeight = newHeight / 40 + 0.5;
     // 40 is the row height, 0.5 is the margin
@@ -764,13 +749,6 @@ const Patient = () => {
     fetchPaymentMethods,
   ]);
 
-  const showSearchResultsDialog = useMemo(() => {
-    if (patientsSearchResults.length) {
-      return true;
-    }
-    return false;
-  }, [patientsSearchResults]);
-
   return (
     <PatientContext.Provider value={{ state, dispatch }}>
       <input
@@ -782,12 +760,12 @@ const Patient = () => {
         onChange={(e) => handleDocumentsFile(e)}
         hidden
       />
-      {showSearchResultsDialog && (
+      {!!patientInfo.appointmentHistoryDialog && (
         <Dialog
-          open={showSearchResultsDialog}
-          title={" "}
-          message={<SearchResults data={patientsSearchResults} />}
-          cancelForm={() => closeSearchResultsDialog()}
+          open={patientInfo.appointmentHistoryDialog}
+          title="Appointment History"
+          message={<AppointmentHistory />}
+          cancelForm={() => dispatch(togglePatientAppointmentHistoryDialog())}
           hideActions
           size="md"
         />
@@ -1020,7 +998,7 @@ const Patient = () => {
       {!!messages.newDialog && (
         <Dialog
           open={messages.newDialog}
-          title="New Message"
+          title={`${messageType} Message`}
           message={(
             <NewMessageForm
               reloadData={fetchMessages}
@@ -1225,7 +1203,7 @@ const Patient = () => {
                     item.title,
                   )}
                   iconHandler={mapIconHandlers(item.title)}
-                  searchHandler={(value) => debouncedSearchPatients(value)}
+                  searchHandler={(value) => searchPatientHandler(value)}
                   updateLayoutHandler={() => updateCardsLayout()}
                   resetLayoutHandler={() => resetCardsLayout()}
                   isLayoutUpdated={isLayoutUpdated}

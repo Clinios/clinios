@@ -5,6 +5,7 @@ const initialState = {
   patientInfo: {
     data: {},
     history: [],
+    appointmentHistoryDialog: false,
     editDialog: false,
     historyDialog: false,
   },
@@ -46,6 +47,8 @@ const initialState = {
   },
   messages: {
     data: [],
+    selectedMessage: null,
+    messageType: "New",
     newDialog: false,
     expandDialog: false,
   },

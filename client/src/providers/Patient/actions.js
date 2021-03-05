@@ -18,6 +18,9 @@ import {
   SET_HANDOUTS,
   SET_ENCOUNTERS,
   SET_MEDICAL_NOTES,
+  SET_SELECTED_MESSAGE,
+  RESET_SELECTED_MESSAGE,
+  SET_MESSAGE_TYPE,
   SET_MESSAGES,
   SET_MEDICATIONS,
   SET_DIAGNOSES,
@@ -30,6 +33,7 @@ import {
   // Togglers
   TOGGLE_PATIENT_INFO_EDIT_DIALOG,
   TOGGLE_PATIENT_INFO_HISORY_DIALOG,
+  TOGGLE_PATIENT_APPOINTMENT_HISORY_DIALOG,
   TOGGLE_ADMIN_NOTES_EDIT_FORM,
   TOGGLE_ADMIN_NOTES_HISTORY_DIALOG,
   TOGGLE_FORM_EXPAND_DIALOG,
@@ -138,6 +142,21 @@ export const setMessages = (data) => ({
   payload: data,
 });
 
+export const setSelectedMessage = (message) => ({
+  type: SET_SELECTED_MESSAGE,
+  payload: message,
+});
+
+export const resetSelectedMessage = () => ({
+  type: RESET_SELECTED_MESSAGE,
+});
+
+export const setMessageType = (message) => ({
+  type: SET_MESSAGE_TYPE,
+  payload: message,
+});
+
+
 export const setRequisitions = (data) => ({
   type: SET_REQUISITIONS,
   payload: data,
@@ -185,6 +204,10 @@ export const togglePatientInfoDialog = () => ({
 
 export const togglePatientHistoryDialog = () => ({
   type: TOGGLE_PATIENT_INFO_HISORY_DIALOG,
+});
+
+export const togglePatientAppointmentHistoryDialog = () => ({
+  type: TOGGLE_PATIENT_APPOINTMENT_HISORY_DIALOG,
 });
 
 export const toggleAdminFormDialog = () => ({

@@ -11,6 +11,7 @@ import TableRow from "@material-ui/core/TableRow";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
 import RestoreIcon from "@material-ui/icons/RestorePage";
 import clsx from "clsx";
+import { chunk, orderBy } from "lodash";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
@@ -20,6 +21,7 @@ import Tooltip from "../../../../components/common/CustomTooltip";
 import usePatientContext from "../../../../hooks/usePatientContext";
 // import useAuth from "../../../../hooks/useAuth";
 import PatientService from "../../../../services/patient.service";
+import { calculateFunctionalPercentage } from "../../../../utils/FunctionalRange";
 import Lab from "./Dialog/Lab";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   overFlowControl: {
-    maxWidth: "30px",
+    maxWidth: "130px",
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap",
@@ -179,6 +181,58 @@ const DocumentsContent = (props) => {
     setTabValue(newValue);
   };
 
+  const calculateFlag = (itemRow) => {
+    const testsString = !!itemRow.tests && itemRow.tests.split(",");
+    const allTestsArray = chunk(testsString, 4);
+
+    const trimmedValues = !!allTestsArray && allTestsArray.length && allTestsArray.map((test) => {
+      const tests = test.map((elem, index) => {
+        if (index === 0) {
+          return elem.replace(/["]/g, ``);
+        }
+        return Number(elem.replace(/["]/g, ``));
+      });
+      return tests;
+    });
+
+    // value, rangeLow, rangeHigh
+
+    let flagResults = [];
+    if (!!trimmedValues && trimmedValues.length) {
+      flagResults = trimmedValues.map((value) => {
+        const testName = value[0];
+        const resultValue = Number(value[1]);
+        const rangeLow = Number(value[2]);
+        const rangeHigh = Number(value[3]);
+        const flag = calculateFunctionalPercentage(rangeLow, rangeHigh, resultValue);
+        let percentValue = 0;
+        if (resultValue < rangeLow) {
+          percentValue = Math.abs(Number(((resultValue / rangeLow) * 100) - 100).toFixed(1));
+        }
+        if (resultValue > rangeHigh) {
+          percentValue = Math.abs(Number(((resultValue / rangeHigh) * 100) - 100).toFixed(1));
+        }
+        return {
+          testName,
+          flag,
+          percentValue,
+        };
+      });
+    }
+
+    flagResults = orderBy(flagResults, ["percentValue"], ["desc"]);
+
+    let resString = "";
+    flagResults.forEach((item) => {
+      if (item.flag.length) {
+        resString += `${item.testName} (${item.flag}), `;
+      }
+    });
+    resString = resString.trim(); // removing last space
+    resString = resString.slice(0, -1); // removing last comma
+    return resString;
+  };
+
   return (
     <Grid
       className={clsx({
@@ -235,10 +289,8 @@ const DocumentsContent = (props) => {
             <TableRow>
               <StyledTableCell>Created</StyledTableCell>
               <StyledTableCell>Filename</StyledTableCell>
-              <StyledTableCell align="center">
-                Conv Flag
-              </StyledTableCell>
-              <StyledTableCell>Func Flag</StyledTableCell>
+              <StyledTableCell>Conventional Flag</StyledTableCell>
+              <StyledTableCell>Functional Flag</StyledTableCell>
               <StyledTableCell>Notes</StyledTableCell>
               {
                 actionsEnable && (
@@ -249,51 +301,74 @@ const DocumentsContent = (props) => {
           </TableHead>
           <TableBody>
             {tableData.length ? (
-              tableData.map((row) => (
-                <StyledTableRow
-                  key={`${row.created}_${row.filename}`}
-                  onClick={() => handleDocumentClick(row)}
-                >
-                  <TableCell component="th" scope="row">
-                    {moment(row.created).format("MMM D YYYY")}
-                  </TableCell>
-                  <TableCell>{row.filename}</TableCell>
-                  <TableCell>{row.physician}</TableCell>
-                  <TableCell>{row.physician}</TableCell>
-                  {
-                    !!row.note && row.note.length > 10
+              tableData.map((row) => {
+                const flagValue = calculateFlag(row);
+                return (
+                  <StyledTableRow
+                    key={`${row.created}_${row.filename}`}
+                    onClick={() => handleDocumentClick(row)}
+                  >
+                    <TableCell component="th" scope="row">
+                      {moment(row.created).format("MMM D YYYY")}
+                    </TableCell>
+                    <TableCell>{row.filename}</TableCell>
+                    {!!flagValue && flagValue.length > 23
                       ? (
-                        <Tooltip title={row.note}>
+                        <Tooltip title={flagValue}>
                           <TableCell
                             className={classes.overFlowControl}
                           >
-                            {row.note}
+                            {flagValue}
                           </TableCell>
                         </Tooltip>
                       )
-                      : <TableCell>{row.note}</TableCell>
-                  }
-                  {actionsEnable && (
-                    <TableCell className={classes.actions}>
-                      {row.status === "D"
+                      : <TableCell>{flagValue}</TableCell>}
+                    {!!flagValue && flagValue.length > 23
+                      ? (
+                        <Tooltip title={flagValue}>
+                          <TableCell
+                            className={classes.overFlowControl}
+                          >
+                            {flagValue}
+                          </TableCell>
+                        </Tooltip>
+                      )
+                      : <TableCell>{flagValue}</TableCell>}
+                    {
+                      !!row.note && row.note.length > 10
                         ? (
-                          <RestoreIcon
-                            className={classes.icon}
-                            onClick={(e) => updateDocumentStatusHandler(row.id, "A", e)}
-                            fontSize="small"
-                          />
+                          <Tooltip title={row.note}>
+                            <TableCell
+                              className={classes.overFlowControl}
+                            >
+                              {row.note}
+                            </TableCell>
+                          </Tooltip>
                         )
-                        : (
-                          <DeleteIcon
-                            className={classes.icon}
-                            onClick={(e) => updateDocumentStatusHandler(row.id, "D", e)}
-                            fontSize="small"
-                          />
-                        )}
-                    </TableCell>
-                  )}
-                </StyledTableRow>
-              ))
+                        : <TableCell>{row.note}</TableCell>
+                    }
+                    {actionsEnable && (
+                      <TableCell className={classes.actions}>
+                        {row.status === "D"
+                          ? (
+                            <RestoreIcon
+                              className={classes.icon}
+                              onClick={(e) => updateDocumentStatusHandler(row.id, "A", e)}
+                              fontSize="small"
+                            />
+                          )
+                          : (
+                            <DeleteIcon
+                              className={classes.icon}
+                              onClick={(e) => updateDocumentStatusHandler(row.id, "D", e)}
+                              fontSize="small"
+                            />
+                          )}
+                      </TableCell>
+                    )}
+                  </StyledTableRow>
+                );
+              })
             ) : (
               <StyledTableRow>
                 <TableCell align="center" colSpan={10}>

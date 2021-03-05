@@ -73,7 +73,7 @@ const routes = [
   },
   {
     exact: true,
-    guard: AuthGuard,
+    guard: AdminGuard,
     layout: DashboardLayout,
     path: "/dashboard",
     component: lazy(() => import("./screens/Client/Home/Home")),

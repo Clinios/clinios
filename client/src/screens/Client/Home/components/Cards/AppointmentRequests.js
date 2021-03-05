@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
     padding: "0 0 0 1em",
     borderBottom: `1px solid ${Colors.border}`,
     minHeight: 47,
+    justifyContent: "flex-start",
+  },
+  historyButton: {
+    marginLeft: theme.spacing(2),
   },
   providers: {
     display: "block",
@@ -101,6 +105,7 @@ const useStyles = makeStyles((theme) => ({
 const AppointmentRequests = ({
   appointmentRequests,
   selectedProvider,
+  onHistoryClick,
   onMessageClick,
   onReject,
   onAccept,
@@ -145,6 +150,7 @@ const AppointmentRequests = ({
         <Typography className={classes.title}>
           Patient Appointment Requests
         </Typography>
+        <Button className={classes.historyButton} onClick={onHistoryClick}>History</Button>
       </Grid>
       <CardContent>
         <ul>
@@ -206,6 +212,7 @@ AppointmentRequests.propTypes = {
   selectedProvider: PropTypes.shape({
     name: PropTypes.string,
   }).isRequired,
+  onHistoryClick: PropTypes.func.isRequired,
   onMessageClick: PropTypes.func.isRequired,
   onReject: PropTypes.func.isRequired,
   onAccept: PropTypes.func.isRequired,

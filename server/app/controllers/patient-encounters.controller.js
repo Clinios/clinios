@@ -418,13 +418,13 @@ const createNewPrescription = async (req, res) => {
   try {
     const insertResponse = await db.query(
       `insert into patient_drug (patient_id, drug_id, drug_frequency_id, drug_strength_id, start_dt, expires, amount, refills, generic,
-         patient_instructions, pharmacy_instructions, client_id, user_id, encounter_id, created, created_user_id)
+         patient_instructions, pharmacy_instructions, encounter_id, client_id, user_id, created, created_user_id)
        values (${patient_id}, '${drug_id}', '${drug_frequency_id}', '${drug_strength_id}', '${moment(
         start_dt
       ).format("YYYY-MM-DD HH:mm:ss")}', '${expires}', '${amount}',
-       '${refills}', '${generic}', '${patient_instructions}', '${pharmacy_instructions}', ${
+       '${refills}', '${generic}', '${patient_instructions}', '${pharmacy_instructions}', ${encounter_id}, ${
         req.client_id
-      }, ${req.user_id}, ${encounter_id}, now(), ${req.user_id})`
+      }, ${req.user_id}, now(), ${req.user_id})`
     );
 
     if (!insertResponse.affectedRows) {
@@ -1013,8 +1013,8 @@ const createBillingPayment = async (req, res) => {
   }
   try {
     const insertResponse = await db.query(
-      `insert into tran (patient_id, user_id, client_id, encounter_id, dt, type_id, amount, payment_type, created, created_user_id) values 
-        (${patient_id}, ${req.user_id}, ${req.client_id}, ${encounter_id}, '${dt}', ${type_id}, ${amount}, ${payment_type}, now(), ${req.user_id})`
+      `insert into tran (dt, type_id, payment_type, amount, encounter_id, client_id, user_id, patient_id, created, created_user_id) values 
+        ('${dt}', ${type_id}, ${payment_type}, ${amount}, ${encounter_id}, ${req.client_id}, ${req.user_id}, ${patient_id}, now(), ${req.user_id})`
     );
 
     if (!insertResponse.affectedRows) {

@@ -22,6 +22,11 @@ router.get(
   Patient.history
 );
 router.get(
+  "/patient/:patient_id/appointment/history",
+  [authJwt.verifyToken],
+  Patient.getAppointmenthistory
+);
+router.get(
   "/patient/:patient_id/balance",
   [authJwt.verifyToken],
   Patient.balance
@@ -81,6 +86,16 @@ router.get(
   "/patient/:patient_id/billing",
   [authJwt.verifyToken],
   Patient.getBilling
+);
+router.get(
+  "/patient/:patient_id/billing/transactionTypes",
+  [authJwt.verifyToken],
+  Patient.getBillingTransactionTypes
+);
+router.get(
+  "/patient/:patient_id/billing/paymentOptions",
+  [authJwt.verifyToken],
+  Patient.getBillingPaymentOptions
 );
 router.post(
   "/patient/:patient_id/billing",
@@ -168,6 +183,11 @@ router.post(
   [authJwt.verifyToken],
   Patient.createMessage
 );
+router.put(
+  "/patient/:patient_id/messages/:id",
+  [authJwt.verifyToken],
+  Patient.updateMessage
+);
 router.delete(
   "/patient/:patient_id/messages/:id",
   [authJwt.verifyToken],
@@ -233,37 +253,31 @@ router.delete(
   [authJwt.verifyToken],
   Patient.deleteRequisitions
 );
-
 router.get(
   "/patient-layout/:user_id",
   [authJwt.verifyToken],
   Patient.getLayout
 );
-
 router.post(
   "/patient-layout/:user_id",
   [authJwt.verifyToken],
   Patient.saveLayout
 );
-
 router.delete(
   "/patient-layout/:user_id",
   [authJwt.verifyToken],
   Patient.deleteLayout
 );
-
 router.get(
   "/patient/:patient_id/payment-methods",
   [authJwt.verifyToken],
   Patient.getPaymentMethods
 );
-
 router.post(
   "/patient/:patient_id/payment-methods",
   [authJwt.verifyToken],
   Patient.createPaymentMethod
 );
-
 router.put(
   "/patient/:patient_id/payment-methods/:id",
   [authJwt.verifyToken],

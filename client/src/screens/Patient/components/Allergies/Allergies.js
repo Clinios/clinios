@@ -39,7 +39,6 @@ const Allergies = (props) => {
   const { reloadData } = props;
   const [searchText, setSearchText] = useState("");
   const [allergies, setAllergies] = useState([]);
-  const [selectedAllergy, setSelectedAllergy] = useState(null);
   const { patientId } = state;
 
   const fetchAllergies = (e, text) => {
@@ -54,11 +53,10 @@ const Allergies = (props) => {
     });
   };
 
-  const onFormSubmit = (e) => {
-    e.preventDefault();
+  const onFormSubmit = (item) => {
     const reqBody = {
       data: {
-        drug_id: selectedAllergy.id,
+        drug_id: item.id,
       },
     };
     PatientService.createAllergy(patientId, reqBody)
@@ -91,7 +89,6 @@ const Allergies = (props) => {
         <form onSubmit={(e) => fetchAllergies(e, searchText)}>
           <TextField
             autoFocus
-            required
             size="small"
             variant="outlined"
             value={searchText}
@@ -106,16 +103,14 @@ const Allergies = (props) => {
           </Button>
         </form>
       </Grid>
-      <Grid item lg={4} className={classes.root}>
+      <Grid item lg={4} className={`${classes.root} ${classes.mb2}`}>
         <List component="ul">
           {allergies.map((allergy) => (
             <ListItem
               onClick={() => {
-                setSearchText(allergy.name);
-                setSelectedAllergy(allergy);
+                onFormSubmit(allergy);
               }}
               key={allergy.id}
-              selected={!!selectedAllergy && selectedAllergy.id === allergy.id}
               disableGutters
               button
             >
@@ -123,26 +118,6 @@ const Allergies = (props) => {
             </ListItem>
           ))}
         </List>
-      </Grid>
-
-      <Grid
-        className={classes.actionContainer}
-        container
-        justify="space-between"
-      >
-        <Button
-          variant="outlined"
-          onClick={(e) => onFormSubmit(e)}
-          type="submit"
-        >
-          Save
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => dispatch(toggleAllergyDialog())}
-        >
-          Cancel
-        </Button>
       </Grid>
     </>
   );

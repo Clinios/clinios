@@ -15,7 +15,7 @@ const search = async (req, res) => {
             left join user u on u.id=cd.updated_user_id
             where 1 \n`;
     if (searchTerm) {
-      $sql += `and d.name like '${searchTerm}%' \n`;
+      $sql += `and d.name like '%${searchTerm}%' \n`;
     }
     if (checkBox === true) {
       $sql += `and cd.favorite = true \n`;

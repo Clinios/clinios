@@ -381,6 +381,34 @@ const history = async (req, res) => {
   }
 };
 
+const getAppointmenthistory = async (req, res) => {
+  const db = makeDb(configuration, res);
+  const { patient_id } = req.params;
+  try {
+    const dbResponse = await db.query(
+      `select concat(p.firstname, ' ', p.lastname) patient, concat(u2.firstname, ' ', u2.lastname) provider,
+       uc.start_dt, uc.end_dt, uc.status , uc.updated, concat(u.firstname, ' ', u.lastname) updated_by from user_calendar uc 
+       left join patient p on p.id=uc.patient_id left join user u on u.id=uc.updated_user_id 
+       left join user u2 on u2.id=uc.user_id where uc.patient_id=${patient_id}
+       order by uc.start_dt desc limit 40`
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    console.log("err", err);
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
 const nextAppointment = async (req, res) => {
   const db = makeDb(configuration, res);
   const { patient_id } = req.params;
@@ -787,6 +815,60 @@ const getBilling = async (req, res) => {
   }
 };
 
+const getBillingTransactionTypes = async (req, res) => {
+  const db = makeDb(configuration, res);
+  try {
+    const dbResponse = await db.query(
+      `select id, name
+      from tran_type tt
+      where (client_id is null or client_id=${req.client_id})
+      order by 1
+      limit 100`
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    console.log("err", err);
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
+const getBillingPaymentOptions = async (req, res) => {
+  const db = makeDb(configuration, res);
+  const { patient_id } = req.params;
+  try {
+    const dbResponse = await db.query(
+      `select id, type, account_number, exp, created
+      from payment_method
+      where patient_id=${patient_id}
+      order by 1`
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    console.log("err", err);
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
 const createBilling = async (req, res) => {
   const { patient_id } = req.params;
   const { dt, type_id, amount, note } = req.body.data;
@@ -797,11 +879,12 @@ const createBilling = async (req, res) => {
   if (!payment_type && typeof payment_type !== "undefined") {
     payment_type = `'${payment_type}'`;
   }
+
   try {
-    const insertResponse = await db.query(
-      `insert into tran (patient_id, user_id, client_id, dt, type_id, amount, payment_type, note, created, created_user_id) values 
-        (${patient_id}, ${req.user_id}, ${req.client_id}, '${dt}', ${type_id}, ${amount}, ${payment_type}, '${note}', now(), ${req.user_id})`
-    );
+    const $sql = `insert into tran (patient_id, user_id, client_id, dt, type_id, amount, payment_type, note, created, created_user_id) values 
+    (${patient_id}, ${req.user_id}, ${req.client_id}, '${dt}', ${type_id}, ${amount}, '${payment_type}', '${note}', now(), ${req.user_id})`;
+
+    const insertResponse = await db.query($sql);
 
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
@@ -897,7 +980,7 @@ const searchAllergies = async (req, res) => {
         from drug d
         where d.name like '%${text}%'
         order by d.name
-        limit 50
+        limit 15
       `
     );
 
@@ -957,7 +1040,7 @@ const getDocuments = async (req, res) => {
     let $sql;
 
     $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
-      , group_concat('"', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
+      , group_concat('"', lc.cpt_id, '","', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
       from lab l
       left join lab_cpt lc on lc.lab_id=l.id
       left join cpt c on c.id=lc.cpt_id
@@ -1102,7 +1185,8 @@ const createDocuments = async (req, res) => {
       }
 
       const insertResponse = await db.query(
-        `insert into lab (client_id, user_id, patient_id, filename, status, source, created, created_user_id) values (${req.client_id}, ${req.user_id}, ${patient_id}, '${uploadedFilename}', 'R', 'U', now(), ${req.user_id})`
+        `insert into lab (client_id, user_id, patient_id, filename, source, status, created, created_user_id) values 
+          (${req.client_id}, ${req.user_id}, ${patient_id}, '${uploadedFilename}', 'U', 'R', now(), ${req.user_id})`
       );
 
       if (!insertResponse.affectedRows) {
@@ -1368,7 +1452,7 @@ const getMessages = async (req, res) => {
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select m.id, m.created
+      `select m.id, m.created, m.user_id_from
         , concat(u.firstname, ' ', u.lastname) user_to_from
         , concat(u2.firstname, ' ', u2.lastname) user_to_name
         , m.read_dt, m.subject , m.message
@@ -1402,11 +1486,12 @@ const createMessage = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const insertResponse = await db.query(
-      `insert into message (subject, message, unread_notify_dt, client_id, patient_id_to, user_id_from, created, created_user_id)
-         values ( '${subject}', '${message}', '${moment(
+      `insert into message (client_id, user_id_from, patient_id_to, subject, message, unread_notify_dt, created, created_user_id)
+         values (${req.client_id}, ${
+        req.user_id
+      }, ${patient_id}, '${subject}', '${message}', '${moment(
         unread_notify_dt
-      ).format("YYYY-MM-DD")}', ${req.client_id}, ${patient_id},
-          ${req.user_id}, now(), ${req.user_id})`
+      ).format("YYYY-MM-DD")}', now(), ${req.user_id})`
     );
 
     if (!insertResponse.affectedRows) {
@@ -1419,6 +1504,33 @@ const createMessage = async (req, res) => {
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
+const updateMessage = async (req, res) => {
+  const { subject, message, unread_notify_dt } = req.body.data;
+  const { id } = req.params;
+
+  const db = makeDb(configuration, res);
+  try {
+    const $sql = `update message set subject='${subject}', message='${message}', unread_notify_dt='${unread_notify_dt}', 
+     updated= now(), updated_user_id='${req.user_id}' where id=${id}`;
+
+    const updateResponse = await db.query($sql);
+    if (!updateResponse.affectedRows) {
+      errorMessage.message = "Update not successful";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = updateResponse;
+    successMessage.message = "Update successful";
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    console.log("err", err);
+    errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
     await db.close();
@@ -1770,8 +1882,8 @@ const createRequisitions = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const insertResponse = await db.query(
-      `insert into patient_cpt (encounter_id, cpt_id, client_id, patient_id, created, created_user_id) 
-      values ('${encounter_id}', '${cpt_id}', ${req.client_id}, ${patient_id}, now(), ${req.user_id})`
+      `insert into patient_cpt (patient_id, cpt_id, client_id, encounter_id, created, created_user_id) 
+      values (${patient_id}, '${cpt_id}', ${req.client_id}, '${encounter_id}', now(), ${req.user_id})`
     );
 
     if (!insertResponse.affectedRows) {
@@ -2078,6 +2190,7 @@ const appointmentTypes = {
   updatePatient,
   search,
   history,
+  getAppointmenthistory,
   balance,
   nextAppointment,
   AdminNotehistory,
@@ -2091,6 +2204,8 @@ const appointmentTypes = {
   DeletePatientHandouts,
   getTranType,
   getBilling,
+  getBillingTransactionTypes,
+  getBillingPaymentOptions,
   createBilling,
   getAllergies,
   deleteAllergy,
@@ -2108,6 +2223,7 @@ const appointmentTypes = {
   medicalNotesHistoryUpdate,
   getMessages,
   createMessage,
+  updateMessage,
   deleteMessage,
   getAllTests,
   getDiagnoses,
