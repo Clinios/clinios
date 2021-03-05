@@ -22,7 +22,7 @@ jobs:
         run: cd client/ && npm i --ignore-scripts
 
       - name: Super-Linter-on-Client
-        uses: docker://github/super-linter:latest
+        uses: github/super-linter@v3
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
