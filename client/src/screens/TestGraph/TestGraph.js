@@ -15,14 +15,11 @@ import {
   extent,
 } from "d3";
 
-
 import { AxisBottom } from "./AxisBottom";
 import { AxisLeft } from "./Axisleft";
 import { GraphTooltip } from "./GraphTooltip";
 import { Marks } from "./LineChart";
 import { useData } from "./useData";
-
-import "./TestGraph.css";
 
 const width = 1300;
 const height = 500;
@@ -31,7 +28,7 @@ const margin = {
 };
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   gridMargin: {
     marginTop: "15px",
   },
@@ -46,6 +43,21 @@ const useStyles = makeStyles(() => ({
     flexDirection: "column",
     marginTop: "30px",
   },
+  testGraph: {
+    alignSelf: "center",
+    width: 1190,
+  },
+  graphArrowIconContainer: {
+    width: "70px",
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "10px",
+  },
+  graphArrowIcon: {
+    marginBottom: theme.spacing(1 / 2),
+    marginLeft: theme.spacing(1),
+    color: "#2979ffdb",
+  },
 }));
 
 const TestGraph = () => {
@@ -55,7 +67,7 @@ const TestGraph = () => {
 
 
   if (!data) {
-    return <pre>Loading...</pre>;
+    return <pre>...</pre>;
   }
 
   const innerHeight = height - margin.top - margin.bottom;
@@ -95,24 +107,14 @@ const TestGraph = () => {
         handleMouseOver={handleMouseOver}
         toolTipRef={toolTipRef}
       />
-      <div style={{
-        alignSelf: "center",
-        width: 1190,
-      }}
-      >
+      <div className={classes.testGraph}>
         <Typography component="p" variant="body" color="textPrimary">
           Thyroid Stimulating Hormone (TSH)
         </Typography>
-        <div style={{
-          width: "70px",
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: "10px",
-        }}
-        >
+        <div className={classes.graphArrowIconContainer}>
           <Link
             href="/"
-            className={classes.patientIcon}
+            className={classes.graphArrowIcon}
             target="_blank"
           >
             <Icon
@@ -125,7 +127,7 @@ const TestGraph = () => {
           </Link>
           <Link
             href="/"
-            className={classes.patientIcon}
+            className={classes.graphArrowIcon}
             target="_blank"
           >
             <Icon

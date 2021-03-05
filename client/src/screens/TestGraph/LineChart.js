@@ -1,7 +1,23 @@
 import React, { Component } from "react";
 
+import {
+  makeStyles,
+} from "@material-ui/core";
 import { line, curveNatural } from "d3";
 import PropTypes from "prop-types";
+
+const useStyles = makeStyles(() => ({
+  path: {
+    stroke: "#137b80",
+    strokeWidth: "1",
+    strokeLinejoin: "round",
+    strokeLinecap: "round",
+  },
+  circle: {
+    fill: "#fff",
+    stroke: "#137b80",
+  },
+}));
 
 export const Marks = ({
   data,
@@ -13,6 +29,8 @@ export const Marks = ({
   circleRadius,
   toolTipRef,
 }) => {
+  const classes = useStyles();
+
   const handleMouseMove = (event) => {
     const tooltip = toolTipRef.current;
     tooltip.style.position = "absolute";
@@ -32,14 +50,16 @@ export const Marks = ({
 
 
   return (
-    <g className="marks">
+    <g>
       <path
         fill="none"
-        stroke="black"
-        d={line()
-          .x((d) => xScale(xValue(d)))
-          .y((d) => yScale(yValue(d)))
-          .curve(curveNatural)(data)}
+        className={classes.path}
+        d={
+          line()
+            .x((d) => xScale(xValue(d)))
+            .y((d) => yScale(yValue(d)))
+            .curve(curveNatural)(data)
+        }
       />
       {data.map((d) => (
         <g
@@ -60,6 +80,7 @@ export const Marks = ({
             cx={xScale(xValue(d))}
             cy={yScale(yValue(d))}
             r={circleRadius}
+            className={classes.circle}
           />
         </g>
       ))}
