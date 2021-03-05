@@ -60,9 +60,7 @@ export const Marks = ({
             cx={xScale(xValue(d))}
             cy={yScale(yValue(d))}
             r={circleRadius}
-          >
-            {/* <title>{tooltipFormat(xValue(d))}</title> */}
-          </circle>
+          />
         </g>
       ))}
     </g>

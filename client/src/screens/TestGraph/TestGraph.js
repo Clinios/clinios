@@ -18,9 +18,8 @@ import {
 
 import { AxisBottom } from "./AxisBottom";
 import { AxisLeft } from "./Axisleft";
-// import { LeftArrow } from "./LeftArrow";
+import { GraphTooltip } from "./GraphTooltip";
 import { Marks } from "./LineChart";
-// import { RightArrow } from "./RightArrow";
 import { useData } from "./useData";
 
 import "./TestGraph.css";
@@ -38,6 +37,14 @@ const useStyles = makeStyles(() => ({
   },
   filterbutton: {
     marginRight: "5px",
+  },
+  testGraphContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    flexDirection: "column",
+    marginTop: "30px",
   },
 }));
 
@@ -82,52 +89,12 @@ const TestGraph = () => {
   };
 
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      position: "relative",
-      flexDirection: "column",
-      marginTop: "30px",
-    }}
-    >
-      <div
-        ref={toolTipRef}
-        onMouseOver={handleMouseOver}
-        onMouseLeave={handleMouseLeave}
-        onFocus={handleMouseOver}
-        style={{
-          backgroundColor: "#fff",
-          border: "solid",
-          borderWidth: "1px",
-          borderRadius: "5px",
-          borderColor: "#aaa",
-          padding: "10px",
-          opacity: 0,
-          transition: "all .2s",
-          zIndex: "1000",
-        }}
-        className="toolti"
-      >
-        <Typography component="p" variant="body2" color="textPrimary">
-          Lab Date: June 15, 2019 8:00AM
-        </Typography>
-        <Typography component="p" variant="body2" color="textPrimary">
-          File: Something.txt
-        </Typography>
-        <Typography component="p" variant="body2" color="textPrimary">
-          Value: 6
-        </Typography>
-        <Link
-          href="/"
-          target="_blank"
-        >
-          <Typography component="p" variant="body2" color="textPrimary">
-            Link to Original File
-          </Typography>
-        </Link>
-
-      </div>
+    <div className={classes.testGraphContainer}>
+      <GraphTooltip
+        handleMouseLeave={handleMouseLeave}
+        handleMouseOver={handleMouseOver}
+        toolTipRef={toolTipRef}
+      />
       <div style={{
         alignSelf: "center",
         width: 1190,
@@ -209,7 +176,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // onClick={}
+          // TODO: onClick={}
           >
             3 Months
           </Button>
@@ -219,7 +186,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // onClick={}
+          // TODO: onClick={}
           >
             6 Months
           </Button>
@@ -229,7 +196,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // onClick={}
+          // TODO: onClick={}
           >
             1 Years
           </Button>
@@ -239,7 +206,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // onClick={}
+          // TODO: onClick={}
           >
             2 Years
           </Button>
@@ -249,7 +216,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // onClick={}
+          // TODO: onClick={}
           >
             All
           </Button>
