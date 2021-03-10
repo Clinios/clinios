@@ -15,6 +15,7 @@ import {
   extent,
 } from "d3";
 
+import { Graph } from './components';
 import { AxisBottom } from "./AxisBottom";
 import { AxisLeft } from "./Axisleft";
 import { GraphTooltip } from "./GraphTooltip";
@@ -140,35 +141,7 @@ const TestGraph = () => {
           </Link>
         </div>
       </div>
-
-      <svg width={width} height={height}>
-        <g
-          transform={`translate(${margin.left},${margin.top})`}
-        >
-          <AxisBottom
-            xScale={xScale}
-            innerHeight={innerHeight}
-            tickFormat={xAxisTickFormat}
-            tickOffset={7}
-          />
-          <AxisLeft
-            yScale={yScale}
-            innerWidth={innerWidth}
-            tickOffset={7}
-          />
-          <Marks
-            data={data}
-            xScale={xScale}
-            yScale={yScale}
-            xValue={xValue}
-            yValue={yValue}
-            tooltipFormat={xAxisTickFormat}
-            circleRadius={3}
-            toolTipRef={toolTipRef}
-          />
-        </g>
-      </svg>
-
+      <Graph />
       <Grid container xs={12} md={12} className={classes.gridMargin}>
         <Grid item xs={12} sm={6} className={classes.gridMargin} />
         <Grid item xs={12} sm={4} className={classes.gridMargin}>
