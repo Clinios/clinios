@@ -1,6 +1,4 @@
-import React, {
-  useRef,
-} from "react";
+import React from "react";
 
 import {
   Grid, makeStyles, Button, Typography,
@@ -10,8 +8,6 @@ import { mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
 import Icon from "@mdi/react";
 
 import { Graph } from "./components";
-import { GraphTooltip } from "./GraphTooltip";
-import { useData } from "./useData";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -46,33 +42,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TestGraph = () => {
-  const data = useData();
-  const toolTipRef = useRef();
   const classes = useStyles();
-
-
-  if (!data) {
-    return <pre>...</pre>;
-  }
-
-
-  const handleMouseOver = () => {
-    const tooltip = toolTipRef.current;
-    tooltip.style.opacity = 1;
-  };
-
-  const handleMouseLeave = () => {
-    const tooltip = toolTipRef.current;
-    tooltip.style.opacity = 0;
-  };
 
   return (
     <div className={classes.testGraphContainer}>
-      <GraphTooltip
-        handleMouseLeave={handleMouseLeave}
-        handleMouseOver={handleMouseOver}
-        toolTipRef={toolTipRef}
-      />
       <div className={classes.testGraph}>
         <Typography component="p" variant="body" color="textPrimary">
           Thyroid Stimulating Hormone (TSH)
