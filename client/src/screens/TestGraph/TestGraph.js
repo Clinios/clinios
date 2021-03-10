@@ -8,26 +8,10 @@ import {
 import Link from "@material-ui/core/Link";
 import { mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
 import Icon from "@mdi/react";
-import {
-  scaleLinear,
-  scaleTime,
-  timeFormat,
-  extent,
-} from "d3";
 
-import { Graph } from './components';
-import { AxisBottom } from "./AxisBottom";
-import { AxisLeft } from "./Axisleft";
+import { Graph } from "./components";
 import { GraphTooltip } from "./GraphTooltip";
-import { Marks } from "./LineChart";
 import { useData } from "./useData";
-
-const width = 1300;
-const height = 500;
-const margin = {
-  top: 40, right: 30, bottom: 30, left: 90,
-};
-
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -70,25 +54,6 @@ const TestGraph = () => {
   if (!data) {
     return <pre>...</pre>;
   }
-
-  const innerHeight = height - margin.top - margin.bottom;
-  const innerWidth = width - margin.left - margin.right;
-
-  const xValue = (d) => d.timestamp;
-
-  const yValue = (d) => d.temperature;
-
-  const xAxisTickFormat = timeFormat("%a");
-
-  const xScale = scaleTime()
-    .domain(extent(data, xValue))
-    .range([0, innerWidth])
-    .nice();
-
-  const yScale = scaleLinear()
-    .domain(extent(data, yValue))
-    .range([innerHeight, 0])
-    .nice();
 
 
   const handleMouseOver = () => {
