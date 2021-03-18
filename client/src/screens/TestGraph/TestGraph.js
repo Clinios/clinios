@@ -6,8 +6,8 @@ import { mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
 import Icon from "@mdi/react";
 
 import { Graph } from "./components";
-import CPTCodes from "../../services/cpt.service";
 import Tests from "../../services/tests.service";
+import Patient from "../../services/patient.service";
 import useAuth from "../../hooks/useAuth";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,6 +46,7 @@ const TestGraph = () => {
   const classes = useStyles();
   const { user } = useAuth();
   const [cptName, setCptName] = useState("");
+  const [functionalRange, setFunctionalRange] = useState({});
 
   React.useEffect(() => {
     Tests.getTestCptName("82040").then(
@@ -61,22 +62,21 @@ const TestGraph = () => {
     );
   }, []);
 
-  console.log("cptName", cptName[0]?.name);
-  // React.useEffect(() => {
-  //   if (cpt) {
-  //     CPTCodes.search(cpt[0].id).then(
-  //       (res) => {
-  //         // setCpt(res.data);
-  //         console.log("res.data", res.data);
-  //       },
-  //       () => {
-  //         enqueueSnackbar("Unable to fetch Activity history.", {
-  //           variant: "error",
-  //         });
-  //       }
-  //     );
-  //   }
-  // }, [cpt]);
+  React.useEffect(() => {
+    Patient.getFunctionalRange(user.id).then(
+      (res) => {
+        const data = res?.data;
+        setFunctionalRange(data);
+      },
+      () => {
+        enqueueSnackbar("Unable to fetch Activity history.", {
+          variant: "error",
+        });
+      }
+    );
+  }, [user]);
+
+  console.log("functionalRange", functionalRange);
 
   return (
     <div className={classes.testGraphContainer}>

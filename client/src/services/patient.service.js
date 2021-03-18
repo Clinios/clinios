@@ -4,6 +4,14 @@ import { API_BASE } from "../utils/API_BASE";
 import authHeader from "./auth-header";
 
 class Patient {
+  getFunctionalRange(patientId) {
+    return axios
+      .get(`${API_BASE}/patient/${patientId}`, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
   getCardsLayout(userId) {
     return axios
       .get(`${API_BASE}/patient-layout/${userId}`, { headers: authHeader() })
@@ -73,9 +81,7 @@ class Patient {
   }
 
   getPatientData(patientId) {
-    return axios
-      .get(`${API_BASE}/patient/${patientId}`, { headers: authHeader() })
-      .then((res) => res.data);
+    return axios.get(`${API_BASE}/patient/${patientId}`, { headers: authHeader() }).then((res) => res.data);
   }
 
   getNextAppointment(patientId) {
@@ -178,11 +184,9 @@ class Patient {
 
   createEncountersBillingPayments(patientId, encounterId, reqBody) {
     return axios
-      .post(`${API_BASE}/patient/${patientId}/encounters/${encounterId}/billing/payment`,
-        reqBody,
-        {
-          headers: authHeader(),
-        })
+      .post(`${API_BASE}/patient/${patientId}/encounters/${encounterId}/billing/payment`, reqBody, {
+        headers: authHeader(),
+      })
       .then((res) => res.data);
   }
 
@@ -192,7 +196,7 @@ class Patient {
       data,
       {
         headers: authHeader(),
-      },
+      }
     );
   }
 
@@ -202,7 +206,7 @@ class Patient {
       data,
       {
         headers: authHeader(),
-      },
+      }
     );
   }
 
@@ -408,23 +412,15 @@ class Patient {
   }
 
   updateMedicalNotes(patientId, data) {
-    return axios.put(
-      `${API_BASE}/patient/${patientId}/medical-notes/history`,
-      data,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.put(`${API_BASE}/patient/${patientId}/medical-notes/history`, data, {
+      headers: authHeader(),
+    });
   }
 
   updateEncounters(patientId, encounterId, data) {
-    return axios.put(
-      `${API_BASE}/patient/${patientId}/encounters/${encounterId}`,
-      data,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.put(`${API_BASE}/patient/${patientId}/encounters/${encounterId}`, data, {
+      headers: authHeader(),
+    });
   }
 
   updateBilling(patientId, billingId, data) {
@@ -442,24 +438,16 @@ class Patient {
   }
 
   updateDiagnoses(patient_id, icd_id, data) {
-    return axios.put(
-      `${API_BASE}/patient/${patient_id}/diagnoses/${icd_id}`,
-      data,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.put(`${API_BASE}/patient/${patient_id}/diagnoses/${icd_id}`, data, {
+      headers: authHeader(),
+    });
   }
 
   // create methods
   createPatientHandout(patientId, data) {
-    return axios.post(
-      `${API_BASE}/patient/${patientId}/patient-handout`,
-      data,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.post(`${API_BASE}/patient/${patientId}/patient-handout`, data, {
+      headers: authHeader(),
+    });
   }
 
   createDiagnoses(patientId, data) {
@@ -524,58 +512,39 @@ class Patient {
   }
 
   deleteAllergy(patientId, drugId) {
-    return axios.delete(
-      `${API_BASE}/patient/${patientId}/allergies/${drugId}`,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.delete(`${API_BASE}/patient/${patientId}/allergies/${drugId}`, {
+      headers: authHeader(),
+    });
   }
 
   deleteEncounter(patientId, encounterId) {
-    return axios.delete(
-      `${API_BASE}/patient/${patientId}/encounters/${encounterId}`,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.delete(`${API_BASE}/patient/${patientId}/encounters/${encounterId}`, {
+      headers: authHeader(),
+    });
   }
 
   deletePatientHandout(patientId, handoutId) {
-    return axios.delete(
-      `${API_BASE}/patient/patient-handout/${patientId}/${handoutId}`,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.delete(`${API_BASE}/patient/patient-handout/${patientId}/${handoutId}`, {
+      headers: authHeader(),
+    });
   }
 
   deleteHandout(patientId, handoutId) {
-    return axios.delete(
-      `${API_BASE}/patient/${patientId}/handouts/${handoutId}`,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.delete(`${API_BASE}/patient/${patientId}/handouts/${handoutId}`, {
+      headers: authHeader(),
+    });
   }
 
   updateDocument(patientId, documentId, body) {
-    return axios.put(
-      `${API_BASE}/patient/${patientId}/documents/${documentId}`,
-      body,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.put(`${API_BASE}/patient/${patientId}/documents/${documentId}`, body, {
+      headers: authHeader(),
+    });
   }
 
   deleteDiagnoses(patientId, icdId) {
-    return axios.delete(
-      `${API_BASE}/patient/${patientId}/diagnoses/${icdId}`,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.delete(`${API_BASE}/patient/${patientId}/diagnoses/${icdId}`, {
+      headers: authHeader(),
+    });
   }
 
   deleteMedications(patientId, reqBody) {
@@ -605,29 +574,25 @@ class Patient {
   }
 
   createPaymentMethod(patientId, data) {
-    return axios.post(`${API_BASE}/patient/${patientId}/payment-methods`, data, {
-      headers: authHeader(),
-    })
+    return axios
+      .post(`${API_BASE}/patient/${patientId}/payment-methods`, data, {
+        headers: authHeader(),
+      })
       .then((res) => res.data);
   }
 
   deletePaymentMethod(patientId, paymentMethodId) {
-    return axios.delete(
-      `${API_BASE}/patient/${patientId}/payment-methods/${paymentMethodId}`,
-      {
-        headers: authHeader(),
-      },
-    );
+    return axios.delete(`${API_BASE}/patient/${patientId}/payment-methods/${paymentMethodId}`, {
+      headers: authHeader(),
+    });
   }
 
   updatePaymentMethod(patientId, paymentMethodId, data) {
-    return axios.put(
-      `${API_BASE}/patient/${patientId}/payment-methods/${paymentMethodId}`,
-      data,
-      {
+    return axios
+      .put(`${API_BASE}/patient/${patientId}/payment-methods/${paymentMethodId}`, data, {
         headers: authHeader(),
-      },
-    ).then((res) => res.data);
+      })
+      .then((res) => res.data);
   }
 }
 
