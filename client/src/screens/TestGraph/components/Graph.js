@@ -1,71 +1,10 @@
 import React from "react";
-
-import {
-  LineChart,
-  ReferenceLine,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from "recharts";
+import moment from "moment";
+import { LineChart, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from "recharts";
 
 import ReferenceLabel from "./ReferenceLabel";
 
-// TODO:: Dummy data which will be removed soon.
-const data = [
-  {
-    name: "2012",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-  {
-    name: "2013",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-  {
-    name: "2014",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-  {
-    name: "2015",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-  {
-    name: "2016",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-  {
-    name: "2017",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-  {
-    name: "2018",
-    fr: 5.5,
-    uv: 2500,
-    pv: 4000,
-    amt: 2500,
-  },
-];
-
-export default function Graph() {
+export default function Graph({ data, range }) {
   return (
     <LineChart
       width={800}
@@ -77,39 +16,50 @@ export default function Graph() {
         left: 20,
         bottom: 5,
       }}
+      getDerivedStateFromProps={(po) => {
+        console.log("po", po);
+      }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
+      <XAxis dataKey={(v) => moment(v?.lab_dt).format("YYYY")} />
       <YAxis
         type="number"
-        domain={[3, 8]}
+        domain={[range?.low - 5, range?.high + 5]}
         interval="0.5"
-        ticks={[4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7]}
+        ticks={[
+          range?.high + 1,
+          range?.high + 0.5,
+          range?.high,
+          range?.low,
+          range?.low - 0.5,
+          range?.low - 1,
+        ]}
         tick={{ stroke: "grey", strokeWidth: 0.5 }}
         tickCount={5}
       />
       <Tooltip />
       <Legend />
       <ReferenceLine
-        y={5.6}
+        y={range?.high + 0.5}
         label={<ReferenceLabel value="Conventional range" fill="#477fc9" />}
         stroke="#477fc9"
       />
       <ReferenceLine
-        y={5.5}
+        y={range?.high}
         label={<ReferenceLabel value="Functional range" fill="#477fc9" />}
         stroke="#477fc9"
       />
       <ReferenceLine
-        y={5.0}
+        y={range?.low}
         label={<ReferenceLabel value="Functional range" fill="#477fc9" />}
         stroke="#477fc9"
       />
       <ReferenceLine
-        y={4.8}
+        y={range?.low - 0.5}
         label={<ReferenceLabel value="Conventional range" fill="#477fc9" />}
         stroke="#477fc9"
       />
+      <Line strokeWidth={2} type="monotone" dataKey={(v) => v.value} stroke="#477fc9" />
     </LineChart>
   );
 }
