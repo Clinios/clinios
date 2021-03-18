@@ -12,6 +12,10 @@ class Tests {
   getTestCptName(cptId) {
     return axios.get(`${API_URL}/tests/page-title/${cptId}`, { headers: authHeader() });
   }
+
+  getLabCpt(patientId) {
+    return axios.get(`${API_URL}/tests/lab-cpt/${patientId}`, { headers: authHeader() });
+  }
 }
 
 export default new Tests();

@@ -47,6 +47,7 @@ const TestGraph = () => {
   const { user } = useAuth();
   const [cptName, setCptName] = useState("");
   const [functionalRange, setFunctionalRange] = useState({});
+  const [labCpt, setLabCpt] = useState([]);
 
   React.useEffect(() => {
     Tests.getTestCptName("82040").then(
@@ -74,9 +75,21 @@ const TestGraph = () => {
         });
       }
     );
+
+    Tests.getLabCpt(user.id).then(
+      (res) => {
+        const data = res?.data;
+        setLabCpt(data);
+      },
+      () => {
+        enqueueSnackbar("Unable to fetch Activity history.", {
+          variant: "error",
+        });
+      }
+    );
   }, [user]);
 
-  console.log("functionalRange", functionalRange);
+  console.log("labCpt", labCpt);
 
   return (
     <div className={classes.testGraphContainer}>
