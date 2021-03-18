@@ -72,13 +72,13 @@ const routes = [
     path: "/login_client",
     component: lazy(() => import("./screens/Auth/Login")),
   },
-  {
-    exact: true,
-    guard: ClientPortalGuard,
-    layout: DashboardLayout,
-    path: "/dashboard",
-    component: lazy(() => import("./screens/Client/Home/Home")),
-  },
+  // {
+  //   exact: true,
+  //   guard: ClientPortalGuard,
+  //   layout: DashboardLayout,
+  //   path: "/dashboard",
+  //   component: lazy(() => import("./screens/Client/Home/Home")),
+  // },
   {
     exact: true,
     guard: ClientPortalGuard,

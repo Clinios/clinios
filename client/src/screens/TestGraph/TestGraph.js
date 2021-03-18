@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import {
-  Grid, makeStyles, Button, Typography,
-} from "@material-ui/core";
+import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import { mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
 import Icon from "@mdi/react";
 
 import { Graph } from "./components";
+import CPTCodes from "../../services/cpt.service";
+import Tests from "../../services/tests.service";
+import useAuth from "../../hooks/useAuth";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -43,39 +44,52 @@ const useStyles = makeStyles((theme) => ({
 
 const TestGraph = () => {
   const classes = useStyles();
+  const { user } = useAuth();
+  const [cptName, setCptName] = useState("");
+
+  React.useEffect(() => {
+    Tests.getTestCptName("82040").then(
+      (res) => {
+        const data = res?.data?.data;
+        setCptName(data);
+      },
+      () => {
+        enqueueSnackbar("Unable to fetch Activity history.", {
+          variant: "error",
+        });
+      }
+    );
+  }, []);
+
+  console.log("cptName", cptName[0]?.name);
+  // React.useEffect(() => {
+  //   if (cpt) {
+  //     CPTCodes.search(cpt[0].id).then(
+  //       (res) => {
+  //         // setCpt(res.data);
+  //         console.log("res.data", res.data);
+  //       },
+  //       () => {
+  //         enqueueSnackbar("Unable to fetch Activity history.", {
+  //           variant: "error",
+  //         });
+  //       }
+  //     );
+  //   }
+  // }, [cpt]);
 
   return (
     <div className={classes.testGraphContainer}>
       <div className={classes.testGraph}>
         <Typography component="p" variant="body" color="textPrimary">
-          Thyroid Stimulating Hormone (TSH)
+          Thyroid Stimulating Hormone {cptName[0]?.name && `( ${cptName[0].name} )`}
         </Typography>
         <div className={classes.graphArrowIconContainer}>
-          <Link
-            href="/"
-            className={classes.graphArrowIcon}
-            target="_blank"
-          >
-            <Icon
-              path={mdiArrowLeftBold}
-              size={1.3}
-              horizontal
-              vertical
-              rotate={180}
-            />
+          <Link href="/" className={classes.graphArrowIcon} target="_blank">
+            <Icon path={mdiArrowLeftBold} size={1.3} horizontal vertical rotate={180} />
           </Link>
-          <Link
-            href="/"
-            className={classes.graphArrowIcon}
-            target="_blank"
-          >
-            <Icon
-              path={mdiArrowRightBold}
-              size={1.3}
-              horizontal
-              vertical
-              rotate={180}
-            />
+          <Link href="/" className={classes.graphArrowIcon} target="_blank">
+            <Icon path={mdiArrowRightBold} size={1.3} horizontal vertical rotate={180} />
           </Link>
         </div>
       </div>
@@ -89,7 +103,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // TODO: onClick={}
+            // TODO: onClick={}
           >
             3 Months
           </Button>
@@ -99,7 +113,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // TODO: onClick={}
+            // TODO: onClick={}
           >
             6 Months
           </Button>
@@ -109,7 +123,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // TODO: onClick={}
+            // TODO: onClick={}
           >
             1 Years
           </Button>
@@ -119,7 +133,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // TODO: onClick={}
+            // TODO: onClick={}
           >
             2 Years
           </Button>
@@ -129,7 +143,7 @@ const TestGraph = () => {
             variant="contained"
             color="default"
             className={classes.filterbutton}
-          // TODO: onClick={}
+            // TODO: onClick={}
           >
             All
           </Button>
@@ -146,6 +160,5 @@ const TestGraph = () => {
     </div>
   );
 };
-
 
 export default TestGraph;
