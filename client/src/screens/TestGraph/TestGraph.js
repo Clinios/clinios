@@ -98,12 +98,12 @@ const TestGraph = () => {
           Thyroid Stimulating Hormone {cptName[0]?.name && `( ${cptName[0].name} )`}
         </Typography>
         <div className={classes.graphArrowIconContainer}>
-          <Link href="/" className={classes.graphArrowIcon} target="_blank">
+          <Button color="default" className={classes.graphArrowIcon}>
             <Icon path={mdiArrowLeftBold} size={1.3} horizontal vertical rotate={180} />
-          </Link>
-          <Link href="/" className={classes.graphArrowIcon} target="_blank">
+          </Button>
+          <Button color="default" className={classes.graphArrowIcon} target="_blank">
             <Icon path={mdiArrowRightBold} size={1.3} horizontal vertical rotate={180} />
-          </Link>
+          </Button>
         </div>
       </div>
       <Graph />
