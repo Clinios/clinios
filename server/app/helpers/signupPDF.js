@@ -15,7 +15,7 @@ const signupPDF = async (content, user, client) => {
     const fileName = `c${user.client_id}_u${user.id}_${moment().format(
       "YYYY-MM-DD-HHMMSS"
     )}_contract.pdf`;
-    const pdfPath = path.join(process.env.CONTRACT_UPLOAD_DIR, fileName);
+    const pdfPath = path.join(`${process.env.UPLOAD_DIR}/client`, fileName);
     const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
     pdfDoc.text(content);
 

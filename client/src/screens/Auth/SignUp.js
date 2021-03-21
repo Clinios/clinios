@@ -72,7 +72,7 @@ const SignUp = () => {
       },
       (error) => {
         if (error.response) {
-          setErrors(error.response.data.error);
+          setErrors(error.response.data.message);
         }
       },
     );

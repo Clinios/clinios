@@ -33,7 +33,7 @@ const getAll = async (req, res) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dest = process.env.UPLOAD_DIR;
+    const dest = `${process.env.UPLOAD_DIR}/client`;
     // eslint-disable-next-line prefer-arrow-callback
     fs.access(dest, function (error) {
       if (error) {

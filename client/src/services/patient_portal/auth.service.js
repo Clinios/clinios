@@ -24,10 +24,6 @@ class PatientAuthService {
       .then((res) => res.data);
   }
 
-  upload(data) {
-    return axios.post(`${API_BASE}/auth/patient/upload`, data);
-  }
-
   validate(data) {
     return axios.post(`${API_BASE}/auth/field/validate`, data);
   }

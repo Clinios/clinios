@@ -61,7 +61,7 @@ const getUser = async (req, res) => {
   }
 };
 
-const getUserByClientId = async (req, res) => {
+const getUsersByClientId = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const $sql = `select id, firstname, lastname 
@@ -78,8 +78,7 @@ const getUserByClientId = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    const user = dbResponse[0];
-    successMessage.data = { user };
+    successMessage.data = dbResponse;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     errorMessage.message = "Select not successful";
@@ -236,7 +235,7 @@ const users = {
   getForwardEmailList,
   getLastVisitedPatient,
   getUser,
-  getUserByClientId,
+  getUsersByClientId,
   createNewUser,
   updateUser,
 };

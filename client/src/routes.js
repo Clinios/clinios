@@ -302,13 +302,6 @@ const routes = [
   },
   {
     exact: true,
-    guard: ClientPortalGuard,
-    layout: DashboardLayout,
-    path: "/process-message/:userId",
-    component: lazy(() => import("./screens/ProcessMessage")),
-  },
-  {
-    exact: true,
     guard: GuestGuard,
     layout: MainLayout,
     path: "/signup/:clientCode",

@@ -15,7 +15,6 @@ import Icon from "@mdi/react";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 
-import Logo from "../../../../assets/img/Logo.png";
 import Error from "../../../../components/common/Error";
 import useAuth from "../../../../hooks/useAuth";
 import ConfigurationService from "../../../../services/configuration.service";
@@ -101,7 +100,7 @@ export default function Configuration() {
   const logoRef = React.useRef(null);
 
   const initFormParams = {
-    logo: Logo,
+    logo: `${process.env.REACT_APP_API_URL}static/client/c${user.client_id}_logo.png`,
     clientId: "",
     clientCode: "",
     name: "",
@@ -130,7 +129,7 @@ export default function Configuration() {
       // eslint-disable-next-line prefer-destructuring
       data = data.data[0]; // TODO:: Refactor and remove eslint-disable-next-line
       setFormParams({
-        logo: Logo,
+        logo: `${process.env.REACT_APP_API_URL}static/client/c${user.client_id}_logo.png`,
         clientId: data.id,
         clientCode: data.code,
         name: data.name,

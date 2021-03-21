@@ -4,12 +4,11 @@ import {
   TextField, Button, Grid, Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Dialog from "../../../../components/Dialog";
-import PatientService from "../../../../services/patient.service";
+import MessageToUserService from "../../../../services/message-to-user.service";
 
 const useStyles = makeStyles((theme) => ({
   formInput: {
@@ -43,15 +42,13 @@ const NewMessage = (props) => {
 
   const onMessageSend = (e) => {
     e.preventDefault();
-    const patientId = 1;
     const reqBody = {
       data: {
         message: formFields.message,
         subject: formFields.subject,
-        unread_notify_dt: moment().format("YYYY-MM-DD"),
       },
     };
-    PatientService.createMessage(patientId, reqBody)
+    MessageToUserService.createMessage(reqBody)
       .then((response) => {
         enqueueSnackbar(`${response.data.message}`, { variant: "success" });
         reloadData();

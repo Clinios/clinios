@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => createStyles({
     padding: "1rem 2rem",
     maxHeight: "86vh",
   },
+  fullScreenContent: {
+    maxHeight: "unset",
+  },
   fullHeight: {
     minHeight: "86vh",
   },
@@ -120,6 +123,7 @@ const DialogForm = ({
           className={clsx({
             [classes.content]: true, // always apply
             [classes.fullHeight]: fullHeight, // only when fullHeight === true
+            [classes.fullScreenContent]: fullScreen, // only when fullScreen === true
           })}
         >
           {message}

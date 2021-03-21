@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dest = process.env.LAB_UPLOAD_DIR;
+    const dest = `${process.env.UPLOAD_DIR}/patient`;
     // eslint-disable-next-line prefer-arrow-callback
     fs.access(dest, function (error) {
       if (error) {

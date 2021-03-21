@@ -15,7 +15,7 @@ exports.validate = (method) => {
           .exists()
           .not()
           .isEmpty(),
-        check("client.address", "Practice address can not empty!")
+        /*         check("client.address", "Practice address can not empty!")
           .exists()
           .not()
           .isEmpty(),
@@ -30,24 +30,24 @@ exports.validate = (method) => {
         check("client.postal", "Practice postal can not empty!")
           .exists()
           .not()
-          .isEmpty(),
+          .isEmpty(), */
         check("client.phone", "Practice phone can not empty!")
           .exists()
           .not()
           .isEmpty(),
-        check("client.fax", "Practice fax can not empty!")
+        /*       check("client.fax", "Practice fax can not empty!")
           .exists()
           .not()
           .isEmpty(),
         check("client.email", "Practice email can not empty!")
           .exists()
           .not()
-          .isEmpty(),
+          .isEmpty(), */
         check("client.website", "Practice website can not empty!")
           .exists()
           .not()
           .isEmpty(),
-        check("client.ein", "Practice ein can not empty!")
+        /*         check("client.ein", "Practice ein can not empty!")
           .exists()
           .not()
           .isEmpty(),
@@ -58,7 +58,7 @@ exports.validate = (method) => {
         check("client.code", "Client code can not empty!")
           .exists()
           .not()
-          .isEmpty(),
+          .isEmpty(), */
         check("user.email", "User email can not empty!").exists().isEmail(),
         check("user.password", "User password can not empty!")
           .exists()

@@ -7,7 +7,7 @@ const { configuration, makeDb } = require("../db/db.js");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     console.log("req:", req.body);
-    const dest = process.env.UPLOAD_DIR;
+    const dest = `${process.env.UPLOAD_DIR}/client`;
     // eslint-disable-next-line prefer-arrow-callback
     fs.access(dest, function (error) {
       if (error) {

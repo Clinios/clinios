@@ -29,6 +29,7 @@ import {
 } from "../../../../static/patientBasicInfoForm";
 import { calculateAge } from "../../../../utils/helpers";
 
+
 const useStyles = makeStyles((theme) => ({
   inputRow: {
     marginBottom: theme.spacing(1),
@@ -85,8 +86,8 @@ const ProfileForm = () => {
     phone_work: "",
     email: "",
     dob: "",
-    otherPhone: "",
-    phoneNotes: "",
+    phone_other: "",
+    phone_note: "",
     gender: "",
     ssn: "",
     password: "",
@@ -94,12 +95,17 @@ const ProfileForm = () => {
     address: "",
     address2: "",
     city: "",
+    insurance_desc: "",
+    insurance_group: "",
+    insurance_member: "",
+    insurance_name: "",
+    insurance_phone: "",
   });
 
   function formatformFeilds(data = {}) {
     return {
       ...data,
-      ...(data.status && { status: data.status && data.status === "A" ? "active" : data.status }),
+      status: data.status && data.status === "A" ? "active" : "inActive",
       ...(data.gender && { gender: data.gender ? data.gender : "M" }),
       ...(data.dob && { dob: data.dob ? data.dob : moment().format("YYYY-MM-DD") }),
     };
@@ -142,14 +148,16 @@ const ProfileForm = () => {
   };
 
   const onFormSubmit = () => {
-    // ! these fields are not recognized by server
-    delete formFields.provider;
-    delete formFields.otherPhone;
-    delete formFields.phoneNotes;
+    // * Deleting these fields as they don't exists in database structure.
     delete formFields.code;
     delete formFields.role;
     delete formFields.login_url;
-    delete formFields.status;
+    delete formFields.dob;
+    delete formFields.provider;
+
+
+    // * status is in need to be formated back to it's original state.
+    formFields.status = formFields?.status === "active" ? "A" : null;
 
     const payload = {
       data: formFields,
@@ -403,6 +411,7 @@ const ProfileForm = () => {
                       name={item.name}
                       id={item.id}
                       type={item.type}
+                      value={formFields[item.name]}
                       fullWidth
                       onChange={(e) => handleInputChange(e)}
                     />

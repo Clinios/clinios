@@ -4,28 +4,45 @@ import { API_BASE } from "../utils/API_BASE";
 import authHeader from "./auth-header";
 
 class Messages {
+  getAllMessages() {
+    return axios
+      .get(`${API_BASE}/user/messages`, { headers: authHeader() })
+      .then((res) => res.data);
+  }
+
   getMessageByID(id) {
     return axios
-      .get(`${API_BASE}/message-to-user/${id}`, { headers: authHeader() })
+      .get(`${API_BASE}/user/messages/${id}`, { headers: authHeader() })
+      .then((res) => res.data);
+  }
+
+  getMessageHistory(id) {
+    return axios
+      .get(`${API_BASE}/user/messages/history/${id}`, { headers: authHeader() })
+      .then((res) => res.data);
+  }
+
+  getMessageAssignees() {
+    return axios
+      .get(`${API_BASE}/user/by-client-id`, { headers: authHeader() })
       .then((res) => res.data);
   }
 
   createMessage(payload) {
-    return axios.post(`${API_BASE}/message-to-user`, payload, {
+    return axios.post(`${API_BASE}/user/messages`, payload, {
       headers: authHeader(),
     }).then((res) => res.data);
   }
 
-  updateMessage(payload) {
-    return axios.put(`${API_BASE}/message-to-user/${payload.data.id}`, payload, {
+  updateMessage(id, payload) {
+    return axios.put(`${API_BASE}/user/messages/${id}`, payload, {
       headers: authHeader(),
     }).then((res) => res.data);
   }
 
-  // TODO:: API endpoint will be updated
   searchUsers(data) {
     return axios
-      .post(`${API_BASE}/allergies/search`, data, {
+      .post(`${API_BASE}/user/by-client-id`, data, {
         headers: authHeader(),
       })
       .then((res) => res.data);

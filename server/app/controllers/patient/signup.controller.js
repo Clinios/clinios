@@ -84,7 +84,7 @@ exports.patientSignup = async (req, res) => {
       if (signature) {
         const base64Data = signature.replace(/^data:image\/png;base64,/, "");
         const dest =
-          `${process.env.SIGNATURE_UPLOAD_DIR}/` +
+          `${process.env.UPLOAD_DIR}/signature/` +
           `signature_${patientResponse.insertId}.png`;
 
         // eslint-disable-next-line prefer-arrow-callback

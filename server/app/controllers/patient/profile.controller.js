@@ -16,7 +16,7 @@ const getPatient = async (req, res) => {
   }
   let $sql;
   try {
-    $sql = `select p.id, p.firstname, p.middlename, p.lastname, p.gender, p.phone_home, p.phone_cell, p.phone_work, p.phone_other, p.phone_note, p.ssn
+    $sql = `select p.status, p.id, p.firstname, p.middlename, p.lastname, p.gender, p.phone_home, p.phone_cell, p.phone_work, p.phone_other, p.phone_note, p.ssn
     , p.address, p.address2, p.city, p.postal, p.state, p.country, p.insurance_name, p.insurance_group, p.insurance_member, p.insurance_phone, p.insurance_desc, p.email
     from patient p
     where p.id=${patient_id}`;
@@ -40,6 +40,7 @@ const getPatient = async (req, res) => {
 
 const updatePatient = async (req, res) => {
   const {
+    status: profileStatus,
     firstname,
     middlename,
     lastname,
@@ -52,6 +53,8 @@ const updatePatient = async (req, res) => {
     phone_home,
     phone_cell,
     phone_work,
+    phone_other,
+    phone_note,
     admin_note,
     medical_note,
     address,
@@ -95,6 +98,9 @@ const updatePatient = async (req, res) => {
     }
     $sql = `update patient set firstname='${firstname}', lastname='${lastname}', email='${email}' `;
 
+    if (typeof profileStatus !== "undefined") {
+      $sql += `, status=${profileStatus ? `"${profileStatus}"` : "default"}`;
+    }
     if (typeof middlename !== "undefined") {
       $sql += `, middlename='${middlename}'`;
     }
@@ -121,6 +127,12 @@ const updatePatient = async (req, res) => {
     }
     if (typeof phone_work !== "undefined") {
       $sql += `, phone_work='${phone_work}'`;
+    }
+    if (typeof phone_other !== "undefined") {
+      $sql += `, phone_other='${phone_other}'`;
+    }
+    if (typeof phone_note !== "undefined") {
+      $sql += `, phone_note='${phone_note}'`;
     }
     if (typeof admin_note !== "undefined") {
       $sql += `, admin_note='${admin_note}'`;

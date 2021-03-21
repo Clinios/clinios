@@ -1,4 +1,5 @@
 import { intersection } from "lodash";
+import moment from "moment";
 
 export const getAcronym = (str) => {
   if (!str || typeof str === "undefined" || str === "") {
@@ -189,6 +190,17 @@ export const convertTransactionTypes = (type) => {
   }
 };
 
+export const messageStatusType = (type) => {
+  switch (type) {
+    case "O":
+      return "Open";
+    case "C":
+      return "Closed";
+    default:
+      return "";
+  }
+};
+
 export const paymentMethodType = (type) => {
   switch (type) {
     case "V":
@@ -265,3 +277,5 @@ export function isEmpty(obj) {
 export function noOp() {
 
 }
+
+export const dateFormat = (date) => moment(date).format("DD MMMM YYYY");

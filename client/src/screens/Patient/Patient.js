@@ -167,6 +167,7 @@ const Patient = () => {
   } = state;
 
   const { messageType } = messages;
+  const { selectedBilling } = billing;
 
   // patient ID authenticity
   const [hasPatientIderror, setHasPatientIderror] = useState(true);
@@ -837,7 +838,7 @@ const Patient = () => {
       {!!billing.newTransactionDialog && (
         <Dialog
           open={billing.newTransactionDialog}
-          title="New Transaction"
+          title={`${selectedBilling ? "Edit" : "New"} Transaction`}
           message={(
             <NewTransactionForm
               reloadData={() => {

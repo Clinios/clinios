@@ -16,6 +16,12 @@ class Configuration {
     });
   }
 
+  updateLogo(id, data) {
+    return axios.put(`${API_BASE}/config/logo/${id}`, data, {
+      headers: authHeader(),
+    });
+  }
+
   updateConfig(id, data) {
     return axios.put(`${API_BASE}/config/${id}`, data, {
       headers: authHeader(),

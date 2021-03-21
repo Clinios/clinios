@@ -10,7 +10,7 @@ router.get("/user", [authJwt.verifyToken], Users.getUser);
 router.get(
   "/user/by-client-id",
   [authJwt.verifyToken],
-  Users.getUserByClientId
+  Users.getUsersByClientId
 );
 router.get(
   "/user/last-visited-patient/:patientId",

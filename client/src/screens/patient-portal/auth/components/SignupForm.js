@@ -121,47 +121,10 @@ const SignupForm = (props) => {
     signatureRef.clear();
   };
 
-  const dataURItoBlob = (dataURI) => {
-    // convert base64/URLEncoded data component to raw binary data held in a string
-    let byteString;
-    if (dataURI.split(",")[0].indexOf("base64") >= 0) byteString = atob(dataURI.split(",")[1]);
-    else byteString = unescape(dataURI.split(",")[1]);
-
-    // separate out the mime component
-    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-
-    // write the bytes of the string to a typed array
-    const ia = new Uint8Array(byteString.length);
-    for (let i = 0; i < byteString.length; i += 1) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-
-    return new Blob([ia], { type: mimeString });
-  };
-
   const saveSignaturePad = () => {
     setSignature(signatureRef.getTrimmedCanvas().toDataURL("image/png"));
-
-    const blob = dataURItoBlob(
-      signatureRef.getTrimmedCanvas().toDataURL("image/png"),
-    );
-
-    const formData = new FormData();
-    formData.append("canvasImage", blob);
-
-    PatientAuthService.upload({
-      data: {
-        imgBase64: signatureRef.getTrimmedCanvas().toDataURL("image/png"),
-      },
-    }).then(
-      (response) => {
-        console.info("image uploadresponse:", response);
-      },
-      (error) => {
-        console.error("image upload error:", error);
-      },
-    );
   };
+
   const patientErrors = errors && errors.filter((err) => err.param.includes("patient"));
 
   const getFieldError = (target, fieldName) => {

@@ -1,7 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 import {
+  Box,
   Grid,
   Typography,
   makeStyles,
@@ -12,12 +13,19 @@ import {
   Radio,
   TextField,
   Divider,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  MenuItem,
 } from "@material-ui/core";
-import moment from "moment";
+import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
-import DebounceSelect from "../../../../components/common/DebounceSelect";
+import { StyledTableCellSm, StyledTableRowSm } from "../../../../components/common/StyledTable";
 import MessageToUserService from "../../../../services/message-to-user.service";
+import { messageStatusType, dateFormat } from "../../../../utils/helpers";
 import MessageToUser from "../MessageToUser";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,9 +45,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
   },
   borderSection: {
+    position: "relative",
     border: "1px solid #aaa",
     borderRadius: "4px",
-    padding: theme.spacing(1.5),
+    padding: theme.spacing(0.5, 1.5),
     minHeight: 120,
   },
   divider: {
@@ -49,29 +58,62 @@ const useStyles = makeStyles((theme) => ({
   mr2: {
     marginRight: theme.spacing(2),
   },
+  text: {
+    lineHeight: "21px",
+  },
+  historyHeading: {
+    position: "absolute",
+    left: 0,
+    top: theme.spacing(-3),
+    [theme.breakpoints.down("md")]: {
+      display: "none",
+    },
+  },
 }));
 
 const StatusSelectionFields = [
   {
     label: "Open",
-    value: "1",
+    value: "O",
   },
   {
     label: "Closed",
-    value: "0",
+    value: "C",
   },
 ];
 
-const ProcessMessage = (props) => {
+const MessageSection = (props) => {
   const classes = useStyles();
-  const { message, showDivider } = props;
+  const { enqueueSnackbar } = useSnackbar();
+  const { message, showDivider, fetchMessages } = props;
   const {
-    created, user_to_name, user_to_from, subject, message: messageString,
+    id, created, user_to_name, patient_from_name, subject, message: messageString,
+    status, note_assign, user_id_to,
   } = message;
 
-  const [statusSelection, setStatusSelection] = useState("1");
+  const [statusSelection, setStatusSelection] = useState(status);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
-  const [assignTo, setAssignTo] = useState();
+  const [messageHistory, setMessageHistory] = useState(false);
+  const [messageAssignees, setMessageAssignees] = useState(false);
+  const [assignTo, setAssignTo] = useState(user_id_to);
+  const [assignmentNotes, setAssignmentNotes] = useState(note_assign);
+
+  const fetchMessageHistory = useCallback(() => {
+    MessageToUserService.getMessageHistory(id).then((res) => {
+      setMessageHistory(res.data);
+    });
+  }, [id]);
+
+  const fetchAssignees = useCallback(() => {
+    MessageToUserService.getMessageAssignees().then((res) => {
+      setMessageAssignees(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchMessageHistory();
+    fetchAssignees();
+  }, [fetchMessageHistory, fetchAssignees]);
 
   const handleStatusSelection = (e) => {
     setStatusSelection(e.target.value);
@@ -81,13 +123,18 @@ const ProcessMessage = (props) => {
     setShowMessageDialog((prevState) => !prevState);
   };
 
-  const searchAssignees = async (reqBody) => {
-    try {
-      const res = await MessageToUserService.searchUsers(reqBody);
-      return res;
-    } catch (err) {
-      throw err.response;
-    }
+  const messageUpdateHandler = () => {
+    const reqBody = {
+      data: {
+        user_id_to: assignTo,
+        message_status: statusSelection,
+        note_assign: assignmentNotes,
+      },
+    };
+    MessageToUserService.updateMessage(id, reqBody).then((res) => {
+      enqueueSnackbar(`${res.message}`, { variant: "success" });
+      fetchMessages();
+    });
   };
 
   return (
@@ -96,7 +143,7 @@ const ProcessMessage = (props) => {
         <MessageToUser
           isOpen={showMessageDialog}
           onClose={toggleMessageDialog}
-          reloadData={() => { }}
+          reloadData={fetchMessages}
         />
       )}
       <Grid item lg={8} xs={12}>
@@ -116,7 +163,7 @@ const ProcessMessage = (props) => {
               className={classes.text12}
               color="textPrimary"
             >
-              {moment(created).format("DD MMMM YYYY")}
+              {dateFormat(created)}
             </Typography>
           </Grid>
 
@@ -135,7 +182,7 @@ const ProcessMessage = (props) => {
               className={classes.text12}
               color="textPrimary"
             >
-              {user_to_from}
+              {patient_from_name}
             </Typography>
           </Grid>
           <Grid item xs>
@@ -171,7 +218,7 @@ const ProcessMessage = (props) => {
               className={classes.text12}
               color="textPrimary"
             >
-              Status
+              {messageStatusType(status)}
             </Typography>
           </Grid>
         </Grid>
@@ -238,7 +285,7 @@ const ProcessMessage = (props) => {
               className={`${classes.text12} ${classes.label}`}
               color="textPrimary"
             >
-              Message:
+              Status:
             </Typography>
             <FormControl component="fieldset">
               <RadioGroup
@@ -260,22 +307,30 @@ const ProcessMessage = (props) => {
         </Grid>
       </Grid>
 
-      <Grid item lg={2} className={classes.section}>
-        <DebounceSelect
-          fullWidth
+      <Box width={200} mb={1}>
+        <TextField
+          select
+          size="small"
+          variant="outlined"
+          name="assignTo"
           label="Assign To"
-          required={false}
-          controller={(value) => searchAssignees(value)}
-          getOptionLabel={(option) => option.name}
-          getOptionValue={(option) => option.id}
-          onChange={(value) => setAssignTo(value)}
-        />
-        {/* it will be removed on API integration */}
-        <span>
-          Assignee Id:
-          {assignTo}
-        </span>
-      </Grid>
+          fullWidth
+          value={assignTo}
+          className={classes.gutterBottom}
+          onChange={(e) => setAssignTo(e.target.value)}
+        >
+          {messageAssignees.length ? messageAssignees.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {`${option.firstname} ${option.lastname}`}
+            </MenuItem>
+          ))
+          : (
+            <MenuItem value="">
+              No Assignee Available
+            </MenuItem>
+          )}
+        </TextField>
+      </Box>
 
       <Grid container justify="space-between" spacing={1}>
         <Grid item lg={7} xs={12}>
@@ -287,14 +342,56 @@ const ProcessMessage = (props) => {
             fullWidth
             multiline
             rows={5}
+            value={assignmentNotes}
+            onChange={(e) => setAssignmentNotes(e.target.value)}
           />
         </Grid>
         <Grid item lg={4} xs={12}>
           <Grid className={classes.borderSection}>
-            Message History
+            <Typography className={classes.historyHeading}>Message History</Typography>
+            <TableContainer>
+              <Table size="small" aria-label="prescriptions-table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCellSm>Assigned To</StyledTableCellSm>
+                    <StyledTableCellSm>Status</StyledTableCellSm>
+                    <StyledTableCellSm>Updated</StyledTableCellSm>
+                    <StyledTableCellSm>Updated By</StyledTableCellSm>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {messageHistory.length
+                    ? messageHistory.map((row) => (
+                      <StyledTableRowSm key={`${row.assigned_to}_${row.updated}_${row.updated_by}`}>
+                        <StyledTableCellSm>{row.assigned_to}</StyledTableCellSm>
+                        <StyledTableCellSm>{messageStatusType(row.status)}</StyledTableCellSm>
+                        <StyledTableCellSm>{dateFormat(row.updated)}</StyledTableCellSm>
+                        <StyledTableCellSm>{row.updated_by}</StyledTableCellSm>
+                      </StyledTableRowSm>
+                    ))
+                    : (
+                      <StyledTableRowSm>
+                        <StyledTableCellSm colSpan={10}>
+                          <Typography className={classes.text} align="center" variant="body1">
+                            No History Found...
+                          </Typography>
+                        </StyledTableCellSm>
+                      </StyledTableRowSm>
+                    )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Grid>
         </Grid>
       </Grid>
+      <Box mt={2}>
+        <Button
+          variant="outlined"
+          onClick={() => messageUpdateHandler()}
+        >
+          Save
+        </Button>
+      </Box>
       {
         showDivider && (
           <Divider className={classes.divider} />
@@ -304,15 +401,20 @@ const ProcessMessage = (props) => {
   );
 };
 
-ProcessMessage.propTypes = {
+MessageSection.propTypes = {
   showDivider: PropTypes.bool.isRequired,
+  fetchMessages: PropTypes.func.isRequired,
   message: PropTypes.shape({
+    id: PropTypes.number,
     created: PropTypes.string,
+    status: PropTypes.string,
+    note_assign: PropTypes.string,
+    user_id_to: PropTypes.number,
     user_to_name: PropTypes.string,
-    user_to_from: PropTypes.string,
+    patient_from_name: PropTypes.string,
     subject: PropTypes.string,
     message: PropTypes.string,
   }).isRequired,
 };
 
-export default ProcessMessage;
+export default MessageSection;

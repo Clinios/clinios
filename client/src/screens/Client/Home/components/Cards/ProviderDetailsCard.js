@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -9,7 +9,9 @@ import moment from "moment";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
+import Dialog from "../../../../../components/Dialog";
 import Colors from "../../../../../theme/colors";
+import ProcessMessage from "../../../../ProcessMessage";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -72,6 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
   const classes = useStyles();
+  const [showMessagesModal, setShowMessagesModal] = useState(false);
   const patientLabsCount = !!providerDetails
     && providerDetails.patientLabs
     && providerDetails.patientLabs["count(l.id)"];
@@ -80,70 +83,93 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
     && providerDetails.patientLabs
     && providerDetails.patientLabs["min(l.created)"];
 
+
+  const dateValidation = (date, jsx) => {
+    if (!moment(date).isValid()) return null;
+    return jsx;
+  };
+
+  const toggleMessagesModal = () => {
+    setShowMessagesModal((prevState) => !prevState);
+  };
+
   return (
-    <Card className={classes.providerDetails} variant="outlined">
-      <Grid
-        container
-        justify="space-between"
-        alignItems="center"
-        className={classes.titleContainer}
-      >
-        <Typography className={classes.title}>
-          {`User Details - ${selectedProvider && selectedProvider.name}`}
-        </Typography>
-      </Grid>
+    <>
+      {!!showMessagesModal && (
+        <Dialog
+          fullScreen
+          open={showMessagesModal}
+          title="Messages"
+          message={(
+            <ProcessMessage />
+          )}
+          cancelForm={() => toggleMessagesModal()}
+          hideActions
+        />
+      )}
+      <Card className={classes.providerDetails} variant="outlined">
+        <Grid
+          container
+          justify="space-between"
+          alignItems="center"
+          className={classes.titleContainer}
+        >
+          <Typography className={classes.title}>
+            {`User Details - ${selectedProvider && selectedProvider.name}`}
+          </Typography>
+        </Grid>
 
-      <CardContent>
-        <ul className={classes.providers}>
-          <li className={classes.providersLabel}>
-            <div>Type</div>
-            <div className={classes.count}>Count</div>
-            <div>Since</div>
-          </li>
-          <li>
-            {/* we will redirect only if the patient labs count is > 0 */}
-            {
-              patientLabsCount
-                ? (
-                  <Link
-                    to={{
-                      pathname: `/lab/${selectedProvider.id}`,
-                      state: {
-                        fromHome: true,
-                      },
-                    }}
-                  >
-                    <div>Patient Labs</div>
-                    <div className={classes.count}>
-                      {patientLabsCount}
-                    </div>
-                    <div>
-                      {(patientLabsDate !== undefined && patientLabsDate)
-                        ? `${moment(patientLabsDate).format("ll")}
+        <CardContent>
+          <ul className={classes.providers}>
+            <li className={classes.providersLabel}>
+              <div>Type</div>
+              <div className={classes.count}>Count</div>
+              <div>Since</div>
+            </li>
+            <li>
+              {/* we will redirect only if the patient labs count is > 0 */}
+              {
+                patientLabsCount
+                  ? (
+                    <Link
+                      to={{
+                        pathname: `/lab/${selectedProvider.id}`,
+                        state: {
+                          fromHome: true,
+                        },
+                      }}
+                    >
+                      <div>Patient Labs</div>
+                      <div className={classes.count}>
+                        {patientLabsCount}
+                      </div>
+                      <div>
+                        {dateValidation(patientLabsDate, (patientLabsDate !== undefined && patientLabsDate)
+                          ? `${moment(patientLabsDate).format("ll")}
                           (${moment(patientLabsDate).startOf("day").fromNow()})`
-                        : ""}
-                    </div>
-                  </Link>
-                )
-                : (
-                  <>
-                    <div>Patient Labs</div>
-                    <div className={classes.count}>
-                      {patientLabsCount}
-                    </div>
-                    <div>
-                      {(patientLabsDate !== undefined && patientLabsDate)
-                        ? `${moment(patientLabsDate).format("ll")}
+                          : "")}
+                      </div>
+                    </Link>
+                  )
+                  : (
+                    <>
+                      <div>Patient Labs</div>
+                      <div className={classes.count}>
+                        {patientLabsCount}
+                      </div>
+                      <div>
+                        {dateValidation(patientLabsDate, (patientLabsDate !== undefined && patientLabsDate)
+                          ? `${moment(patientLabsDate).format("ll")}
                           (${moment(patientLabsDate).startOf("day").fromNow()})`
-                        : ""}
-                    </div>
-                  </>
-                )
-            }
-          </li>
+                          : "")}
+                      </div>
+                    </>
+                  )
+              }
+            </li>
 
-          <li>
-            <Link to={`/process-message/${selectedProvider.id}`}>
+            <li onClick={() => toggleMessagesModal()} aria-hidden="true">
+              {/* <Link to={`/process-message/${selectedProvider.id}`}> */}
               <div>Messages from Patients</div>
               <div className={classes.count}>
                 {!!providerDetails
@@ -151,72 +177,76 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
                   && providerDetails.messageFromPatients["count(m.id)"]}
               </div>
               <div>
-                {!!providerDetails
+                {dateValidation(providerDetails.messageFromPatients?.["min(m.created)"],
+                  !!providerDetails
                   && providerDetails.messageFromPatients
                   && `${moment(providerDetails.messageFromPatients["min(m.created)"]).format("ll")}
                     (${moment(providerDetails.messageFromPatients["min(m.created)"])
-      .startOf("day").fromNow()})`}
+      .startOf("day").fromNow()})`)}
               </div>
-            </Link>
-          </li>
-          { /* Comment out by Ruhul as per #CLIN-18 */ }
-          <li style={{ display: "none" }}>
-            <div>Messages To Patients Unread</div>
-            <div className={classes.count}>
-              {!!providerDetails
-                && providerDetails.messageToPatientsNotRead
-                && providerDetails.messageToPatientsNotRead["count(m.id)"]}
-            </div>
-            <div>
-              {!!providerDetails
-                && providerDetails.messageToPatientsNotRead
-                && providerDetails.messageToPatientsNotRead[
-                  "min(m.unread_notify_dt)"
-                ]
-                ? `${moment(
-                  providerDetails.messageToPatientsNotRead[
-                    "min(m.unread_notify_dt)"
-                  ],
-                ).format("ll")} (${moment(
-                  providerDetails.messageToPatientsNotRead[
-                    "min(m.unread_notify_dt)"
-                  ],
-                )
-                  .startOf("day")
-                  .fromNow()})`
-                : ""}
-            </div>
-          </li>
-          <li>
-            <div>Patient Appointment Requests</div>
-            <div className={classes.count}>
-              {!!providerDetails
-                && providerDetails.patientAppointmentRequest
-                && providerDetails.patientAppointmentRequest["count(uc.client_id)"]}
-            </div>
-            <div>
-              {!!providerDetails
-                && providerDetails.patientAppointmentRequest
-                && providerDetails.patientAppointmentRequest[
-                  "min(uc.created)"
-                ]
-                ? `${moment(
-                  providerDetails.patientAppointmentRequest[
-                    "min(uc.created)"
-                  ],
-                ).format("ll")} (${moment(
-                  providerDetails.patientAppointmentRequest[
-                    "min(uc.created)"
-                  ],
-                )
-                  .startOf("day")
-                  .fromNow()})`
-                : ""}
-            </div>
-          </li>
-        </ul>
-      </CardContent>
-    </Card>
+              {/* </Link> */}
+            </li>
+            { /* Comment out by Ruhul as per #CLIN-18 */}
+            <li style={{ display: "none" }}>
+              <div>Messages To Patients Unread</div>
+              <div className={classes.count}>
+                {!!providerDetails
+                  && providerDetails.messageToPatientsNotRead
+                  && providerDetails.messageToPatientsNotRead["count(m.id)"]}
+              </div>
+              <div>
+                {dateValidation(providerDetails.messageToPatientsNotRead?.["min(m.unread_notify_dt)"],
+                  !!providerDetails
+                    && providerDetails.messageToPatientsNotRead
+                    && providerDetails.messageToPatientsNotRead[
+                      "min(m.unread_notify_dt)"
+                    ]
+                    ? `${moment(
+                      providerDetails.messageToPatientsNotRead[
+                        "min(m.unread_notify_dt)"
+                      ],
+                    ).format("ll")} (${moment(
+                      providerDetails.messageToPatientsNotRead[
+                        "min(m.unread_notify_dt)"
+                      ],
+                    )
+                      .startOf("day")
+                      .fromNow()})`
+                    : "")}
+              </div>
+            </li>
+            <li>
+              <div>Patient Appointment Requests</div>
+              <div className={classes.count}>
+                {!!providerDetails
+                  && providerDetails.patientAppointmentRequest
+                  && providerDetails.patientAppointmentRequest["count(uc.client_id)"]}
+              </div>
+              <div>
+                {dateValidation(providerDetails.patientAppointmentRequest?.["min(uc.created)"],
+                  !!providerDetails
+                    && providerDetails.patientAppointmentRequest
+                    && providerDetails.patientAppointmentRequest[
+                      "min(uc.created)"
+                    ]
+                    ? `${moment(
+                      providerDetails.patientAppointmentRequest[
+                        "min(uc.created)"
+                      ],
+                    ).format("ll")} (${moment(
+                      providerDetails.patientAppointmentRequest[
+                        "min(uc.created)"
+                      ],
+                    )
+                      .startOf("day")
+                      .fromNow()})`
+                    : "")}
+              </div>
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 

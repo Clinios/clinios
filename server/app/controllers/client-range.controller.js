@@ -8,7 +8,8 @@ const getClientRanges = async (req, res) => {
     const dbResponse = await db.query(`select cr.id, cr.cpt_id, c.name cpt_name, cr.seq, cr.compare_item, cr.compare_operator,
      cr.compare_to, cr.range_low, cr.range_high
     , cr.created, concat(u.firstname, ' ', u.lastname) created_user, cr.updated
-    , concat(u2.firstname, ' ', u2.lastname) updated_user from client_range cr
+    , concat(u2.firstname, ' ', u2.lastname) updated_user 
+    from client_range cr
     left join cpt c on c.id=cr.cpt_id
     left join user u on u.id=cr.created_user_id
     left join user u2 on u2.id=cr.updated_user_id

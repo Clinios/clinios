@@ -84,6 +84,12 @@ const useStyles = makeStyles((theme) => ({
 
 const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => {
   const classes = useStyles();
+
+  const dateValidation = (date, jsx) => {
+    if (!moment(date).isValid()) return null;
+    return jsx;
+  };
+
   return (
     <Card className={classes.root} variant="outlined">
       <Grid
@@ -115,13 +121,13 @@ const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => 
                 onKeyDown={() => handleProviderClick(provider)}
               >
                 <div>{provider.name}</div>
-                <div className={classes.count}>{provider.count}</div>
+                <div className={classes.count}>{provider.count || 0}</div>
                 <div>
-                  {`${moment(provider.dt).format("ll")} (${moment(
+                  {dateValidation(provider.dt, `${moment(provider.dt).format("ll")} (${moment(
                     provider.dt,
                   )
                     .startOf("day")
-                    .fromNow()})`}
+                    .fromNow()})`)}
                 </div>
               </li>
             ))}

@@ -63,6 +63,7 @@ const LabRanges = () => {
   const [useFuncRange, setUseFuncRange] = useState(true);
   const [labRanges, setLabRanges] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const openDeleteDialog = (item) => {
     setSelectedRange(item);
@@ -93,7 +94,11 @@ const LabRanges = () => {
   const fetchLabRanges = useCallback(() => {
     LabRangeService.getLabRanges().then((res) => {
       setLabRanges(res.data);
-    });
+      setIsLoading(false);
+    })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -130,6 +135,7 @@ const LabRanges = () => {
   const applyResetHandler = () => {
     LabRangeService.resetLabRanges().then((res) => {
       enqueueSnackbar(`${res.message}`, { variant: "success" });
+      closeResetDialog();
     });
   };
 
@@ -270,7 +276,7 @@ const LabRanges = () => {
                   <StyledTableRowLg>
                     <TableCell colSpan={10}>
                       <Typography align="center" variant="body1">
-                        No Records Found...
+                        {isLoading ? "Fetching Lab Ranges..." : "No Records Found..."}
                       </Typography>
                     </TableCell>
                   </StyledTableRowLg>
