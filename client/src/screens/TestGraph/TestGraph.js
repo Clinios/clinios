@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
-import Link from "@material-ui/core/Link";
 import { mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useSnackbar } from "notistack";
 
-import { Graph } from "./components";
-import Tests from "../../services/tests.service";
-import Patient from "../../services/patient.service";
 import useAuth from "../../hooks/useAuth";
-
+import Patient from "../../services/patient.service";
+import Tests from "../../services/tests.service";
 import { calculateFunctionalRange } from "../../utils/FunctionalRange";
+import { Graph } from "./components";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -57,7 +55,7 @@ const TestGraph = () => {
   const [cptIdCount, setCptIdCount] = useState(0);
   const [range, setRange] = useState({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (testId) {
       console.log(testId);
       Tests.getTestCptName(testId).then(
@@ -74,7 +72,7 @@ const TestGraph = () => {
     }
   }, [testId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     Patient.getFunctionalRange(user.id).then(
       (res) => {
         const data = res?.data;
@@ -112,7 +110,7 @@ const TestGraph = () => {
     );
   }, [user]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (functionalRange?.functional_range && graph) {
       if (functionalRange?.functional_range[0]?.functional_range !== 0) {
         const data = calculateFunctionalRange(testId, functionalRange?.gender, functionalRange?.age);
@@ -121,7 +119,7 @@ const TestGraph = () => {
     }
   }, [functionalRange]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (labCpt?.data?.length > 0) {
       console.log(labCpt.data[cptIdCount].id);
       setTestId(labCpt.data[cptIdCount].id);
