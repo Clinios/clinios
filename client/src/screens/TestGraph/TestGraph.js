@@ -97,7 +97,7 @@ const TestGraph = () => {
       }
     );
 
-    Tests.getTestGraph(user.id).then(
+    Tests.getTestGraph(user.id, testId).then(
       (res) => {
         const data = res?.data;
         setGraph(data);
@@ -108,7 +108,7 @@ const TestGraph = () => {
         });
       }
     );
-  }, [user]);
+  }, [user, testId]);
 
   useEffect(() => {
     if (functionalRange?.functional_range && graph) {
@@ -121,7 +121,6 @@ const TestGraph = () => {
 
   useEffect(() => {
     if (labCpt?.data?.length > 0) {
-      console.log(labCpt.data[cptIdCount].id);
       setTestId(labCpt.data[cptIdCount].id);
     }
   }, [labCpt, cptIdCount]);
@@ -136,7 +135,7 @@ const TestGraph = () => {
       setCptIdCount(cptIdCount + 1);
     }
   };
-  console.log("labCpt", cptIdCount);
+
   return (
     <div className={classes.testGraphContainer}>
       <div className={classes.testGraph}>

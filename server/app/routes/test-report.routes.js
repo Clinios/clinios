@@ -26,7 +26,7 @@ router.get(
   testReports.getLabcpt
 );
 router.get(
-  "/tests/graph/:patientId",
+  "/tests/graph/:patientId/:labId",
   [authJwt.verifyToken],
   testReports.getTestGraph
 );

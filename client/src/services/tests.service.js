@@ -17,8 +17,8 @@ class Tests {
     return axios.get(`${API_URL}/tests/lab-cpt/${patientId}`, { headers: authHeader() });
   }
 
-  getTestGraph(patientId) {
-    return axios.get(`${API_URL}/tests/graph/${patientId}`, { headers: authHeader() });
+  getTestGraph(patientId, labId) {
+    return axios.get(`${API_URL}/tests/graph/${patientId}/${labId}`, { headers: authHeader() });
   }
 }
 
