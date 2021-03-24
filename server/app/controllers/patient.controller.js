@@ -978,7 +978,7 @@ const createBilling = async (req, res) => {
   //  payment_type = `'${payment_type}'`;
   // }
 
-  // transaction type 2 'Service Credit' and 3 'Payment' are stored in the database as negative numbers, david march 2021
+  // transaction type 2 'Service Credit' and 3 'Payment' are stored in the database as negative numbers, david march 2021 test
   if (type_id === 2 || type_id === 3) {
     amount *= -1;
   }
