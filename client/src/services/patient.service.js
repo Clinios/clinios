@@ -196,7 +196,7 @@ class Patient {
       data,
       {
         headers: authHeader(),
-      }
+      },
     );
   }
 
@@ -206,7 +206,7 @@ class Patient {
       data,
       {
         headers: authHeader(),
-      }
+      },
     );
   }
 

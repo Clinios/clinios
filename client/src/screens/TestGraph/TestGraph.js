@@ -178,7 +178,7 @@ const TestGraph = () => {
     if (filer === "all") {
       setGraphFilterData(graph);
     } else {
-      for (let i = 0; i < graph?.data.length; i++) {
+      for (let i = 0; i < graph?.data.length; i += 1) {
         const compareDate = moment(graph?.data[i]?.lab_dt);
         const com = compareDate.isBetween(startDate, endDate);
         if (com) {

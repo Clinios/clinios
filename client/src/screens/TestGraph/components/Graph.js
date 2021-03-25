@@ -2,6 +2,7 @@ import React from "react";
 
 import { makeStyles } from "@material-ui/core";
 import moment from "moment";
+import PropTypes from "prop-types";
 import {
   LineChart, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Line,
 } from "recharts";
@@ -17,15 +18,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ payload }) => {
   const classes = useStyles();
 
-  if (active && payload && payload.length) {
+  if (payload && payload.length) {
     return (
       <div className={classes.root}>
-        <p className="label">{`Date : ${moment(payload[0]?.payload?.lab_dt).format(
-          "MMMM Do YYYY, h:mm A"
-        )}`}</p>
+        <p className="label">
+          {
+            `Date : ${moment(payload[0]?.payload?.lab_dt).format("MMMM Do YYYY, h:mm A")}`
+          }
+        </p>
         <p className="label">{`File : ${payload[0]?.payload?.filename}`}</p>
         <p className="label">{`Value : ${payload[0]?.payload?.value}`}</p>
       </div>
@@ -35,7 +38,11 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-export default function Graph({ data, range, graphSize }) {
+CustomTooltip.propTypes = {
+  payload: PropTypes.instanceOf(Array).isRequired,
+};
+
+const Graph = ({ data, range, graphSize }) => {
   const middele = (range?.low + range?.high) / 2 + range?.low;
   return (
     <LineChart
@@ -47,9 +54,6 @@ export default function Graph({ data, range, graphSize }) {
         right: 30,
         left: 20,
         bottom: 5,
-      }}
-      getDerivedStateFromProps={(po) => {
-        console.log("po", po);
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
@@ -98,4 +102,24 @@ export default function Graph({ data, range, graphSize }) {
       <Line strokeWidth={2} type="monotone" dataKey={(v) => v.value} stroke="#477fc9" />
     </LineChart>
   );
-}
+};
+
+Graph.propTypes = {
+  data: PropTypes.shape({
+    id: PropTypes.string,
+    lab_dt: PropTypes.string,
+    filename: PropTypes.string,
+    value: PropTypes.number,
+  }).isRequired,
+  range: PropTypes.shape({
+    high: PropTypes.number,
+    low: PropTypes.number,
+  }).isRequired,
+  graphSize: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number,
+  }).isRequired,
+};
+
+
+export default Graph;
