@@ -48,15 +48,15 @@ const getAppointmentTypes = async (req, res) => {
   let $sql;
 
   try {
-    $sql = `select at.appointment_type, at.length
-    from appointment_type_user atu
-    join appointment_type at on atu.appointment_type_id=at.id
-    where atu.client_id=${req.client_id} #add this column to query atu pk (client_id, user_id, appointment_type_id)
-    and atu.user_id=${practitioner_id} #use user_id from above Practitioner Name select component
+    $sql = `select at.appointment_type, at.descr, at.length, at.fee
+    from appointment_type at 
+    where at.client_id=${req.client_id} 
+    /*and atu.user_id=${practitioner_id}*/
     and at.active=true
     and at.allow_patients_schedule=true
     order by at.sort_order 
-    limit 100`;
+    limit 100
+    `;
 
     const dbResponse = await db.query($sql);
 

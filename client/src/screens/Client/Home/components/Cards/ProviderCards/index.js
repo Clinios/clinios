@@ -9,7 +9,7 @@ import clsx from "clsx";
 import moment from "moment";
 import PropTypes from "prop-types";
 
-import Colors from "../../../../../theme/colors";
+import Colors from "../../../../../../theme/colors";
 
 const useStyles = makeStyles((theme) => ({
   root: {

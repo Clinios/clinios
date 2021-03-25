@@ -102,6 +102,8 @@ const Billing = () => {
     fetchBalance();
   }, [fetchBillings, fetchBalance]);
 
+  const hasValue = (value) => !((typeof value === "undefined") || (value === null));
+
   return (
     <>
       {!!newPaymentDialog && (
@@ -211,7 +213,7 @@ const Billing = () => {
                     </StyledTableCell>
                   </StyledTableRow>
                 )}
-                {(!!balance && billings.length) ? (
+                {(hasValue(balance) && billings.length) ? (
                   <StyledTableRow>
                     <StyledTableCell colSpan={4} />
                     <StyledTableCell

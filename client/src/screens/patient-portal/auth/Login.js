@@ -106,7 +106,9 @@ const PatientLogin = () => {
     );
   }, [clientCode]);
 
-  const onFormSubmit = async () => {
+  const onFormSubmit = async (e) => {
+    e.preventDefault();
+
     if (email !== "") {
       localStorage.username = email;
       localStorage.password = password;
@@ -167,6 +169,7 @@ const PatientLogin = () => {
             [classes.withErrors]: errors.length > 0, // only when isLoading === true
           })}
           noValidate
+          onSubmit={(event) => onFormSubmit(event)}
         >
           <TextField
             disabled={errors.length > 0}
@@ -202,7 +205,7 @@ const PatientLogin = () => {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={(event) => onFormSubmit(event)}
+            type="submit"
           >
             Sign In
           </Button>

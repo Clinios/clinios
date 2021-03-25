@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { makeStyles } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
@@ -12,16 +12,15 @@ import Appointments from "../../../services/appointments.service";
 import DashboardHome from "../../../services/DashboardHome.service";
 import Messages from "../../../services/message-to-patient.service";
 import { statusToColorCode, isEmpty } from "../../../utils/helpers";
-import {
-  AppointmentRequests,
-  Calendar,
-  MessagesUnread,
-  MessageToPatient,
-  NewOrEditEvent,
-  ProviderCards,
-  ProviderDetailsCard,
-} from "./components";
-import MessageHistory from "./components/modal/MessageHistory";
+// components
+import Calendar from "./components/Calendar/EventCalendar";
+import AppointmentRequests from "./components/Cards/AppointmentRequests";
+import MessagesUnread from "./components/Cards/MessagesUnread";
+import ProviderCards from "./components/Cards/ProviderCards";
+import ProviderDetailsCard from "./components/Cards/ProviderDetailsCard";
+import MessageHistory from "./components/Modal/MessageHistory";
+import MessageToPatient from "./components/Modal/MessageToPatient";
+import NewOrEditEvent from "./components/Modal/NewOrEditEvent";
 
 const useStyles = makeStyles((theme) => ({
   pageTitle: {
@@ -121,22 +120,22 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProvider]);
 
-  useEffect(() => {
-    async function fetchProviders() {
-      const { data } = await DashboardHome.getProviders();
-      setProviders(data);
-      if (data.length > 0) {
-        const loggedinUserAsProvider = data.filter((d) => d.id === user.id);
-        if (loggedinUserAsProvider.length > 0) {
-          setSelectedProvider(loggedinUserAsProvider[0]);
-        } else {
-          setSelectedProvider(data[0]);
-        }
+  const fetchProviders = useCallback(async () => {
+    const { data } = await DashboardHome.getProviders();
+    setProviders(data);
+    if (data.length > 0) {
+      const loggedinUserAsProvider = data.filter((d) => d.id === user.id);
+      if (loggedinUserAsProvider.length > 0) {
+        setSelectedProvider(loggedinUserAsProvider[0]);
+      } else {
+        setSelectedProvider(data[0]);
       }
     }
+  }, [user.id]);
+
+  useEffect(() => {
     fetchProviders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchProviders]);
 
   const handleEventCreation = (payload) => {
     setIsLoading(true);
@@ -317,7 +316,13 @@ export default function Home() {
             providers={providers}
             handleProviderClick={handleProviderClick}
           />
-          <ProviderDetailsCard selectedProvider={selectedProvider} providerDetails={providerDetails} />
+          <ProviderDetailsCard
+            selectedProvider={selectedProvider}
+            providerDetails={providerDetails}
+            fetchProviderDetails={() => {
+              fetchProviders();
+            }}
+          />
           {!!selectedProvider && (
             <>
               <MessagesUnread

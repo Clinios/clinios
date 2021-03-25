@@ -43,7 +43,10 @@ const getBillings = async (req, res) => {
 
 const getBalance = async (req, res) => {
   const db = makeDb(configuration, res);
-  const { patient_id } = req.query;
+  let { patient_id } = req.query;
+  if (typeof patient_id === "undefined") {
+    patient_id = req.user_id;
+  }
   try {
     const dbResponse = await db.query(
       `select 

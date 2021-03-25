@@ -29,7 +29,7 @@ class Messages {
   }
 
   createMessage(payload) {
-    return axios.post(`${API_BASE}/user/messages`, payload, {
+    return axios.post(`${API_BASE}/user/message`, payload, {
       headers: authHeader(),
     }).then((res) => res.data);
   }
@@ -43,6 +43,15 @@ class Messages {
   searchUsers(data) {
     return axios
       .post(`${API_BASE}/user/by-client-id`, data, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
+  // User History
+  getUserHistory() {
+    return axios
+      .get(`${API_BASE}/user/history`, {
         headers: authHeader(),
       })
       .then((res) => res.data);

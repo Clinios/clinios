@@ -7,23 +7,21 @@ import {
   TableRow,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import { useParams } from "react-router-dom";
 
 import { StyledTableCellLg, StyledTableRowLg } from "../../../../components/common/StyledTable";
 import Dialog from "../../../../components/Dialog";
-import LabService from "../../../../services/lab.service";
-import { labStatusType, labSourceType, dateFormat } from "../../../../utils/helpers";
+import MessageToUserService from "../../../../services/message-to-user.service";
+import { dateFormat } from "../../../../utils/helpers";
 
 const UserHistory = (props) => {
   const { open, onClose } = props;
-  const { userId } = useParams();
   const [userHistory, setUserHistory] = useState([]);
 
   const fetchUserHistory = useCallback(() => {
-    LabService.getUserHistory(userId).then((res) => {
+    MessageToUserService.getUserHistory().then((res) => {
       setUserHistory(res.data);
     });
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     fetchUserHistory();
@@ -33,12 +31,10 @@ const UserHistory = (props) => {
     <Table size="small" aria-label="simple table">
       <TableHead>
         <TableRow>
-          <StyledTableCellLg>Created</StyledTableCellLg>
-          <StyledTableCellLg>Filename</StyledTableCellLg>
-          <StyledTableCellLg>Status</StyledTableCellLg>
-          <StyledTableCellLg>Type</StyledTableCellLg>
-          <StyledTableCellLg>Assigned To</StyledTableCellLg>
+          <StyledTableCellLg>Updated</StyledTableCellLg>
           <StyledTableCellLg>Patient</StyledTableCellLg>
+          <StyledTableCellLg>Assigned Name</StyledTableCellLg>
+          <StyledTableCellLg>Updated Name</StyledTableCellLg>
           <StyledTableCellLg>Note</StyledTableCellLg>
         </TableRow>
       </TableHead>
@@ -46,14 +42,12 @@ const UserHistory = (props) => {
         {userHistory.map((row) => (
           <StyledTableRowLg key={row.type}>
             <StyledTableCellLg component="th" scope="row">
-              {dateFormat(row.created)}
+              {dateFormat(row.updated)}
             </StyledTableCellLg>
-            <StyledTableCellLg>{row.filename}</StyledTableCellLg>
-            <StyledTableCellLg>{labStatusType(row.status)}</StyledTableCellLg>
-            <StyledTableCellLg>{labSourceType(row.type)}</StyledTableCellLg>
-            <StyledTableCellLg>{row.assigned_to}</StyledTableCellLg>
             <StyledTableCellLg>{row.patient_name}</StyledTableCellLg>
-            <StyledTableCellLg>{row.note}</StyledTableCellLg>
+            <StyledTableCellLg>{row.assigned_name}</StyledTableCellLg>
+            <StyledTableCellLg>{row.updated_name}</StyledTableCellLg>
+            <StyledTableCellLg>{row.note_assign}</StyledTableCellLg>
           </StyledTableRowLg>
         ))}
       </TableBody>

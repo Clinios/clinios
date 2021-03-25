@@ -80,6 +80,7 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
           <TableRow>
             <StyledTableCell padding="checkbox">Appointment Type</StyledTableCell>
             <StyledTableCell padding="checkbox">Minutes</StyledTableCell>
+            <StyledTableCell padding="checkbox">Fee</StyledTableCell>
             <StyledTableCell padding="checkbox">Patient Schedule</StyledTableCell>
             <StyledTableCell padding="checkbox" align="center">
               Note
@@ -99,6 +100,7 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
                 {appointment.appointment_type}
               </TableCell>
               <TableCell padding="checkbox">{appointment.length}</TableCell>
+              <TableCell padding="checkbox">{appointment.fee}</TableCell>
               <TableCell padding="checkbox">{appointment.allow_patients_schedule ? "Yes" : "No"}</TableCell>
               {appointment.note && appointment.note.length > 0 ? (
                 <LightTooltip title={appointment.note}>

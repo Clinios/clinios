@@ -53,6 +53,7 @@ import {
   TOGGLE_MEDICAL_NOTES_EDIT_FORM,
   TOGGLE_MESSAGES_NEW_DIALOG,
   TOGGLE_MESSAGES_EXPAND_DIALOG,
+  TOGGLE_MESSAGES_DIALOG_PAGE,
   TOGGLE_MEDICATION_NEW_DIALOG,
   TOGGLE_MEDICATION_EXPAND_DIALOG,
   TOGGLE_DIAGNOSES_NEW_DIALOG,
@@ -287,6 +288,10 @@ export const toggleMessageDialog = () => ({
 
 export const toggleMessageExpandDialog = () => ({
   type: TOGGLE_MESSAGES_EXPAND_DIALOG,
+});
+
+export const toggleMessageDialogPage = () => ({
+  type: TOGGLE_MESSAGES_DIALOG_PAGE,
 });
 
 export const toggleMedicationDialog = () => ({

@@ -9,9 +9,9 @@ import moment from "moment";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-import Dialog from "../../../../../components/Dialog";
-import Colors from "../../../../../theme/colors";
-import ProcessMessage from "../../../../ProcessMessage";
+import Dialog from "../../../../../../components/Dialog";
+import Colors from "../../../../../../theme/colors";
+import ProcessMessage from "../../../../../ProcessMessage";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
+const ProviderDetailsCard = ({ selectedProvider, providerDetails, fetchProviderDetails }) => {
   const classes = useStyles();
   const [showMessagesModal, setShowMessagesModal] = useState(false);
   const patientLabsCount = !!providerDetails
@@ -97,13 +97,14 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
     <>
       {!!showMessagesModal && (
         <Dialog
-          fullScreen
+          fullHeight
           open={showMessagesModal}
           title="Messages"
           message={(
-            <ProcessMessage />
+            <ProcessMessage fetchProviderDetails={fetchProviderDetails} />
           )}
           cancelForm={() => toggleMessagesModal()}
+          size="xl"
           hideActions
         />
       )}
@@ -251,6 +252,7 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails }) => {
 };
 
 ProviderDetailsCard.propTypes = {
+  fetchProviderDetails: PropTypes.func.isRequired,
   selectedProvider: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string,

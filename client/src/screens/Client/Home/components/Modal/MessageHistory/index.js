@@ -18,8 +18,8 @@ import clsx from "clsx";
 import moment from "moment";
 import PropTypes from "prop-types";
 
-import Appointments from "../../../../../services/appointments.service";
-import { mapAppointmentStatus } from "../../../../../utils/helpers";
+import Appointments from "../../../../../../services/appointments.service";
+import { mapAppointmentStatus } from "../../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -154,20 +154,20 @@ const MessageHistory = ({
                 </TableHead>
                 <TableBody>
                   {!!history
-                  && history.length
-                  && history.map((row) => (
-                    <StyledTableRow key={row.id}>
-                      <TableCell component="th" scope="row">
-                        {row.patient || ""}
-                      </TableCell>
-                      <TableCell>{row.provider || ""}</TableCell>
-                      <TableCell>{moment(row.start_dt).format("MMM D YYYY")}</TableCell>
-                      <TableCell>{moment(row.end_dt).format("MMM D YYYY")}</TableCell>
-                      <TableCell>{mapAppointmentStatus(row.status) || ""}</TableCell>
-                      <TableCell>{moment(row.updated).format("MMM D YYYY") || ""}</TableCell>
-                      <TableCell>{row.updated_by || ""}</TableCell>
-                    </StyledTableRow>
-                  ))}
+                    && history.length
+                    && history.map((row) => (
+                      <StyledTableRow key={row.id}>
+                        <TableCell component="th" scope="row">
+                          {row.patient || ""}
+                        </TableCell>
+                        <TableCell>{row.provider || ""}</TableCell>
+                        <TableCell>{moment(row.start_dt).format("MMM D YYYY")}</TableCell>
+                        <TableCell>{moment(row.end_dt).format("MMM D YYYY")}</TableCell>
+                        <TableCell>{mapAppointmentStatus(row.status) || ""}</TableCell>
+                        <TableCell>{moment(row.updated).format("MMM D YYYY") || ""}</TableCell>
+                        <TableCell>{row.updated_by || ""}</TableCell>
+                      </StyledTableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>

@@ -212,6 +212,21 @@ export const paymentMethodType = (type) => {
   }
 };
 
+export const labRangeTableTranslation = (type) => {
+  switch (type) {
+    case "G":
+      return "Gender";
+    case "A":
+      return "Age";
+    case "M":
+      return "Male";
+    case "F":
+      return "Female";
+    default:
+      return "";
+  }
+};
+
 export const labStatusType = (type) => {
   switch (type) {
     case "R":
@@ -278,4 +293,4 @@ export function noOp() {
 
 }
 
-export const dateFormat = (date) => moment(date).format("DD MMMM YYYY");
+export const dateFormat = (date) => moment(date).format("MMM D YYYY");

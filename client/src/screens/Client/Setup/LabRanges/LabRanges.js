@@ -18,15 +18,16 @@ import {
   TableCell,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@material-ui/icons/EditOutlined";
 import { isEmpty } from "lodash";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 
 import Alert from "../../../../components/Alert";
-import { StyledTableCellLg, StyledTableRowLg } from "../../../../components/common/StyledTable";
+import { StyledTableCellSm, StyledTableRowSm } from "../../../../components/common/StyledTable";
 import useAuth from "../../../../hooks/useAuth";
 import LabRangeService from "../../../../services/setup/labrange.service";
+import { labRangeTableTranslation } from "../../../../utils/helpers";
 import NewLabRange from "./components/NewLabRange";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,11 +51,20 @@ const useStyles = makeStyles((theme) => ({
   pointerEnable: {
     pointerEvents: "auto",
   },
+  text: {
+    lineHeight: "22px",
+  },
+  iconButton: {
+    padding: theme.spacing(0.25),
+    "& svg": {
+      fontSize: "1rem",
+    },
+  },
 }));
 
 const LabRanges = () => {
   const classes = useStyles();
-  const { user: { client_id } } = useAuth();
+  const { user: { client_id, firstname, lastname } } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const [selectedRange, setSelectedRange] = useState({});
@@ -105,8 +115,16 @@ const LabRanges = () => {
     fetchLabRanges();
   }, [fetchLabRanges]);
 
-  const handleChangeFuncRange = () => {
+  const handleChangeFuncRange = (e, value) => {
     setUseFuncRange((prevState) => !prevState);
+    const reqBody = {
+      data: {
+        functional_range: value ? 1 : 0,
+      },
+    };
+    LabRangeService.updateLabRangeUse(reqBody).then((res) => {
+      enqueueSnackbar(res.message, { variant: "success" });
+    });
   };
 
   const deleteItemHandler = (item) => {
@@ -170,6 +188,7 @@ const LabRanges = () => {
           }}
           reloadData={fetchLabRanges}
           selectedItem={selectedRange}
+          userName={`${firstname} ${lastname}`}
         />
       )}
       <div className={classes.root}>
@@ -233,27 +252,27 @@ const LabRanges = () => {
           <Table size="small" className={classes.table}>
             <TableHead>
               <TableRow>
-                <StyledTableCellLg>Test</StyledTableCellLg>
-                <StyledTableCellLg>Sequence</StyledTableCellLg>
-                <StyledTableCellLg>Compare Item</StyledTableCellLg>
-                <StyledTableCellLg>Operator</StyledTableCellLg>
-                <StyledTableCellLg>Compare To</StyledTableCellLg>
-                <StyledTableCellLg>Low</StyledTableCellLg>
-                <StyledTableCellLg>High</StyledTableCellLg>
-                <StyledTableCellLg>Created</StyledTableCellLg>
-                <StyledTableCellLg>Updated</StyledTableCellLg>
-                <StyledTableCellLg align="center">Actions</StyledTableCellLg>
+                <StyledTableCellSm>Test</StyledTableCellSm>
+                <StyledTableCellSm>Sequence</StyledTableCellSm>
+                <StyledTableCellSm>Compare Item</StyledTableCellSm>
+                <StyledTableCellSm>Operator</StyledTableCellSm>
+                <StyledTableCellSm>Compare To</StyledTableCellSm>
+                <StyledTableCellSm>Low</StyledTableCellSm>
+                <StyledTableCellSm>High</StyledTableCellSm>
+                <StyledTableCellSm>Created</StyledTableCellSm>
+                <StyledTableCellSm>Updated</StyledTableCellSm>
+                <StyledTableCellSm align="center">Actions</StyledTableCellSm>
               </TableRow>
             </TableHead>
             <TableBody>
               {labRanges && labRanges.length
                 ? labRanges.map((item) => (
-                  <StyledTableRowLg key={`${item.cpt_id}_${item.cpt_name}_${item.range_low}_${item.seq}`}>
+                  <StyledTableRowSm key={`${item.cpt_id}_${item.cpt_name}_${item.range_low}_${item.seq}`}>
                     <TableCell>{item.cpt_name}</TableCell>
                     <TableCell>{item.seq}</TableCell>
-                    <TableCell>{item.compare_item}</TableCell>
+                    <TableCell>{labRangeTableTranslation(item.compare_item)}</TableCell>
                     <TableCell>{item.compare_operator}</TableCell>
-                    <TableCell>{item.compare_to}</TableCell>
+                    <TableCell>{labRangeTableTranslation(item.compare_to)}</TableCell>
                     <TableCell>{item.range_low}</TableCell>
                     <TableCell>{item.range_high}</TableCell>
                     <TableCell>
@@ -263,23 +282,23 @@ const LabRanges = () => {
                       {item.updated ? moment(item.updated).format("MMM D YYYY") : ""}
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton onClick={() => editItemHandler(item)}>
+                      <IconButton className={classes.iconButton} onClick={() => editItemHandler(item)}>
                         <EditIcon fontSize="small" />
                       </IconButton>
-                      <IconButton onClick={() => openDeleteDialog(item)}>
+                      <IconButton className={classes.iconButton} onClick={() => openDeleteDialog(item)}>
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </TableCell>
-                  </StyledTableRowLg>
+                  </StyledTableRowSm>
                 ))
                 : (
-                  <StyledTableRowLg>
+                  <StyledTableRowSm>
                     <TableCell colSpan={10}>
-                      <Typography align="center" variant="body1">
+                      <Typography className={classes.text} align="center" variant="body1">
                         {isLoading ? "Fetching Lab Ranges..." : "No Records Found..."}
                       </Typography>
                     </TableCell>
-                  </StyledTableRowLg>
+                  </StyledTableRowSm>
                 )}
             </TableBody>
           </Table>

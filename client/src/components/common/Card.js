@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     position: "sticky",
     top: 0,
     background: theme.palette.common.white,
+    zIndex: 2,
   },
   fullPadding: {
     padding: 8,

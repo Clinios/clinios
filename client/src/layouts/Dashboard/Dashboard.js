@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 0,
   },
   content: {
-    height: "100%",
+    flex: 1,
   },
 }));
 
@@ -61,7 +61,7 @@ const Dashboard = (props) => {
         variant={isDesktop ? "persistent" : "temporary"}
       />
 
-      <Container maxWidth="xl" style={{ flex: 1 }}>
+      <Container maxWidth="xl" className={classes.content}>
         {children}
       </Container>
       <Footer />

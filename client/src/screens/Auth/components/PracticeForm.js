@@ -67,7 +67,9 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
     setClientCode(clientCodeAcc);
   }, [name]);
 
-  const handleFormSubmission = () => {
+  const handleFormSubmission = (e) => {
+    e.preventDefault();
+
     const formData = {
       client: {
         name: name.trim(),
@@ -162,7 +164,7 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
   };
 
   return (
-    <form className={classes.form} noValidate>
+    <form className={classes.form} noValidate onSubmit={(event) => handleFormSubmission(event)}>
       <Typography
         component="h3"
         variant="h4"
@@ -463,7 +465,7 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
         variant="contained"
         color="primary"
         className={classes.submit}
-        onClick={(event) => handleFormSubmission(event)}
+        type="submit"
       >
         Sign up
       </Button>

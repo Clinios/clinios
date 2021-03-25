@@ -85,7 +85,9 @@ const StatusSelectionFields = [
 const MessageSection = (props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { message, showDivider, fetchMessages } = props;
+  const {
+    message, showDivider, fetchMessages, onChangeHandler, index, isEdit,
+  } = props;
   const {
     id, created, user_to_name, patient_from_name, subject, message: messageString,
     status, note_assign, user_id_to,
@@ -116,7 +118,11 @@ const MessageSection = (props) => {
   }, [fetchMessageHistory, fetchAssignees]);
 
   const handleStatusSelection = (e) => {
-    setStatusSelection(e.target.value);
+    const { value } = e.target;
+    setStatusSelection(value);
+    if (!isEdit) {
+      onChangeHandler("statusSelection", value, index);
+    }
   };
 
   const toggleMessageDialog = () => {
@@ -144,10 +150,11 @@ const MessageSection = (props) => {
           isOpen={showMessageDialog}
           onClose={toggleMessageDialog}
           reloadData={fetchMessages}
+          message={message}
         />
       )}
-      <Grid item lg={8} xs={12}>
-        <Grid container spacing={1} className={classes.gutterBottom}>
+      <Grid item lg={6} xs={12}>
+        <Grid container spacing={1}>
           <Grid item xs>
             <Typography
               component="span"
@@ -224,7 +231,7 @@ const MessageSection = (props) => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={1} className={classes.gutterBottom}>
+      <Grid container spacing={1}>
         <Grid item xs>
           <Typography
             component="span"
@@ -317,7 +324,13 @@ const MessageSection = (props) => {
           fullWidth
           value={assignTo}
           className={classes.gutterBottom}
-          onChange={(e) => setAssignTo(e.target.value)}
+          onChange={(e) => {
+            const { value } = e.target;
+            setAssignTo(value);
+            if (!isEdit) {
+              onChangeHandler("assignTo", value, index);
+            }
+          }}
         >
           {messageAssignees.length ? messageAssignees.map((option) => (
             <MenuItem key={option.id} value={option.id}>
@@ -337,13 +350,19 @@ const MessageSection = (props) => {
           <TextField
             variant="outlined"
             name="notes"
-            label="Assignment Notes"
+            label="Assignment Note"
             type="text"
             fullWidth
             multiline
             rows={5}
             value={assignmentNotes}
-            onChange={(e) => setAssignmentNotes(e.target.value)}
+            onChange={(e) => {
+              const { value } = e.target;
+              setAssignmentNotes(value);
+              if (!isEdit) {
+                onChangeHandler("assignmentNotes", value, index);
+              }
+            }}
           />
         </Grid>
         <Grid item lg={4} xs={12}>
@@ -384,14 +403,16 @@ const MessageSection = (props) => {
           </Grid>
         </Grid>
       </Grid>
-      <Box mt={2}>
-        <Button
-          variant="outlined"
-          onClick={() => messageUpdateHandler()}
-        >
-          Save
-        </Button>
-      </Box>
+      {isEdit && (
+        <Box mt={1.5}>
+          <Button
+            variant="outlined"
+            onClick={() => messageUpdateHandler()}
+          >
+            Save
+          </Button>
+        </Box>
+      )}
       {
         showDivider && (
           <Divider className={classes.divider} />
@@ -402,8 +423,11 @@ const MessageSection = (props) => {
 };
 
 MessageSection.propTypes = {
+  index: PropTypes.number.isRequired,
   showDivider: PropTypes.bool.isRequired,
   fetchMessages: PropTypes.func.isRequired,
+  onChangeHandler: PropTypes.func.isRequired,
+  isEdit: PropTypes.bool.isRequired,
   message: PropTypes.shape({
     id: PropTypes.number,
     created: PropTypes.string,

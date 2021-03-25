@@ -52,6 +52,7 @@ import {
   TOGGLE_ALLERGIES_EXPAND_DIALOG,
   TOGGLE_MESSAGES_NEW_DIALOG,
   TOGGLE_MESSAGES_EXPAND_DIALOG,
+  TOGGLE_MESSAGES_DIALOG_PAGE,
   TOGGLE_REQUISITIONS_NEW_DIALOG,
   TOGGLE_REQUISITIONS_EXPAND_DIALOG,
   TOGGLE_TESTS_EXPAND_DIALOG,
@@ -436,6 +437,14 @@ const reducer = (state = initialState, action) => {
         messages: {
           ...state.messages,
           newDialog: !state.messages.newDialog,
+        },
+      };
+    case TOGGLE_MESSAGES_DIALOG_PAGE:
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          messageDialogPage: !state.messages.messageDialogPage,
         },
       };
     case TOGGLE_REQUISITIONS_EXPAND_DIALOG:

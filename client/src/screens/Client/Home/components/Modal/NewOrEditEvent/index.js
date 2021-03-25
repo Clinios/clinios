@@ -36,9 +36,9 @@ import clsx from "clsx";
 import moment from "moment";
 import PropTypes from "prop-types";
 
-import useAuth from "../../../../../hooks/useAuth";
-import useDebounce from "../../../../../hooks/useDebounce";
-import * as API from "../../../../../utils/API";
+import useAuth from "../../../../../../hooks/useAuth";
+import useDebounce from "../../../../../../hooks/useDebounce";
+import * as API from "../../../../../../utils/API";
 
 const useStyles = makeStyles((theme) => ({
   title: {

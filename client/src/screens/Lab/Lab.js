@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     position: "absolute",
     bottom: theme.spacing(1),
+    marginTop: theme.spacing(4),
     width: `calc(100% - ${theme.spacing(3)}px)`, // 1.5 x 2 sides = 3
   },
   downloadButton: {

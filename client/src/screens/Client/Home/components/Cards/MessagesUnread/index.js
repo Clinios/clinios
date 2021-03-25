@@ -10,7 +10,7 @@ import moment from "moment";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-import Colors from "../../../../../theme/colors";
+import Colors from "../../../../../../theme/colors";
 
 const useStyles = makeStyles((theme) => ({
   title: {

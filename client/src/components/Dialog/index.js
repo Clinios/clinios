@@ -71,6 +71,7 @@ const DialogForm = ({
   size,
   fullScreen,
   fullHeight,
+  transitionComponent,
 }) => {
   const classes = useStyles();
   return (
@@ -81,6 +82,7 @@ const DialogForm = ({
         onClose={cancelForm}
         fullWidth
         maxWidth={size}
+        TransitionComponent={transitionComponent}
       // disableBackdropClick //enable esc button close and backdrop click
       >
         <>
@@ -174,6 +176,7 @@ DialogForm.defaultProps = {
   size: "lg",
   fullScreen: false,
   fullHeight: false,
+  transitionComponent: undefined,
 };
 
 DialogForm.propTypes = {
@@ -190,6 +193,7 @@ DialogForm.propTypes = {
   size: PropTypes.string,
   fullScreen: PropTypes.bool,
   fullHeight: PropTypes.bool,
+  transitionComponent: PropTypes.node,
 };
 
 export default DialogForm;

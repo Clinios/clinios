@@ -59,6 +59,7 @@ import {
   toggleAllergyExpandDialog,
   toggleMessageDialog,
   toggleMessageExpandDialog,
+  toggleMessageDialogPage,
   toggleRequisitionDialog,
   toggleRequisitionExpandDialog,
   toggleTestsExpandDialog,
@@ -71,6 +72,7 @@ import {
   toggleNewTransactionDialog,
   togglePaymentDialog,
   togglePatientAppointmentHistoryDialog,
+  resetSelectedMessage,
 } from "../../providers/Patient/actions";
 import initialState from "../../providers/Patient/initialState";
 import PatientService from "../../services/patient.service";
@@ -80,6 +82,7 @@ import {
   FourthColumnPatientCards,
 } from "../../static/patient";
 import { isDev } from "../../utils/helpers";
+import ProcessMessagePage from "../ProcessMessage";
 import {
   AdminNotesForm,
   AdminNotesHistory,
@@ -113,6 +116,7 @@ import {
   HandoutsCardContent,
   HandoutsDetails,
 } from "./components/Handouts";
+import InsightsCardContent from "./components/Insights/content";
 import EncountersForm from "./Encounters";
 import EncountersCardContent from "./Encounters/content";
 import EncountersDetails from "./Encounters/details";
@@ -166,7 +170,7 @@ const Patient = () => {
     allergies, messages, requisitions, tests, diagnoses, medications, billing,
   } = state;
 
-  const { messageType } = messages;
+  const { selectedMessage, messageType, messageDialogPage } = messages;
   const { selectedBilling } = billing;
 
   // patient ID authenticity
@@ -527,7 +531,13 @@ const Patient = () => {
       case "Forms":
         return <FormCardContent />;
       case "Billing":
-        return <BillingCardContent />;
+        return (
+          <BillingCardContent reloadData={() => {
+            fetchBillings();
+            fetchPatientBalance();
+          }}
+          />
+        );
       case "Allergies":
         return (
           <AllergiesCardContent
@@ -543,7 +553,11 @@ const Patient = () => {
         return <MedicalNotesCardContent />;
 
       case "Handouts":
-        return <HandoutsCardContent />;
+        return (
+          <HandoutsCardContent
+            reloadData={() => fetchPatientHandouts()}
+          />
+        );
       case "Messages":
         return (
           <MessagesCardContent
@@ -553,9 +567,18 @@ const Patient = () => {
       case "Medications":
         return <MedicationsCardContent />;
       case "Diagnoses":
-        return <DiagnosesCardContent />;
+        return (
+          <DiagnosesCardContent
+            reloadData={() => {
+              fetchDiagnoses();
+              fetchDiagnoses(true);
+            }}
+          />
+        );
       case "Requisitions":
         return <RequisitionsCardContent />;
+      case "Insights":
+        return <InsightsCardContent />;
       default:
         return <div />;
     }
@@ -1017,6 +1040,27 @@ const Patient = () => {
           cancelForm={() => dispatch(toggleMessageDialog())}
           hideActions
           size="md"
+        />
+      )}
+
+      {!!messageDialogPage && (
+        <Dialog
+          fullHeight
+          open={messageDialogPage}
+          title="Edit Messages"
+          message={(
+            <ProcessMessagePage
+              fetchProviderDetails={() => { }}
+              selectedMessage={selectedMessage}
+              onClose={() => {
+                dispatch(resetSelectedMessage());
+                dispatch(toggleMessageDialogPage());
+              }}
+            />
+          )}
+          cancelForm={() => dispatch(toggleMessageDialogPage())}
+          size="xl"
+          hideActions
         />
       )}
 

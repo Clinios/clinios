@@ -3,6 +3,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import {
   makeStyles, withStyles, Typography, Grid, Button,
 } from "@material-ui/core";
+import Slide from "@material-ui/core/Slide";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -12,9 +13,14 @@ import TableRow from "@material-ui/core/TableRow";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 
+import Dialog from "../../../components/Dialog";
 import useAuth from "../../../hooks/useAuth";
 import useDidMountEffect from "../../../hooks/useDidMountEffect";
 import PatientPortalService from "../../../services/patient_portal/patient-portal.service";
+import PatientLabDocumentViewer from "./modal/PatientLabDocumentViewer";
+
+
+const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,6 +65,7 @@ const StyledTableCell = withStyles(() => ({
 const StyledTableRow = withStyles(() => ({
   root: {
     fontSize: 14,
+    cursor: "pointer",
     "& th": {
       fontSize: 14,
       whiteSpace: "nowrap",
@@ -77,10 +84,12 @@ const StyledTableRow = withStyles(() => ({
 const Labs = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { lastVisitedPatient } = useAuth();
+  const { lastVisitedPatient, user } = useAuth();
   const [labDocuments, setLabDocuments] = useState([]);
   const [tabValue, setTabValue] = useState(0);
   const [tableData, setTableData] = useState([]);
+  const [isLabModalOpen, setIsLabModalOpen] = useState(false);
+  const [documentName, setDocumentName] = useState("");
 
   const fetchLabDocuments = useCallback(() => {
     PatientPortalService.getLabDocuments(lastVisitedPatient).then((res) => {
@@ -144,6 +153,11 @@ const Labs = () => {
           enqueueSnackbar(`${resMessage}`, { variant: "error" });
         });
     }
+  };
+
+  const handleDocumentClick = (doc) => {
+    setDocumentName(doc.filename);
+    setIsLabModalOpen(true);
   };
 
   return (
@@ -233,11 +247,16 @@ const Labs = () => {
             <TableBody>
               {tableData.length ? (
                 tableData.map((item) => (
-                  <StyledTableRow key={`${item.created}_${item.filename}`}>
+                  <StyledTableRow
+                    key={`${item.created}_${item.filename}`}
+                    onClick={() => handleDocumentClick(item)}
+                  >
                     <StyledTableCell component="th" scope="item">
                       {moment(item.created).format("MMM D YYYY")}
                     </StyledTableCell>
-                    <StyledTableCell>{item.filename}</StyledTableCell>
+                    <StyledTableCell>
+                      {item.filename}
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))
               ) : (
@@ -253,6 +272,25 @@ const Labs = () => {
           </Table>
         </TableContainer>
       </Grid>
+      {isLabModalOpen
+        && (
+          <Dialog
+            open={isLabModalOpen}
+            cancelForm={() => setIsLabModalOpen(false)}
+            title="Lab Document"
+            message={(
+              <PatientLabDocumentViewer
+                documentName={documentName}
+                patientId={user?.client_id}
+              />
+            )}
+            hideActions
+            size="sm"
+            fullHeight
+            transitionComponent={Transition}
+          />
+
+        )}
     </div>
   );
 };

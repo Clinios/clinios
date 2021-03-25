@@ -111,9 +111,6 @@ exports.validate = (method) => {
         check("data.appointment_type")
           .exists()
           .withMessage("Appointment Type can not empty!"),
-        check("data.appointment_name_portal")
-          .exists()
-          .withMessage("Appointment name portal can not empty!"),
         check("data.length").exists().withMessage("Minutes an not empty!"),
         check("data.allow_patients_schedule")
           .exists()

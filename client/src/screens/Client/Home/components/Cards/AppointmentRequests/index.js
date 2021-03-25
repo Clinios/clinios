@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import moment from "moment";
 import PropTypes from "prop-types";
 
-import Colors from "../../../../../theme/colors";
+import Colors from "../../../../../../theme/colors";
 
 const useStyles = makeStyles((theme) => ({
   title: {

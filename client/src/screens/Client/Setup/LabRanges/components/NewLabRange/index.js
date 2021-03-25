@@ -57,7 +57,7 @@ const NewLabRange = (props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const {
-    isOpen, onClose, reloadData, selectedItem,
+    isOpen, onClose, reloadData, selectedItem, userName,
   } = props;
 
   const isNewDialog = useMemo(() => isEmpty(selectedItem), [selectedItem]);
@@ -72,8 +72,8 @@ const NewLabRange = (props) => {
     compareTo: "",
     rangeLow: "",
     rangeHigh: "",
-    created: moment().format("MMM DD YYYY"),
-    updated: moment().format("MMM DD YYYY"),
+    created: `${moment().format("MMM DD YYYY")} ${userName}`,
+    updated: `${moment().format("MMM DD YYYY")} ${userName}`,
   });
 
   const updateFields = () => {
@@ -286,7 +286,6 @@ const NewLabRange = (props) => {
                   type="number"
                   label="Compare Operator"
                   size="small"
-                  required
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.compareOperator}
@@ -313,7 +312,6 @@ const NewLabRange = (props) => {
                   type="number"
                   label="Compare To"
                   size="small"
-                  required
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.compareTo}
@@ -407,6 +405,7 @@ NewLabRange.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   reloadData: PropTypes.func.isRequired,
+  userName: PropTypes.string.isRequired,
   selectedItem: PropTypes.shape({
     id: PropTypes.number,
     cpt_id: PropTypes.string,
@@ -414,9 +413,12 @@ NewLabRange.propTypes = {
     seq: PropTypes.number,
     compare_item: PropTypes.string,
     compare_operator: PropTypes.string,
-    compare_to: PropTypes.number,
+    compare_to: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
     range_low: PropTypes.number,
-    range_high: PropTypes.string,
+    range_high: PropTypes.number,
     created: PropTypes.string,
     updated: PropTypes.string,
     created_user: PropTypes.string,

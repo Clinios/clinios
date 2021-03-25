@@ -13,7 +13,7 @@ import Alert from "../../../components/Alert";
 import useAuth from "../../../hooks/useAuth";
 import usePatientContext from "../../../hooks/usePatientContext";
 import {
-  setSelectedMessage, resetSelectedMessage, toggleMessageDialog, setMessageType,
+  setSelectedMessage, resetSelectedMessage, toggleMessageDialog, toggleMessageDialogPage, setMessageType,
 } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
 
@@ -132,8 +132,7 @@ const MessagesContent = (props) => {
         <MenuItem
           disabled={isEditDisabled}
           onClick={() => {
-            dispatch(setMessageType("Edit"));
-            dispatch(toggleMessageDialog());
+            dispatch(toggleMessageDialogPage());
             closeMenu();
           }}
         >
