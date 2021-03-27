@@ -107,19 +107,20 @@ const TestGraph = () => {
         });
       },
     );
-
-    Tests.getTestGraph(user.id, testId).then(
-      (res) => {
-        const data = res?.data;
-        setGraph(data);
-        setGraphFilterData(data);
-      },
-      () => {
-        enqueueSnackbar("Unable to fetch Activity history.", {
-          variant: "error",
-        });
-      },
-    );
+    if (testId) {
+      Tests.getTestGraph(user.id, testId).then(
+        (res) => {
+          const data = res?.data;
+          setGraph(data);
+          setGraphFilterData(data);
+        },
+        () => {
+          enqueueSnackbar("Unable to fetch Activity history.", {
+            variant: "error",
+          });
+        },
+      );
+    }
   }, [user, testId, enqueueSnackbar]);
 
   useEffect(() => {
