@@ -33,7 +33,7 @@ const getPageTitle = async (req, res) => {
   try {
     const $sql = `select name
     from cpt 
-    where id = ${cptId}`;
+    where id = '${cptId}'`;
 
     const dbResponse = await db.query($sql);
 
@@ -59,7 +59,7 @@ const getLabcptByLabId = async (req, res) => {
     const $sql = `select cpt_id
    from lab_cpt
    where patient_id=${req.patient_id || patientId}
-   and lab_id=${labId}
+   and lab_id='${labId}'
    order by line_nbr
    limit 200`;
 
@@ -119,7 +119,7 @@ const getTestGraph = async (req, res) => {
     /*left join cpt c on c.id=lc.cpt_id*/
     left join lab l on l.id=lc.lab_id
     where lc.patient_id=${req.patient_id || patientId}
-    and lc.cpt_id=${labId}
+    and lc.cpt_id='${labId}'
     order by lc.lab_dt, lc.lab_id
     limit 200`;
 

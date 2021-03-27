@@ -142,6 +142,7 @@ const NewOrEditAppointment = ({
       const formedData = {
         data: removeEmpty({
           appointment_type: appointment.appointment_type,
+          descr: appointment.descr,
           length: appointment.length,
           fee: appointment.fee,
           sort_order: appointment.sort_order,
@@ -222,6 +223,25 @@ const NewOrEditAppointment = ({
               <p className={classes.formHelperText}>
                 The name of the appointment type
               </p>
+            </FormControl>
+            <FormControl
+              component="div"
+              className={`${classes.formControl} ${classes.textArea}`}
+            >
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Description"
+                multiline
+                name="descr"
+                InputProps={{
+                  classes: classes.normalOutline,
+                  inputComponent: TextareaAutosize,
+                  rows: 8,
+                }}
+                value={appointment.descr}
+                onChange={(event) => handleOnChange(event)}
+              />
             </FormControl>
             <FormControl component="div" className={classes.formControl}>
               <TextField
@@ -322,7 +342,7 @@ const NewOrEditAppointment = ({
                 InputProps={{
                   classes: classes.normalOutline,
                   inputComponent: TextareaAutosize,
-                  rows: 8,
+                  rows: 4,
                 }}
                 value={appointment.note}
                 onChange={(event) => handleOnChange(event)}

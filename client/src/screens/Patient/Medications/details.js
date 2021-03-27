@@ -10,12 +10,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
+import EditIcon from "@material-ui/icons/EditOutlined";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
 import usePatientContext from "../../../hooks/usePatientContext";
+import { toggleMedicationDialog, setSelectedMedication } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +71,7 @@ const MedicationsDetails = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
-  const { state } = usePatientContext();
+  const { state, dispatch } = usePatientContext();
   const { data } = state.medications;
   const { patientId } = state;
 
@@ -97,15 +99,12 @@ const MedicationsDetails = (props) => {
         enqueueSnackbar(`${response.data.message}`, { variant: "success" });
         closeDeleteDialog();
         reloadData();
-      })
-      .catch((error) => {
-        const resMessage = (error.response
-          && error.response.data
-          && error.response.data.message)
-          || error.message
-          || error.toString();
-        enqueueSnackbar(`${resMessage}`, { variant: "error" });
       });
+  };
+
+  const editItemHandler = (item) => {
+    dispatch(setSelectedMedication(item));
+    dispatch(toggleMedicationDialog());
   };
 
   return (
@@ -145,6 +144,12 @@ const MedicationsDetails = (props) => {
                   <TableCell>{row.unit}</TableCell>
 
                   <TableCell className={classes.actions}>
+                    <IconButton
+                      className={classes.button}
+                      onClick={() => editItemHandler(row)}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
                     <IconButton
                       className={classes.button}
                       onClick={() => openDeleteDialog(row)}

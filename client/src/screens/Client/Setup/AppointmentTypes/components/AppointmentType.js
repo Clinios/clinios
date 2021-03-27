@@ -79,6 +79,7 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
         <TableHead>
           <TableRow>
             <StyledTableCell padding="checkbox">Appointment Type</StyledTableCell>
+            <StyledTableCell padding="checkbox" align="center">Description</StyledTableCell>
             <StyledTableCell padding="checkbox">Minutes</StyledTableCell>
             <StyledTableCell padding="checkbox">Fee</StyledTableCell>
             <StyledTableCell padding="checkbox">Patient Schedule</StyledTableCell>
@@ -99,6 +100,17 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
               <TableCell padding="checkbox" component="th" scope="row">
                 {appointment.appointment_type}
               </TableCell>
+              {appointment.descr && appointment.descr.length > 0 ? (
+                <LightTooltip title={appointment.descr}>
+                  <TableCell padding="checkbox" className={classes.overflowControl} align="center">
+                    {appointment.descr}
+                  </TableCell>
+                </LightTooltip>
+              ) : (
+                <TableCell padding="checkbox" className={classes.overflowControl} align="center">
+                  {appointment.descr || ""}
+                </TableCell>
+              )}
               <TableCell padding="checkbox">{appointment.length}</TableCell>
               <TableCell padding="checkbox">{appointment.fee}</TableCell>
               <TableCell padding="checkbox">{appointment.allow_patients_schedule ? "Yes" : "No"}</TableCell>

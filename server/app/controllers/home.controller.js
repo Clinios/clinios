@@ -27,7 +27,7 @@ const getAll = async (req, res) => {
         left join user au on au.id=uc.approved_user_id
         left join user du on du.id=uc.declined_user_id
         where uc.client_id=${req.client_id}
-          and uc.user_id=${req.user_id}
+        and uc.user_id=${req.user_id}
       `
     );
 
@@ -94,7 +94,8 @@ const getEventsByProvider = async (req, res) => {
     left join user au on au.id=uc.approved_user_id
     left join user du on du.id=uc.declined_user_id
     where uc.client_id=${req.client_id}
-        and uc.user_id=${providerId}`;
+    and uc.user_id=${providerId}
+    `;
 
     const dbResponse = await db.query($sql);
 

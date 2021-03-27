@@ -17,6 +17,13 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: "ellipsis",
     padding: theme.spacing(0, 0.5, 0, 0),
   },
+  fullWidth: {
+    width: "52%",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    padding: theme.spacing(0, 0.5, 0, 0),
+  },
 }));
 
 const MedicationsContent = () => {
@@ -46,7 +53,7 @@ const MedicationsContent = () => {
               {item.descr}
             </Typography>
           </Grid>
-          <Grid item className={classes.block}>
+          <Grid item className={classes.fullWidth}>
             <Typography
               component="span"
               className={classes.text12}

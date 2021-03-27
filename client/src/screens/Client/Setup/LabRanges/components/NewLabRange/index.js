@@ -131,7 +131,7 @@ const NewLabRange = (props) => {
     e.preventDefault();
     const reqBody = {
       data: {
-        cpt_id: isNewDialog ? selectedTest.id : selectedItem.cpt_id,
+        cpt_id: isNewDialog ? selectedTest?.id : selectedItem?.cpt_id,
         seq: Number(formFields.sequence),
         compare_item: formFields.compareItem,
         compare_operator: formFields.compareOperator,
@@ -265,7 +265,6 @@ const NewLabRange = (props) => {
                   type="number"
                   label="Compare Item"
                   size="small"
-                  required
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.compareItem}

@@ -44,21 +44,30 @@ const useStyles = makeStyles((theme) => ({
   labelContainer: {
     pointerEvents: "none",
   },
-  label: {
-    fontSize: 16,
-    marginRight: theme.spacing(1),
-  },
   pointerEnable: {
     pointerEvents: "auto",
   },
+  title: {
+    fontSize: "1.7em",
+  },
   text: {
     lineHeight: "22px",
+    fontSize: 12,
   },
   iconButton: {
     padding: theme.spacing(0.25),
     "& svg": {
       fontSize: "1rem",
     },
+  },
+  switchLabel: {
+    marginRight: theme.spacing(1),
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: 1.75,
+    borderRadius: 4,
+    letterSpacing: "0.02857em",
+    textTransform: "capitalize",
   },
 }));
 
@@ -198,7 +207,7 @@ const LabRanges = () => {
           className={classes.mb2}
         >
           <Grid item lg={6}>
-            <Grid container justify="space-between">
+            <Grid container justify="space-between" alignItems="center">
               <Typography
                 component="h1"
                 variant="h2"
@@ -229,7 +238,7 @@ const LabRanges = () => {
                 label="Use Functional Range"
                 labelPlacement="start"
                 classes={{
-                  label: classes.label,
+                  label: classes.switchLabel,
                   root: classes.labelContainer, // to disable clicking of label
                 }}
               />

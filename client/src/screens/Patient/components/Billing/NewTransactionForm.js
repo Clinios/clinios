@@ -258,7 +258,7 @@ const NewTransactionForm = (props) => {
             alignItems="center"
             className={classes.formInput}
           >
-            <Grid item md={4}>
+            <Grid item md={4} xs={12}>
               {item.baseType === "input" ? (
                 <TextField
                   variant="outlined"

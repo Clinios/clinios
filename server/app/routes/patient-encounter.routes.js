@@ -78,6 +78,11 @@ router.get(
   PatientEncounter.getEncountersPrescriptionsFrequencies
 );
 router.get(
+  "/patient/:patient_id/encounters/:encounter_id/plan/new-prescriptions/:drug_id/strengths",
+  [authJwt.verifyToken],
+  PatientEncounter.getEncountersPrescriptionsStrength
+);
+router.get(
   "/patient/:patient_id/encounters/:encounter_id/plan/new-prescriptions/recent-profiles",
   [authJwt.verifyToken],
   PatientEncounter.encountersRecentProfiles

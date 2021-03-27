@@ -25,6 +25,8 @@ import {
   SET_MESSAGE_TYPE,
   SET_MESSAGES,
   SET_MEDICATIONS,
+  SET_SELECTED_MEDICATION,
+  RESET_SELECTED_MEDICATION,
   SET_DIAGNOSES,
   SET_ACTIVE_DIAGNOSES,
   SET_DIAGNOSES_STATUS,
@@ -183,6 +185,15 @@ export const setActiveDiagnoses = (data) => ({
 export const setMedications = (data) => ({
   type: SET_MEDICATIONS,
   payload: data,
+});
+
+export const setSelectedMedication = (data) => ({
+  type: SET_SELECTED_MEDICATION,
+  payload: data,
+});
+
+export const resetSelectedMedication = () => ({
+  type: RESET_SELECTED_MEDICATION,
 });
 
 export const setBilling = (data) => ({

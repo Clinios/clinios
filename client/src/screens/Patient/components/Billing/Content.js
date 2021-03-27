@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 0.5, 0, 0),
   },
   blockAction: {
-    width: 65,
+    width: 55,
     textAlign: "right",
     "& button": {
       padding: 2,

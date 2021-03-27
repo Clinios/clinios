@@ -172,6 +172,7 @@ const Patient = () => {
 
   const { selectedMessage, messageType, messageDialogPage } = messages;
   const { selectedBilling } = billing;
+  const { selectedMedication } = medications;
 
   // patient ID authenticity
   const [hasPatientIderror, setHasPatientIderror] = useState(true);
@@ -1047,7 +1048,7 @@ const Patient = () => {
         <Dialog
           fullHeight
           open={messageDialogPage}
-          title="Edit Messages"
+          title="Edit Message"
           message={(
             <ProcessMessagePage
               fetchProviderDetails={() => { }}
@@ -1122,7 +1123,7 @@ const Patient = () => {
       {!!medications.newDialog && (
         <Dialog
           open={medications.newDialog}
-          title="New Medication"
+          title={`${selectedMedication ? "Edit" : "New"} Patient Medication`}
           message={(
             <MedicationsForm
               reloadData={fetchMedications}
@@ -1131,7 +1132,7 @@ const Patient = () => {
           applyForm={() => dispatch(toggleMedicationDialog())}
           cancelForm={() => dispatch(toggleMedicationDialog())}
           hideActions
-          size="md"
+          size="lg"
         />
       )}
 

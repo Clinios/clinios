@@ -266,6 +266,17 @@ export const drugFrequencyCodeToLabel = (frequency) => {
   }
 };
 
+export const drugFrequencyLabelToCode = (frequency) => {
+  switch (frequency) {
+    case "Once Daily":
+      return "1D";
+    case "Twice Daily":
+      return "2D";
+    default:
+      return "";
+  }
+};
+
 export const isDev = () => process.env.NODE_ENV === "development";
 
 export function isArrayWithLength(arr) {

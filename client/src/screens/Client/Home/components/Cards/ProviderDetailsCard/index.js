@@ -99,7 +99,7 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails, fetchProviderD
         <Dialog
           fullHeight
           open={showMessagesModal}
-          title="Messages"
+          title="Message From Patient"
           message={(
             <ProcessMessage fetchProviderDetails={fetchProviderDetails} />
           )}

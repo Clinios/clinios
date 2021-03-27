@@ -53,9 +53,10 @@ const getUserMessage = async (req, res) => {
               from message m
               where m.user_id_to=${req.user_id}
               and m.status='O'
-              and (m.pend_dt is null or m.pend_dt<=current_date) 
               )
       )
+      and m.user_id_to=${req.user_id}
+      and m.status='O'
       order by m.created
       limit 10
       `

@@ -23,6 +23,15 @@ const useStyles = makeStyles((theme) => ({
   mr3: {
     marginRight: theme.spacing(3),
   },
+  historyButton: {
+    position: "absolute",
+    right: "20%",
+    top: "10px",
+    [theme.breakpoints.down("md")]: {
+      right: "8%",
+      top: "7px",
+    },
+  },
   actionsContainer: {
     background: "white",
     position: "absolute",
@@ -126,19 +135,12 @@ const ProcessMessage = (props) => {
           />
         )
       }
-      <Grid container className={classes.gutterBottom}>
-        <Typography
-          component="h1"
-          variant="h2"
-          color="textPrimary"
-          className={classes.mr3}
-        >
-          Message From Patient
-        </Typography>
-        <Button onClick={() => toggleHistoryDialog()}>
-          User History
-        </Button>
-      </Grid>
+      <Button
+        className={classes.historyButton}
+        onClick={() => toggleHistoryDialog()}
+      >
+        User History
+      </Button>
       <Box mb={8}>
         {
           messages.length
@@ -162,7 +164,7 @@ const ProcessMessage = (props) => {
               </Grid>
             )))
             : (
-              <Typography variant="h5">
+              <Typography variant="h6">
                 {isLoading ? "Fetching Messages..." : "No Messages Found!"}
               </Typography>
             )
@@ -171,7 +173,6 @@ const ProcessMessage = (props) => {
       {!selectedMessage && ( // hidden on patient page
         <Grid
           container
-          justify="flex-end"
           className={classes.actionsContainer}
         >
           <Button

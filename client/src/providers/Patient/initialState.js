@@ -71,6 +71,7 @@ const initialState = {
   },
   medications: {
     data: [],
+    selectedMedication: null,
     newDialog: false,
     expandDialog: false,
   },

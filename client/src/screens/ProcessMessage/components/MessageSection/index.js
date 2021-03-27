@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     lineHeight: "21px",
+    fontSize: 12,
   },
   historyHeading: {
     position: "absolute",
@@ -153,7 +154,7 @@ const MessageSection = (props) => {
           message={message}
         />
       )}
-      <Grid item lg={6} xs={12}>
+      <Grid item lg={5} xs={12}>
         <Grid container spacing={1}>
           <Grid item xs>
             <Typography

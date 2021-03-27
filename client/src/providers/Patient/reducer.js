@@ -25,6 +25,8 @@ import {
   SET_MESSAGE_TYPE,
   SET_MESSAGES,
   SET_MEDICATIONS,
+  SET_SELECTED_MEDICATION,
+  RESET_SELECTED_MEDICATION,
   SET_DIAGNOSES,
   SET_ACTIVE_DIAGNOSES,
   SET_DIAGNOSES_STATUS,
@@ -250,6 +252,22 @@ const reducer = (state = initialState, action) => {
         medications: {
           ...state.medications,
           data: [...action.payload],
+        },
+      };
+    case SET_SELECTED_MEDICATION:
+      return {
+        ...state,
+        medications: {
+          ...state.medications,
+          selectedMedication: action.payload,
+        },
+      };
+    case RESET_SELECTED_MEDICATION:
+      return {
+        ...state,
+        medications: {
+          ...state.medications,
+          selectedMedication: null,
         },
       };
     case SET_BILLING:

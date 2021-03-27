@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
+import throttle from "lodash/throttle";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 import FileViewer from "react-file-viewer";
@@ -24,16 +25,18 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
     marginLeft: theme.spacing(2),
+    display: "grid",
+    gridTemplateColumns: "max-content",
+    justifyContent: "center",
+    alignContent: "center",
   },
   PaginationWrap: {
     display: "flex",
     justifyContent: "center",
   },
-  download: {
-    "& a": {
-      color: "#ffffff",
-      textDecoration: "none",
-    },
+  documentPage: {
+    background: "red",
+    textAlign: "center",
   },
 }));
 
@@ -48,6 +51,8 @@ const PatientLabDocumentViewer = ({
   const [totalPages, setTotalPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [type, setType] = useState("");
+  const [initialWidth, setInitialWidth] = useState(580);
+  const pdfWrapper = useRef(null);
 
   useEffect(() => {
     const filePath = `${process.env.REACT_APP_API_URL}static/patient/pid${patientId}_${documentName}`;
@@ -69,17 +74,31 @@ const PatientLabDocumentViewer = ({
     console.error("onError", e);
   };
 
+  const setPdfSize = () => {
+    if (pdfWrapper && pdfWrapper.current) {
+      setInitialWidth(pdfWrapper.current.getBoundingClientRect().width);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", throttle(setPdfSize, 3000));
+    setPdfSize();
+    return () => {
+      window.removeEventListener("resize", throttle(setPdfSize, 3000));
+    };
+  }, []);
+
 
   return (
     <>
       {type && (type === "pdf")
         ? (
-          <div className={classes.PDFViewer}>
+          <div className={classes.PDFViewer} ref={pdfWrapper}>
             <Document
               file={(file)}
               onLoadSuccess={onDocumentLoadSuccess}
             >
-              <Page pageNumber={pageNumber} />
+              <Page pageNumber={pageNumber} width={initialWidth} />
             </Document>
             {totalPages && (
               <div className={classes.PaginationWrap}>

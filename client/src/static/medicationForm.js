@@ -1,6 +1,16 @@
 
 export const NewDrugFormFields = [
   {
+    name: "strength",
+    id: "strength",
+    label: "Strength",
+    baseType: "select",
+    type: "text",
+    options: [],
+    multiline: false,
+    required: false,
+  },
+  {
     name: "frequency",
     id: "frequency",
     label: "Frequency",
@@ -8,6 +18,7 @@ export const NewDrugFormFields = [
     type: "text",
     options: [],
     multiline: false,
+    required: true,
   },
   {
     name: "startDate",
@@ -17,6 +28,7 @@ export const NewDrugFormFields = [
     type: "date",
     options: [],
     multiline: false,
+    required: true,
   },
   {
     name: "expires",
@@ -26,6 +38,7 @@ export const NewDrugFormFields = [
     type: "number",
     options: [],
     multiline: false,
+    required: true,
   },
   {
     name: "amount",
@@ -35,6 +48,7 @@ export const NewDrugFormFields = [
     type: "number",
     options: [],
     multiline: false,
+    required: true,
   },
   {
     name: "refills",
@@ -44,6 +58,7 @@ export const NewDrugFormFields = [
     type: "number",
     options: [],
     multiline: false,
+    required: true,
   },
   {
     name: "patientInstructions",
@@ -53,6 +68,7 @@ export const NewDrugFormFields = [
     type: "text",
     options: [],
     multiline: true,
+    required: true,
   },
   {
     name: "pharmacyInstructions",
@@ -62,6 +78,7 @@ export const NewDrugFormFields = [
     type: "text",
     options: [],
     multiline: true,
+    required: true,
   },
 ];
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 
 import {
+  Typography,
   Table,
   TableHead,
   TableBody,
@@ -39,8 +40,8 @@ const UserHistory = (props) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {userHistory.map((row) => (
-          <StyledTableRowLg key={row.type}>
+        {userHistory.length ? userHistory.map((row) => (
+          <StyledTableRowLg key={row.id}>
             <StyledTableCellLg component="th" scope="row">
               {dateFormat(row.updated)}
             </StyledTableCellLg>
@@ -49,7 +50,16 @@ const UserHistory = (props) => {
             <StyledTableCellLg>{row.updated_name}</StyledTableCellLg>
             <StyledTableCellLg>{row.note_assign}</StyledTableCellLg>
           </StyledTableRowLg>
-        ))}
+        ))
+        : (
+          <StyledTableRowLg>
+            <StyledTableCellLg colSpan={5}>
+              <Typography align="center" variant="body1">
+                No Records found...
+              </Typography>
+            </StyledTableCellLg>
+          </StyledTableRowLg>
+        )}
       </TableBody>
     </Table>
   );
@@ -57,7 +67,7 @@ const UserHistory = (props) => {
   return (
     <Dialog
       open={open}
-      title="User History"
+      title="Message From Patient User History"
       message={<UserHistoryTable />}
       cancelForm={onClose}
       hideActions
