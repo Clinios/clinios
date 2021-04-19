@@ -17,7 +17,7 @@ import SaveIcon from "@material-ui/icons/CheckCircle";
 import CardIcon from "@material-ui/icons/CreditCard";
 import DesktopIcon from "@material-ui/icons/DesktopMac";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { mdiCalendarBlankOutline, mdiChartBoxOutline } from "@mdi/js";
+import { mdiCalendarBlankOutline, mdiChartBoxOutline, mdiContentSaveOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
@@ -200,9 +200,11 @@ const PatientCard = (props) => {
           {title === "Patient" && (
             <>
               <MoreVertIcon className={classes.icon} onClick={handleClick} />
-              <SaveIcon
+              <Icon
                 className={classes.icon}
                 onClick={() => updateLayoutHandler()}
+                path={mdiContentSaveOutline}
+                size={1}
               />
               <Icon
                 className={classes.icon}
