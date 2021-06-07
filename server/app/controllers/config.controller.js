@@ -42,11 +42,10 @@ const getInit = async (req, res) => {
   let $sql;
 
   try {
-    $sql = `select id, name, code, address, address2, city, state, postal, country, phone, fax, website, email, ein, npi, calendar_start_time, calendar_end_time
-          from client 
-          where id=${req.client_id}`;
+    $sql = `select id, name, code, address, address2, city, state, postal, country, phone, fax, 
+    website, email, ein, npi, calendar_start_time, calendar_end_time from client where id=?`;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [req.client_id]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";

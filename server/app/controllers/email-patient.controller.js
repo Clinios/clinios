@@ -66,9 +66,8 @@ const updateEmailHistory = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const updateResponse = await db.query(`update email_bulk_history set ? 
-    where client_id='${emailData.client_id}' and created='${moment(
-      emailData.created
-    ).format("YYYY-MM-DD HH:mm:ss")}'`, [emailData]);
+    where client_id=? and created='${moment(emailData.created).format("YYYY-MM-DD HH:mm:ss")}'`,
+    [emailData, emailData.client_id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -95,13 +94,7 @@ const deleteHistory = async (req, res) => {
   const { date } = req.params;
   const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(
-      `delete 
-        from email_bulk_history
-        where client_id=${req.client_id}
-        and created='${date}'
-      `
-    );
+    const deleteResponse = await db.query(`delete from email_bulk_history where client_id=${req.client_id} and created=?`, [date]);
 
     if (!deleteResponse.affectedRows) {
       errorMessage.message = "Deletion not successful";

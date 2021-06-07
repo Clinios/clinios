@@ -7,10 +7,7 @@ const getMessageById = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select id, subject, message, unread_notify_dt, created, client_id
-        from message
-        where id=${id}
-      `
+      `select id, subject, message, unread_notify_dt, created, client_id from message where id=?`, [id]
     );
 
     if (!dbResponse) {
@@ -29,23 +26,16 @@ const getMessageById = async (req, res) => {
 };
 
 const createMessage = async (req, res) => {
-  const {
-    user_id_from,
-    patient_id_to,
-    subject,
-    message,
-    unread_notify_dt,
-  } = req.body.data;
+  const {unread_notify_dt} = req.body.data;
+  const formData = req.body.data;
+  formData.client_id = req.client_id;
+  formData.unread_notify_dt = moment(unread_notify_dt).format("YYYY-MM-DD");
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
+
   const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(
-      `insert into message (client_id, user_id_from, patient_id_to, subject, message, unread_notify_dt, created, created_user_id) values 
-      (${
-        req.client_id
-      }, ${user_id_from}, ${patient_id_to}, '${subject}', '${message}', '${moment(
-        unread_notify_dt
-      ).format("YYYY-MM-DD")}', now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into message set ?`, [formData]);
 
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
@@ -64,19 +54,17 @@ const createMessage = async (req, res) => {
 };
 
 const updateMessage = async (req, res) => {
-  const { subject, message, unread_notify_dt } = req.body.data;
   const { id } = req.params;
+  const formData = req.body.data;
+  formData.client_id = req.client_id;
+  formData.unread_notify_dt = moment(unread_notify_dt).format("YYYY-MM-DD");
+  formData.updated = new Date();
+  formData.updated_user_id = req.user_id;
+
   const db = makeDb(configuration, res);
 
   try {
-    const updateResponse = await db.query(
-      `update message
-        set subject='${subject}', message='${message}', unread_notify_dt='${moment(
-        unread_notify_dt
-      ).format("YYYY-MM-DD")}', updated= now(), updated_user_id='${req.user_id}'
-        where id=${id}
-      `
-    );
+    const updateResponse = await db.query(`update message set ? where id=?`, [formData, id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
