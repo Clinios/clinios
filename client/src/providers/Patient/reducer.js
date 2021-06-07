@@ -69,6 +69,7 @@ import {
   TOGGLE_INSIGHTS_EXPAND_DIALOG,
   SET_TEST_NAME,
   SET_SELECTED_TEST,
+  RESET_STORE,
 } from "./types";
 
 const reducer = (state = initialState, action) => {
@@ -586,6 +587,10 @@ const reducer = (state = initialState, action) => {
           ...state.insights,
           expandDialog: !state.insights.expandDialog,
         },
+      };
+    case RESET_STORE:
+      return {
+        ...initialState,
       };
     default:
       return state;
