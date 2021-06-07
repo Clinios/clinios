@@ -356,7 +356,7 @@ const Patient = () => {
     const { patientId: storePatientId } = state;
     if (storePatientId) { // if patientId is present in store and route changes then reset the store values
       dispatch(resetStore());
-    };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
