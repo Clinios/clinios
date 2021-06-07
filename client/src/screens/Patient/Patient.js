@@ -75,6 +75,7 @@ import {
   togglePatientAppointmentHistoryDialog,
   resetSelectedMessage,
   toggleInsightsExpandDialog,
+  resetStore,
 } from "../../providers/Patient/actions";
 import initialState from "../../providers/Patient/initialState";
 import PatientService from "../../services/patient.service";
@@ -350,6 +351,14 @@ const Patient = () => {
       }
     });
   };
+
+  useEffect(() => {
+    const { patientId: storePatientId } = state;
+    if (storePatientId) { // if patientId is present in store and route changes then reset the store values
+      dispatch(resetStore());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patientId]);
 
   useEffect(() => {
     generateLayout();
