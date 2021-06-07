@@ -15,6 +15,7 @@ import NumberFormat from "react-number-format";
 
 import useAuth from "../../../../hooks/useAuth";
 import MySelfService from "../../../../services/myself.service";
+import { CURRENT_TIMEZONE } from "../../../../static/setup/schedules";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -195,6 +196,16 @@ export default function MyProfile() {
               InputProps={{
                 readOnly: true,
               }}
+            />
+            <TextField
+              disabled
+              variant="outlined"
+              size="small"
+              label="Timezone"
+              id="timezone"
+              name="timezone"
+              value={CURRENT_TIMEZONE}
+              className={classes.formElment}
             />
             <TextField
               variant="outlined"
