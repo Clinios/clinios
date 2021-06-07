@@ -23,11 +23,11 @@ const mergePatient = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const patientToKeepResponse = await db.query(
-      `select id, client_id, firstname, lastname from patient where id=${patient_id_to_keep};`
+      `select id, client_id, firstname, lastname from patient where id=?`, [patient_id_to_keep]
     );
     const patientToKeep = patientToKeepResponse[0];
     const patientToDeleteResponse = await db.query(
-      `select id, client_id, firstname, lastname from patient where id=${patient_id_to_delete};`
+      `select id, client_id, firstname, lastname from patient where id=?`, [patient_id_to_delete]
     );
     const patientToDelete = patientToDeleteResponse[0];
 
@@ -50,24 +50,17 @@ const mergePatient = async (req, res) => {
     for (const key in tables) {
       // eslint-disable-next-line no-await-in-loop
       await db.query(
-        `update ${key}
-        set patient_id=${patient_id_to_keep} 
-        where patient_id=${patient_id_to_delete};`
+        `update ${key} set patient_id=? where patient_id=? `,
+         [patient_id_to_keep, patient_id_to_delete]
       );
     }
 
     // eslint-disable-next-line no-await-in-loop
-    const deleteResponse = await db.query(
-      `delete
-      from patient
-      where id=${patient_id_to_delete}`
-    );
+    const deleteResponse = await db.query(`delete from patient where id=?`, [patient_id_to_delete]);
 
     // eslint-disable-next-line no-await-in-loop
     await db.query(
-      `delete
-      from user_log
-      where patient_id=${patient_id_to_delete}`
+      `delete from user_log where patient_id=? `, [patient_id_to_delete]
     );
 
     const now = moment().format("YYYY-MM-DD HH:mm:ss");

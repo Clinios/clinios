@@ -13,9 +13,9 @@ const getEncounters = async (req, res) => {
       left join encounter_type et on et.id=e.type_id
       left join user u on u.id=e.user_id
       where e.client_id=${req.client_id}
-      and e.patient_id=${patient_id}
+      and e.patient_id=?
       order by e.dt desc
-      limit 50`
+      limit 50`, [patient_id]
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -93,11 +93,7 @@ const getEncountersPrescriptionsStrength = async (req, res) => {
   const db = makeDb(configuration, res);
   const { drug_id } = req.params;
   try {
-    const dbResponse = await db.query(
-      `select id, strength, unit, form
-      from drug_strength
-      where drug_id=${drug_id}`
-    );
+    const dbResponse = await db.query(`select id, strength, unit, form from drug_strength where drug_id=?`, [drug_id]);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
@@ -127,9 +123,9 @@ const encountersPrescriptionsEdit = async (req, res) => {
       left join drug d on d.id=pd.drug_id
       left join drug_strength ds on ds.drug_id=d.id 
         and ds.id=pd.drug_strength_id left join drug_frequency df on df.id=pd.drug_frequency_id
-      where pd.encounter_id=${encounter_id}
+      where pd.encounter_id=?
       and pd.drug_id=1
-      and pd.drug_strength_id=1`
+      and pd.drug_strength_id=1`, [encounter_id]
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -184,34 +180,18 @@ const encountersRecentProfiles = async (req, res) => {
 
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
-  const { title } = req.body.data;
-  let { dt, type_id, notes, treatment, read_dt, lab_bill_to } = req.body.data;
-
-  if (dt && typeof dt !== "undefined") {
-    dt = `'${moment(dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-  }
-  if (type_id && typeof type_id !== "undefined") {
-    type_id = `'${type_id}'`;
-  }
-  if (notes && typeof notes !== "undefined") {
-    notes = `'${notes}'`;
-  }
-  if (treatment && typeof treatment !== "undefined") {
-    treatment = `'${treatment}'`;
-  }
-  if (read_dt && typeof read_dt !== "undefined") {
-    read_dt = `'${moment(read_dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-  }
-  if (lab_bill_to && typeof lab_bill_to !== "undefined") {
-    lab_bill_to = `'${lab_bill_to}'`;
-  }
+  const formData = req.body.data;
+  formData.client_id = req.client_id;
+  formData.user_id = req.user_id;
+  formData.patient_id = patient_id;
+  formData.dt = moment(formData.dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.read_dt = moment(formData.read_dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
 
   const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(
-      `insert into encounter (client_id, user_id, patient_id, dt, type_id, title, notes, treatment, read_dt, lab_bill_to, created, created_user_id) 
-      values (${req.client_id}, ${req.user_id}, ${patient_id}, ${dt}, ${type_id}, '${title}', ${notes}, ${treatment}, ${read_dt}, ${lab_bill_to}, now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into encounter set ?`, [formData]);
 
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
@@ -241,31 +221,17 @@ const updateEncounter = async (req, res) => {
     lab_bill_to,
   } = req.body.data;
 
+  const formData = req.body.data;
+  formData.dt = moment(formData.dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.read_dt = moment(formData.read_dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.updated = new Date();
+  formData.updated_user_id = req.user_id;
+
   const db = makeDb(configuration, res);
   try {
-    let $sql;
+    const $sql = `update encounter set ? where patient_id=${patient_id} and id=${id}`;
+    const updateResponse = await db.query($sql, [formData, patient_id, id]);
 
-    $sql = `update encounter set title='${title}', notes='${notes}', treatment='${treatment}' `;
-
-    if (dt && typeof dt !== "undefined") {
-      $sql += `, dt='${moment(dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-    }
-    if (type_id && typeof type_id !== "undefined") {
-      $sql += `, type_id='${type_id}'`;
-    }
-    if (read_dt && typeof read_dt !== "undefined") {
-      $sql += `, read_dt='${moment(read_dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-    }
-
-    if (lab_bill_to && typeof lab_bill_to !== "undefined") {
-      $sql += `, lab_bill_to=${lab_bill_to}`;
-    }
-
-    $sql += `, updated='${moment().format("YYYY-MM-DD HH:mm:ss")}',
-    updated_user_id=${req.user_id}
-    where patient_id=${patient_id} and id=${id}`;
-
-    const updateResponse = await db.query($sql);
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
@@ -289,9 +255,7 @@ const deleteEncounter = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     // Call DB query without assigning into a variable
-    const deleteResponse = await db.query(`
-      delete from encounter where id=${id}
-    `);
+    const deleteResponse = await db.query(`delete from encounter where id=?`, [id]);
 
     if (!deleteResponse.affectedRows) {
       errorMessage.message = "Deletion not successful";
@@ -344,10 +308,10 @@ const getDiagnoses = async (req, res) => {
       `select i.name, concat('(', pi.icd_id, ' ICD-10)') id
       from patient_icd pi
       join icd i on i.id=pi.icd_id
-      where pi.encounter_id=${encounter_id}
+      where pi.encounter_id=? 
       and pi.active=true
       order by i.name
-      limit 20`
+      limit 20`, [encounter_id]
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -373,10 +337,10 @@ const getRecentDiagnoses = async (req, res) => {
       `select i.name, concat('(', pi.icd_id, ' ICD-10)') id
       from patient_icd pi
       join icd i on i.id=pi.icd_id
-      where pi.encounter_id<>${encounter_id}
+      where pi.encounter_id<>? 
       and pi.user_id=${req.client_id}
       order by pi.created desc
-      limit 20`
+      limit 20`, [encounter_id]
     );
     if (!dbResponse) {
       errorMessage.message = "None found";

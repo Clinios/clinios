@@ -9,9 +9,7 @@ const getProfile = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select firstname, lastname, email, title, created, email_forward_user_id, phone, status, timezone
-      from user 
-      where id=${req.params.userId}
-      `
+      from user where id=${req.params.userId}`
     );
 
     if (!dbResponse || dbResponse === 0) {
@@ -48,9 +46,8 @@ const updateProfile = async (req, res) => {
   if (data.password) data.password = bcrypt.hashSync(data.password, 8);
 
   try {
-    const updateResponse = await db.query(
-      `update user set ? where id =${req.params.userId}`,
-      [data]
+    const updateResponse = await db.query(`update user set ? where id =?`,
+      [data, req.params.userId]
     );
 
     if (!updateResponse.affectedRows) {
@@ -73,12 +70,8 @@ const getForwardEmail = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select u.id, concat(u.firstname, ' ', u.lastname) name
-      from user u 
-      where u.client_id=${req.client_id}
-      and u.id<>${req.params.userId}
-      order by name
-      limit 100
-      `
+      from user u where u.client_id=${req.client_id}
+      and u.id<>? order by name limit 100`, [req.params.userId]
     );
 
     if (!dbResponse) {
@@ -99,12 +92,7 @@ const getLogins = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select dt, ip
-      from user_login 
-      where user_id=${req.params.userId}
-      order by dt desc
-      limit 20
-      `
+      `select dt, ip from user_login where user_id=? order by dt desc limit 20`, [eq.params.userId]
     );
 
     if (!dbResponse) {
@@ -126,12 +114,10 @@ const getActivityHistory = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select ul.dt, concat(p.firstname, ' ', p.lastname) patient, p.id patient_id, ul.action
-      from user_log ul
+      from user_log ul 
       left join patient p on p.id=ul.patient_id
-      where ul.user_id=${req.params.userId}
-      order by ul.dt desc
-      limit 20
-      `
+      where ul.user_id=? order by ul.dt desc limit 20`,
+      [req.params.userId]
     );
 
     if (!dbResponse) {

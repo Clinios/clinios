@@ -61,8 +61,7 @@ const getPatient = async (req, res) => {
         from patient p
         left join user u on u.id=p.user_id
         where p.client_id=${req.client_id}
-        and p.id=${patient_id}
-      `
+        and p.id=?`, [patient_id]
     );
 
     // Call DB query without assigning into a variable
@@ -459,10 +458,8 @@ const balance = async (req, res) => {
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select 
-        sum(t.amount) amount
-        from tran t
-        where t.patient_id=${patient_id}`
+      `select sum(t.amount) amount from tran t
+        where t.patient_id=?`, [patient_id]
     );
 
     if (!dbResponse) {
@@ -489,12 +486,9 @@ const AdminNotehistory = async (req, res) => {
       `select ph.created, ph.admin_note, concat(u.firstname, ' ', u.lastname) name
         from patient_history ph
         left join user u on u.id=ph.created_user_id
-        where ph.id=${patient_id}
-        and ph.admin_note is not null
+        where ph.id=? and ph.admin_note is not null
         order by ph.created desc
-        limit 50
-      `
-    );
+        limit 50`, [patient_id]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -527,12 +521,7 @@ const adminNoteupdate = async (req, res) => {
     await db.query(
       `insert into patient_history (id, admin_note, created, created_user_id) values (${patient_id}, '${old_admin_note}', now(), ${req.user_id})`
     );
-    const updateResponse = await db.query(
-      `update patient
-            set admin_note='${admin_note}'
-            where id=${patient_id}
-      `
-    );
+    const updateResponse = await db.query(`update patient set admin_note=? where id=? `, [admin_note, patient_id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -560,9 +549,9 @@ const getForms = async (req, res) => {
         from patient_form pf
         left join client_form cf on cf.id=pf.form_id
         where pf.client_id=${req.client_id}
-        and pf.patient_id=${patient_id}
+        and pf.patient_id=?
         order by pf.created
-      `
+      `, [patient_id]
     );
 
     if (!dbResponse) {
@@ -594,10 +583,8 @@ const getFormById = async (req, res) => {
       `select pf.form_id, pf.created, cf.title, pf.form
         from patient_form pf
         left join client_form cf on cf.id=pf.form_id
-        where pf.patient_id=${patient_id} 
-        and pf.form_id=${id}
-      `
-    );
+        where pf.patient_id=? and pf.form_id=?`,
+         [patient_id, id]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -659,10 +646,9 @@ const handouts = async (req, res) => {
         from patient_handout ph
         left join handout h on h.id=ph.handout_id
         where ph.client_id=${req.client_id}
-        and ph.patient_id=${patient_id}
+        and ph.patient_id=?
         order by h.filename
-        limit 100
-      `
+        limit 100`, [patient_id]
     );
 
     if (!dbResponse) {
@@ -691,11 +677,9 @@ const handoutDelete = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const deleteResponse = await db.query(
-      `delete 
-        from patient_handout
-        where patient_id=${patient_id}
-        and handout_id=${id}
-      `
+      `delete from patient_handout
+        where patient_id=? and handout_id=?`,
+        [patient_id, id]
     );
 
     if (!deleteResponse.affectedRows) {
@@ -717,12 +701,15 @@ const handoutDelete = async (req, res) => {
 
 const CreatePatientHandouts = async (req, res) => {
   const { patient_id } = req.params;
-  const { handout_id } = req.body.data;
+  const formData = req.body.data;
+  formData.patient_id = patient_id;
+  formData.client_id = req.client_id;
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
+
   const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(
-      `insert into patient_handout (patient_id, handout_id, client_id, created, created_user_id) values (${patient_id}, ${handout_id}, ${req.client_id}, now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into patient_handout set ?`, [formData]);
 
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
@@ -781,11 +768,8 @@ const DeletePatientHandouts = async (req, res) => {
 
   try {
     const dbResponse = await db.query(
-      `delete
-        from patient_handout
-        where patient_id=${patient_id}
-        and handout_id=${handout_id}
-      `
+      `delete from patient_handout where patient_id=? and handout_id=?`,
+       [patient_id, handout_id]
     );
 
     if (!dbResponse.affectedRows) {
@@ -808,9 +792,7 @@ const DeletePatientHandouts = async (req, res) => {
 const getTranType = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
-    const dbResponse = await db.query(
-      `select id, name, amount, note, status from tran_type`
-    );
+    const dbResponse = await db.query(`select id, name, amount, note, status from tran_type`);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -843,9 +825,9 @@ const getBilling = async (req, res) => {
         left join tran_type tt on tt.id=t.type_id
         left join payment_method pm on pm.id=t.payment_method_id
         where t.client_id=${req.client_id}
-        and t.patient_id=${patient_id}
+        and t.patient_id=? 
         order by t.dt desc
-        limit ${limit}`
+        limit ${limit}`, [patient_id]
     );
 
     if (!dbResponse) {
@@ -876,10 +858,7 @@ const updateBilling = async (req, res) => {
 
   const db = makeDb(configuration, res);
   try {
-    const updateResponse = await db.query(
-      `update tran set ? where patient_id=${patient_id} and id='${id}'`,
-      [formData]
-    );
+    const updateResponse = await db.query(`update tran set ? where patient_id=? and id=?`,[formData, patient_id, id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -902,12 +881,7 @@ const deleteBilling = async (req, res) => {
   const { patient_id, id } = req.params;
   const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(`
-       delete 
-        from tran
-        where patient_id=${patient_id}
-        and id='${id}'
-    `);
+    const deleteResponse = await db.query(`delete from tran where patient_id=? and id=?`, [patient_id, id]);
 
     if (!deleteResponse.affectedRows) {
       errorMessage.message = "Deletion not successful";
@@ -960,9 +934,8 @@ const getBillingPaymentOptions = async (req, res) => {
     const dbResponse = await db.query(
       `select id, type, account_number, exp, stripe_payment_method_token, created
       from payment_method
-      where patient_id=${patient_id}
-      and (status is null or status <> 'D')
-      order by 1`
+      where patient_id=? and (status is null or status <> 'D')
+      order by 1`, [patient_id]
     );
 
     if (!dbResponse) {
@@ -994,10 +967,9 @@ const createBilling = async (req, res) => {
   const db = makeDb(configuration, res);
 
   const $sql = `select p.id, c.name, c.stripe_api_key from patient p
-    left join client c on c.id=p.client_id
-    where p.id=${patient_id}`;
+    left join client c on c.id=p.client_id where p.id=?`;
 
-  const getStripeResponse = await db.query($sql);
+  const getStripeResponse = await db.query($sql, [patient_id]);
 
   // transaction type 3 'Payment' and 3 'Payment refund' goes to stripe
   if (type_id === 3 || type_id === 4) {
@@ -1058,11 +1030,10 @@ const getAllergies = async (req, res) => {
         from patient_allergy pa
         left join drug d on d.id=pa.drug_id
         where pa.client_id=${req.client_id}
-        and pa.patient_id=${patient_id}
+        and pa.patient_id=?
         order by d.name
-        limit 100
-      `
-    );
+        limit 100`,
+      [patient_id]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -1090,10 +1061,7 @@ const deleteAllergy = async (req, res) => {
   const db = makeDb(configuration, res);
 
   try {
-    const dbResponse = await db.query(
-      `delete from patient_allergy where patient_id=${patient_id} and drug_id=${drug_id}
-      `
-    );
+    const dbResponse = await db.query(`delete from patient_allergy where patient_id=? and drug_id=?`, [patient_id, drug_id]);
 
     if (!dbResponse.affectedRows) {
       errorMessage.message = "Deletion not successful";
@@ -1154,19 +1122,21 @@ const createPatientAllergy = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { patient_id } = req.params;
-  const { drug_id } = req.body.data;
+
+  const formData = req.body.data;
+  formData.patient_id = patient_id;
+  formData.client_id = req.client_id;
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
+
   const db = makeDb(configuration, res);
   try {
-    const selectQueryRes = await db.query(
-      `select 1 from patient_allergy where drug_id=${drug_id}`
-    );
+    const selectQueryRes = await db.query(`select 1 from patient_allergy where drug_id=?`, [formData.drug_id]);
     if (selectQueryRes.length > 0) {
       errorMessage.message = "This patient allergy already exists.";
       return res.status(status.notfound).send(errorMessage);
     }
-    const insertResponse = await db.query(
-      `insert into patient_allergy (patient_id, drug_id, client_id, created, created_user_id) values (${patient_id}, ${drug_id}, ${req.client_id}, now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into patient_allergy set ?`, [formData]);
 
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
@@ -1251,9 +1221,9 @@ const updateDocuments = async (req, res) => {
       $sql += `, deleted_dt=null, `;
     }
 
-    $sql += `updated=now(), updated_user_id=${req.user_id} where id=${id}`;
+    $sql += `updated=now(), updated_user_id=${req.user_id} where id=?`;
 
-    const updateResponse = await db.query($sql);
+    const updateResponse = await db.query($sql, [id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -1276,13 +1246,7 @@ const checkDocument = async (req, res) => {
   const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
-    const dbResponse = await db.query(
-      `select 1
-        from lab
-        where patient_id=${patient_id}
-        and filename=filename
-        limit 1`
-    );
+    const dbResponse = await db.query(`select 1 from lab where patient_id=? and filename=filename limit 1`, [patient_id]);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
@@ -1378,9 +1342,9 @@ const getEncounters = async (req, res) => {
       from encounter e 
       left join encounter_type et on et.id=e.type_id
       left join user u on u.id=e.user_id
-      where e.patient_id=${patient_id}
+      where e.patient_id=?
       order by e.dt desc
-      limit 50`
+      limit 50`, [patient_id]
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -1400,46 +1364,20 @@ const getEncounters = async (req, res) => {
 
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
-  const { title } = req.body.data;
-  let { dt, type_id, notes, treatment, read_dt, lab_bill_to } = req.body.data;
-
-  if (typeof dt !== "undefined") {
-    dt = `'${moment(dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-  } else {
-    dt = null;
-  }
-  if (typeof type_id !== "undefined") {
-    type_id = `'${type_id}'`;
-  } else {
-    type_id = null;
-  }
-  if (typeof notes !== "undefined") {
-    notes = `'${notes}'`;
-  } else {
-    notes = null;
-  }
-  if (typeof treatment !== "undefined") {
-    treatment = `'${treatment}'`;
-  } else {
-    treatment = null;
-  }
-  if (typeof read_dt !== "undefined") {
-    read_dt = `'${moment(read_dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-  } else {
-    read_dt = null;
-  }
-  if (typeof lab_bill_to !== "undefined") {
-    lab_bill_to = `'${lab_bill_to}'`;
-  } else {
-    lab_bill_to = null;
-  }
+  
+  const formData = req.body.data;
+  formData.client_id = req.client_id;
+  formData.user_id = req.user_id;
+  formData.patient_id = patient_id;
+  formData.dt = moment(formData.dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.read_dt = moment(formData.read_dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
+  delete formData.name;
 
   const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(
-      `insert into encounter (client_id, user_id, patient_id, dt, type_id, title, notes, treatment, read_dt, lab_bill_to, created, created_user_id) 
-      values (${req.client_id}, ${req.user_id}, ${patient_id}, ${dt}, ${type_id}, '${title}', ${notes}, ${treatment}, ${read_dt}, ${lab_bill_to}, now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into encounter set ?`, [formData]);
 
     if (!insertResponse.affectedRows) {
       removeFile(req.file);
@@ -1451,6 +1389,7 @@ const createEncounter = async (req, res) => {
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (excepErr) {
+    console.error('excepErr:', excepErr )
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
   } finally {

@@ -35,18 +35,10 @@ const deletePatient = async (req, res) => {
         return res.status(status.error).send(errorMessage);
       }
       // eslint-disable-next-line no-await-in-loop
-      const deleteResponse = await db.query(
-        `delete
-          from patient
-          where id=${id}`
-      );
+      const deleteResponse = await db.query(`delete from patient where id=?`, [id]);
 
       // eslint-disable-next-line no-await-in-loop
-      await db.query(
-        `delete
-          from user_log
-          where patient_id=${id}`
-      );
+      await db.query(`delete from user_log where patient_id=?`, [id]);
 
       // eslint-disable-next-line no-await-in-loop
       await db.query(
