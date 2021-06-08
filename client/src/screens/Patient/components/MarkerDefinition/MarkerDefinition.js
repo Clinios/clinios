@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
       verticalAlign: "top",
     },
   },
+  tableCell: {
+    maxWidth: "13.5vw",
+  },
 }));
 
 const MarkerDefinition = ({
@@ -76,6 +79,7 @@ const MarkerDefinition = ({
                   <TableRow key={item.condition}>
                     <TableCell>{item.condition}</TableCell>
                     <TableCell
+                      className={classes.tableCell}
                       dangerouslySetInnerHTML={{ __html: urlify(item.comment) }}
                     />
                     <TableCell>{item.evidence}</TableCell>
@@ -104,6 +108,7 @@ const MarkerDefinition = ({
                   <TableRow key={item.condition}>
                     <TableCell>{item.condition}</TableCell>
                     <TableCell
+                      className={classes.tableCell}
                       dangerouslySetInnerHTML={{ __html: urlify(item.comment) }}
                     />
                     <TableCell>{item.evidence}</TableCell>
