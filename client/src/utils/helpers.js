@@ -1,5 +1,6 @@
-import { intersection } from "lodash";
+import { intersection, find } from "lodash";
 import moment from "moment";
+import momentTZ from "moment-timezone";
 
 export const getAcronym = (str) => {
   if (!str || typeof str === "undefined" || str === "") {
@@ -387,4 +388,13 @@ export const changeTimezone = (date, ianatz) => {
 
   // so 12:00 in Toronto is 17:00 UTC
   return new Date(date.getTime() - diff); // needs to substract
+};
+
+export const getTimeZone = (/* offset */) => {
+  const timezoneOffset = `-08:00`; // TODO:: dynamic timezone value
+  const timeZoneNames = momentTZ.tz.names();
+  // eslint-disable-next-line max-len
+  const timeZone = find(timeZoneNames, (timezoneName) => timezoneOffset === momentTZ.tz(timezoneName).format("Z"));
+  const zoneAbbreviation = moment().tz(timeZone).zoneAbbr();
+  return zoneAbbreviation;
 };
