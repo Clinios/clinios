@@ -1,11 +1,9 @@
 import React from "react";
 
 import {
-  Box, Button, Grid, makeStyles, TextField, MenuItem,
+  Button, Grid, makeStyles, TextField,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-
-import { TIMEZONES, CURRENT_TIMEZONE } from "../../../../../static/setup/schedules";
 
 const useStyles = makeStyles(() => ({
   gridMargin: {
@@ -52,29 +50,6 @@ const ScheduleSearchForm = ({
           </option>
         ))}
       </TextField>
-
-      <Box mt={1}>
-        <TextField
-          select
-          variant="outlined"
-          size="small"
-          label="Timezone"
-          id="timezone"
-          name="timezone"
-          fullWidth
-          margin="dense"
-          value={CURRENT_TIMEZONE}
-        >
-          {TIMEZONES.map((option) => (
-            <MenuItem
-              key={`${Math.random()}_${option.label}_${option.value}`}
-              value={option.value}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
 
       <Button
         size="medium"
