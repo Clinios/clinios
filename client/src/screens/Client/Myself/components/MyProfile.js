@@ -15,7 +15,7 @@ import NumberFormat from "react-number-format";
 
 import useAuth from "../../../../hooks/useAuth";
 import MySelfService from "../../../../services/myself.service";
-import { CURRENT_TIMEZONE } from "../../../../static/setup/schedules";
+import { getTimeZone } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,6 +77,7 @@ export default function MyProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
+  const [timezone, setTimezone] = useState("");
   const [created, setCreated] = useState(moment().format("YYYY-MM-DD"));
   const [forwardEmails, setForwardEmails] = useState([]);
   const [selectedForwardEmail, setSelectedForwardEmail] = useState(null);
@@ -132,6 +133,7 @@ export default function MyProfile() {
       setCreated(moment(profile.created).format("YYYY-MM-DD"));
       setSelectedForwardEmail(profile.email_forward_user_id);
       setPhone(profile.phone);
+      setTimezone(profile.timezone);
     });
   }, [user]);
 
@@ -204,7 +206,7 @@ export default function MyProfile() {
               label="Timezone"
               id="timezone"
               name="timezone"
-              value={CURRENT_TIMEZONE}
+              value={getTimeZone(timezone)}
               className={classes.formElment}
             />
             <TextField
