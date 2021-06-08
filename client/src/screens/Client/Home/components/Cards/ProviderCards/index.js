@@ -10,6 +10,7 @@ import moment from "moment";
 import PropTypes from "prop-types";
 
 import Colors from "../../../../../../theme/colors";
+import { getTimeZone } from "../../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,9 @@ const useStyles = makeStyles((theme) => ({
     width: "30px",
     flex: "1 !important",
   },
+  timezone: {
+    marginLeft: theme.spacing(2),
+  },
 }));
 
 const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => {
@@ -120,7 +124,12 @@ const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => 
                 onClick={() => handleProviderClick(provider)} // TODO:: Refactor and remove the eslint disable comment
                 onKeyDown={() => handleProviderClick(provider)}
               >
-                <div>{provider.name}</div>
+                <div>
+                  {provider.name}
+                  <span className={classes.timezone}>
+                    {getTimeZone(provider.timezone)}
+                  </span>
+                </div>
                 <div className={classes.count}>{provider.count || 0}</div>
                 <div>
                   {dateValidation(provider.dt, `${moment(provider.dt).format("ll")} (${moment(
