@@ -211,15 +211,6 @@ const createEncounter = async (req, res) => {
 
 const updateEncounter = async (req, res) => {
   const { patient_id, id } = req.params;
-  const {
-    dt,
-    type_id,
-    title,
-    notes,
-    treatment,
-    read_dt,
-    lab_bill_to,
-  } = req.body.data;
 
   const formData = req.body.data;
   formData.dt = moment(formData.dt).format("YYYY-MM-DD HH:mm:ss");

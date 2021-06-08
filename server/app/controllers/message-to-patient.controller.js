@@ -57,7 +57,7 @@ const updateMessage = async (req, res) => {
   const { id } = req.params;
   const formData = req.body.data;
   formData.client_id = req.client_id;
-  formData.unread_notify_dt = moment(unread_notify_dt).format("YYYY-MM-DD");
+  formData.unread_notify_dt = moment(formData.unread_notify_dt).format("YYYY-MM-DD");
   formData.updated = new Date();
   formData.updated_user_id = req.user_id;
 

@@ -92,7 +92,7 @@ const getLogins = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select dt, ip from user_login where user_id=? order by dt desc limit 20`, [eq.params.userId]
+      `select dt, ip from user_login where user_id=? order by dt desc limit 20`, [req.params.userId]
     );
 
     if (!dbResponse) {

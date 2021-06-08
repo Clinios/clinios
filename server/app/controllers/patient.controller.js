@@ -1364,7 +1364,7 @@ const getEncounters = async (req, res) => {
 
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
-  
+
   const formData = req.body.data;
   formData.client_id = req.client_id;
   formData.user_id = req.user_id;
@@ -1399,33 +1399,16 @@ const createEncounter = async (req, res) => {
 
 const updateEncounter = async (req, res) => {
   const { patient_id, id } = req.params;
-  const { dt, type_id, title, notes, treatment, read_dt, lab_bill_to } = req.body.data;
+
+  const formData = req.body.data;
+  formData.dt = moment(formData.dt).format("YYYY-MM-DD HH:mm:ss");
+  formData.read_dt = moment(formData.read_dt).format("YYYY-MM-DD HH:mm:ss")
+  formData.updated = new Date();
+  formData.updated_user_id = req.user_id;
 
   const db = makeDb(configuration, res);
   try {
-    let $sql;
-
-    $sql = `update encounter set title='${title}', notes='${notes}', treatment='${treatment}' `;
-
-    if (typeof dt !== "undefined") {
-      $sql += `, dt='${moment(dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-    }
-    if (typeof type_id !== "undefined") {
-      $sql += `, type_id='${type_id}'`;
-    }
-    if (typeof read_dt !== "undefined") {
-      $sql += `, read_dt='${moment(read_dt).format("YYYY-MM-DD HH:mm:ss")}'`;
-    }
-
-    if (typeof lab_bill_to !== "undefined") {
-      $sql += `, lab_bill_to=${lab_bill_to}`;
-    }
-
-    $sql += `, updated='${moment().format("YYYY-MM-DD HH:mm:ss")}',
-    updated_user_id=${req.user_id}
-    where patient_id=${patient_id} and id=${id}`;
-
-    const updateResponse = await db.query($sql);
+    const updateResponse = await db.query(`update encounter set ? where patient_id=? and id=?`, [formData, patient_id, id]);
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
