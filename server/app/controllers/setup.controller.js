@@ -58,10 +58,9 @@ const backup = async (req, res) => {
         updated,
         updated_user_id
         from patient
-        where client_id=${client_id}
-        order by 1`;
+        where client_id=? order by 1`;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [client_id]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
