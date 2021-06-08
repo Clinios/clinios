@@ -8,8 +8,7 @@ const getIntegrations = async (req, res) => {
     const dbResponse = await db.query(
       `select id, labcorp_api_key, quest_api_key, doctors_data_username, doctors_data_password, stripe_api_key
       from client
-      where id=${req.client_id}
-      `
+      where id=${req.client_id}`
     );
 
     if (!dbResponse) {

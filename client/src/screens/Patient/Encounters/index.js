@@ -20,7 +20,7 @@ import {
 } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
 import { EncountersFormFields } from "../../../static/encountersForm";
-import { encounterTypeToLetterConversion, encounterLetterToTypeConversion } from "../../../utils/helpers";
+import { encounterTypeToLetterConversion } from "../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   btnsContainer: {
@@ -111,9 +111,9 @@ const Encounters = (props) => {
         data: {
           dt: formFields.date,
           title: formFields.title,
-          encounter_type: encounterLetterToTypeConversion(formFields.encounter_type),
+          // encounter_type: encounterLetterToTypeConversion(formFields.encounter_type),
           type_id: formFields.encounter_type,
-          name: formFields.name,
+          // name: formFields.name,
           notes: formFields.notes,
           treatment: formFields.treatment,
         },

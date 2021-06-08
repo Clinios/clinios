@@ -6,7 +6,8 @@ const getAll = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select at.id, at.appointment_type, at.descr, at.length, at.fee, at.allow_patients_schedule, at.sort_order, at.note, at.active, at.client_id
+      `select at.id, at.appointment_type, at.descr, at.length,
+       at.fee, at.allow_patients_schedule, at.sort_order, at.note, at.active, at.client_id
       , at.created
       , concat(u.firstname, ' ', u.lastname) created_user
       , at.updated
@@ -84,8 +85,8 @@ const update = async (req, res) => {
 
   try {
     const updateResponse = await db.query(
-      `update appointment_type set ? where id =${req.params.appointmentId}`,
-      [appointment_type]
+      `update appointment_type set ? where id =?`,
+      [appointment_type, req.params.appointmentId]
     );
 
     if (!updateResponse.affectedRows) {

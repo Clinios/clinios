@@ -31,11 +31,7 @@ const getPageTitle = async (req, res) => {
 
   const db = makeDb(configuration, res);
   try {
-    const $sql = `select name
-    from marker 
-    where id = '${markerId}'`;
-
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query(`select name from marker where id = ?`, [markerId]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -59,11 +55,11 @@ const getLabMarkerByLabId = async (req, res) => {
     const $sql = `select marker_id
    from lab_marker
    where patient_id=${req.patient_id || patientId}
-   and lab_id='${labId}'
+   and lab_id=? 
    order by line_nbr
    limit 200`;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [labId]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -118,11 +114,11 @@ const getTestGraph = async (req, res) => {
     from lab_marker lc
     left join lab l on l.id=lc.lab_id
     where lc.patient_id=${req.patient_id || patientId}
-    and lc.marker_id='${markerId}'
+    and lc.marker_id=? 
     order by lc.lab_dt, lc.lab_id
     limit 200`;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [markerId]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -146,11 +142,10 @@ const getConventionalRange = async (req, res) => {
     from lab_marker lc
     left join lab l on l.id=lc.lab_id
     where lc.patient_id=${req.patient_id || patientId}
-    and lc.marker_id='${markerId}'
-    order by lc.lab_dt, lc.lab_id
+    and lc.marker_id=? order by lc.lab_dt, lc.lab_id
     limit 200`;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [markerId]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";

@@ -1,4 +1,3 @@
-const moment = require("moment");
 const { configuration, makeDb } = require("../db/db.js");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
@@ -89,40 +88,14 @@ const resetClientRange = async (req, res) => {
 
 const updateClientRange = async (req, res) => {
   const { id } = req.params;
-  const {
-    marker_id,
-    range_low,
-    range_high,
-    seq,
-    compare_item,
-    compare_operator,
-    compare_to,
-  } = req.body.data;
-
   const db = makeDb(configuration, res);
+
+  const formData = req.body.data;
+  formData.updated = new Date();
+  formData.updated_user_id = req.user_id;
+  
   try {
-    let $sql;
-
-    $sql = `update client_range set marker_id='${marker_id}', range_low=${range_low}, range_high=${range_high}`;
-
-    if (seq && typeof seq !== "undefined") {
-      $sql += `, seq='${seq}'`;
-    }
-    if (compare_item && typeof compare_item !== "undefined") {
-      $sql += `, compare_item='${compare_item}'`;
-    }
-    if (compare_operator && typeof compare_operator !== "undefined") {
-      $sql += `, compare_operator='${compare_operator}'`;
-    }
-    if (compare_to && typeof compare_to !== "undefined") {
-      $sql += `, compare_to='${compare_to}'`;
-    }
-    $sql += `, updated='${moment().format("YYYY-MM-DD HH:mm:ss")}',
-      updated_user_id=${req.user_id}
-      where id=${id}
-      `;
-
-    const updateResponse = await db.query($sql);
+    const updateResponse = await db.query(`update client_range set ? where id=?`, [formData, id]);
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
       return res.status(status.error).send(errorMessage);

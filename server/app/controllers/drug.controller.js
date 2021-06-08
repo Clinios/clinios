@@ -9,11 +9,11 @@ const search = async (req, res) => {
 
   try {
     $sql = `select d.id, d.name, cd.favorite, cd.updated, concat(u.firstname, ' ', u.lastname) updated_name
-            from drug d
-            left join client_drug cd on cd.client_id=1
-            and cd.drug_id=d.id
-            left join user u on u.id=cd.updated_user_id
-            where 1 \n`;
+      from drug d
+      left join client_drug cd on cd.client_id=1
+      and cd.drug_id=d.id
+      left join user u on u.id=cd.updated_user_id
+      where 1 \n`;
     if (searchTerm) {
       $sql += `and d.name like '%${searchTerm}%' \n`;
     }

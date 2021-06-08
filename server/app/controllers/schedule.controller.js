@@ -38,11 +38,11 @@ const search = async (req, res) => {
             left join user u3 on u3.id=us.updated_user_id
             where us.client_id=${req.client_id} \n`;
     if (userId) {
-      $sql += `and us.user_id=${userId} \n`;
+      $sql += `and us.user_id=? \n`;
     }
     $sql += `limit 500`;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [userId]);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
@@ -124,9 +124,7 @@ const deleteSchedule = async (req, res) => {
   }
   const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(
-      `delete from user_schedule where id=${req.params.id}`
-    );
+    const deleteResponse = await db.query(`delete from user_schedule where id=?`, [req.params.id]);
 
     if (!deleteResponse.affectedRows) {
       errorMessage.message = "Deletion not successful";
