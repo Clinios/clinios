@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   tableCell: {
-    maxWidth: "13.5vw",
+    maxWidth: "12.85vw",
   },
 }));
 
