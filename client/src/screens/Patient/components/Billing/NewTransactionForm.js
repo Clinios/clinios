@@ -57,6 +57,7 @@ const NewTransactionForm = (props) => {
   const { patientId, patientInfo } = state;
   const { enqueueSnackbar } = useSnackbar();
 
+  const [isNegativeAmount, setIsNegativeAmount] = useState(false);
   const [hasAmountError, setHasAmountError] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
   const [transactionTypes, setTransactionTypes] = useState([]);
@@ -88,10 +89,13 @@ const NewTransactionForm = (props) => {
   }, [paymentOptions]);
 
   const updateFields = () => {
+    if (selectedBilling.amount < 0) {
+      setIsNegativeAmount(true);
+    }
     formFields.date = pickerDateFormat(selectedBilling.dt);
     formFields.type = convertTransactionTypes(selectedBilling.tran_type);
     formFields.paymentType = selectedBilling.payment_type;
-    formFields.amount = selectedBilling.amount;
+    formFields.amount = Math.abs(selectedBilling?.amount);
     formFields.notes = selectedBilling.note;
     setFormFields({ ...formFields });
   };
@@ -129,7 +133,7 @@ const NewTransactionForm = (props) => {
         data: {
           dt: moment(formFields.date).format("YYYY-MM-DD hh:mm"),
           type_id: formFields.type,
-          amount: formFields.amount,
+          amount: isNegativeAmount ? -formFields.amount : formFields.amount,
           note: formFields.notes,
           payment_method_id: (formFields.accountNum !== "") ? formFields.accountNum : null,
           stripe_payment_method_token: selectedPaymentMethod[0]?.stripe_payment_method_token,
