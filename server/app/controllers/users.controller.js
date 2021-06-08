@@ -92,12 +92,7 @@ const getLastVisitedPatient = async (req, res) => {
   const db = makeDb(configuration, res);
   const { patientId } = req.params;
   try {
-    const dbResponse = await db.query(
-      `select id, client_id, firstname, lastname 
-      from patient 
-      where id=${patientId}
-      `
-    );
+    const dbResponse = await db.query(`select id, client_id, firstname, lastname from patient where id=?`, [patientId]);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);

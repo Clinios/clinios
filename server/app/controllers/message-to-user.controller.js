@@ -14,8 +14,7 @@ const getUserMessageById = async (req, res) => {
       from message m
       left join patient p on p.id=m.patient_id_from
       left join user u on u.id=m.user_id_to
-      where m.id=${id}
-      `
+      where m.id=?`, [id]
     );
 
     if (!dbResponse) {
@@ -53,15 +52,14 @@ const getUserMessage = async (req, res) => {
           where m.id=(
               select min(m.id) id
               from message m
-              where m.user_id_to=${provider_id}
+              where m.user_id_to=?
               and m.status='O'
               )
       )
-      and m.user_id_to=${provider_id}
+      and m.user_id_to=?
       and m.status='O'
       order by m.created
-      limit 10
-      `
+      limit 10`, [provider_id, provider_id]
     );
 
     if (!dbResponse) {
@@ -107,13 +105,14 @@ const getMessageAssignUser = async (req, res) => {
 };
 
 const createMessage = async (req, res) => {
-  const { user_id_from, subject, message } = req.body.data;
   const db = makeDb(configuration, res);
+  const formData = req.body.data;
+  formData.client_id = req.client_id;
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
+
   try {
-    const insertResponse = await db.query(
-      `insert into message (client_id, user_id_from, subject, message, created, created_user_id) values 
-      (${req.client_id}, ${user_id_from}, '${subject}', '${message}', now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into message set ?`, [formData]);
 
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
@@ -132,22 +131,29 @@ const createMessage = async (req, res) => {
 };
 
 const updateMessage = async (req, res) => {
-  const { message_status, user_id_to, note_assign } = req.body.data;
   const { id } = req.params;
+  const formData = req.body.data;
+  formData.status = formData.message_status;
+  formData.updated = new Date();
+  formData.updated_user_id = req.user_id;
+  delete formData.message_status;
+
   const db = makeDb(configuration, res);
   const msgHistoryData = {};
   msgHistoryData.id = id;
 
   try {
-    const updateResponse = await db.query(
-      `update message set user_id_to='${user_id_to}', note_assign='${note_assign}', status='${message_status}',
-         updated= now(), updated_user_id='${req.user_id}' where id=${id}`
-    );
+    const updateResponse = await db.query(`update message set ? where id=?`, [formData, id]);
 
-    await db.query(
-      `insert into message_history (id, user_id_to, note_assign, status, created, created_user_id) 
-      values (${id}, ${user_id_to}, '${note_assign}', '${message_status}', now(), ${req.user_id});`
-    );
+    const msgData = {};
+    msgData.id = id;
+    msgData.user_id_to = formData.user_id_to;
+    msgData.note_assign = formData.note_assign;
+    msgData.status = formData.status;
+    msgData.created = new Date();
+    msgData.created_user_id = req.user_id;
+
+    await db.query(`insert into message_history ?`, [msgData]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -178,10 +184,7 @@ const getUserMessageHistory = async (req, res) => {
       left join user u on u.id=mh.created_user_id
       left join user u2 on u2.id=mh.user_id_to
       where mh.client_id=${req.client_id}
-      and mh.id=${messageId}
-      order by mh.created desc
-      limit 50
-      `
+      and mh.id=? order by mh.created desc limit 50`, [messageId]
     );
 
     if (!dbResponse) {

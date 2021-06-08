@@ -183,7 +183,8 @@ exports.receiveNewPassword = async (req, res) => {
   // check token expires validity
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
   const userRows = await db.query(
-    `SELECT id, email, reset_password_token, reset_password_expires FROM user WHERE id=${userId} AND reset_password_token='${token}' AND reset_password_expires > '${now}'`
+    `SELECT id, email, reset_password_token, reset_password_expires FROM user 
+    WHERE id=? AND reset_password_token=? AND reset_password_expires > '${now}'`, [userId, token]
   );
   const user = userRows[0];
 
@@ -197,7 +198,8 @@ exports.receiveNewPassword = async (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 8);
 
   const updateUserResponse = await db.query(
-    `UPDATE user SET password='${hashedPassword}', reset_password_token=NULL, reset_password_expires=NULL, updated= now() WHERE id =${user.id}`
+    `UPDATE user SET password=?, reset_password_token=NULL, reset_password_expires=NULL, updated= now() 
+    WHERE id =? `, [hashedPassword, user.id]
   );
 
   if (updateUserResponse.affectedRows) {

@@ -48,8 +48,8 @@ const getSingleForm = async (req, res) => {
         left join user u on u.id=cf.created_user_id
           left join user u2 on u2.id=cf.updated_user_id
           where cf.client_id=${req.client_id}
-          and cf.id=${id}
-      `
+          and cf.id=?
+      `, [id]
     );
 
     if (!dbResponse) {

@@ -94,10 +94,10 @@ const getEventsByProvider = async (req, res) => {
     left join user au on au.id=uc.approved_user_id
     left join user du on du.id=uc.declined_user_id
     where uc.client_id=${req.client_id}
-    and uc.user_id=${providerId}
+    and uc.user_id=?
     `;
 
-    const dbResponse = await db.query($sql);
+    const dbResponse = await db.query($sql, [providerId]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -143,30 +143,23 @@ const createAppointment = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.bad).send(errorMessage);
   }
-  const { ApptStatus, patient, start_dt, end_dt, provider } = req.body.data;
+  const { title, notes, ApptStatus, patient, start_dt, end_dt, provider } = req.body.data;
 
-  let { title, notes } = req.body.data;
-  let patient_id = patient.id;
-  if (patient_id === undefined) {
-    patient_id = null;
-  }
-  if (title === undefined) {
-    title = "";
-  }
-  if (notes === undefined) {
-    notes = "";
-  }
+  const userCalendarData = {};
+  userCalendarData.client_id = req.client_id;
+  userCalendarData.user_id = provider.id;
+  userCalendarData.patient_id = patient.id;
+  userCalendarData.start_dt = moment(start_dt).format("YYYY-MM-DD HH:mm:ss");
+  userCalendarData.end_dt = moment(end_dt).format("YYYY-MM-DD HH:mm:ss");
+  userCalendarData.status = ApptStatus;
+  userCalendarData.title = title;
+  userCalendarData.notes = notes;
+  userCalendarData.created = new Date();
+  userCalendarData.created_user_id = req.user_id;
 
   const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(
-      `insert into user_calendar (client_id, user_id, patient_id, start_dt, end_dt, status, title, notes, created, created_user_id) values (
-        ${req.client_id}, ${provider.id}, ${patient_id}, '${moment(
-        start_dt
-      ).format("YYYY-MM-DD HH:mm:ss")}', '${moment(end_dt).format(
-        "YYYY-MM-DD HH:mm:ss"
-      )}', '${ApptStatus}', '${title}', '${notes}', now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into user_calendar set ?`, [userCalendarData])
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
@@ -204,9 +197,8 @@ const cancelAppointment = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const updateResponse = await db.query(
-      `update user_calendar
-        set status='D', declined=now(), updated= now(), updated_user_id='${req.user_id}'
-        where id=${id}`
+      `update user_calendar set status='D', declined=now(), updated= now(),
+       updated_user_id='${req.user_id}' where id=?`, [id]
     );
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -287,9 +279,9 @@ const updateAppointment = async (req, res) => {
       $sql += `, approved=now(), approved_user_id=${req.user_id}`;
     }
     $sql += `, updated=now(), updated_user_id='${req.user_id}'
-    where id=${id}`;
+    where id=?`;
 
-    const updateResponse = await db.query($sql);
+    const updateResponse = await db.query($sql, [id]);
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
@@ -340,11 +332,11 @@ const getAppointmentRequest = async (req, res) => {
         join patient p on p.id=uc.patient_id
         left join appointment_type at on at.id=uc.appointment_type_id
         where uc.client_id=${req.client_id}
-        and uc.user_id=${providerId}
+        and uc.user_id=?
         and uc.status='R' /*R=Requested*/
         order by uc.created
         limit 2
-      `
+      `, [providerId]
     );
 
     if (!dbResponse) {
@@ -371,11 +363,11 @@ const getUnreadMessages = async (req, res) => {
         from message m
         left join patient p on p.id=m.patient_id_to
         where m.client_id=${req.client_id}
-        and m.user_id_from=${providerId}
+        and m.user_id_from=?
         and m.read_dt is null
         and m.unread_notify_dt<=current_date()
         order by m.unread_notify_dt
-      `
+      `, [providerId]
     );
 
     if (!dbResponse) {
@@ -459,37 +451,37 @@ const getProviderDetails = async (req, res) => {
       `select count(l.id), min(l.created)
             from lab l
             where l.client_id=${req.client_id}
-            and l.user_id=${providerId}
+            and l.user_id=?
             and l.status='R' /*R=Requested*/
             /*and (l.pend_dt is null or l.pend_dt<=current_date)*/
-      `
+      `, [providerId]
     );
     const messageFromPatients = await db.query(
       `select count(m.id), min(m.created)
             from message m
             where m.client_id=${req.client_id}
-            and m.user_id_to=${providerId}
+            and m.user_id_to=?
             and m.status='O' /*O=Open*/
             /*and (m.pend_dt is null or m.pend_dt<=current_date)*/
-      `
+      `, [providerId]
     );
     const messageToPatientsNotRead = await db.query(
       `select count(m.id), min(m.unread_notify_dt)
         from message m
         where m.client_id=${req.client_id}
-        and m.user_id_from=${providerId}
+        and m.user_id_from=?
         and m.read_dt is null
         and m.unread_notify_dt<=current_date()
-      `
+      `, [providerId]
     );
 
     const patientAppointmentRequest = await db.query(
       `select count(uc.client_id), min(uc.created)
       from user_calendar uc
       where uc.client_id=${req.client_id}
-      and uc.user_id=${providerId}
+      and uc.user_id=?
       and uc.status='R' /*R=Requested*/
-      `
+      `, [providerId]
     );
 
     if (!patientLabs) {
