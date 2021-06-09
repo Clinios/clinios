@@ -1,4 +1,4 @@
-import { intersection, find } from "lodash";
+import { intersection } from "lodash";
 import moment from "moment";
 
 export const getAcronym = (str) => {
