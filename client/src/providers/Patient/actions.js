@@ -68,6 +68,7 @@ import {
   TOGGLE_TESTS_CHART_EXPAND_DIALOG,
   SET_TEST_NAME,
   SET_SELECTED_TEST,
+  RESET_STORE,
 } from "./types";
 
 export const setEncounter = (encounter) => ({
@@ -359,4 +360,8 @@ export const setTestName = (testName) => ({
 export const setSelectedTest = (test) => ({
   type: SET_SELECTED_TEST,
   payload: test,
+});
+
+export const resetStore = () => ({
+  type: RESET_STORE,
 });

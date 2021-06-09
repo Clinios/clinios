@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
@@ -143,7 +144,7 @@ const Topbar = (props) => {
     lastVisitedPatient, user, logout,
   } = useAuth();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [nothingFound, setNothingFound] = useState(false);
@@ -250,30 +251,32 @@ const Topbar = (props) => {
               </Typography>
             </div>
 
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search…"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
-              {!!searchTerm && (
-                <SearchResults
-                  open={open}
-                  handleClose={handleClose}
-                  results={results}
-                  noContent={
-                    nothingFound && results.length < 1 && "Nothing found!"
-                  }
+            <ClickAwayListener onClickAway={() => handleClose()}>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Search…"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ "aria-label": "search" }}
                 />
-              )}
-            </div>
+                {!!searchTerm && (
+                  <SearchResults
+                    open={open}
+                    handleClose={handleClose}
+                    results={results}
+                    noContent={
+                      nothingFound && results.length < 1 && "Nothing found!"
+                    }
+                  />
+                )}
+              </div>
+            </ClickAwayListener>
           </div>
         </Hidden>
         <Hidden lgUp>

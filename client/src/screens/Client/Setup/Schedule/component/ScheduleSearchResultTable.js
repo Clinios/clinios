@@ -72,6 +72,9 @@ const ScheduleSearchResultTable = ({
                 User
               </StyledTableCell>
               <StyledTableCell padding="checkbox" align="center">
+                Timezone
+              </StyledTableCell>
+              <StyledTableCell padding="checkbox" align="center">
                 Date Start
               </StyledTableCell>
               <StyledTableCell padding="checkbox" align="center">
@@ -126,6 +129,9 @@ const ScheduleSearchResultTable = ({
               <StyledTableRow key={result.id}>
                 <TableCell padding="checkbox" component="th" scope="row">
                   {result.user_name}
+                </TableCell>
+                <TableCell padding="checkbox" component="th" scope="row">
+                  {result?.timezone}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   {result.date_start ? moment(result.date_start).format("ll") : ""}

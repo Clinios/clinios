@@ -76,6 +76,7 @@ export default function MyProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
+  const [timezone, setTimezone] = useState("");
   const [created, setCreated] = useState(moment().format("YYYY-MM-DD"));
   const [forwardEmails, setForwardEmails] = useState([]);
   const [selectedForwardEmail, setSelectedForwardEmail] = useState(null);
@@ -131,6 +132,7 @@ export default function MyProfile() {
       setCreated(moment(profile.created).format("YYYY-MM-DD"));
       setSelectedForwardEmail(profile.email_forward_user_id);
       setPhone(profile.phone);
+      setTimezone(profile.timezone);
     });
   }, [user]);
 
@@ -195,6 +197,16 @@ export default function MyProfile() {
               InputProps={{
                 readOnly: true,
               }}
+            />
+            <TextField
+              disabled
+              variant="outlined"
+              size="small"
+              label="Timezone"
+              id="timezone"
+              name="timezone"
+              value={timezone}
+              className={classes.formElment}
             />
             <TextField
               variant="outlined"

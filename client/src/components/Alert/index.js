@@ -46,6 +46,14 @@ const DialogForm = ({
       fullWidth
       maxWidth={size}
       disableBackdropClick
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          applyForm();
+        }
+        if (event.key === "Escape") {
+          cancelForm();
+        }
+      }}
     >
       <DialogTitle disableTypography className={classes.titleContainer} id="form-dialog-title">
         <Typography variant="h5">{title}</Typography>

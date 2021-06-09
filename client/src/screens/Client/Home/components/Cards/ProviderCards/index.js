@@ -80,6 +80,9 @@ const useStyles = makeStyles((theme) => ({
     width: "30px",
     flex: "1 !important",
   },
+  timezone: {
+    marginLeft: theme.spacing(2),
+  },
 }));
 
 const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => {
@@ -120,7 +123,12 @@ const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => 
                 onClick={() => handleProviderClick(provider)} // TODO:: Refactor and remove the eslint disable comment
                 onKeyDown={() => handleProviderClick(provider)}
               >
-                <div>{provider.name}</div>
+                <div>
+                  {provider.name}
+                  <span className={classes.timezone}>
+                    {provider?.timezone}
+                  </span>
+                </div>
                 <div className={classes.count}>{provider.count || 0}</div>
                 <div>
                   {dateValidation(provider.dt, `${moment(provider.dt).format("ll")} (${moment(

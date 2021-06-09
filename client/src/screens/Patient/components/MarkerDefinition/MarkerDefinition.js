@@ -32,6 +32,13 @@ const useStyles = makeStyles((theme) => ({
       verticalAlign: "top",
     },
   },
+  tableCell: {
+    maxWidth: "12.85vw",
+  },
+  tableCellSm: {
+    maxWidth: "6vw",
+    wordWrap: "break-word",
+  },
 }));
 
 const MarkerDefinition = ({
@@ -74,8 +81,9 @@ const MarkerDefinition = ({
               <TableBody>
                 {markerInterpretation?.high.filter((x) => x?.comment.length).map((item) => (
                   <TableRow key={item.condition}>
-                    <TableCell>{item.condition}</TableCell>
+                    <TableCell className={classes.tableCellSm}>{item.condition}</TableCell>
                     <TableCell
+                      className={classes.tableCell}
                       dangerouslySetInnerHTML={{ __html: urlify(item.comment) }}
                     />
                     <TableCell>{item.evidence}</TableCell>
@@ -102,8 +110,9 @@ const MarkerDefinition = ({
               <TableBody>
                 {markerInterpretation?.low.filter((x) => x?.comment.length).map((item) => (
                   <TableRow key={item.condition}>
-                    <TableCell>{item.condition}</TableCell>
+                    <TableCell className={classes.tableCellSm}>{item.condition}</TableCell>
                     <TableCell
+                      className={classes.tableCell}
                       dangerouslySetInnerHTML={{ __html: urlify(item.comment) }}
                     />
                     <TableCell>{item.evidence}</TableCell>

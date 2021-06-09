@@ -355,7 +355,7 @@ export const stringWithoutComments = (string) => string.replace(/(\/\*[^*]*\*\/)
 export const urlify = (text) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   // eslint-disable-next-line quotes
-  return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
+  return text.replace(urlRegex, '<a style="word-wrap: break-word" href="$1" target="_blank">$1</a>');
 };
 
 export const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);

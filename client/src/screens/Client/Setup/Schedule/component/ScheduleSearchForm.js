@@ -50,6 +50,7 @@ const ScheduleSearchForm = ({
           </option>
         ))}
       </TextField>
+
       <Button
         size="medium"
         type="submit"

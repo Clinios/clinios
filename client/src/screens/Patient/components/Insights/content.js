@@ -123,6 +123,8 @@ const InsightsContent = () => {
         });
       });
       setTests([...tempArray, ...MissingTests]);
+    } else {
+      setTests([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
