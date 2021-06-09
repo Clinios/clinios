@@ -110,7 +110,7 @@ const getProfileTests = async (req, res) => {
     $sql = `select ci.quest_id, q.name quest_name
     from tranc_detail td
     join proc c on c.id = td.proc_id
-    join proc ci on ci.proc_id = c.id
+    join proc_item ci on ci.proc_id = c.id
     join quest q on q.id = ci.quest_id
     where tranc_id = ?
     order by q.name`;
