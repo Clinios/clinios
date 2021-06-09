@@ -26,7 +26,6 @@ import Success from "./Success";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   marginTop: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(16),
   },
   avatar: {
     margin: theme.spacing(1),
