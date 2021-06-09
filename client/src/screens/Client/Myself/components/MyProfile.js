@@ -15,7 +15,6 @@ import NumberFormat from "react-number-format";
 
 import useAuth from "../../../../hooks/useAuth";
 import MySelfService from "../../../../services/myself.service";
-import { getTimeZone } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -206,7 +205,7 @@ export default function MyProfile() {
               label="Timezone"
               id="timezone"
               name="timezone"
-              value={getTimeZone(timezone)}
+              value={timezone}
               className={classes.formElment}
             />
             <TextField

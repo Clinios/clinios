@@ -10,7 +10,6 @@ import moment from "moment";
 import PropTypes from "prop-types";
 
 import Colors from "../../../../../../theme/colors";
-import { getTimeZone } from "../../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -127,7 +126,7 @@ const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => 
                 <div>
                   {provider.name}
                   <span className={classes.timezone}>
-                    {getTimeZone(provider.timezone)}
+                    {provider?.timezone}
                   </span>
                 </div>
                 <div className={classes.count}>{provider.count || 0}</div>

@@ -18,8 +18,6 @@ import EditIcon from "@material-ui/icons/EditOutlined";
 import moment from "moment";
 import PropTypes from "prop-types";
 
-import { getTimeZone } from "../../../../../utils/helpers";
-
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
     minWidth: 450,
@@ -133,7 +131,7 @@ const ScheduleSearchResultTable = ({
                   {result.user_name}
                 </TableCell>
                 <TableCell padding="checkbox" component="th" scope="row">
-                  {getTimeZone(result?.timezone)}
+                  {result?.timezone}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   {result.date_start ? moment(result.date_start).format("ll") : ""}
