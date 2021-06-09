@@ -7,6 +7,7 @@ import Alert from "@material-ui/lab/Alert";
 import moment from "moment-timezone";
 import { useSnackbar } from "notistack";
 import { useHistory, useLocation } from "react-router-dom";
+import TimezoneSelect from "react-timezone-select";
 
 import useAuth from "../../../hooks/useAuth";
 import useDidMountEffect from "../../../hooks/useDidMountEffect";
@@ -41,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 5,
     boxShadow: "-1px 0px 19px -4px rgba(0,17,1,0.45)",
     margin: "0",
+  },
+  timeZoneWrapper: {
+    marginTop: theme.spacing(2),
   },
   timingBox: {
     marginBottom: theme.spacing(2),
@@ -100,6 +104,7 @@ const Appointments = () => {
   const history = useHistory();
   const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedTimezone, setSelectedTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [practitioners, setPractitioners] = useState([]);
   const [practitionerDateTimes, setPractitionerDateTimes] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
@@ -543,6 +548,12 @@ const Appointments = () => {
                     onEventClick={(val) => calendarSelectionHandler(val)}
                     selectedDate={userSelection.date}
                   />
+                  <div className={classes.timeZoneWrapper}>
+                    <TimezoneSelect
+                      value={selectedTimezone}
+                      onChange={setSelectedTimezone}
+                    />
+                  </div>
                 </Grid>
                 <Grid item lg={3} md={3} sm={3} xs={3}>
                   <Grid className={classes.currentDate}>
