@@ -68,7 +68,7 @@ export default function ProcedureCodes() {
           Procedure Codes
         </Typography>
         <Typography component="p" variant="body2" color="textPrimary">
-          This page is used to manage Procedure codes
+          This page is used to manage procedure codes
         </Typography>
         <ProcedureForm
           labCompanyList={labCompanyList}
