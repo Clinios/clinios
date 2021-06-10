@@ -83,9 +83,6 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
             <StyledTableCell padding="checkbox">Minutes</StyledTableCell>
             <StyledTableCell padding="checkbox">Fee</StyledTableCell>
             <StyledTableCell padding="checkbox">Patient Schedule</StyledTableCell>
-            <StyledTableCell padding="checkbox" align="center">
-              Note
-            </StyledTableCell>
             <StyledTableCell padding="checkbox">Status</StyledTableCell>
             <StyledTableCell padding="checkbox">Created</StyledTableCell>
             <StyledTableCell padding="checkbox">Created By</StyledTableCell>
@@ -114,6 +111,7 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
               <TableCell padding="checkbox">{appointment.length}</TableCell>
               <TableCell padding="checkbox">{`$${appointment.fee?.toFixed(2)}`}</TableCell>
               <TableCell padding="checkbox">{appointment.allow_patients_schedule ? "Yes" : "No"}</TableCell>
+              {/*
               {appointment.note && appointment.note.length > 0 ? (
                 <LightTooltip title={appointment.note}>
                   <TableCell padding="checkbox" className={classes.overflowControl} align="center">
@@ -125,6 +123,7 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
                   {appointment.note || ""}
                 </TableCell>
               )}
+              */ }
               <TableCell padding="checkbox">{appointment.active ? "Active" : "-"}</TableCell>
               <TableCell padding="checkbox">{moment(appointment.created).format("lll")}</TableCell>
               <TableCell padding="checkbox">{appointment.created_user}</TableCell>

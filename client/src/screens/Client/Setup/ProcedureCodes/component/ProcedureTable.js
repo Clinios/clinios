@@ -215,7 +215,7 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
                 >
                   {result.id}
                 </TableCell>
-                <TableCell padding="checkbox" align="center">
+                <TableCell padding="checkbox" align="left">
                   {result.proc}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">

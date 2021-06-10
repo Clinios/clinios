@@ -115,8 +115,8 @@ const createPurchaseLabs = async (req, res) => {
       };
       if (formData.selectedLabs.length > 0) {
         formData.selectedLabs.map(async (lab) => {
-          trancDetailsData.procedure_id = lab.procedure_id;
-          trancDetailsData.patient_procedure_id = lab.patient_procedure_id;
+          trancDetailsData.proc_id = lab.procedure_id;
+          trancDetailsData.patient_proc_id = lab.patient_procedure_id;
           await db.query(`insert into tranc_detail set ?`, [trancDetailsData]);
         });
       }
