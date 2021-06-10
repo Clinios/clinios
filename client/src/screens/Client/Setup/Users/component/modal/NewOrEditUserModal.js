@@ -413,7 +413,7 @@ const NewOrEditUserModal = ({
                       {/* eslint-disable-next-line no-tabs */}
                       CST	&#45; Central Standard Time
                     </option>
-                    <option aria-label="None" value="CST">
+                    <option aria-label="None" value="EST">
                       {/* eslint-disable-next-line no-tabs */}
                       EST	&#45; Eastern Standard Time
                     </option>
