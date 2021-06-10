@@ -64,6 +64,7 @@ const UsersTable = ({ users, handleOnEditClick }) => {
               <StyledTableCell>Lastname</StyledTableCell>
               <StyledTableCell>Title</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Timezone</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
               <StyledTableCell>Type</StyledTableCell>
               <StyledTableCell>Schedule</StyledTableCell>
@@ -87,6 +88,7 @@ const UsersTable = ({ users, handleOnEditClick }) => {
                 <TableCell>{user.lastname}</TableCell>
                 <TableCell>{user.title}</TableCell>
                 <TableCell>{user.email}</TableCell>
+                <TableCell>{user.timezone}</TableCell>
                 <TableCell>
                   {user.status === "A"
                     ? "Active"

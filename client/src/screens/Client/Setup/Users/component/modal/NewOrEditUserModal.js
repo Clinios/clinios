@@ -395,25 +395,25 @@ const NewOrEditUserModal = ({
                     }}
                   >
                     <option aria-label="None" value="" />
-                    <option aria-label="None" value="-10">
+                    <option aria-label="None" value="HST">
                       HST &#45; Hawaii Standard Time
                     </option>
-                    <option aria-label="None" value="-9">
+                    <option aria-label="None" value="AKST">
                       AKST &#45; Alaska Standard Time
                     </option>
-                    <option aria-label="None" value="-8">
+                    <option aria-label="None" value="PST">
                       {/* eslint-disable-next-line no-tabs */}
                       PST	&#45; Pacific Standard Time
                     </option>
-                    <option aria-label="None" value="-7">
+                    <option aria-label="None" value="MST">
                       {/* eslint-disable-next-line no-tabs */}
                       MST	&#45; Mountain Standard Time
                     </option>
-                    <option aria-label="None" value="-6">
+                    <option aria-label="None" value="CST">
                       {/* eslint-disable-next-line no-tabs */}
                       CST	&#45; Central Standard Time
                     </option>
-                    <option aria-label="None" value="-5">
+                    <option aria-label="None" value="CST">
                       {/* eslint-disable-next-line no-tabs */}
                       EST	&#45; Eastern Standard Time
                     </option>
