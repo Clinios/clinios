@@ -34,10 +34,10 @@ const search = async (req, res) => {
   } = req.body;
   let $sql;
   try {
-    $sql = `select c.id, c.name procedure, lc.name lab_company, cc.favorite, cc.billable, cc.fee, cl.name client_name
+    $sql = `select c.id, c.name proc, lc.name lab_company, cc.favorite, cc.billable, cc.fee, cl.name client_name
         , cc.updated, concat(u.firstname, ' ', u.lastname) updated_name
         , group_concat(ci.quest_id order by ci.quest_id separator ", ") procedure_group
-        from procedure c
+        from proc c
         left join client_proc cc on cc.client_id=${req.client_id}
         and cc.proc_id=c.id
         left join lab_company lc on lc.id=c.lab_company_id
