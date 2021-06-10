@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import { makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Myself = () => {
   const classes = useStyles();
-  const [activeView, setActiveView] = React.useState("history");
+  const [activeView, setActiveView] = useState("history");
 
   return (
     <div className={classes.root}>

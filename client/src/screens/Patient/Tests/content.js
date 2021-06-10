@@ -94,8 +94,8 @@ const TestsContent = () => {
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
 
   const [tests, setTests] = useState([]);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedMarker, setSelectedMarker] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedMarker, setSelectedMarker] = useState(null);
 
   const handlePopoverOpen = (event, marker) => {
     setAnchorEl(event.currentTarget);

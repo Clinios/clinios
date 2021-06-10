@@ -90,11 +90,11 @@ const ForgotPassword = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { clientCode } = useParams();
-  const [client, setClient] = React.useState(null);
+  const [client, setClient] = useState(null);
   const [email, setEmail] = useState("");
   const [lastname, setLastname] = useState("");
   const [postal, setPostal] = useState("");
-  const [errors, setErrors] = React.useState([]);
+  const [errors, setErrors] = useState([]);
   const [registrationLink, setRegistrationLink] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dob, handleDateChange] = useState(new Date());

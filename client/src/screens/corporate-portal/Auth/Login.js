@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -70,9 +70,9 @@ const PatientLogin = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { corporateLogin } = useAuth();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [errors, setErrors] = React.useState([]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const onFormSubmit = async () => {
     if (email !== "") {

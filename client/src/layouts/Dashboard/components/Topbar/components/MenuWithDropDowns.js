@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Menu, MenuItem, makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -34,7 +34,7 @@ const MenuWithDropDowns = (
     },
   ) => {
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
