@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import moment from "moment";
 import PropTypes from "prop-types";
-import NumberFormat from "react-number-format";
+// import NumberFormat from "react-number-format";
 
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
@@ -62,7 +62,6 @@ const AccountingTypesTable = ({ result }) => {
           <TableHead>
             <TableRow>
               <StyledTableCell padding="checkbox">Type</StyledTableCell>
-              <StyledTableCell padding="checkbox">Amount</StyledTableCell>
               <StyledTableCell padding="checkbox">Status</StyledTableCell>
               <StyledTableCell padding="checkbox">Note</StyledTableCell>
               <StyledTableCell padding="checkbox">Client</StyledTableCell>
@@ -78,6 +77,7 @@ const AccountingTypesTable = ({ result }) => {
                 <TableCell padding="checkbox" component="th" scope="row">
                   {type.name}
                 </TableCell>
+                {/*
                 <TableCell padding="checkbox">
                   <NumberFormat
                     decimalScale={2}
@@ -87,6 +87,7 @@ const AccountingTypesTable = ({ result }) => {
                     prefix="$"
                   />
                 </TableCell>
+                */}
                 <TableCell padding="checkbox">
                   {type.status === "A"
                     ? "Active"

@@ -9,7 +9,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Tooltip from "@material-ui/core/Tooltip";
+// import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import moment from "moment";
@@ -35,14 +35,14 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
   },
 }));
-const LightTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0,0,0,0.87)",
-    boxShadow: theme.shadows[1],
-    fontSizw: 13,
-  },
-}))(Tooltip);
+// const LightTooltip = withStyles((theme) => ({
+//  tooltip: {
+//    backgroundColor: theme.palette.common.white,
+//    color: "rgba(0,0,0,0.87)",
+//    boxShadow: theme.shadows[1],
+//    fontSizw: 13,
+//  },
+// }))(Tooltip);
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.grey,
@@ -89,9 +89,6 @@ const Appointments = ({
               Patient Schedule
             </StyledTableCell>
             <StyledTableCell padding="checkbox">Order</StyledTableCell>
-            <StyledTableCell padding="checkbox" align="center">
-              Note
-            </StyledTableCell>
             <StyledTableCell padding="checkbox">Status</StyledTableCell>
             <StyledTableCell padding="checkbox">Created</StyledTableCell>
             <StyledTableCell padding="checkbox">Created By</StyledTableCell>
@@ -116,6 +113,7 @@ const Appointments = ({
                 {appointment.allow_patients_schedule ? "Yes" : "No"}
               </TableCell>
               <TableCell padding="checkbox">{appointment.sort_order}</TableCell>
+              {/*
               {appointment.note && appointment.note.length > 0 ? (
                 <LightTooltip title={appointment.note}>
                   <TableCell
@@ -135,6 +133,7 @@ const Appointments = ({
                   {appointment.note || ""}
                 </TableCell>
               )}
+              */}
               <TableCell padding="checkbox">
                 {appointment.active ? "Active" : "-"}
               </TableCell>
