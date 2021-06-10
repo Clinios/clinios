@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -59,9 +59,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Fax() {
   const classes = useStyles();
-  const [faxNumber, setFaxNumber] = React.useState("");
-  const [cover, setCover] = React.useState("");
-  const [file, setFile] = React.useState(null);
+  const [faxNumber, setFaxNumber] = useState("");
+  const [cover, setCover] = useState("");
+  const [file, setFile] = useState(null);
 
   return (
     <div className={classes.root}>

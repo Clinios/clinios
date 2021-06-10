@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Avatar from "@material-ui/core/Avatar";
 import Container from "@material-ui/core/Container";
@@ -46,10 +46,10 @@ const PatientSignUp = () => {
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const { clientCode } = useParams();
-  const [client, setClient] = React.useState(null);
-  const [clientError, setClientError] = React.useState([]);
-  const [errors, setErrors] = React.useState([]);
-  const [signUpSuccess, setSignUpSuccess] = React.useState(false);
+  const [client, setClient] = useState(null);
+  const [clientError, setClientError] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   useEffect(() => {
     AuthService.getClientCode(clientCode).then(

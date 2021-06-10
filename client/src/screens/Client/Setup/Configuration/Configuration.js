@@ -91,7 +91,7 @@ export default function Configuration() {
   const classes = useStyles();
   const [isSubmitting, setSubmitting] = useState(false);
 
-  const [errors] = React.useState([]);
+  const [errors] = useState([]);
   const [modalHistory, setModalHistory] = useState({
     isOpen: false,
     data: [],

@@ -244,7 +244,7 @@ const EventModal = ({
   });
 
   const [indexP, setIndex] = useState(0);
-  const [provider, setProvider] = React.useState(providers[indexP]);
+  const [provider, setProvider] = useState(providers[indexP]);
   const { user } = useAuth();
 
   const calculateLength = async () => {

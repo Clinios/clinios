@@ -44,8 +44,8 @@ const LabValues = (props) => {
 
   const [selectedGraph, setSelectedGraph] = useState(null);
   const [showGraphDialog, setShowGraphDialog] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedMarker, setSelectedMarker] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedMarker, setSelectedMarker] = useState(null);
 
   const handlePopoverOpen = (event, marker) => {
     setAnchorEl(event.currentTarget);

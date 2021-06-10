@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Button, Container, CssBaseline, makeStyles,
@@ -49,12 +49,12 @@ const useStyles = makeStyles((theme) => ({
 
 const PortalHeader = () => {
   const classes = useStyles();
-  const [updated, setUpdated] = React.useState("");
-  const [updatedUser, setUpdatedUser] = React.useState("");
-  const [header, setHeader] = React.useState("");
-  const [portalId, setPortalId] = React.useState("");
-  const [isInEditMode, setIsInEditMode] = React.useState(false);
-  const [editedHeader, setEditedHeader] = React.useState("");
+  const [updated, setUpdated] = useState("");
+  const [updatedUser, setUpdatedUser] = useState("");
+  const [header, setHeader] = useState("");
+  const [portalId, setPortalId] = useState("");
+  const [isInEditMode, setIsInEditMode] = useState(false);
+  const [editedHeader, setEditedHeader] = useState("");
 
   const getPatientPortalHeader = () => {
     PatientPortalHeaderService.getClientPortalHeader().then((res) => {
@@ -74,7 +74,7 @@ const PortalHeader = () => {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getPatientPortalHeader();
   }, []);
 

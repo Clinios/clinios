@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 
 
 import Alert from "../../../../components/Alert";
+import Tooltip from "../../../../components/common/CustomTooltip";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import { toggleNewTransactionDialog, setSelectedBilling } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
@@ -94,32 +95,38 @@ const BillingContent = (props) => {
           className={classes.inputRow}
         >
           <Grid item className={classes.block}>
-            <Typography
-              component="span"
-              className={classes.text12}
-              color="textPrimary"
-            >
-              {moment(item.dt).format("MMM D YYYY")}
-            </Typography>
+            <Tooltip title={item?.note}>
+              <Typography
+                component="span"
+                className={classes.text12}
+                color="textPrimary"
+              >
+                {moment(item.dt).format("MMM D YYYY")}
+              </Typography>
+            </Tooltip>
           </Grid>
           <Grid item className={classes.block}>
-            <Typography
-              component="span"
-              className={classes.text12}
-              color="textPrimary"
-            >
-              $
-              {item.amount?.toFixed(2)}
-            </Typography>
+            <Tooltip title={item?.note}>
+              <Typography
+                component="span"
+                className={classes.text12}
+                color="textPrimary"
+              >
+                $
+                {item.amount?.toFixed(2)}
+              </Typography>
+            </Tooltip>
           </Grid>
           <Grid item className={classes.block}>
-            <Typography
-              component="span"
-              className={classes.text12}
-              color="textPrimary"
-            >
-              {item.tran_type}
-            </Typography>
+            <Tooltip title={item?.note}>
+              <Typography
+                component="span"
+                className={classes.text12}
+                color="textPrimary"
+              >
+                {item.tran_type}
+              </Typography>
+            </Tooltip>
           </Grid>
           {/* Removed this column because Mr David asked to.
            Not sure if we need to revert it back, So i am keeping it commented */}
@@ -139,7 +146,7 @@ const BillingContent = (props) => {
               <EditIcon />
             </IconButton>
             <IconButton
-            // disabled check added as per CLIN-174
+              // disabled check added as per CLIN-174
               disabled={(item.payment_type === "C" || item.payment_type === "CH")}
               onClick={() => openDeleteDialog(item)}
             >

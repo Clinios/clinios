@@ -26,7 +26,6 @@ import Success from "./Success";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   marginTop: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(16),
   },
   avatar: {
     margin: theme.spacing(1),
@@ -91,11 +90,11 @@ const ForgotPassword = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { clientCode } = useParams();
-  const [client, setClient] = React.useState(null);
+  const [client, setClient] = useState(null);
   const [email, setEmail] = useState("");
   const [lastname, setLastname] = useState("");
   const [postal, setPostal] = useState("");
-  const [errors, setErrors] = React.useState([]);
+  const [errors, setErrors] = useState([]);
   const [registrationLink, setRegistrationLink] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dob, handleDateChange] = useState(new Date());
