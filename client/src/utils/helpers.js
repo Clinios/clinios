@@ -388,3 +388,46 @@ export const changeTimezone = (date, ianatz) => {
   // so 12:00 in Toronto is 17:00 UTC
   return new Date(date.getTime() - diff); // needs to substract
 };
+
+/** Create time slots * */
+
+function parseTime(s) {
+  const c = s.split(":");
+  return parseInt(c[0], 10) * 60 + parseInt(c[1], 10);
+}
+
+function pad(str, max) {
+  const string = str.toString();
+  return string.length < max ? pad(`0${string}`, max) : string;
+}
+
+function convertHours(mins) {
+  const hour = Math.floor(mins / 60);
+  const minutes = mins % 60;
+  const converted = `${pad(hour, 2)}:${pad(minutes, 2)}`;
+  return converted;
+}
+
+export const calculate_time_slot = (startTime, endTime, interval = "30") => {
+  const start_time = parseTime(startTime);
+  const end_time = parseTime(endTime);
+  const time_slots = [];
+  if (start_time < end_time) {
+    for (let i = start_time; i < end_time; i += interval) {
+      const formatted_pre_time = convertHours(i);
+      const formatted_end_time = convertHours(i + interval);
+      time_slots.push(`${formatted_pre_time} - ${formatted_end_time}`);
+    }
+  } else {
+    for (let i = end_time; i < start_time; i += interval) {
+      const formatted_pre_time = convertHours(i);
+      const formatted_end_time = convertHours(i + interval);
+      time_slots.push(`${formatted_pre_time} - ${formatted_end_time}`);
+    }
+  }
+
+  return time_slots;
+};
+
+
+/** End of create time slots * */
