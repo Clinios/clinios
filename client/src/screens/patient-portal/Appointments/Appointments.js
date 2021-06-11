@@ -188,7 +188,6 @@ const Appointments = () => {
   useEffect(() => {
     const appointment = location?.state?.appointment;
     if (appointment?.patient_id) {
-      alert("useEffect");
       const date = moment(appointment.start_dt).format("YYYY-MM-DD");
       // const minutesFromStartDate = moment(appointment.start_dt).minutes();
       const startTime = moment(appointment.start_dt).format("HH:mm");
