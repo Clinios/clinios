@@ -25,7 +25,6 @@ const ToolTipContent = (props) => {
   const completedDaysDiff = completed_dt && dateDiffInDays(completed_dt, currentDate);
   const labReceiptDaysDiff = lab_receipt_dt && dateDiffInDays(lab_receipt_dt, currentDate);
   const sentToDaysDiff = sent_to_patient_dt && dateDiffInDays(sent_to_patient_dt, currentDate);
-  const noDateMessage = "Not Available";
   const daysText = "days ago";
 
   return (
@@ -47,19 +46,19 @@ const ToolTipContent = (props) => {
         </Grid>
         <Grid item className={classes.ml2}>
           <Typography item gutterBottom>
-            {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${daysText})` : noDateMessage}
+            {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${daysText})` : ""}
           </Typography>
           <Typography item gutterBottom>
             {sent_to_patient_dt
-              ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${daysText})` : noDateMessage}
+              ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${daysText})` : ""}
           </Typography>
           <Typography item gutterBottom>
             {lab_receipt_dt
-              ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${daysText})` : noDateMessage}
+              ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${daysText})` : ""}
           </Typography>
           <Typography item>
             {completed_dt
-              ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${daysText})` : noDateMessage}
+              ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${daysText})` : ""}
           </Typography>
         </Grid>
       </Grid>
