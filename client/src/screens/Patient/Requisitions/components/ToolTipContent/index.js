@@ -23,6 +23,7 @@ const ToolTipContent = (props) => {
   const completedDaysDiff = completed_dt && dateDiffInDays(completed_dt, currentDate);
   const labReceiptDaysDiff = lab_receipt_dt && dateDiffInDays(lab_receipt_dt, currentDate);
   const sentToDaysDiff = sent_to_patient_dt && dateDiffInDays(sent_to_patient_dt, currentDate);
+  const noDateMessage = "Not Available";
 
   return (
     <>
@@ -46,13 +47,13 @@ const ToolTipContent = (props) => {
             {dateFormat()}
           </Typography>
           <Typography item gutterBottom>
-            {sent_to_patient_dt ? `${dateFormat(sent_to_patient_dt)} ${sentToDaysDiff}` : ""}
+            {sent_to_patient_dt ? `${dateFormat(sent_to_patient_dt)} ${sentToDaysDiff}` : noDateMessage}
           </Typography>
           <Typography item gutterBottom>
-            {lab_receipt_dt ? `${dateFormat(lab_receipt_dt)} ${labReceiptDaysDiff}` : ""}
+            {lab_receipt_dt ? `${dateFormat(lab_receipt_dt)} ${labReceiptDaysDiff}` : noDateMessage}
           </Typography>
           <Typography item>
-            {completed_dt ? `${dateFormat(completed_dt)} ${completedDaysDiff}` : ""}
+            {completed_dt ? `${dateFormat(completed_dt)} ${completedDaysDiff}` : noDateMessage}
           </Typography>
         </Grid>
       </Grid>
