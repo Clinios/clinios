@@ -193,8 +193,8 @@ const Appointments = () => {
       const startTime = moment(appointment.start_dt).format("HH:mm");
       const endTime = moment(appointment.end_dt).format("HH:mm");
       const time = {
-        time_start: startTime,
-        time_end: endTime,
+        timeStart: startTime,
+        timeEnd: endTime,
       };
       setUserSelection((prevUserSelection) => ({
         ...prevUserSelection,
@@ -246,8 +246,10 @@ const Appointments = () => {
       value = moment(date.event._instance.range.start).format("YYYY-MM-DD");
     } else { // day clicked
       value = date;
+      // eslint-disable-next-line max-len
+      const doctorEndLimit = practitionerDateTimes[0]?.end_date_time ? moment(practitionerDateTimes[0].end_date_time).format("YYYY-MM-DD") : null;
       const lowerDaysDifference = moment(date).diff(currentDate, "days");
-      const upperDaysDifference = moment(date).diff(practitionerDateTimes[0]?.date_end || oneYear, "days");
+      const upperDaysDifference = moment(date).diff(doctorEndLimit || oneYear, "days");
       const isPastDate = lowerDaysDifference < 0;
       const isFutureUnAvailableDate = upperDaysDifference > 0;
       const isTodayDate = lowerDaysDifference === 0;
@@ -308,16 +310,16 @@ const Appointments = () => {
           user_id: selectedPractitioner?.[0]?.user_id,
           // do something with app status because it's going to server each time.
           ...(!isRescheduleAppointment && { status: "R" }),
-          start_dt: `${moment(userSelection.date).format("YYYY-MM-DD")} ${userSelection.time.time_start}`,
-          end_dt: `${moment(userSelection.date).format("YYYY-MM-DD")} ${userSelection.time.time_end}`,
+          start_dt: `${moment(userSelection.date).format("YYYY-MM-DD")} ${userSelection.time.timeStart}`,
+          end_dt: `${moment(userSelection.date).format("YYYY-MM-DD")} ${userSelection.time.timeEnd}`,
           patient_id: user?.id,
           reschedule_id: location?.state?.appointment?.id || null,
           appointment_type_id: userSelection.appointmentType,
           // this handles the startDateTime and endDateTime required for timezone conversion
           // eslint-disable-next-line max-len
-          start_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.time_start, ["HH.mm"]).format("h:mm:ss A")}`,
+          start_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.timeStart, ["HH.mm"]).format("h:mm:ss A")}`,
           // eslint-disable-next-line max-len
-          end_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.time_end, ["HH.mm"]).format("h:mm:ss A")}`,
+          end_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.timeEnd, ["HH.mm"]).format("h:mm:ss A")}`,
         },
       };
       PatientPortalService[isRescheduleAppointment
@@ -359,11 +361,11 @@ const Appointments = () => {
     if (practitionerDateTimes.length && appointmentLength) {
       let timeIntervalSlots = [];
       practitionerDateTimes.forEach((item) => {
-        const slots = item?.start_date_time ? calculate_time_slot(
+        const slots = calculate_time_slot(
           moment.tz(item.start_date_time, userTimeZone).format("HH:mm"),
           moment.tz(item.end_date_time, userTimeZone).format("HH:mm"),
           appointmentLength,
-        ) : calculate_time_slot(item.time_start, item.time_end, appointmentLength);
+        );
         timeIntervalSlots = [...timeIntervalSlots, ...slots];
       });
       setTimeSlots([...timeIntervalSlots]);
@@ -386,12 +388,11 @@ const Appointments = () => {
       // generating time slots
       let timeIntervalSlots = [];
       practitionerDateTimes.forEach((item) => {
-        // const slots = makeTimeIntervals(item.time_start, item.time_end, apptLength);
-        const slots = item?.start_date_time ? calculate_time_slot(
+        const slots = calculate_time_slot(
           moment.tz(item.start_date_time, userTimeZone).format("hh:mm"),
           moment.tz(item.end_date_time, userTimeZone).format("hh:mm"),
           apptLength,
-        ) : calculate_time_slot(item.time_start, item.time_end, apptLength);
+        );
         timeIntervalSlots = [...timeIntervalSlots, ...slots];
       });
       setTimeSlots([...timeIntervalSlots]);
@@ -449,7 +450,9 @@ const Appointments = () => {
         }
       });
     }
-    const dateLimit = practitionerDateTimes[0].date_end || oneYear;
+    // eslint-disable-next-line max-len
+    const doctorEndLimit = practitionerDateTimes[0]?.end_date_time ? moment(practitionerDateTimes[0].end_date_time).format("YYYY-MM-DD") : null;
+    const dateLimit = doctorEndLimit || oneYear;
     // using tomorrowDate: allow user to book appts from tomorrow
     const availableDates = getDatesArray(tomorrowDate, dateLimit, holidays).map((date) => ({
       title: "Available",
@@ -463,7 +466,7 @@ const Appointments = () => {
     let variant = "outlined";
     const userSelectedTime = userSelection?.time;
     const { startTime, endTime } = timing;
-    if (userSelectedTime?.time_start === startTime && userSelectedTime?.time_end === endTime) {
+    if (userSelectedTime?.timeStart === startTime && userSelectedTime?.timeEnd === endTime) {
       variant = "contained";
     }
     return variant;
@@ -583,8 +586,8 @@ const Appointments = () => {
                           onClick={() => {
                             const timingObject = {
                               id: index,
-                              time_start: timing.startTime,
-                              time_end: timing.endTime,
+                              timeStart: timing.startTime,
+                              timeEnd: timing.endTime,
                             };
                             userSelectionHandler("time", timingObject);
                           }}
