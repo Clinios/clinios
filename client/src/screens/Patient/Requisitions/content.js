@@ -9,8 +9,10 @@ import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
 import Tooltip from "../../../components/common/CustomTooltip";
+import Popover from "../../../components/common/Popover";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
+import ToolTipContent from "./components/ToolTipContent";
 
 const useStyles = makeStyles((theme) => ({
   text12: {
@@ -54,6 +56,8 @@ const RequisitionsContent = (props) => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRequisition, setSelectedRequisition] = useState(null);
 
   const openDeleteDialog = (item) => {
     setSelectedItem(item);
@@ -75,6 +79,18 @@ const RequisitionsContent = (props) => {
       });
   };
 
+  const showPopover = Boolean(selectedRequisition);
+
+  const handlePopoverOpen = (event, requisition) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedRequisition(requisition);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setSelectedRequisition(null);
+  };
+
   return (
     <>
       <Alert
@@ -87,8 +103,26 @@ const RequisitionsContent = (props) => {
         cancelForm={closeDeleteDialog}
       />
       {
+        showPopover && (
+          <Popover
+            open={showPopover}
+            anchorEl={anchorEl}
+            handlePopoverClose={handlePopoverClose}
+          >
+            <ToolTipContent data={selectedRequisition} />
+          </Popover>
+        )
+      }
+      {
         data.map((item) => (
-          <Grid key={item.id} container alignItems="center" className={classes.inputRow}>
+          <Grid
+            key={item.id}
+            container
+            alignItems="center"
+            className={classes.inputRow}
+            onMouseEnter={(e) => handlePopoverOpen(e, item)}
+            onMouseLeave={handlePopoverClose}
+          >
             <Typography
               component="span"
               className={`${classes.text12} ${classes.block}`}
