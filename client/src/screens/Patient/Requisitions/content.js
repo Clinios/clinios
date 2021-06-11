@@ -122,6 +122,7 @@ const RequisitionsContent = (props) => {
             <Grid item className={classes.blockAction}>
               <IconButton
                 onClick={() => openDeleteDialog(item)}
+                disabled={item.dt !== null}
               >
                 <DeleteIcon />
               </IconButton>

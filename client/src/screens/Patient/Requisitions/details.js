@@ -122,20 +122,21 @@ const RequisitionsDetails = (props) => {
           <TableBody>
             {!!data
               && data.length
-              ? data.map((row) => (
-                <StyledTableRow key={`${row.created}_${row.id}`}>
-                  <TableCell component="th" scope="row">
-                    {moment(row.created).format("MMM D YYYY")}
+              ? data.map((item) => (
+                <StyledTableRow key={`${item.created}_${item.id}`}>
+                  <TableCell component="th" scope="item">
+                    {moment(item.created).format("MMM D YYYY")}
                   </TableCell>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.marker_id}</TableCell>
-                  <TableCell>{row.marker_name || ""}</TableCell>
-                  <TableCell>{row.lab_name || ""}</TableCell>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.marker_id}</TableCell>
+                  <TableCell>{item.marker_name || ""}</TableCell>
+                  <TableCell>{item.lab_name || ""}</TableCell>
 
                   <TableCell className={classes.actions}>
                     <IconButton
                       className={classes.button}
-                      onClick={() => openDeleteDialog(row)}
+                      onClick={() => openDeleteDialog(item)}
+                      disabled={item.dt !== null}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
