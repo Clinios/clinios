@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRow: {
     flexWrap: "nowrap",
+    width: "max-content",
+    display: "flex",
+    alignItems: "center",
   },
   block: {
     width: 90,
@@ -117,8 +120,6 @@ const RequisitionsContent = (props) => {
         data.map((item) => (
           <Grid
             key={item.id}
-            container
-            alignItems="center"
             className={classes.inputRow}
             onMouseEnter={(e) => handlePopoverOpen(e, item)}
             onMouseLeave={handlePopoverClose}
