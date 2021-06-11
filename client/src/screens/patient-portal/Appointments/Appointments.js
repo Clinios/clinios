@@ -450,6 +450,7 @@ const Appointments = () => {
         }
       });
     }
+    // eslint-disable-next-line max-len
     const doctorEndLimit = practitionerDateTimes[0]?.end_date_time ? moment(practitionerDateTimes[0].end_date_time).format("YYYY-MM-DD") : null;
     const dateLimit = doctorEndLimit || oneYear;
     // using tomorrowDate: allow user to book appts from tomorrow
