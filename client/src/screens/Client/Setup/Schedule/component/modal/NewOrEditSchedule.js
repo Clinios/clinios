@@ -17,13 +17,11 @@ import {
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { KeyboardDatePicker, KeyboardTimePicker } from "@material-ui/pickers";
-import moment from "moment";
+import moment from "moment-timezone";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
-// import useAuth from "../../../../../../hooks/useAuth";
 import ScheduleService from "../../../../../../services/schedule.service";
-import { changeTimezone } from "../../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -116,9 +114,9 @@ const NewOrEditSchedule = ({
   /* eslint-enable */
 
   useEffect(() => {
-    if (moment(schedule.date_start) > moment()) {
+    if (moment(schedule.start_date_time) > moment()) {
       setStatus("Future");
-    } else if (moment(schedule.date_end) < moment()) {
+    } else if (moment(schedule.end_date_time) < moment()) {
       setStatus("Past");
     } else {
       setStatus("Current");
@@ -126,26 +124,13 @@ const NewOrEditSchedule = ({
   }, [schedule]);
 
   const ianatz = "America/New_York"; // TODO:: hardcoded to test. Will be removed in future.
-  const startDateTimeWithTimeZone = (schedule.date_start && schedule.date_start) ? changeTimezone(
-    new Date(
-      `${moment(schedule.date_start).format("YYYY-MM-DD")} ${moment(schedule.time_start).format("HH:mm:ss")}`,
-    ),
-    ianatz,
-  ) : null;
-  const endDateTimeWithTimeZone = (schedule.date_end && schedule.time_end) ? changeTimezone(
-    new Date(
-      `${moment(schedule.date_end).format("YYYY-MM-DD")} ${moment(schedule.time_end).format("HH:mm:ss")}`,
-    ),
-    ianatz,
-  ) : null;
+
+  const startDateTimeWithTimeZone = moment.tz(schedule.start_date_time, ianatz).format();
+  const endDateTimeWithTimeZone = moment.tz(schedule.end_date_time, ianatz).format();
 
   const payload = {
     data: {
       user_id: schedule.user_id,
-      date_start: schedule.date_start ? moment(schedule.date_start).format("YYYY-MM-DD") : null,
-      date_end: schedule.date_end ? moment(schedule.date_end).format("YYYY-MM-DD") : null,
-      time_start: schedule.time_start ? moment(schedule.time_start, "HH:mm:ss").format("HH:mm:ss") : null,
-      time_end: schedule.time_end ? moment(schedule.time_end, "HH:mm:ss").format("HH:mm:ss") : null,
       start_date_time: moment(startDateTimeWithTimeZone).format(),
       end_date_time: moment(endDateTimeWithTimeZone).format(),
       active: schedule.active,
@@ -293,14 +278,14 @@ const NewOrEditSchedule = ({
                     label="Date Start"
                     className={classes.textField}
                     size="small"
-                    name="date_start"
-                    value={schedule.date_start}
+                    name="start_date_time"
+                    value={schedule.start_date_time}
                     onChange={(date) => setSchedule({
                       ...schedule,
-                      date_start: date,
+                      start_date_time: date,
                     })}
                     onKeyUp={handleKeyUp}
-                    maxDate={schedule.date_end}
+                    maxDate={schedule.end_date_time}
                     maxDateMessage="Date start should not be after date end"
                   />
                 </FormControl>
@@ -319,17 +304,17 @@ const NewOrEditSchedule = ({
                     label="Date End"
                     className={classes.textField}
                     size="small"
-                    name="date_end"
-                    value={schedule.date_end}
+                    name="end_date_time"
+                    value={schedule.end_date_time}
                     onChange={(date) => setSchedule({
                       ...schedule,
-                      date_end: date,
+                      end_date_time: date,
                     })}
                     onKeyUp={handleKeyUp}
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    minDate={schedule.date_start}
+                    minDate={schedule.start_date_time}
                     minDateMessage="Date end should not be before date start"
                   />
                 </FormControl>
@@ -341,17 +326,17 @@ const NewOrEditSchedule = ({
                       "aria-label": "change time",
                     }}
                     id="time_start"
-                    name="time_start"
+                    name="start_date_time"
                     label="Time Start"
                     value={
-                      schedule.time_start
-                        ? moment(schedule.time_start, "HH:mm:ss").format("YYYY-MM-DDTHH:mm:ss")
+                      schedule.start_date_time
+                        ? moment(schedule.start_date_time, "HH:mm:ss").format("YYYY-MM-DDTHH:mm:ss")
                         : null
                     }
                     className={classes.textField}
                     onChange={(date) => setSchedule({
                       ...schedule,
-                      time_start: date,
+                      start_date_time: date,
                     })}
                     size="small"
                     autoOk
@@ -359,7 +344,7 @@ const NewOrEditSchedule = ({
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    maxDate={schedule.time_end}
+                    maxDate={schedule.end_date_time}
                     maxDateMessage="Time start should not be after time end"
                   />
                 </FormControl>
@@ -374,14 +359,14 @@ const NewOrEditSchedule = ({
                     name="time_end"
                     label="Time End"
                     value={
-                      schedule.time_end
-                        ? moment(schedule.time_end, "HH:mm:ss").format("YYYY-MM-DDTHH:mm:ss")
+                      schedule.end_date_time
+                        ? moment(schedule.end_date_time, "HH:mm:ss").format("YYYY-MM-DDTHH:mm:ss")
                         : null
                     }
                     className={classes.textField}
                     onChange={(date) => setSchedule({
                       ...schedule,
-                      time_end: date,
+                      end_date_time: date,
                     })}
                     size="small"
                     autoOk
@@ -389,7 +374,7 @@ const NewOrEditSchedule = ({
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    minDate={schedule.time_start}
+                    minDate={schedule.start_date_time}
                     minDateMessage="Date end should not be before date start"
                   />
                 </FormControl>
