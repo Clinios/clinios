@@ -52,8 +52,9 @@ const getTestList = async (req, res) => {
     from tranc t
     left join tranc_detail td on td.tranc_id = t.id
     left join proc c on c.id = td.proc_id
+    left join patient_proc pc on pc.tranc_id = t.id
     where t.patient_id = ? 
-    and t.completed_dt is null
+    and pc.completed_dt is null
     group by t.id, t.dt`;
 
     const dbResponse = await db.query($sql, [patient_id]);
