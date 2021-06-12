@@ -29,34 +29,34 @@ const ToolTipContent = (props) => {
 
   return (
     <>
-      <Grid container md={12}>
+      <Grid container>
         <Grid item xs>
-          <Typography item gutterBottom>
+          <Typography gutterBottom>
             Patient payment:
           </Typography>
-          <Typography item gutterBottom>
+          <Typography gutterBottom>
             Lab kit mailed to patient:
           </Typography>
-          <Typography item gutterBottom>
+          <Typography gutterBottom>
             Lab kit received from patient:
           </Typography>
-          <Typography item>
+          <Typography>
             Lab completed test:
           </Typography>
         </Grid>
         <Grid item className={classes.ml2}>
-          <Typography item gutterBottom>
+          <Typography gutterBottom>
             {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${daysText})` : ""}
           </Typography>
-          <Typography item gutterBottom>
+          <Typography gutterBottom>
             {sent_to_patient_dt
               ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${daysText})` : ""}
           </Typography>
-          <Typography item gutterBottom>
+          <Typography gutterBottom>
             {lab_receipt_dt
               ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${daysText})` : ""}
           </Typography>
-          <Typography item>
+          <Typography>
             {completed_dt
               ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${daysText})` : ""}
           </Typography>
