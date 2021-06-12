@@ -247,7 +247,7 @@ const Topbar = (props) => {
                 }
               </Typography>
               <Typography className={classes.date}>
-                {moment().format("ddd, MMM Do")}
+                {moment().format("ddd MMM D")}
               </Typography>
             </div>
 
