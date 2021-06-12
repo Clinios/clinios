@@ -82,14 +82,14 @@ const Schedule = () => {
   const handleOnNewClick = () => {
     setIsOpen(true);
     setIsNewSchedule(true);
+    const currentDate = moment().format("YYYY-MM-DD");
+    const startTime = "09:00:00";
+    const endDate = moment().add(3, "M").format("YYYY-MM-DD");
+    const endTime = "15:00:00";
     setSelectedScheduleValues({
       user_id: userId,
-      startDateTime: moment.utc().format(),
-      endDateTime: moment.utc().add(3, "M").format(),
-      // date_start: moment(),
-      // date_end: `${moment().add(3, "M")}`,
-      // time_start: "09:00:00",
-      // time_end: "15:00:00",
+      start_date_time: moment(`${currentDate} ${startTime}`),
+      end_date_time: moment(`${endDate} ${endTime}`),
       active: true,
       note: "",
     });
@@ -110,7 +110,6 @@ const Schedule = () => {
   };
 
   return (
-
     <>
       <CssBaseline>
         <Container maxWidth={false} className={classes.root}>
