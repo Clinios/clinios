@@ -31,12 +31,13 @@ const search = async (req, res) => {
   const { userId } = req.body;
   let $sql;
   try {
-    $sql = `select us.id, us.user_id, concat(u.firstname, ' ', u.lastname) user_name, u.timezone, us.date_start, us.date_end, us.time_start, us.time_end, us.monday, us.tuesday, us.wednesday, us.thursday, us.friday, us.active, us.created, concat(u2.firstname, ' ', u2.lastname) created_name, us.updated, concat(u3.firstname, ' ', u3.lastname) updated_name
-            from user_schedule us
-            left join user u on u.id=us.created_user_id
-            left join user u2 on u2.id=us.created_user_id
-            left join user u3 on u3.id=us.updated_user_id
-            where us.client_id=${req.client_id} \n`;
+    $sql = `select us.id, us.user_id, concat(u.firstname, ' ', u.lastname) user_name, u.timezone, us.start_date_time,
+    us.end_date_time, us.monday, us.tuesday, us.wednesday, us.thursday, us.friday, us.active, us.created, concat(u2.firstname, ' ', u2.lastname) created_name, us.updated, concat(u3.firstname, ' ', u3.lastname) updated_name
+    from user_schedule us
+    left join user u on u.id=us.created_user_id
+    left join user u2 on u2.id=us.created_user_id
+    left join user u3 on u3.id=us.updated_user_id
+    where us.client_id=${req.client_id} \n`;
     if (userId) {
       $sql += `and us.user_id=? \n`;
     }

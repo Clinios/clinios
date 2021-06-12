@@ -134,16 +134,16 @@ const ScheduleSearchResultTable = ({
                   {result?.timezone}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.date_start ? moment(result.date_start).format("ll") : ""}
+                  {result.start_date_time ? moment(result.start_date_time).format("ll") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.date_end ? moment(result.date_end).format("ll") : ""}
+                  {result.end_date_time ? moment(result.end_date_time).format("ll") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.time_start ? moment(result.time_start, "hh:mm:a").format("LT") : ""}
+                  {result.start_date_time ? moment(result.start_date_time).format("LT") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.time_end ? moment(result.time_end, "hh:mm:a").format("LT") : ""}
+                  {result.end_date_time ? moment(result.end_date_time).format("LT") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   {result?.monday ? "Yes" : "No"}
@@ -164,9 +164,9 @@ const ScheduleSearchResultTable = ({
                   {result.active ? "Yes" : "No"}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {moment(result.date_start) > moment()
+                  {moment(result.start_date_time) > moment()
                     ? "Future"
-                    : moment(result.date_end) < moment()
+                    : moment(result.end_date_time) < moment()
                       ? "Past"
                       : "Current"}
                 </TableCell>
