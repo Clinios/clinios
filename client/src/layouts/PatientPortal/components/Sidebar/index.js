@@ -4,9 +4,7 @@ import { Drawer } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PaymentIcon from "@material-ui/icons/PaymentOutlined";
 import ReceiptIcon from "@material-ui/icons/ReceiptOutlined";
-import SettingsIcon from "@material-ui/icons/SettingsOutlined";
 import {
-  mdiChartBox,
   mdiAccount,
   mdiMessageOutline,
   mdiHome,
@@ -14,8 +12,10 @@ import {
   mdiPrescription,
   mdiPharmacy,
   mdiCalendar,
-  mdiFormSelect,
   mdiLogoutVariant,
+  mdiTextBoxOutline,
+  mdiFileDocumentEditOutline,
+  mdiFileDocumentOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import clsx from "clsx";
@@ -84,14 +84,16 @@ const Sidebar = (props) => {
       title: "Handouts",
       href: "/patient/handouts",
       icon: (
-        <Icon path={mdiChartBox} size={1} horizontal vertical rotate={180} />
+        <Icon path={mdiTextBoxOutline} size={1} horizontal vertical rotate={180} />
       ),
     },
     {
       id: 3,
       title: "Encounters",
       href: "/patient/encounters",
-      icon: <SettingsIcon />,
+      icon: (
+        <Icon path={mdiFileDocumentOutline} size={1} horizontal vertical rotate={180} />
+      ),
     },
     {
       id: 6,
@@ -106,7 +108,7 @@ const Sidebar = (props) => {
       title: "Lab Requisitions",
       href: "/patient/labs-requisition",
       icon: (
-        <Icon path={mdiFormSelect} size={1} horizontal vertical rotate={180} />
+        <Icon path={mdiFileDocumentEditOutline} size={1} horizontal vertical rotate={180} />
       ),
     },
     {
@@ -168,7 +170,7 @@ const Sidebar = (props) => {
       title: "Forms",
       href: "/patient/forms",
       icon: (
-        <Icon path={mdiFormSelect} size={1} horizontal vertical rotate={180} />
+        <Icon path={mdiTextBoxOutline} size={1} horizontal vertical rotate={180} />
       ),
     },
     {
