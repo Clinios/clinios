@@ -14,12 +14,13 @@ const getLabBilling = async (req, res) => {
   }
   let $sql;
   try {
-    $sql = `select t.id, t.dt, t.amount, t.completed_dt, left(group_concat(c.name separator ", "), 400) tests
+    $sql = `select t.id, t.dt, t.amount, pc.completed_dt, left(group_concat(c.name separator ", "), 400) tests
     from tranc t
     left join tranc_detail td on td.tranc_id = t.id
     left join proc c on c.id = td.proc_id
+    left join patient_proc pc on pc.tranc_id = t.id
     where t.patient_id = ?
-    group by t.id, t.dt, t.amount, t.completed_dt
+    group by t.id, t.dt, t.amount, pc.completed_dt
     order by t.dt desc
     `;
 

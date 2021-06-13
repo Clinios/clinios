@@ -165,7 +165,8 @@ const PaymentMethodsForm = (props) => {
     const reqBody = {
       data: {
         exp: formFields.expiryDate.replace("/", ""),
-        type: formFields.cardType[0] || "V",
+       // type: formFields.cardType[0] || "C",
+        type: "C",
         cvc: formFields.cvv,
         account_number: formFields.cardNumber.replaceAll("/", ""),
         stripe_customer_id: user.stripe_customer_id,
@@ -178,7 +179,6 @@ const PaymentMethodsForm = (props) => {
         state: region,
       },
     };
-
     if (isEdit) {
       const paymentMethodId = cardData.id;
       const updateFormData = {
