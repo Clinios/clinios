@@ -20,6 +20,7 @@ const getAllUser = async (req, res) => {
     successMessage.data = dbResponse;
     return res.status(status.created).send(successMessage);
   } catch (error) {
+    console.error(error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
@@ -51,6 +52,7 @@ const search = async (req, res) => {
     successMessage.data = dbResponse;
     return res.status(status.created).send(successMessage);
   } catch (error) {
+    console.error(error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
@@ -81,6 +83,7 @@ const createNewSchedule = async (req, res) => {
     successMessage.message = "Creation successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.error(err);
     errorMessage.message = "Creation not not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
@@ -110,6 +113,7 @@ const updateSchedule = async (req, res) => {
     successMessage.message = "Update successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
+    console.error(error);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
@@ -135,6 +139,7 @@ const deleteSchedule = async (req, res) => {
     successMessage.message = "Deletion successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
+    console.error(error);
     errorMessage.message = "Deletion not successful";
     return res.status(status.error).send(errorMessage);
   } finally {

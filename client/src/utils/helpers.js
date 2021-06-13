@@ -234,6 +234,8 @@ export const paymentMethodType = (type) => {
       return "Visa";
     case "M":
       return "Master";
+    case "C":
+      return "Credit Card";
     default:
       return "New Payment Method"; // required for purchase labs page
   }
