@@ -69,8 +69,8 @@ exports.signup = async (req, res) => {
   user.password = bcrypt.hashSync(user.password, 8);
 
   const existingClientRows = await db.query(
-    `SELECT 1 FROM client WHERE name='${client.name}' OR phone='${client.phone}'  OR fax='${client.fax}'
-    OR website='${client.website}' OR email='${client.email}' OR ein='${client.ein}' OR npi='${client.npi}' OR code='${client.code}' LIMIT 1`
+    `SELECT 1 FROM client WHERE name=? OR phone=?  OR fax=? OR website=? OR email=? OR ein=? OR npi=? OR code=? LIMIT 1`,
+    [client.name, client.phone, client.fax, client.website, client.email, client.ein, client.npi, client.code]
   );
 
   if (existingClientRows.length > 0) {
@@ -85,7 +85,8 @@ exports.signup = async (req, res) => {
   }
 
   const existingUserRows = await db.query(
-    `SELECT 1 FROM user WHERE email='${user.email}' OR npi='${user.npi}'  OR medical_license='${user.medical_license}' LIMIT 1`
+    `SELECT 1 FROM user WHERE email=? OR npi=? OR medical_license=? LIMIT 1`,
+    [user.email, user.npi, user.medical_license]
   );
 
   if (existingUserRows.length > 0) {
