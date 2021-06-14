@@ -7,6 +7,10 @@ import PropTypes from "prop-types";
 import { dateFormat, dateDiffInDays } from "../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
+  title: {
+    fontWeight: "600",
+    marginBottom: theme.spacing(1.5),
+  },
   ml2: {
     marginLeft: theme.spacing(2),
   },
@@ -18,9 +22,10 @@ const ToolTipContent = (props) => {
   const classes = useStyles();
   const { data } = props;
   const {
-    dt, completed_dt, lab_receipt_dt, sent_to_patient_dt,
+    marker_name, created, dt, completed_dt, lab_receipt_dt, sent_to_patient_dt,
   } = data;
 
+  const createdDaysDiff = created && dateDiffInDays(new Date(created), currentDate);
   const paymentDaysDiff = dt && dateDiffInDays(dt, currentDate);
   const completedDaysDiff = completed_dt && dateDiffInDays(completed_dt, currentDate);
   const labReceiptDaysDiff = lab_receipt_dt && dateDiffInDays(lab_receipt_dt, currentDate);
@@ -29,8 +34,14 @@ const ToolTipContent = (props) => {
 
   return (
     <>
+      <Typography className={classes.title}>
+        {marker_name}
+      </Typography>
       <Grid container>
         <Grid item xs>
+          <Typography gutterBottom>
+            Provider created:
+          </Typography>
           <Typography gutterBottom>
             Patient payment:
           </Typography>
@@ -45,6 +56,9 @@ const ToolTipContent = (props) => {
           </Typography>
         </Grid>
         <Grid item className={classes.ml2}>
+          <Typography gutterBottom>
+            {created ? `${dateFormat(created)} (${createdDaysDiff} ${daysText})` : ""}
+          </Typography>
           <Typography gutterBottom>
             {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${daysText})` : ""}
           </Typography>
@@ -68,6 +82,8 @@ const ToolTipContent = (props) => {
 
 ToolTipContent.propTypes = {
   data: PropTypes.shape({
+    marker_name: PropTypes.string,
+    created: PropTypes.string,
     dt: PropTypes.string,
     completed_dt: PropTypes.string,
     lab_receipt_dt: PropTypes.string,
