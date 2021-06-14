@@ -4,7 +4,7 @@ import { Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 
-import { dateFormat, dateDiffInDays } from "../../../../../utils/helpers";
+import { dateFormat, calculateDateDifference } from "../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -25,12 +25,13 @@ const ToolTipContent = (props) => {
     marker_name, created, dt, completed_dt, lab_receipt_dt, sent_to_patient_dt,
   } = data;
 
-  const createdDaysDiff = created && dateDiffInDays(new Date(created), currentDate);
-  const paymentDaysDiff = dt && dateDiffInDays(dt, currentDate);
-  const completedDaysDiff = completed_dt && dateDiffInDays(completed_dt, currentDate);
-  const labReceiptDaysDiff = lab_receipt_dt && dateDiffInDays(lab_receipt_dt, currentDate);
-  const sentToDaysDiff = sent_to_patient_dt && dateDiffInDays(sent_to_patient_dt, currentDate);
-  const daysText = "days ago";
+  const createdDaysDiff = created && calculateDateDifference(new Date(created), currentDate);
+  const paymentDaysDiff = dt && calculateDateDifference(new Date(dt), currentDate);
+  const completedDaysDiff = completed_dt && calculateDateDifference(new Date(completed_dt), currentDate);
+  const labReceiptDaysDiff = lab_receipt_dt && calculateDateDifference(new Date(lab_receipt_dt), currentDate);
+  // eslint-disable-next-line max-len
+  const sentToDaysDiff = sent_to_patient_dt && calculateDateDifference(new Date(sent_to_patient_dt), currentDate);
+  const constText = "ago";
 
   return (
     <>
@@ -57,22 +58,22 @@ const ToolTipContent = (props) => {
         </Grid>
         <Grid item className={classes.ml2}>
           <Typography gutterBottom>
-            {created ? `${dateFormat(created)} (${createdDaysDiff} ${daysText})` : ""}
+            {created ? `${dateFormat(created)} (${createdDaysDiff} ${constText})` : ""}
           </Typography>
           <Typography gutterBottom>
-            {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${daysText})` : ""}
+            {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${constText})` : ""}
           </Typography>
           <Typography gutterBottom>
             {sent_to_patient_dt
-              ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${daysText})` : ""}
+              ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${constText})` : ""}
           </Typography>
           <Typography gutterBottom>
             {lab_receipt_dt
-              ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${daysText})` : ""}
+              ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
           </Typography>
           <Typography>
             {completed_dt
-              ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${daysText})` : ""}
+              ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${constText})` : ""}
           </Typography>
         </Grid>
       </Grid>
