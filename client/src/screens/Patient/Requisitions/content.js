@@ -8,7 +8,6 @@ import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
-import Tooltip from "../../../components/common/CustomTooltip";
 import Popover from "../../../components/common/Popover";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
@@ -37,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     padding: theme.spacing(0, 0.5, 0, 0),
+    maxWidth: "65%",
   },
   blockAction: {
     "& button": {
@@ -131,29 +131,13 @@ const RequisitionsContent = (props) => {
             >
               {moment(item.created).format("MMM D YYYY")}
             </Typography>
-            {
-              !!item.marker_name && item.marker_name.length > 30
-                ? (
-                  <Tooltip title={item.marker_name}>
-                    <Typography
-                      component="span"
-                      className={`${classes.text12} ${classes.fullWidth}`}
-                      color="textPrimary"
-                    >
-                      {item.marker_name}
-                    </Typography>
-                  </Tooltip>
-                )
-                : (
-                  <Typography
-                    component="span"
-                    className={`${classes.text12} ${classes.fullWidth}`}
-                    color="textPrimary"
-                  >
-                    {item.marker_name}
-                  </Typography>
-                )
-            }
+            <Typography
+              component="span"
+              className={`${classes.text12} ${classes.fullWidth}`}
+              color="textPrimary"
+            >
+              {item.marker_name}
+            </Typography>
             <Grid item className={classes.blockAction}>
               <IconButton
                 onClick={() => openDeleteDialog(item)}

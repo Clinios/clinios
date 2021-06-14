@@ -144,6 +144,21 @@ export const dateDiffInMonths = (d1, d2) => {
 
 export const dateDiffInYears = (d1, d2) => d2.getFullYear() - d1.getFullYear();
 
+export const calculateDateDifference = (d1, d2) => {
+  const hoursDiff = dateDiffInHours(d1, d2);
+  const daysDiff = dateDiffInDays(d1, d2);
+  const monthsDiff = dateDiffInMonths(d1, d2);
+  const yearsDiff = dateDiffInYears(d1, d2);
+
+  if (yearsDiff > 0) {
+    return yearsDiff > 1 ? `${yearsDiff} years` : `${yearsDiff} year`;
+  } if (monthsDiff > 0) {
+    return monthsDiff > 1 ? `${monthsDiff} months` : `${monthsDiff} month`;
+  }
+
+  return daysDiff > 0 ? `${daysDiff} ${daysDiff > 1 ? "days" : "day"}` : `${hoursDiff} hours`;
+};
+
 export const statusToColorCode = (status) => {
   switch (status) {
     case "D":
