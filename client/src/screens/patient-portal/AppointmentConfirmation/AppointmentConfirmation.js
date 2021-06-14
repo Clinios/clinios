@@ -23,9 +23,9 @@ const AppointmentConfirmation = () => {
     practitioner, date, time, reschedule,
   } = location.state;
 
-  const { time_start, time_end } = time;
-  const startTime = moment(time_start, ["HH.mm"]).format("h:mm A");
-  const endTime = moment(time_end, ["HH.mm"]).format("h:mm A");
+  const { timeStart, timeEnd } = time;
+  const startTime = moment(timeStart, ["HH.mm"]).format("h:mm A");
+  const endTime = moment(timeEnd, ["HH.mm"]).format("h:mm A");
 
   return (
     <div className={classes.root}>
