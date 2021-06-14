@@ -51,6 +51,15 @@ const useStyles = makeStyles((theme) => ({
       top: 3,
     },
   },
+  graphIcon: {
+    position: "absolute",
+    right: "44%",
+    top: "14px",
+    [theme.breakpoints.down("md")]: {
+      right: "25%",
+      top: "14px",
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -89,7 +98,7 @@ const StyledTableRow = withStyles((theme) => ({
 const TestsContent = () => {
   const classes = useStyles();
   const { state, dispatch } = usePatientContext();
-  const { data } = state.tests;
+  const { data, expandDialog } = state.tests;
   const { gender, dob } = state.patientInfo.data;
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
 
@@ -218,6 +227,13 @@ const TestsContent = () => {
           </Popover>
         )
       }
+      {expandDialog && (
+        <Icon
+          className={classes.graphIcon}
+          path={mdiChartBoxOutline}
+          size={1}
+        />
+      )}
       <TableContainer className={classes.tableContainer}>
         <Table size="small" className={classes.table}>
           <TableHead>
