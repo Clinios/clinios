@@ -436,10 +436,15 @@ export const calculate_time_slot = (startTime, endTime, interval = "30") => {
       time_slots.push(`${formatted_pre_time} - ${formatted_end_time}`);
     }
   } else {
-    for (let i = end_time; i < start_time; i += interval) {
+    for (let i = start_time; i < parseTime("24:00"); i += interval) {
       const formatted_pre_time = convertHours(i);
       const formatted_end_time = convertHours(i + interval);
       time_slots.push(`${formatted_pre_time} - ${formatted_end_time}`);
+    }
+    for (let i = parseTime("00:00"); i < end_time; i += interval) {
+      const formatted_pre_time_2 = convertHours(i);
+      const formatted_end_time_2 = convertHours(i + interval);
+      time_slots.push(`${formatted_pre_time_2} - ${formatted_end_time_2}`);
     }
   }
 
