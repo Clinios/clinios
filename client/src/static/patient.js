@@ -127,7 +127,7 @@ export const FourthColumnPatientCards = [
     showActions: true,
     showSearch: false,
     data: [],
-    primaryButtonText: "New",
+    primaryButtonText: null,
     secondaryButtonText: "Expand",
     icon: null,
     cardInfo: "Balance $100",
