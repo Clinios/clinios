@@ -125,9 +125,18 @@ const Appointments = () => {
   const location = useLocation();
   const isReschedule = location?.state?.appointment;
 
+  const alterPractitionerDatesWithTimeZone = (data) => data.reduce((acc, item) => {
+      /* eslint-disable */
+      item.start_date_time = moment.tz(item.start_date_time, item.log_tz).format();
+      item.end_date_time = moment.tz(item.end_date_time, item.log_tz).format();
+       /* eslint-disable */
+      const tempData = [...acc, item]
+      return tempData;
+    }, [])
+
   const fetchPractitionersAvailableDates = useCallback((practitionerId) => {
     PatientPortalService.getPractitionerDates().then((res) => {
-      const resData = res.data;
+      const resData = res?.data && alterPractitionerDatesWithTimeZone(res.data);
       const filtered = resData.filter((x) => x.user_id === practitionerId);
       setPractitionerDateTimes([...filtered]);
     });
