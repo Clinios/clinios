@@ -125,16 +125,17 @@ const NewOrEditSchedule = ({
 
   const ianatz = "America/New_York"; // TODO:: hardcoded to test. Will be removed in future.
 
-  const startDateTimeWithTimeZone = moment.tz(schedule.start_date_time, ianatz).format();
-  const endDateTimeWithTimeZone = moment.tz(schedule.end_date_time, ianatz).format();
+  // const startDateTimeWithTimeZone = moment.tz(schedule.start_date_time, ianatz).format();
+  // const endDateTimeWithTimeZone = moment.tz(schedule.end_date_time, ianatz).format();
 
   const payload = {
     data: {
       user_id: schedule.user_id,
-      start_date_time: moment(startDateTimeWithTimeZone).format(),
-      end_date_time: moment(endDateTimeWithTimeZone).format(),
+      start_date_time: moment(schedule.start_date_time).format("YYYY-MM-DD HH:mm:ss"),
+      end_date_time: moment(schedule.end_date_time).format("YYYY-MM-DD HH:mm:ss"),
+      log_tz: ianatz,
       active: schedule.active,
-      note: schedule.note ? schedule.note : 0,
+      note: schedule.note ? schedule.note : "",
       monday: schedule?.monday ? 1 : 0,
       tuesday: schedule?.tuesday ? 1 : 0,
       wednesday: schedule?.wednesday ? 1 : 0,
@@ -330,7 +331,7 @@ const NewOrEditSchedule = ({
                     label="Time Start"
                     value={
                       schedule.start_date_time
-                        ? moment(schedule.start_date_time, "HH:mm:ss").format("YYYY-MM-DDTHH:mm:ss")
+                        ? schedule.start_date_time
                         : null
                     }
                     className={classes.textField}
@@ -360,7 +361,7 @@ const NewOrEditSchedule = ({
                     label="Time End"
                     value={
                       schedule.end_date_time
-                        ? moment(schedule.end_date_time, "HH:mm:ss").format("YYYY-MM-DDTHH:mm:ss")
+                        ? schedule.end_date_time
                         : null
                     }
                     className={classes.textField}
