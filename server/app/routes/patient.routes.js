@@ -117,6 +117,21 @@ router.get(
   [authJwt.verifyToken],
   Patient.getBillingPaymentOptions
 );
+router.post(
+  "/patient/:patient_id/billing/search",
+  [authJwt.verifyToken],
+  Patient.searchBilling
+);
+router.get(
+  "/patient/:patient_id/billing/favorites",
+  [authJwt.verifyToken],
+  Patient.getBillingFavorites
+);
+router.get(
+  "/patient/:patient_id/billing/recents",
+  [authJwt.verifyToken],
+  Patient.getBillingRecents
+);
 router.get(
   "/patient/:patient_id/allergies",
   [authJwt.verifyToken],
