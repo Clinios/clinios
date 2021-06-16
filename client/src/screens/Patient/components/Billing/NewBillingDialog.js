@@ -55,41 +55,41 @@ const Requisitions = (props) => {
   const { reloadData } = props;
   const [searchText, setSearchText] = useState("");
   const [hasUserSearched, setHasUserSearched] = useState(false);
-  const [tests, setTests] = useState([]);
-  const [recentTests, setRecentTests] = useState([]);
-  const [favoriteTests, setFavoriteTests] = useState([]);
+  const [billings, setBillings] = useState([]);
+  const [recentBillings, setRecentBillings] = useState([]);
+  const [favoriteBillings, setFavoriteBillings] = useState([]);
 
   const { patientId } = state;
 
-  const searchTests = (e, text) => {
+  const searchBillings = (e, text) => {
     e.preventDefault();
     const reqBody = {
       data: {
         text,
       },
     };
-    PatientService.searchTests(patientId, reqBody).then((res) => {
-      setTests(res.data);
+    PatientService.searchBilling(patientId, reqBody).then((res) => {
+      setBillings(res.data);
       setHasUserSearched(true);
     });
   };
 
-  const fetchRecentTests = useCallback(() => {
-    PatientService.getRequisitionsRecentTests(patientId).then((response) => {
-      setRecentTests(response.data);
+  const fetchRecentBillings = useCallback(() => {
+    PatientService.getBillingRecents(patientId).then((response) => {
+      setRecentBillings(response.data);
     });
   }, [patientId]);
 
-  const fetchFavoriteTests = useCallback(() => {
-    PatientService.getRequisitionsFavoriteTests(patientId).then((response) => {
-      setFavoriteTests(response.data);
+  const fetchFavoriteBillings = useCallback(() => {
+    PatientService.getBillingFavorites(patientId).then((response) => {
+      setFavoriteBillings(response.data);
     });
   }, [patientId]);
 
   useEffect(() => {
-    fetchRecentTests();
-    fetchFavoriteTests();
-  }, [fetchRecentTests, fetchFavoriteTests]);
+    fetchRecentBillings();
+    fetchFavoriteBillings();
+  }, [fetchRecentBillings, fetchFavoriteBillings]);
 
   const onFormSubmit = (selectedTest) => {
     const reqBody = {
@@ -107,7 +107,7 @@ const Requisitions = (props) => {
 
   useDidMountEffect(() => {
     if (!searchText.length) {
-      setTests([]);
+      setBillings([]);
       setHasUserSearched(false);
     }
   }, [searchText]);
@@ -116,7 +116,7 @@ const Requisitions = (props) => {
     <>
       <Grid container spacing={3}>
         <Grid item md={4} xs={12}>
-          <form onSubmit={(e) => searchTests(e, searchText)}>
+          <form onSubmit={(e) => searchBillings(e, searchText)}>
             <Grid container spacing={2} alignItems="center">
               <Grid item sm={9} xs={8}>
                 <TextField
@@ -148,8 +148,8 @@ const Requisitions = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {tests.length
-                  ? tests.map((item) => (
+                {billings.length
+                  ? billings.map((item) => (
                     <StyledTableRowSm
                       key={item.marker_id}
                       className={classes.pointer}
@@ -198,8 +198,8 @@ const Requisitions = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {favoriteTests.length
-                    ? favoriteTests.map((item) => (
+                  {favoriteBillings.length
+                    ? favoriteBillings.map((item) => (
                       <StyledTableRowSm
                         key={item.marker_id}
                         className={classes.pointer}
@@ -249,8 +249,8 @@ const Requisitions = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {recentTests.length
-                    ? recentTests.map((item) => (
+                  {recentBillings.length
+                    ? recentBillings.map((item) => (
                       <StyledTableRowSm
                         key={item.marker_id}
                         className={classes.pointer}
