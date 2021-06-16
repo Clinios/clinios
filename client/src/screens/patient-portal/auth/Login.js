@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
@@ -92,7 +90,6 @@ const PatientLogin = () => {
   const [email, setEmail] = useState("");
   const [clientId, setClientId] = useState(null);
   const [password, setPassword] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
   const [apiErrors, setApiErrors] = useState([]);
 
   useEffect(() => {
@@ -121,12 +118,6 @@ const PatientLogin = () => {
   }, [clientCode]);
 
   const onFormSubmit = async () => {
-    if (isChecked && email !== "") {
-      localStorage.username = email;
-      localStorage.password = password;
-      localStorage.rememberme = isChecked;
-    }
-
     try {
       await patientLogin(clientId, email.trim(), password.trim()); // Call AuthProvider login
     } catch (error) {
@@ -142,21 +133,13 @@ const PatientLogin = () => {
     }
   };
 
-  useEffect(() => {
-    if (localStorage.rememberme && localStorage.username !== "") {
-      setIsChecked(true);
-      setEmail(localStorage.username);
-      setPassword(localStorage.password);
-    }
-  }, []);
-
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Grid className={classes.marginTop}>
         <div className={classes.Logo}>
           <Image
-            lassName="clientLogo"
+            className="clientLogo"
             src={`${process.env.REACT_APP_API_URL}static/client/c${clientId}_logo.png`}
             alt="Client Logo"
           />
@@ -172,9 +155,7 @@ const PatientLogin = () => {
           >
             Patient Sign in
           </Typography>
-
           <Error errors={apiErrors} />
-
           <form
             className={clsx({
               [classes.form]: true, // always apply
@@ -221,17 +202,6 @@ const PatientLogin = () => {
               id="password"
               autoComplete="current-password"
               onChange={(event) => setPassword(event.target.value)}
-            />
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  value="remember"
-                  color="primary"
-                  checked={isChecked}
-                  onChange={(event) => setIsChecked(event.target.checked)}
-                />
-              )}
-              label="Remember me"
             />
             <Button
               disabled={!email || !password || errors.length > 0}
