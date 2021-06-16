@@ -64,6 +64,30 @@ class Patient {
       .then((res) => res.data);
   }
 
+  searchBilling(patientId, data) {
+    return axios
+      .post(`${API_BASE}/patient/${patientId}/billing/search`, data, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
+  getBillingFavorites(patientId) {
+    return axios
+      .get(`${API_BASE}/patient/${patientId}/billing/favorites`, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
+  getBillingRecents(patientId) {
+    return axios
+      .get(`${API_BASE}/patient/${patientId}/billing/recents`, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
+
   getDocuments(patientId, tab) {
     return axios
       .get(`${API_BASE}/patient/${patientId}/documents/?tab=${tab}`, {
