@@ -1140,7 +1140,7 @@ const Patient = () => {
           applyForm={() => dispatch(toggleRequisitionExpandDialog())}
           cancelForm={() => dispatch(toggleRequisitionExpandDialog())}
           hideActions
-          size="md"
+          size="lg"
         />
       )}
 

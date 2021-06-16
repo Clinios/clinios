@@ -112,10 +112,12 @@ const RequisitionsDetails = (props) => {
           <TableHead>
             <TableRow>
               <StyledTableCell>Created</StyledTableCell>
-              <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell>Marker ID</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Lab Name</StyledTableCell>
+              <StyledTableCell>Patient Paid</StyledTableCell>
+              <StyledTableCell>Sent To Patient</StyledTableCell>
+              <StyledTableCell>Lab Receipt</StyledTableCell>
+              <StyledTableCell>Completed</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -127,11 +129,12 @@ const RequisitionsDetails = (props) => {
                   <TableCell component="th" scope="item">
                     {moment(item.created).format("MMM D YYYY")}
                   </TableCell>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.marker_id}</TableCell>
-                  <TableCell>{item.marker_name || ""}</TableCell>
-                  <TableCell>{item.lab_name || ""}</TableCell>
-
+                  <TableCell>{item.marker_name}</TableCell>
+                  <TableCell>{item.lab_name}</TableCell>
+                  <TableCell>{item.dt}</TableCell>
+                  <TableCell>{item.sent_to_patient_dt}</TableCell>
+                  <TableCell>{item.lab_receipt_dt}</TableCell>
+                  <TableCell>{item.completed_dt}</TableCell>
                   <TableCell className={classes.actions}>
                     <IconButton
                       className={classes.button}
