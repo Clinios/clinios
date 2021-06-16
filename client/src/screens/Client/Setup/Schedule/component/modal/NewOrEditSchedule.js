@@ -98,7 +98,7 @@ const NewOrEditSchedule = ({
 }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  // const { user } = useAuth();
+  const ianatz = moment.tz.guess() || "America/New_York";
   const [schedule, setSchedule] = useState([]);
   const [status, setStatus] = useState("");
   const [errors, setErrors] = useState([]);
@@ -122,11 +122,6 @@ const NewOrEditSchedule = ({
       setStatus("Current");
     }
   }, [schedule]);
-
-  const ianatz = "America/New_York"; // TODO:: hardcoded to test. Will be removed in future.
-
-  // const startDateTimeWithTimeZone = moment.tz(schedule.start_date_time, ianatz).format();
-  // const endDateTimeWithTimeZone = moment.tz(schedule.end_date_time, ianatz).format();
 
   const payload = {
     data: {
