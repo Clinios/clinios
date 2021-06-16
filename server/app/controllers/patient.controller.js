@@ -584,7 +584,7 @@ const getFormById = async (req, res) => {
         from patient_form pf
         left join client_form cf on cf.id=pf.form_id
         where pf.patient_id=? and pf.form_id=?`,
-         [patient_id, id]);
+      [patient_id, id]);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -679,7 +679,7 @@ const handoutDelete = async (req, res) => {
     const deleteResponse = await db.query(
       `delete from patient_handout
         where patient_id=? and handout_id=?`,
-        [patient_id, id]
+      [patient_id, id]
     );
 
     if (!deleteResponse.affectedRows) {
@@ -769,7 +769,7 @@ const DeletePatientHandouts = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `delete from patient_handout where patient_id=? and handout_id=?`,
-       [patient_id, handout_id]
+      [patient_id, handout_id]
     );
 
     if (!dbResponse.affectedRows) {
@@ -858,7 +858,7 @@ const updateBilling = async (req, res) => {
 
   const db = makeDb(configuration, res);
   try {
-    const updateResponse = await db.query(`update tran set ? where patient_id=? and id=?`,[formData, patient_id, id]);
+    const updateResponse = await db.query(`update tran set ? where patient_id=? and id=?`, [formData, patient_id, id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -947,6 +947,105 @@ const getBillingPaymentOptions = async (req, res) => {
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
+const searchBilling = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    errorMessage.message = errors.array();
+    return res.status(status.bad).send(errorMessage);
+  }
+  const { text } = req.body.data;
+
+  const db = makeDb(configuration, res);
+  try {
+    const dbResponse = await db.query(
+      `select p.id, p.name, cp.billable favorite_billing
+        from proc p
+        left join client_proc cp on cp.proc_id = p.id
+        and cp.billable=True
+        and cp.client_id=${req.client_id}
+        where p.name like '%${text}%'
+        order by p.name desc
+        limit 20
+      `
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    errorMessage.message = "Search not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
+
+const getBillingFavorites = async (req, res) => {
+  const db = makeDb(configuration, res);
+  // const { patient_id } = req.params;
+  try {
+    const dbResponse = await db.query(
+      `select p.id, p.name, cp.billable favorite_billing
+      from client_proc cp
+      join proc p on p.id = cp.proc_id
+      where cp.client_id=${req.client_id}
+      and cp.billable=True
+      order by p.name
+      limit 20`
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    errorMessage.message = "Select not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
+const getBillingRecents = async (req, res) => {
+  const db = makeDb(configuration, res);
+  // const { patient_id } = req.params;
+  try {
+    const dbResponse = await db.query(
+      `select p.id, p.name, cp.billable favorite_billing
+      from tran t
+      join proc p on p.id = t.proc_id
+      left join client_proc cp on cp.proc_id = t.proc_id
+      and cp.billable=True
+      and cp.client_id=${req.client_id}
+      where t.client_id=${req.client_id}
+      order by t.dt desc
+      limit 10
+      `
+    );
+
+    if (!dbResponse) {
+      errorMessage.message = "None found";
+      return res.status(status.notfound).send(errorMessage);
+    }
+
+    successMessage.data = dbResponse;
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
@@ -1389,7 +1488,7 @@ const createEncounter = async (req, res) => {
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (excepErr) {
-    console.error('excepErr:', excepErr )
+    console.error('excepErr:', excepErr)
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
@@ -1867,7 +1966,7 @@ const updateDiagnose = async (req, res) => {
   formData.updated_user_id = req.user_id;
   try {
     const updateResponse = await db.query(`update patient_icd set ? where patient_id=? and icd_id=?`,
-     [formData, patient_id, icd_id]
+      [formData, patient_id, icd_id]
     );
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
@@ -1891,7 +1990,7 @@ const deleteDiagnose = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const deleteResponse = await db.query(`delete from patient_icd where patient_id=? and icd_id=?`,
-     [patient_id, icd_id]
+      [patient_id, icd_id]
     );
 
     if (!deleteResponse.affectedRows) {
@@ -1955,7 +2054,7 @@ const getMedications = async (req, res) => {
         left join drug_strength ds on ds.id=pd.drug_strength_id
         left join drug_frequency df on df.id=pd.drug_frequency_id
         where pd.patient_id=? order by d.name limit 50`,
-        [patient_id]
+      [patient_id]
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -2450,7 +2549,7 @@ const getPaymentMethods = async (req, res) => {
       where patient_id=?
       and (status is null or status <> 'D')
       order by 1`, [patient_id]
-    ); 
+    );
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -2550,6 +2649,9 @@ const appointmentTypes = {
   deleteBilling,
   getBillingTransactionTypes,
   getBillingPaymentOptions,
+  searchBilling,
+  getBillingFavorites,
+  getBillingRecents,
   createBilling,
   getAllergies,
   deleteAllergy,

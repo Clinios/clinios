@@ -10,13 +10,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
-import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
+import { dateFormat } from "../../../utils/helpers";
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -112,10 +112,12 @@ const RequisitionsDetails = (props) => {
           <TableHead>
             <TableRow>
               <StyledTableCell>Created</StyledTableCell>
-              <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell>Marker ID</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Lab Name</StyledTableCell>
+              <StyledTableCell>Patient Paid</StyledTableCell>
+              <StyledTableCell>Sent To Patient</StyledTableCell>
+              <StyledTableCell>Lab Receipt</StyledTableCell>
+              <StyledTableCell>Completed</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -125,13 +127,22 @@ const RequisitionsDetails = (props) => {
               ? data.map((item) => (
                 <StyledTableRow key={`${item.created}_${item.id}`}>
                   <TableCell component="th" scope="item">
-                    {moment(item.created).format("MMM D YYYY")}
+                    {dateFormat(item.created)}
                   </TableCell>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.marker_id}</TableCell>
-                  <TableCell>{item.marker_name || ""}</TableCell>
-                  <TableCell>{item.lab_name || ""}</TableCell>
-
+                  <TableCell>{item.marker_name}</TableCell>
+                  <TableCell>{item.lab_name}</TableCell>
+                  <TableCell>
+                    {item.dt ? dateFormat(item.dt) : ""}
+                  </TableCell>
+                  <TableCell>
+                    {item.sent_to_patient_dt ? dateFormat(item.sent_to_patient_dt) : ""}
+                  </TableCell>
+                  <TableCell>
+                    {item.lab_receipt_dt ? dateFormat(item.lab_receipt_dt) : ""}
+                  </TableCell>
+                  <TableCell>
+                    {item.completed_dt ? dateFormat(item.completed_dt) : ""}
+                  </TableCell>
                   <TableCell className={classes.actions}>
                     <IconButton
                       className={classes.button}

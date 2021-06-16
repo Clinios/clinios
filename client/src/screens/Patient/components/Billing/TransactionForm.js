@@ -244,7 +244,7 @@ const NewTransactionForm = (props) => {
       const name = "type";
       setFormFields({
         ...formFields,
-        [name]: transactionTypes[0].id,
+        [name]: transactionTypes[2].id,
       });
     }
   }, [transactionTypes]);

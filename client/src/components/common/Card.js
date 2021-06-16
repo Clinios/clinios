@@ -15,6 +15,7 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CancelIcon from "@material-ui/icons/Cancel";
 import CardIcon from "@material-ui/icons/CreditCard";
 import DesktopIcon from "@material-ui/icons/DesktopMac";
+import BillingIcon from "@material-ui/icons/MonetizationOnOutlined";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SaveIcon from "@material-ui/icons/SaveOutlined";
 import { mdiCalendarBlankOutline, mdiChartBoxOutline } from "@mdi/js";
@@ -24,7 +25,9 @@ import PropTypes from "prop-types";
 
 import useDidMountEffect from "../../hooks/useDidMountEffect";
 import usePatientContext from "../../hooks/usePatientContext";
-import { togglePatientAppointmentHistoryDialog } from "../../providers/Patient/actions";
+import {
+  togglePatientAppointmentHistoryDialog, toggleNewTransactionDialog, togglePaymentDialog,
+} from "../../providers/Patient/actions";
 import Colors from "../../theme/colors";
 
 const useStyles = makeStyles((theme) => ({
@@ -103,6 +106,10 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     height: 8,
+  },
+  billingIcons: {
+    position: "absolute",
+    right: "16%",
   },
 }));
 
@@ -248,6 +255,23 @@ const PatientCard = (props) => {
                 onClick={editorSaveHandler}
               >
                 <SaveIcon />
+              </IconButton>
+            </Grid>
+          )}
+          {title === "Billing" && (
+            <Grid className={classes.billingIcons}>
+              <IconButton
+                onClick={() => dispatch(togglePaymentDialog())}
+                size="small"
+              >
+                <AddIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                type="submit"
+                size="small"
+                onClick={() => dispatch(toggleNewTransactionDialog())}
+              >
+                <BillingIcon fontSize="small" />
               </IconButton>
             </Grid>
           )}
