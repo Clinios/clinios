@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -75,16 +75,8 @@ const PatientLogin = () => {
   const [errors, setErrors] = useState([]);
 
   const onFormSubmit = async () => {
-    if (email !== "") {
-      localStorage.username = email;
-      localStorage.password = password;
-    }
-
     try {
       await corporateLogin(email.trim(), password.trim()); // Call AuthProvider login
-      // enqueueSnackbar("Successfully logged in!", {
-      //  variant: "success",
-      // });
     } catch (error) {
       console.error(error);
       enqueueSnackbar("Unable to login", {
@@ -97,13 +89,6 @@ const PatientLogin = () => {
       ]);
     }
   };
-
-  useEffect(() => {
-    if (localStorage.username !== "") {
-      setEmail(localStorage.username);
-      setPassword(localStorage.password);
-    }
-  }, []);
 
   return (
     <Container component="main" maxWidth="xs">

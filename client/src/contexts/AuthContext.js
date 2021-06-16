@@ -155,6 +155,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    localStorage.clear();
     setSession(null);
     dispatch({ type: "LOGOUT" });
 
