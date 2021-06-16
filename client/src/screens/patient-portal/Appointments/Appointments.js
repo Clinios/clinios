@@ -127,8 +127,8 @@ const Appointments = () => {
 
   const alterPractitionerDatesWithTimeZone = (data) => data.reduce((acc, item) => {
       /* eslint-disable */
-      item.start_date_time = moment.tz(item.start_date_time, item.log_tz).format();
-      item.end_date_time = moment.tz(item.end_date_time, item.log_tz).format();
+      item.start_date_time = moment.tz(moment(item.start_date_time).format('YYYY-MM-DD HH:mm:ss'), item.log_tz).format();
+      item.end_date_time = moment.tz(moment(item.end_date_time).format('YYYY-MM-DD HH:mm:ss'), item.log_tz).format();
        /* eslint-disable */
       const tempData = [...acc, item]
       return tempData;
