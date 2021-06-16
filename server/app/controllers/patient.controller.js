@@ -1023,7 +1023,7 @@ const getBillingFavorites = async (req, res) => {
 
 const getBillingRecents = async (req, res) => {
   const db = makeDb(configuration, res);
-  const { patient_id } = req.params;
+  // const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
       `select p.id, p.name, cp.billable favorite_billing
