@@ -122,7 +122,7 @@ const HandoutsContent = (props) => {
       {
         data.map((item) => (
           <Grid
-            key={item.created}
+            key={`${item.created}_${item.filename}`}
             container
             alignItems="center"
             className={classes.inputRow}
