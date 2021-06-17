@@ -326,9 +326,9 @@ const Appointments = () => {
           appointment_type_id: userSelection.appointmentType,
           // this handles the startDateTime and endDateTime required for timezone conversion
           // eslint-disable-next-line max-len
-          start_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.timeStart, ["HH.mm"]).format("h:mm:ss A")}`,
+          //start_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.timeStart, ["HH.mm"]).format("h:mm:ss A")}`,
           // eslint-disable-next-line max-len
-          end_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.timeEnd, ["HH.mm"]).format("h:mm:ss A")}`,
+          //end_date_time: `${moment(userSelection.date).format("YYYY-MM-DD")} ${moment(userSelection.time.timeEnd, ["HH.mm"]).format("h:mm:ss A")}`,
         },
       };
       PatientPortalService[isRescheduleAppointment

@@ -149,24 +149,25 @@ const createAppointment = async (req, res) => {
     start_dt,
     end_dt,
     user_id,
-    status: appStatus,
+    status: apptStatus,
     patient_id,
     appointment_type_id,
   } = req.body.data;
 
+  const userCalendarData = {};
+  userCalendarData.client_id = req.client_id;
+  userCalendarData.user_id = user_id;
+  userCalendarData.patient_id = patient_id;
+  userCalendarData.appointment_type_id = appointment_type_id;
+  userCalendarData.start_dt = moment(start_dt).format("YYYY-MM-DD HH:mm:ss");
+  userCalendarData.end_dt = moment(end_dt).format("YYYY-MM-DD HH:mm:ss");
+  userCalendarData.status = apptStatus;
+  userCalendarData.created = new Date();
+  userCalendarData.created_user_id = req.user_id;
+
   const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(
-      `insert into user_calendar (client_id, user_id, patient_id, appointment_type_id, start_dt, end_dt, status, created, created_user_id) values (${
-        req.client_id
-      }, ${user_id}, ${patient_id}, ${appointment_type_id}, '${moment(
-        start_dt,
-        "YYYY-MM-DD HH:mm:ss"
-      ).format("YYYY-MM-DD HH:mm:ss")}', '${moment(
-        end_dt,
-        "YYYY-MM-DD HH:mm:ss"
-      ).format("YYYY-MM-DD HH:mm:ss")}', '${appStatus}', now(), ${req.user_id})`
-    );
+    const insertResponse = await db.query(`insert into user_calendar set ?`, [userCalendarData])
     if (!insertResponse.affectedRows) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
@@ -192,10 +193,7 @@ const updateAppointment = async (req, res) => {
   formData.updated_user_id = req.user_id;
 
   try {
-    const updateResponse = await db.query(
-      `update user_calendar set ? where id=${appointmentId}`,
-      [formData]
-    );
+    const updateResponse = await db.query(`update user_calendar set ? where id=?`,[formData, appointmentId]);
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
@@ -221,15 +219,15 @@ const cancelRequestRescheduleAppointment = async (req, res) => {
       `delete from user_calendar where id=?`, [appointmentId]
     );
     if (!deletedResponse.affectedRows) {
-      errorMessage.message = "deletion not successful";
+      errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
     successMessage.data = deletedResponse;
-    successMessage.message = "delete successful";
+    successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
-    errorMessage.message = "delete not successful";
+    errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
   } finally {
     await db.close();
