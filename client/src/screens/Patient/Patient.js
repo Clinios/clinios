@@ -906,6 +906,7 @@ const Patient = () => {
           cancelForm={() => dispatch(togglePaymentDialog())}
           hideActions
           size="lg"
+          fullHeight
         />
       )}
 
