@@ -965,7 +965,7 @@ const searchBilling = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select p.id, p.name, cp.billable favorite_billing, p.price, cp.fee
+      `select p.id, p.name, cp.billable favorite_billing, p.price proc_price, cp.fee client_fee
         from proc p
         left join client_proc cp on cp.proc_id = p.id
         and cp.billable=True
@@ -997,7 +997,7 @@ const getBillingFavorites = async (req, res) => {
   // const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select p.id, p.name, cp.billable favorite_billing, p.price, cp.fee
+      `select p.id, p.name, cp.billable favorite_billing, p.price proc_price, cp.fee client_fee
       from client_proc cp
       join proc p on p.id = cp.proc_id
       where cp.client_id=${req.client_id}
@@ -1026,7 +1026,7 @@ const getBillingRecents = async (req, res) => {
   // const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select p.id, p.name, cp.billable favorite_billing, p.price, cp.fee
+      `select p.id, p.name, cp.billable favorite_billing, p.price proc_price, cp.fee client_fee
       from tran t
       join proc p on p.id = t.proc_id
       left join client_proc cp on cp.proc_id = t.proc_id
