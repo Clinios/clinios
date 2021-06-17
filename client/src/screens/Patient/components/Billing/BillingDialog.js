@@ -94,10 +94,12 @@ const BillingDialog = (props) => {
   const onFormSubmit = (selectedTest) => {
     const reqBody = {
       data: {
-        marker_id: selectedTest.marker_id,
+        amount: selectedTest.price || selectedTest.fee || 0,
+        proc_id: selectedTest.id,
+        type_id: 1  // the 1 is hardcoded as per CLIN-203
       },
     };
-    PatientService.createBilling(patientId, reqBody)
+    PatientService.createNewBilling(patientId, reqBody)
       .then((response) => {
         enqueueSnackbar(`${response.data.message}`, { variant: "success" });
         reloadData();
