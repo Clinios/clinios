@@ -19,7 +19,7 @@ import Tooltip from "../../../../components/common/CustomTooltip";
 import { StyledTableRowSm, StyledTableCellSm } from "../../../../components/common/StyledTable";
 import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { toggleRequisitionDialog } from "../../../../providers/Patient/actions";
+import { togglePaymentDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -97,11 +97,11 @@ const Requisitions = (props) => {
         marker_id: selectedTest.marker_id,
       },
     };
-    PatientService.createRequisition(patientId, reqBody)
+    PatientService.createBilling(patientId, reqBody)
       .then((response) => {
         enqueueSnackbar(`${response.data.message}`, { variant: "success" });
         reloadData();
-        dispatch(toggleRequisitionDialog());
+        dispatch(togglePaymentDialog());
       });
   };
 
