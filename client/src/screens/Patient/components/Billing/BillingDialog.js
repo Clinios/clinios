@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Requisitions = (props) => {
+const BillingDialog = (props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = usePatientContext();
@@ -289,8 +289,8 @@ const Requisitions = (props) => {
   );
 };
 
-Requisitions.propTypes = {
+BillingDialog.propTypes = {
   reloadData: PropTypes.func.isRequired,
 };
 
-export default Requisitions;
+export default BillingDialog;
