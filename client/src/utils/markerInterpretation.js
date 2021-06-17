@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-export const getMarkerInterpretation = marker => {
+export const getMarkerInterpretation = (marker) => {
   const data = {
     high: [],
     low: []
