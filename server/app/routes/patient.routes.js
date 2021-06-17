@@ -132,6 +132,11 @@ router.get(
   [authJwt.verifyToken],
   Patient.getBillingRecents
 );
+router.post(
+  "/patient/:patient_id/new-billing",
+  [authJwt.verifyToken, authorization.isReadOnly],
+  Patient.createNewBilling
+);
 router.get(
   "/patient/:patient_id/allergies",
   [authJwt.verifyToken],
