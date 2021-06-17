@@ -96,7 +96,7 @@ const BillingDialog = (props) => {
       data: {
         amount: selectedTest.price || selectedTest.fee || 0,
         proc_id: selectedTest.id,
-        type_id: 1  // the 1 is hardcoded as per CLIN-203
+        type_id: 1, // the 1 is hardcoded as per CLIN-203
       },
     };
     PatientService.createNewBilling(patientId, reqBody)
