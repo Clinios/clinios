@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
-import { Typography, Button } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
+import { Grid, Typography, IconButton } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,25 +8,34 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/EditOutlined";
+import BillingIcon from "@material-ui/icons/MonetizationOnOutlined";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../../components/Alert";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { toggleNewTransactionDialog, setSelectedBilling } from "../../../../providers/Patient/actions";
+import {
+  toggleNewTransactionDialog, setSelectedBilling, togglePaymentDialog,
+} from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   newButton: {
     position: "absolute",
     right: "20%",
     top: "10px",
+    display: "flex",
+    alignItems: "center",
   },
   tableContainer: {
     minWidth: 650,
+  },
+  balanceText: {
+    marginRight: theme.spacing(7),
   },
 }));
 
@@ -65,7 +73,7 @@ const BillingDetails = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = usePatientContext();
   const { patientId } = state;
-  const { data } = state.billing;
+  const { data, balance } = state.billing;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -94,6 +102,8 @@ const BillingDetails = (props) => {
       });
   };
 
+  const patientBalance = balance || 0;
+
   return (
     <>
       <Alert
@@ -105,13 +115,26 @@ const BillingDetails = (props) => {
         applyForm={() => deleteItemHandler(selectedItem)}
         cancelForm={closeDeleteDialog}
       />
-      <Button
-        variant="outlined"
-        className={classes.newButton}
-        onClick={() => dispatch(toggleNewTransactionDialog())}
-      >
-        New
-      </Button>
+      <Grid className={classes.newButton}>
+        <Typography className={classes.balanceText}>
+          {`Balance $${patientBalance.toFixed(2)}`}
+        </Typography>
+        <Grid>
+          <IconButton
+            onClick={() => dispatch(togglePaymentDialog())}
+            size="small"
+          >
+            <AddIcon />
+          </IconButton>
+          <IconButton
+            type="submit"
+            size="small"
+            onClick={() => dispatch(toggleNewTransactionDialog())}
+          >
+            <BillingIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
       <TableContainer className={classes.tableContainer}>
         <Table size="small" className={classes.table}>
           <TableHead>
@@ -143,7 +166,7 @@ const BillingDetails = (props) => {
                       <EditIcon fontSize="small" />
                     </IconButton>
                     <IconButton
-                    // disabled check added as per CLIN-174
+                      // disabled check added as per CLIN-174
                       disabled={(item.payment_type === "C" || item.payment_type === "CH")}
                       onClick={() => openDeleteDialog(item)}
                     >

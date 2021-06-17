@@ -16,7 +16,6 @@ import Icon from "@mdi/react";
 import { orderBy } from "lodash";
 import moment from "moment";
 
-import Popover from "../../../components/common/Popover";
 import usePatientContext from "../../../hooks/usePatientContext";
 import { toggleTestsChartExpandDialog, setSelectedTest } from "../../../providers/Patient/actions";
 import { calculateFunctionalRange, calculatePercentageFlag } from "../../../utils/FunctionalRange";
@@ -24,6 +23,7 @@ import { calculateAge, hasValue } from "../../../utils/helpers";
 import { getMarkerDefinition } from "../../../utils/markerDefinition";
 import { getMarkerInterpretation } from "../../../utils/markerInterpretation";
 import MarkerDefinition from "../components/MarkerDefinition";
+import ClickableHoverPopover from "./components/ClickableHoverPopover";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -103,17 +103,10 @@ const TestsContent = () => {
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
 
   const [tests, setTests] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [selectedMarker, setSelectedMarker] = useState(null);
 
-  const handlePopoverOpen = (event, marker) => {
-    setAnchorEl(event.currentTarget);
+  const onIconHover = (event, marker) => {
     setSelectedMarker(marker);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setSelectedMarker(null);
   };
 
   const hasTestValue = (value, markerId, testsArray) => {
@@ -207,8 +200,6 @@ const TestsContent = () => {
     Boolean(getMarkerDefinition(marker.marker_id).length || (getMarkerInterpretation(marker.marker_id).low.length && getMarkerInterpretation(marker.marker_id).high.length))
   );
 
-  const showPopover = Boolean(selectedMarker);
-
   const toggleGraphDialog = (test) => {
     dispatch(setSelectedTest(test));
     dispatch(toggleTestsChartExpandDialog());
@@ -216,17 +207,6 @@ const TestsContent = () => {
 
   return (
     <>
-      {
-        showPopover && (
-          <Popover
-            open={showPopover}
-            anchorEl={anchorEl}
-            handlePopoverClose={handlePopoverClose}
-          >
-            <MarkerDefinition data={selectedMarker} />
-          </Popover>
-        )
-      }
       {expandDialog && (
         <Icon
           className={classes.graphIcon}
@@ -260,12 +240,18 @@ const TestsContent = () => {
                     <TableCell className={classes.iconContainer}>
                       {showPopoverIcon(row) && (
                         <Grid
-                          onMouseEnter={(e) => handlePopoverOpen(e, row)}
-                        // onMouseLeave={handlePopoverClose} // this will enable the user to click links inside Popover
+                          onMouseEnter={(e) => onIconHover(e, row)}
                         >
-                          <Icon
-                            path={mdiInformationOutline}
-                            size={0.85}
+                          <ClickableHoverPopover
+                            hoverElement={(
+                              <Icon
+                                path={mdiInformationOutline}
+                                size={0.85}
+                              />
+                            )}
+                            bodyElement={(
+                              selectedMarker ? <MarkerDefinition data={selectedMarker} /> : ""
+                            )}
                           />
                         </Grid>
                       )}

@@ -110,8 +110,8 @@ import {
   PatientHistoryDetails,
 } from "./components/BasicInfo";
 import {
-  NewTransactionForm,
-  NewBillingDialog,
+  TransactionForm,
+  BillingDialog,
   BillingCardContent,
   BillingDetails,
 } from "./components/Billing";
@@ -856,7 +856,7 @@ const Patient = () => {
           open={billing.newTransactionDialog}
           title={`${selectedBilling ? "Edit" : "New"} Transaction`}
           message={(
-            <NewTransactionForm
+            <TransactionForm
               reloadData={() => {
                 fetchBillings();
                 fetchPatientBalance();
@@ -894,7 +894,7 @@ const Patient = () => {
           open={billing.newDialog}
           title="New Billing"
           message={(
-            <NewBillingDialog
+            <BillingDialog
               reloadData={() => {
                 fetchBillings();
                 fetchPatientBalance();
@@ -906,6 +906,7 @@ const Patient = () => {
           cancelForm={() => dispatch(togglePaymentDialog())}
           hideActions
           size="lg"
+          fullHeight
         />
       )}
 
