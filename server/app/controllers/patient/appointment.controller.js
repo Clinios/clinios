@@ -52,9 +52,7 @@ const getPractitionerDates = async (req, res) => {
 
   try {
     $sql = `select id, user_id, start_date_time, end_date_time, log_tz, monday, tuesday, wednesday, thursday, friday, active
-    from user_schedule
-    where client_id=? 
-    and start_date_time > current_date()`;
+    from user_schedule where client_id=? and current_date() between start_date_time and end_date_time`;
 
     const dbResponse = await db.query($sql, [client_id]);
 
