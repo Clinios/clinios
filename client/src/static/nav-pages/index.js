@@ -121,12 +121,6 @@ export const client_pages = [
         href: "/setup/contracts",
       },
       {
-        id: 36,
-        icon: CodeIcon,
-        title: "Procedure Codes",
-        href: "/setup/procedure-codes",
-      },
-      {
         id: 37,
         icon: CodeIcon,
         title: "Drugs",
@@ -167,8 +161,14 @@ export const client_pages = [
       {
         id: 313,
         icon: CodeIcon,
-        title: "Patient Portal Header",
+        title: "Portal Header",
         href: "/setup/patient-portal-header",
+      },
+      {
+        id: 36,
+        icon: CodeIcon,
+        title: "Procedure Codes",
+        href: "/setup/procedure-codes",
       },
       {
         id: 314,
