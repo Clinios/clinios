@@ -60,7 +60,7 @@ const NewTransactionForm = (props) => {
   const [isNegativeAmount, setIsNegativeAmount] = useState(false);
   const [hasAmountError, setHasAmountError] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-  const [transactionTypes, setTransactionTypes] = useState([...TransactionTypes]);
+  // const [transactionTypes, setTransactionTypes] = useState([...TransactionTypes]);
   const [paymentOptions, setPaymentOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState({
@@ -71,7 +71,7 @@ const NewTransactionForm = (props) => {
     accountNum: "",
     notes: "",
   });
-
+  const transactionTypes = [...TransactionTypes];
   const { selectedBilling } = state.billing;
 
   useDidMountEffect(() => {
@@ -108,11 +108,11 @@ const NewTransactionForm = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBilling]);
 
-  const fetchBillingTransactionTypes = useCallback(() => {
-    PatientService.getBillingTransactionTypes(patientId).then((res) => {
-      setTransactionTypes(res.data);
-    });
-  }, [patientId]);
+  // const fetchBillingTransactionTypes = useCallback(() => {
+  //   PatientService.getBillingTransactionTypes(patientId).then((res) => {
+  //     setTransactionTypes(res.data);
+  //   });
+  // }, [patientId]);
 
   const fetchBillingPaymentOptions = useCallback(() => {
     PatientService.getBillingPaymentOptions(patientId).then((res) => {
@@ -246,7 +246,7 @@ const NewTransactionForm = (props) => {
         [name]: 3, // PAYMENT id is 3.
       });
     }
-  }, [selectedBilling])
+  }, [selectedBilling, formFields]);
 
   useDidMountEffect(() => {
     if (hasAmountError) {
@@ -257,7 +257,7 @@ const NewTransactionForm = (props) => {
   // selecting the first payment method by default for new billing dialog
   useDidMountEffect(() => {
     const name = "accountNum";
-    if (selectedBilling === null && paymentOptions.length && (formFields.type === 3 || formFields.type === 4)) {
+    if (selectedBilling === null && (formFields.type === 3 || formFields.type === 4)) {
       setFormFields({
         ...formFields,
         [name]: paymentOptions[0]?.id,
