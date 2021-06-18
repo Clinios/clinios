@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   graphIcon: {
+    cursor: "pointer",
     position: "absolute",
     right: "44%",
     top: "14px",
@@ -212,6 +213,9 @@ const TestsContent = () => {
           className={classes.graphIcon}
           path={mdiChartBoxOutline}
           size={1}
+          onClick={() => {
+            dispatch(toggleTestsChartExpandDialog());
+          }}
         />
       )}
       <TableContainer className={classes.tableContainer}>
