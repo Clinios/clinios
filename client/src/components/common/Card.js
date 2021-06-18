@@ -15,7 +15,6 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CancelIcon from "@material-ui/icons/Cancel";
 import CardIcon from "@material-ui/icons/CreditCard";
 import DesktopIcon from "@material-ui/icons/DesktopMac";
-import BillingIcon from "@material-ui/icons/MonetizationOnOutlined";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SaveIcon from "@material-ui/icons/SaveOutlined";
 import { mdiCalendarBlankOutline, mdiChartBoxOutline } from "@mdi/js";
@@ -264,14 +263,14 @@ const PatientCard = (props) => {
                 onClick={() => dispatch(togglePaymentDialog())}
                 size="small"
               >
-                <AddIcon fontSize="small" />
+                <AddIcon fontSize="default" />
               </IconButton>
               <IconButton
                 type="submit"
                 size="small"
                 onClick={() => dispatch(toggleNewTransactionDialog())}
               >
-                <BillingIcon fontSize="small" />
+                <CardIcon fontSize="default" />
               </IconButton>
             </Grid>
           )}
