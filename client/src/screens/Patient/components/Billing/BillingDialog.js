@@ -21,6 +21,7 @@ import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import { togglePaymentDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
+import { formatDate } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   section: {
@@ -97,6 +98,7 @@ const BillingDialog = (props) => {
         amount: selectedTest.client_fee || 0,
         proc_id: selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
+        note: `${selectedTest.name} added on ${formatDate(new Date())}`,
       },
     };
     PatientService.createNewBilling(patientId, reqBody)
