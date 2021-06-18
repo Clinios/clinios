@@ -63,4 +63,4 @@ export const TransactionTypes = [
     id: 4,
     name: "Refund",
   },
-]
+];
