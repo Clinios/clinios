@@ -1054,11 +1054,6 @@ const getBillingRecents = async (req, res) => {
 };
 
 const createNewBilling = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    errorMessage.message = errors.array();
-    return res.status(status.bad).send(errorMessage);
-  }
   const { patient_id } = req.params;
 
   const formData = req.body.data;
