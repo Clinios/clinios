@@ -2257,12 +2257,12 @@ const getRequisitions = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select pc.created, pc.id, c.name marker_name, c.id marker_id, lc.name lab_name
-        , t.dt, t.amount, pc.completed_dt
+        , t.dt, t.amount, pc.sent_to_patient_dt, pc.lab_receipt_dt, pc.completed_dt
         from patient_proc pc
         left join proc c on c.id=pc.proc_id
         left join lab_company lc on lc.id=c.lab_company_id
         left join tranc t on t.id = pc.tranc_id
-        where pc.patient_id=? and pc.completed_dt is null
+        where pc.patient_id=?
         order by pc.created desc
         limit 500
         `, [patient_id]
