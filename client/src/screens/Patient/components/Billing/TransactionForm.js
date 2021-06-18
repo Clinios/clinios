@@ -21,7 +21,7 @@ import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import { toggleNewTransactionDialog, resetBilling } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
-import { TransactionFormFields } from "../../../../static/transactionForm";
+import { TransactionFormFields, TransactionTypes } from "../../../../static/transactionForm";
 import { convertTransactionTypes, pickerDateFormat } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
@@ -60,7 +60,7 @@ const NewTransactionForm = (props) => {
   const [isNegativeAmount, setIsNegativeAmount] = useState(false);
   const [hasAmountError, setHasAmountError] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-  const [transactionTypes, setTransactionTypes] = useState([]);
+  const [transactionTypes, setTransactionTypes] = useState([...TransactionTypes]);
   const [paymentOptions, setPaymentOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState({
@@ -121,9 +121,8 @@ const NewTransactionForm = (props) => {
   }, [patientId]);
 
   useEffect(() => {
-    fetchBillingTransactionTypes();
     fetchBillingPaymentOptions();
-  }, [fetchBillingTransactionTypes, fetchBillingPaymentOptions]);
+  }, [fetchBillingPaymentOptions]);
 
   const createBilling = () => {
     if (+formFields.amount > 0) { /* shorthand to convert string => number */
@@ -239,15 +238,15 @@ const NewTransactionForm = (props) => {
   };
 
   // selecting the first transaction type by default for new billing dialog
-  useDidMountEffect(() => {
-    if (transactionTypes.length && selectedBilling === null) { // only for new billing dialog
+  useEffect(() => {
+    if (selectedBilling === null) { // only for new billing dialog
       const name = "type";
       setFormFields({
         ...formFields,
-        [name]: transactionTypes[2].id,
+        [name]: 3, // PAYMENT id is 3.
       });
     }
-  }, [transactionTypes]);
+  }, [selectedBilling])
 
   useDidMountEffect(() => {
     if (hasAmountError) {
@@ -258,7 +257,7 @@ const NewTransactionForm = (props) => {
   // selecting the first payment method by default for new billing dialog
   useDidMountEffect(() => {
     const name = "accountNum";
-    if (selectedBilling === null && (formFields.type === 3 || formFields.type === 4)) {
+    if (selectedBilling === null && paymentOptions.length && (formFields.type === 3 || formFields.type === 4)) {
       setFormFields({
         ...formFields,
         [name]: paymentOptions[0]?.id,
@@ -269,7 +268,7 @@ const NewTransactionForm = (props) => {
         [name]: "",
       });
     }
-  }, [formFields.type]);
+  }, [formFields.type, paymentOptions]);
 
   const checkIfRequired = useCallback((field) => {
     if (field === "accountNum") {
