@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: "600",
     marginBottom: theme.spacing(1.5),
-  }
+  },
 }));
 
 const currentDate = new Date();
@@ -40,7 +40,7 @@ const ToolTipContent = (props) => {
           <Grid item xs>
             <Typography gutterBottom>
               Provider created:
-          </Typography>
+            </Typography>
           </Grid>
           <Grid item xs={5}>
             <Typography gutterBottom>
@@ -52,7 +52,7 @@ const ToolTipContent = (props) => {
           <Grid item xs>
             <Typography gutterBottom>
               Patient payment:
-          </Typography>
+            </Typography>
           </Grid>
           <Grid item xs={5}>
             <Typography gutterBottom>
@@ -64,7 +64,7 @@ const ToolTipContent = (props) => {
           <Grid item xs>
             <Typography gutterBottom>
               Lab kit mailed to patient:
-          </Typography>
+            </Typography>
           </Grid>
           <Grid item xs={5}>
             <Typography gutterBottom>
@@ -77,7 +77,7 @@ const ToolTipContent = (props) => {
           <Grid item xs>
             <Typography gutterBottom>
               Lab kit received from patient:
-          </Typography>
+            </Typography>
           </Grid>
           <Grid item xs={5}>
             <Typography gutterBottom>
@@ -90,7 +90,7 @@ const ToolTipContent = (props) => {
           <Grid item xs>
             <Typography gutterBottom>
               Lab completed test:
-          </Typography>
+            </Typography>
           </Grid>
           <Grid item xs={5}>
             <Typography>
