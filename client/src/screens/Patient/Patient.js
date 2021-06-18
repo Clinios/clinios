@@ -854,7 +854,7 @@ const Patient = () => {
       {!!billing.newTransactionDialog && (
         <Dialog
           open={billing.newTransactionDialog}
-          title={`${selectedBilling ? "Edit" : "New"} Transaction`}
+          title={`${selectedBilling ? "Edit" : "New"} Payment`}
           message={(
             <TransactionForm
               reloadData={() => {
