@@ -332,6 +332,7 @@ const BillingDialog = (props) => {
           <Grid container spacing={2} alignItems="center">
             <Grid item sm={6} xs={6}>
               <TextField
+                autoFocus={Boolean(storeBilling)}
                 inputRef={textInput}
                 fullWidth
                 size="small"
