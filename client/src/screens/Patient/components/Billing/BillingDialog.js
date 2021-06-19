@@ -116,7 +116,7 @@ const BillingDialog = (props) => {
     e.preventDefault();
     const reqBody = {
       data: {
-        amount: selectedTest.client_fee || 0,
+        amount: selectedTest.client_fee || selectedTest.proc_price || 0,
         proc_id: selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
       },
