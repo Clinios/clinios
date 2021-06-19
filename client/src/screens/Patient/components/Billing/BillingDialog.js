@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState, useEffect, useCallback, useRef,
+} from "react";
 
 import {
   Button,
@@ -21,7 +23,6 @@ import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import { togglePaymentDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
-import { formatDate } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   section: {
@@ -47,10 +48,21 @@ const useStyles = makeStyles((theme) => ({
   menuOption: {
     minHeight: 26,
   },
+  amountContainer: {
+    padding: theme.spacing(2, 0),
+    background: "white",
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+  },
+  nameInput: {
+    color: "rgb(158, 158, 158)",
+  },
 }));
 
 const BillingDialog = (props) => {
   const classes = useStyles();
+  const textInput = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = usePatientContext();
   const { reloadData } = props;
@@ -59,8 +71,16 @@ const BillingDialog = (props) => {
   const [billings, setBillings] = useState([]);
   const [recentBillings, setRecentBillings] = useState([]);
   const [favoriteBillings, setFavoriteBillings] = useState([]);
+  const [selectedBilling, setSelectedBilling] = useState(null);
 
-  const { patientId } = state;
+  const { patientId, billing } = state;
+  const { selectedBilling: storeBilling } = billing;
+
+  useEffect(() => {
+    if (storeBilling) {
+      setSelectedBilling(storeBilling);
+    }
+  }, [storeBilling]);
 
   const searchBillings = (e, text) => {
     e.preventDefault();
@@ -92,13 +112,13 @@ const BillingDialog = (props) => {
     fetchFavoriteBillings();
   }, [fetchRecentBillings, fetchFavoriteBillings]);
 
-  const onFormSubmit = (selectedTest) => {
+  const onFormSubmit = (e, selectedTest) => {
+    e.preventDefault();
     const reqBody = {
       data: {
         amount: selectedTest.client_fee || 0,
         proc_id: selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
-        note: `${selectedTest.name} added on ${formatDate(new Date())}`,
       },
     };
     PatientService.createNewBilling(patientId, reqBody)
@@ -115,6 +135,11 @@ const BillingDialog = (props) => {
       setHasUserSearched(false);
     }
   }, [searchText]);
+
+  const onItemSelect = (item) => {
+    textInput.current.focus();
+    setSelectedBilling(item);
+  };
 
   return (
     <>
@@ -148,6 +173,8 @@ const BillingDialog = (props) => {
               <TableHead>
                 <TableRow>
                   <StyledTableCellSm>Name</StyledTableCellSm>
+                  <StyledTableCellSm>Price</StyledTableCellSm>
+                  <StyledTableCellSm>My Price</StyledTableCellSm>
                   <StyledTableCellSm width="15%">Favorite</StyledTableCellSm>
                 </TableRow>
               </TableHead>
@@ -155,9 +182,9 @@ const BillingDialog = (props) => {
                 {billings.length
                   ? billings.map((item) => (
                     <StyledTableRowSm
-                      key={item.marker_id}
+                      key={item.name}
                       className={classes.pointer}
-                      onClick={() => onFormSubmit(item)}
+                      onClick={() => onItemSelect(item)}
                     >
                       {!!item.name && item.name.length > 30
                         ? (
@@ -170,6 +197,8 @@ const BillingDialog = (props) => {
                           </Tooltip>
                         )
                         : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
+                      <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
                       <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
@@ -198,6 +227,8 @@ const BillingDialog = (props) => {
                 <TableHead>
                   <TableRow>
                     <StyledTableCellSm>Name</StyledTableCellSm>
+                    <StyledTableCellSm>Price</StyledTableCellSm>
+                    <StyledTableCellSm>My Price</StyledTableCellSm>
                     <StyledTableCellSm width="15%">Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
@@ -205,9 +236,9 @@ const BillingDialog = (props) => {
                   {favoriteBillings.length
                     ? favoriteBillings.map((item) => (
                       <StyledTableRowSm
-                        key={item.marker_id}
+                        key={item.name}
                         className={classes.pointer}
-                        onClick={() => onFormSubmit(item)}
+                        onClick={() => onItemSelect(item)}
                       >
                         {!!item.name && item.name.length > 30
                           ? (
@@ -220,6 +251,8 @@ const BillingDialog = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
+                        <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
@@ -249,6 +282,8 @@ const BillingDialog = (props) => {
                 <TableHead>
                   <TableRow>
                     <StyledTableCellSm>Name</StyledTableCellSm>
+                    <StyledTableCellSm>Price</StyledTableCellSm>
+                    <StyledTableCellSm>My Price</StyledTableCellSm>
                     <StyledTableCellSm width="15%">Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
@@ -256,9 +291,9 @@ const BillingDialog = (props) => {
                   {recentBillings.length
                     ? recentBillings.map((item) => (
                       <StyledTableRowSm
-                        key={item.marker_id}
+                        key={item.name}
                         className={classes.pointer}
-                        onClick={() => onFormSubmit(item)}
+                        onClick={() => onItemSelect(item)}
                       >
                         {!!item.name && item.name.length > 30
                           ? (
@@ -271,6 +306,8 @@ const BillingDialog = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
+                        <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
@@ -288,6 +325,53 @@ const BillingDialog = (props) => {
             </TableContainer>
           </Grid>
         </Grid>
+      </Grid>
+
+      <Grid item md={4} className={classes.amountContainer}>
+        <form onSubmit={(e) => onFormSubmit(e, selectedBilling)}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item sm={6} xs={6}>
+              <TextField
+                inputRef={textInput}
+                fullWidth
+                size="small"
+                variant="outlined"
+                value={selectedBilling?.name}
+                InputProps={{
+                  readOnly: storeBilling === null,
+                  classes: {
+                    input: storeBilling ? "" : classes.nameInput,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item sm={3} xs={3}>
+              <TextField
+                fullWidth
+                required
+                type="number"
+                size="small"
+                variant="outlined"
+                label="Amount"
+                value={storeBilling
+                  ? storeBilling.amount : selectedBilling?.client_fee || selectedBilling?.proc_price || ""}
+                onChange={(e) => setSelectedBilling({
+                  ...selectedBilling,
+                  client_fee: e.target.value,
+                })}
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                variant="outlined"
+                type="submit"
+                fullWidth
+              >
+                Save
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Grid>
     </>
   );
