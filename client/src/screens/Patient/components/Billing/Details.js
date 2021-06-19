@@ -8,10 +8,11 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CardIcon from "@material-ui/icons/CreditCard";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/EditOutlined";
+import { mdiMedicalBag } from "@mdi/js";
+import Icon from "@mdi/react";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
@@ -124,7 +125,11 @@ const BillingDetails = (props) => {
             onClick={() => dispatch(togglePaymentDialog())}
             size="small"
           >
-            <AddIcon />
+            <Icon
+              className={classes.icon}
+              path={mdiMedicalBag}
+              size={1}
+            />
           </IconButton>
           <IconButton
             type="submit"
