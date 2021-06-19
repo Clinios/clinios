@@ -2293,7 +2293,7 @@ const getRequisitions = async (req, res) => {
         left join lab_company lc on lc.id=c.lab_company_id
         left join tranc t on t.id = pc.tranc_id
         where pc.patient_id=?
-        order by pc.created desc
+        order by pc.created desc, c.name
         limit 500
         `, [patient_id]
     );
