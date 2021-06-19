@@ -892,7 +892,7 @@ const Patient = () => {
       {!!billing.newDialog && (
         <Dialog
           open={billing.newDialog}
-          title="New Billing"
+          title={`${selectedBilling ? "Edit" : "New"} Billing`}
           message={(
             <BillingDialog
               reloadData={() => {
@@ -905,7 +905,7 @@ const Patient = () => {
           applyForm={() => dispatch(togglePaymentDialog())}
           cancelForm={() => dispatch(togglePaymentDialog())}
           hideActions
-          size="lg"
+          size="xl"
           fullHeight
         />
       )}

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Grid, Typography } from "@material-ui/core";
+import { Box, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 
@@ -10,9 +10,6 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: "600",
     marginBottom: theme.spacing(1.5),
-  },
-  ml2: {
-    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -38,45 +35,71 @@ const ToolTipContent = (props) => {
       <Typography className={classes.title}>
         {marker_name}
       </Typography>
-      <Grid container>
-        <Grid item xs>
-          <Typography gutterBottom>
-            Provider created:
-          </Typography>
-          <Typography gutterBottom>
-            Patient payment:
-          </Typography>
-          <Typography gutterBottom>
-            Lab kit mailed to patient:
-          </Typography>
-          <Typography gutterBottom>
-            Lab kit received from patient:
-          </Typography>
-          <Typography>
-            Lab completed test:
-          </Typography>
+      <Box minWidth={380}>
+        <Grid container>
+          <Grid item xs>
+            <Typography gutterBottom>
+              Provider created:
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Typography gutterBottom>
+              {created ? `${dateFormat(created)} (${createdDaysDiff} ${constText})` : ""}
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item className={classes.ml2}>
-          <Typography gutterBottom>
-            {created ? `${dateFormat(created)} (${createdDaysDiff} ${constText})` : ""}
-          </Typography>
-          <Typography gutterBottom>
-            {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${constText})` : ""}
-          </Typography>
-          <Typography gutterBottom>
-            {sent_to_patient_dt
-              ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${constText})` : ""}
-          </Typography>
-          <Typography gutterBottom>
-            {lab_receipt_dt
-              ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
-          </Typography>
-          <Typography>
-            {completed_dt
-              ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${constText})` : ""}
-          </Typography>
+        <Grid container>
+          <Grid item xs>
+            <Typography gutterBottom>
+              Patient payment:
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Typography gutterBottom>
+              {dt ? `${dateFormat(dt)} (${paymentDaysDiff} ${constText})` : ""}
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
+        <Grid container>
+          <Grid item xs>
+            <Typography gutterBottom>
+              Lab kit mailed to patient:
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Typography gutterBottom>
+              {sent_to_patient_dt
+                ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${constText})` : ""}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container>
+          <Grid item xs>
+            <Typography gutterBottom>
+              Lab kit received from patient:
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Typography gutterBottom>
+              {lab_receipt_dt
+                ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container>
+          <Grid item xs>
+            <Typography gutterBottom>
+              Lab completed test:
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Typography>
+              {completed_dt
+                ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${constText})` : ""}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
     </>
   );
 };

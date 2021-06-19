@@ -53,3 +53,14 @@ export const TransactionFormFields = [
     options: [],
   },
 ];
+
+export const TransactionTypes = [
+  {
+    id: 3,
+    name: "Payment",
+  },
+  {
+    id: 4,
+    name: "Refund",
+  },
+];

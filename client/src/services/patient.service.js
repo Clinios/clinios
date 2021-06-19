@@ -614,6 +614,12 @@ class Patient {
     });
   }
 
+  createNewBilling(patientId, data) {
+    return axios.post(`${API_BASE}/patient/${patientId}/new-billing`, data, {
+      headers: authHeader(),
+    });
+  }
+
   createDocuments(patientId, data) {
     return axios.post(`${API_BASE}/patient/${patientId}/documents/`, data, {
       headers: authHeader(),

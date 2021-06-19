@@ -12,7 +12,9 @@ import PropTypes from "prop-types";
 import Alert from "../../../../components/Alert";
 import Tooltip from "../../../../components/common/CustomTooltip";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { toggleNewTransactionDialog, setSelectedBilling } from "../../../../providers/Patient/actions";
+import {
+  toggleNewTransactionDialog, togglePaymentDialog, setSelectedBilling,
+} from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -64,7 +66,11 @@ const BillingContent = (props) => {
 
   const editItemHandler = (item) => {
     dispatch(setSelectedBilling(item));
-    dispatch(toggleNewTransactionDialog());
+    if (item.type_id === 1) {
+      dispatch(togglePaymentDialog());
+    } else {
+      dispatch(toggleNewTransactionDialog());
+    }
   };
 
   const deleteItemHandler = (item) => {
