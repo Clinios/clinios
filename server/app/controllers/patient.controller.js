@@ -820,14 +820,17 @@ const getBilling = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select t.id, t.type_id, t.dt, t.amount, tt.name tran_type, e.title encounter_title, t.note, pm.type payment_type, pm.account_number
-        from tran t
-        left join encounter e on e.id=t.encounter_id
-        left join tran_type tt on tt.id=t.type_id
-        left join payment_method pm on pm.id=t.payment_method_id
-        where t.client_id=${req.client_id}
-        and t.patient_id=? 
-        order by t.dt desc
-        limit ${limit}`, [patient_id]
+      , t.proc_id, p.name proc_name
+      from tran t
+      left join encounter e on e.id=t.encounter_id
+      left join tran_type tt on tt.id=t.type_id
+      left join payment_method pm on pm.id=t.payment_method_id
+      left join proc p on p.id=t.proc_id
+      where t.client_id=${req.client_id}
+      and t.patient_id=? 
+      order by t.dt desc
+      limit ${limit}
+      `, [patient_id]
     );
 
     if (!dbResponse) {
