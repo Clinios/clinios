@@ -35,7 +35,7 @@ const ToolTipContent = (props) => {
       <Typography className={classes.title}>
         {marker_name}
       </Typography>
-      <Box minWidth={380}>
+      <Box minWidth={400}>
         <Grid container>
           <Grid item xs>
             <Typography gutterBottom>
