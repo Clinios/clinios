@@ -126,7 +126,9 @@ const ProviderCards = ({ providers, selectedProvider, handleProviderClick }) => 
                 <div>
                   {provider.name}
                   <span className={classes.timezone}>
+                    {/*
                     {provider?.timezone}
+                    */}
                   </span>
                 </div>
                 <div className={classes.count}>{provider.count || 0}</div>
