@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const db = require('../db')
 const config = require("../../config");
 const { configuration, makeDb } = require("../db/db.js");
 const { errorMessage, successMessage, status } = require("../helpers/status");
@@ -13,16 +14,18 @@ const { errorMessage, successMessage, status } = require("../helpers/status");
 exports.signin = async (req, res) => {
   // Check for validation errors
 
-  const db = makeDb(configuration, res);
+  //const db = makeDb(configuration, res);
 
-  const rows = await db.query(`select u.id, u.admin, u.client_id, u.firstname, u.lastname, u.email,
+  const response = await db.query(`select u.id, u.admin, u.client_id, u.firstname, u.lastname, u.email,
    u.password, u.sign_dt, u.email_confirm_dt, c.name, c.calendar_start_time, c.calendar_end_time
-   from user u
+   from users u
    left join client c on c.id=u.client_id 
-   where u.email=?
+   where u.email=$1
    and client_id is not null`, [req.body.email]); // client_id is not null to prevent corp logins
 
-  const user = rows[0];
+   const user = response.rows[0];
+
+   console.log('user:', user)
   if (!user) {
     errorMessage.message = "User not found";
     errorMessage.user = user;
@@ -31,8 +34,8 @@ exports.signin = async (req, res) => {
   if (user.admin) {
     user.permissions = ["ADMIN"];
   }
-  const clientRows = await db.query(
-    "SELECT id, name FROM client WHERE id = ?",
+  const clientRes = await db.query(
+    "SELECT id, name FROM client WHERE id = $1",
     [user.client_id]
   );
 
@@ -40,7 +43,7 @@ exports.signin = async (req, res) => {
     errorMessage.message =
       "The password for this additional user can not be reset until user registration has first been completed.";
     delete user.password; // delete password from response
-    const clientResult = clientRows[0];
+    const clientResult = clientRes.rows;
     user.client = clientResult;
     errorMessage.user = user;
     return res.status(status.unauthorized).send(errorMessage);
@@ -62,8 +65,8 @@ exports.signin = async (req, res) => {
 
   // update user login_dt
   await db.query(
-    `UPDATE user SET login_dt=now(), updated= now(), updated_user_id=? WHERE id =?`, [user.id, user.id]
-  );
+    `UPDATE users SET login_dt=now(), updated= now(), updated_user_id=$1 WHERE id =$2`, [user.id, user.id]
+  ); 
 
   const token = jwt.sign(
     { id: user.id, client_id: user.client_id, role: "CLIENT" },
