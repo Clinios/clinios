@@ -486,7 +486,8 @@ const AdminNotehistory = async (req, res) => {
       `select ph.created, ph.admin_note, concat(u.firstname, ' ', u.lastname) name
         from patient_history ph
         left join user u on u.id=ph.created_user_id
-        where ph.id=? and ph.admin_note is not null
+        where ph.id=? 
+        and ph.admin_note is not null
         order by ph.created desc
         limit 50`, [patient_id]);
 
@@ -819,13 +820,16 @@ const getBilling = async (req, res) => {
   }
   try {
     const dbResponse = await db.query(
-      `select t.id, t.type_id, t.dt, t.amount, tt.name tran_type, e.title encounter_title, t.note, pm.type payment_type, pm.account_number
-      , t.proc_id, p.name proc_name
+      `select t.id, t.type_id, t.dt, t.amount, t.proc_id, t.note, tt.name tran_type, e.title encounter_title, pm.type payment_type, pm.account_number, p.name proc_name
+      , t.created, concat(u.firstname, ' ', u.lastname) created_user
+      , t.updated, concat(u2.firstname, ' ', u2.lastname) updated_user
       from tran t
       left join encounter e on e.id=t.encounter_id
       left join tran_type tt on tt.id=t.type_id
       left join payment_method pm on pm.id=t.payment_method_id
       left join proc p on p.id=t.proc_id
+      left join user u on u.id=t.created_user_id
+      left join user u2 on u2.id=t.updated_user_id
       where t.client_id=${req.client_id}
       and t.patient_id=? 
       order by t.dt desc
@@ -1317,7 +1321,8 @@ const getDocuments = async (req, res) => {
 
     $sql += `group by l.id, l.created, l.filename, right(l.filename,3), l.status, l.lab_dt, l.physician, l.note
         order by l.created desc
-        limit 200`;
+        limit 200
+        `;
 
     const dbResponse = await db.query($sql);
     if (!dbResponse) {
