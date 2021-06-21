@@ -130,7 +130,7 @@ const BillingContent = (props) => {
                 className={classes.text12}
                 color="textPrimary"
               >
-                {item.tran_type}
+                {item.proc_name ? item.proc_name : item.tran_type}
               </Typography>
             </Tooltip>
           </Grid>
