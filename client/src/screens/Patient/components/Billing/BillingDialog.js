@@ -349,7 +349,7 @@ const BillingDialog = (props) => {
                 fullWidth
                 size="small"
                 variant="outlined"
-                value={selectedBilling?.name}
+                value={selectedBilling?.name || ""}
                 InputProps={{
                   readOnly: storeBilling === null,
                   classes: {
