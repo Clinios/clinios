@@ -10,7 +10,7 @@ export const getMarkerInterpretation = (marker) => {
   if (marker === 866) {
     data.high = [
       {
-        condition: "Insulin resistance (increased glucagon)",
+        condition: "Insulin resistance",
         prevalence: "Common in the general population",
         comment: `Insulin is released by the pancreas in response to carbohydrates consumed in the diet. In states of insulin resistance, the same amount of insulin does not have the same effect on glucose transport and blood sugar levels, and the pancreas makes extra insulin to make up for it. For a while, this will work and the blood sugar levels will stay normal. Over time, though, the pancreas won't be able to keep up and the blood sugar levels will go up.
         <br />
@@ -21,7 +21,7 @@ export const getMarkerInterpretation = (marker) => {
         evidence: "Strong"
       },
       {
-        condition: "Overactive thyroid (hyperthyroidism)",
+        condition: "Hyperthyroidism",
         prevalence: "Common in the general population",
         comment: `The elevated plasma glucose levels in hyperthyroidism may be explained by increased rates of endogenous glucose production, due mainly to increased gluconeogenesis.
         <br />
