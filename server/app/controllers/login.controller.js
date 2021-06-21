@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const db = require('../db')
 const config = require("../../config");
-const { configuration, makeDb } = require("../db/db.js");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 /**
@@ -13,9 +12,6 @@ const { errorMessage, successMessage, status } = require("../helpers/status");
  */
 exports.signin = async (req, res) => {
   // Check for validation errors
-
-  //const db = makeDb(configuration, res);
-
   const response = await db.query(`select u.id, u.admin, u.client_id, u.firstname, u.lastname, u.email,
    u.password, u.sign_dt, u.email_confirm_dt, c.name, c.calendar_start_time, c.calendar_end_time
    from users u
@@ -25,7 +21,6 @@ exports.signin = async (req, res) => {
 
    const user = response.rows[0];
 
-   console.log('user:', user)
   if (!user) {
     errorMessage.message = "User not found";
     errorMessage.user = user;

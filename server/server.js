@@ -95,6 +95,7 @@ app.use(baseAPIPath, require("./app/routes/corporate/myself.routes"));
 app.use(baseAPIPath, require("./app/routes/corporate/case.routes"));
 
 app.use(baseAPIPath, require("./app/routes/stripe.routes"));
+app.use(baseAPIPath, require("./app/routes/test-postgres.routes"));
 
 // Catalog
 app.use(baseAPIPath, require("./app/routes/catalog.routes"));

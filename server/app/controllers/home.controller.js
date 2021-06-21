@@ -3,7 +3,8 @@ const moment = require("moment");
 const sgMail = require("@sendgrid/mail");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-const { configuration, makeDb } = require("../db/db.js");
+
+const db = require('../db')
 const { errorMessage, successMessage, status } = require("../helpers/status");
 const {
   transporter,
@@ -13,8 +14,6 @@ const {
 } = require("../helpers/email");
 
 const getAll = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   try {
     const dbResponse = await db.query(
       `select uc.id, uc.user_id, uc.patient_id, uc.start_dt, uc.end_dt, uc.status, uc.title, uc.notes, uc.client_id, uc.approved, uc.declined
@@ -23,9 +22,9 @@ const getAll = async (req, res) => {
         , p.firstname, p.lastname, p.email, concat(u.firstname, ' ', u.lastname) provider_name
         from user_calendar uc
         left join patient p on p.id=uc.patient_id
-        left join user u on u.id=uc.user_id
-        left join user au on au.id=uc.approved_user_id
-        left join user du on du.id=uc.declined_user_id
+        left join users u on u.id=uc.user_id
+        left join users au on au.id=uc.approved_user_id
+        left join users du on du.id=uc.declined_user_id
         where uc.client_id=${req.client_id}
         and uc.user_id=${req.user_id}
       `
@@ -35,20 +34,16 @@ const getAll = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getAppointmentHistory = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   try {
     const dbResponse = await db.query(
       `select concat(p.firstname, ' ', p.lastname) patient, concat(u2.firstname, ' ', u2.lastname) provider
@@ -56,31 +51,27 @@ const getAppointmentHistory = async (req, res) => {
       , uc.updated, concat(u.firstname, ' ', u.lastname) updated_by
       from user_calendar uc
       left join patient p on p.id=uc.patient_id
-      left join user u on u.id=uc.updated_user_id
-      left join user u2 on u2.id=uc.user_id
+      left join users u on u.id=uc.updated_user_id
+      left join users u2 on u2.id=uc.user_id
       where uc.updated_user_id=${req.user_id}
       order by uc.updated desc
-      limit 50
-      `
+      limit 50`
     );
 
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getEventsByProvider = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { providerId } = req.params;
 
   try {
@@ -90,11 +81,11 @@ const getEventsByProvider = async (req, res) => {
     , p.firstname, p.lastname, p.email, concat(u.firstname, ' ', u.lastname) provider_name
     from user_calendar uc
     left join patient p on p.id=uc.patient_id
-    left join user u on u.id=uc.user_id
-    left join user au on au.id=uc.approved_user_id
-    left join user du on du.id=uc.declined_user_id
+    left join users u on u.id=uc.user_id
+    left join users au on au.id=uc.approved_user_id
+    left join users du on du.id=uc.declined_user_id
     where uc.client_id=${req.client_id}
-    and uc.user_id=?
+    and uc.user_id=$1
     `;
 
     const dbResponse = await db.query($sql, [providerId]);
@@ -103,14 +94,12 @@ const getEventsByProvider = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -156,8 +145,6 @@ const createAppointment = async (req, res) => {
   userCalendarData.notes = notes;
   userCalendarData.created = new Date();
   userCalendarData.created_user_id = req.user_id;
-
-  const db = makeDb(configuration, res);
   try {
     const insertResponse = await db.query(`insert into user_calendar set ?`, [userCalendarData])
     if (!insertResponse.affectedRows) {
@@ -173,15 +160,13 @@ const createAppointment = async (req, res) => {
       const logInfo = "Email for new appointment has bees sent!";
       sendEmailOnAppointmentCreationAndChange(emailTemplate, logInfo); // Call to send email notifcation
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -194,7 +179,6 @@ const cancelAppointment = async (req, res) => {
   const { id } = req.params;
   const { patient, appointmentDate, providerName } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const updateResponse = await db.query(
       `update user_calendar set status='D', declined=now(), updated= now(),
@@ -217,15 +201,13 @@ const cancelAppointment = async (req, res) => {
       );
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Cancel successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Cancel not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -248,7 +230,7 @@ const updateAppointment = async (req, res) => {
     old_start_dt,
   } = req.body.data;
 
-  const db = makeDb(configuration, res);
+ // const db = makeDb(configuration, res);
   try {
     let $sql = `update user_calendar
     set status='${ApptStatus}'`;
@@ -279,7 +261,7 @@ const updateAppointment = async (req, res) => {
       $sql += `, approved=now(), approved_user_id=${req.user_id}`;
     }
     $sql += `, updated=now(), updated_user_id='${req.user_id}'
-    where id=?`;
+    where id=$1`;
 
     const updateResponse = await db.query($sql, [id]);
     if (!updateResponse.affectedRows) {
@@ -309,30 +291,27 @@ const updateAppointment = async (req, res) => {
       );
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getAppointmentRequest = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { providerId } = req.params;
   try {
     const dbResponse = await db.query(
-      `select uc.id, uc.client_id, at.appointment_type, uc.start_dt, uc.end_dt, concat(p.firstname, ' ', p.lastname) name,
+      `select uc.id, uc.client_id, at.appointment_type, uc.start_dt, uc.end_dt, concat(p.firstname, ' ', p.lastname) "name",
        uc.title, uc.reschedule, p.id patient_id, p.email patient_email
         from user_calendar uc
         join patient p on p.id=uc.patient_id
         left join appointment_type at on at.id=uc.appointment_type_id
         where uc.client_id=${req.client_id}
-        and uc.user_id=?
+        and uc.user_id=$1
         and uc.status='R' /*R=Requested*/
         order by uc.created
         limit 2
@@ -343,19 +322,16 @@ const getAppointmentRequest = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getUnreadMessages = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { providerId } = req.params;
   try {
     const dbResponse = await db.query(
@@ -380,51 +356,48 @@ const getUnreadMessages = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getProviders = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select u.id, concat(u.firstname, ' ', u.lastname) name, u.timezone, d.count, d.dt
-        from user u
-        left join (
-            select d.user_id, sum(d.count) count, min(d.dt) dt from (
-            select l.user_id user_id, count(l.id) count, min(l.created) dt
-            from lab l
-            where l.client_id=${req.client_id}
-            and l.status='R' /*R=Requested*/
-            group by l.user_id
-            union
-            select m.user_id_to user_id, count(m.id) count, min(m.created) dt
-            from message m
-            where client_id=${req.client_id}
-            and m.status='O' /*O=Open*/
-            group by m.user_id_to
-            union
-            select m.user_id_from user_id, count(m.id) count, min(m.unread_notify_dt) dt
-            from message m
-            where m.client_id=${req.client_id}
-            and m.read_dt is null
-            and m.unread_notify_dt<=current_date()
-            group by m.user_id_from
-            union
-            select uc.user_id user_id, count(uc.client_id) count, min(uc.created) dt
-            from user_calendar uc
-            where uc.client_id=${req.client_id}
-            and uc.status='R' /*R=Requested*/
-            group by uc.user_id
-            ) d
-            where d.user_id is not null
-            group by d.user_id
-        ) d on d.user_id=u.id
-        where u.client_id=${req.client_id}
-        and u.status='A'
-        order by name
-        limit 100
+      `select u.id, concat(u.firstname, ' ', u.lastname) "name", u.timezone, d.count, d.dt
+      from users u
+      left join (
+        select d.user_id, sum(d.count) count, min(d.dt) dt from (
+        select l.user_id user_id, count(l.id) count, min(l.created) dt
+        from lab l
+        where l.client_id=${req.client_id}
+        and l.status='R' /*R=Requested*/
+        group by l.user_id
+        union
+        select m.user_id_to user_id, count(m.id) count, min(m.created) dt
+        from message m
+        where client_id=${req.client_id}
+        and m.status='O' /*O=Open*/
+        group by m.user_id_to
+        union
+        select m.user_id_from user_id, count(m.id) count, min(m.unread_notify_dt) dt
+        from message m
+        where m.client_id=${req.client_id}
+        and m.read_dt is null
+        and m.unread_notify_dt<=current_date
+        group by m.user_id_from
+        union
+        select uc.user_id user_id, count(uc.client_id) count, min(uc.created) dt
+        from user_calendar uc
+        where uc.client_id=${req.client_id}
+        and uc.status='R' /*R=Requested*/
+        group by uc.user_id
+        ) d
+        where d.user_id is not null
+        group by d.user_id
+      ) d on d.user_id=u.id
+      where u.client_id=${req.client_id}
+      and u.status='A'
+      order by name
+      limit 100
       `
     );
 
@@ -432,55 +405,52 @@ const getProviders = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getProviderDetails = async (req, res) => {
   const { providerId } = req.params;
-  const db = makeDb(configuration, res);
   try {
     const patientLabs = await db.query(
       `select count(l.id), min(l.created)
-            from lab l
-            where l.client_id=${req.client_id}
-            and l.user_id=?
-            and l.status='R' /*R=Requested*/
-            /*and (l.pend_dt is null or l.pend_dt<=current_date)*/
+        from lab l
+        where l.client_id=${req.client_id}
+        and l.user_id=$1
+        and l.status='R' /*R=Requested*/
+        /*and (l.pend_dt is null or l.pend_dt<=current_date)*/
       `, [providerId]
     );
     const messageFromPatients = await db.query(
       `select count(m.id), min(m.created)
-            from message m
-            where m.client_id=${req.client_id}
-            and m.user_id_to=?
-            and m.status='O' /*O=Open*/
-            /*and (m.pend_dt is null or m.pend_dt<=current_date)*/
+        from message m
+        where m.client_id=${req.client_id}
+        and m.user_id_to=$1
+        and m.status='O' /*O=Open*/
+        /*and (m.pend_dt is null or m.pend_dt<=current_date)*/
       `, [providerId]
     );
     const messageToPatientsNotRead = await db.query(
       `select count(m.id), min(m.unread_notify_dt)
         from message m
         where m.client_id=${req.client_id}
-        and m.user_id_from=?
+        and m.user_id_from=$1
         and m.read_dt is null
-        and m.unread_notify_dt<=current_date()
+        and m.unread_notify_dt<=current_date
       `, [providerId]
     );
 
     const patientAppointmentRequest = await db.query(
       `select count(uc.client_id), min(uc.created)
-      from user_calendar uc
-      where uc.client_id=${req.client_id}
-      and uc.user_id=?
-      and uc.status='R' /*R=Requested*/
+        from user_calendar uc
+        where uc.client_id=${req.client_id}
+        and uc.user_id=$1
+        and uc.status='R' /*R=Requested*/
       `, [providerId]
     );
 
@@ -489,18 +459,16 @@ const getProviderDetails = async (req, res) => {
       return res.status(status.notfound).send(errorMessage);
     }
     successMessage.data = {
-      patientLabs: patientLabs[0],
-      messageFromPatients: messageFromPatients[0],
-      messageToPatientsNotRead: messageToPatientsNotRead[0],
-      patientAppointmentRequest: patientAppointmentRequest[0],
+      patientLabs: patientLabs.rows[0],
+      messageFromPatients: messageFromPatients.rows[0],
+      messageToPatientsNotRead: messageToPatientsNotRead.rows[0],
+      patientAppointmentRequest: patientAppointmentRequest.rows[0],
     };
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
