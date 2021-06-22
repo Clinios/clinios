@@ -102,12 +102,12 @@ const updateClientProcedure = async (req, res) => {
   let $sql;
   try {
     $sql = `insert into client_proc (client_id, proc_id, favorite, billable, fee, notes, created, created_user_id, updated, updated_user_id )
-        values (${req.client_id}, '${procedureId}', ${favorite}, ${billable}, ${fee > 0 ? fee : 0} /*TODO if fee is "" then set fee to null*/,
+        values (${req.client_id}, '${procedureId}', ${favorite}, ${billable}, ${fee >= 0 ? fee : null},
           '${notes}', now(), ${req.user_id}, now(), ${req.user_id} ) 
          on duplicate key update 
             favorite=${favorite},
             billable=${billable},
-            fee=${fee > 0 ? fee : 0}, /*TODO if fee is "" then set fee to null*/
+            fee=${fee >= 0 ? fee : null},
             notes='${notes}',
             created=now(),
             created_user_id=${req.user_id},
