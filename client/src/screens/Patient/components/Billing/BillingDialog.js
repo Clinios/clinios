@@ -78,6 +78,8 @@ const BillingDialog = (props) => {
 
   useEffect(() => {
     if (storeBilling) {
+      storeBilling.client_fee = storeBilling.amount;
+      storeBilling.name = storeBilling.proc_name;
       setSelectedBilling(storeBilling);
     }
   }, [storeBilling]);
@@ -116,17 +118,27 @@ const BillingDialog = (props) => {
     e.preventDefault();
     const reqBody = {
       data: {
-        amount: selectedTest.client_fee || 0,
+        amount: selectedTest.client_fee || selectedTest.proc_price || 0,
         proc_id: selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
       },
     };
-    PatientService.createNewBilling(patientId, reqBody)
-      .then((response) => {
-        enqueueSnackbar(`${response.data.message}`, { variant: "success" });
-        reloadData();
-        dispatch(togglePaymentDialog());
-      });
+    if (storeBilling) { // edit scenario
+      const billingId = storeBilling?.id;
+      PatientService.updateBilling(patientId, billingId, reqBody)
+        .then((response) => {
+          enqueueSnackbar(`${response.data.message}`, { variant: "success" });
+          reloadData();
+          dispatch(togglePaymentDialog());
+        });
+    } else {
+      PatientService.createNewBilling(patientId, reqBody)
+        .then((response) => {
+          enqueueSnackbar(`${response.data.message}`, { variant: "success" });
+          reloadData();
+          dispatch(togglePaymentDialog());
+        });
+    }
   };
 
   useDidMountEffect(() => {
@@ -337,7 +349,7 @@ const BillingDialog = (props) => {
                 fullWidth
                 size="small"
                 variant="outlined"
-                value={selectedBilling?.name}
+                value={selectedBilling?.name || ""}
                 InputProps={{
                   readOnly: storeBilling === null,
                   classes: {
@@ -354,8 +366,7 @@ const BillingDialog = (props) => {
                 size="small"
                 variant="outlined"
                 label="Amount"
-                value={storeBilling
-                  ? storeBilling.amount : selectedBilling?.client_fee || selectedBilling?.proc_price || ""}
+                value={selectedBilling?.client_fee || selectedBilling?.proc_price || ""}
                 onChange={(e) => setSelectedBilling({
                   ...selectedBilling,
                   client_fee: e.target.value,
