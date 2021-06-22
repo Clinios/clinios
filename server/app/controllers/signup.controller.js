@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 const { signupPDF } = require("../helpers/signupPDF");
 
@@ -19,13 +19,12 @@ exports.fieldValiate = async (req, res) => {
   if (req.body.target) {
     tableName = req.body.target;
   }
-  const db = makeDb(configuration, res);
   try {
-    const rows = await db.query(
-      `SELECT id, ${req.body.fieldName} FROM ${tableName} WHERE ${req.body.fieldName} = ?`,
+    const selectResponse = await db.query(
+      `SELECT id, ${req.body.fieldName} FROM ${tableName} WHERE ${req.body.fieldName} = $1`,
       [req.body.value]
     );
-    if (rows.length > 0) {
+    if (selectResponse.rows.length > 0) {
       errorMessage.message = {
         value: req.body.value,
         msg: `${req.body.value} already taken.`,
@@ -58,7 +57,6 @@ exports.signup = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
   const { client } = req.body;
   client.created = new Date();
   client.calendar_start_time = "8:00";
@@ -69,7 +67,7 @@ exports.signup = async (req, res) => {
   user.password = bcrypt.hashSync(user.password, 8);
 
   const existingClientRows = await db.query(
-    `SELECT 1 FROM client WHERE name=? OR phone=?  OR fax=? OR website=? OR email=? OR ein=? OR npi=? OR code=? LIMIT 1`,
+    `SELECT 1 FROM client WHERE name=$1 OR phone=$2  OR fax=$3 OR website=$4 OR email=$5 OR ein=$6 OR npi=$7 OR code=$8 LIMIT 1`,
     [client.name, client.phone, client.fax, client.website, client.email, client.ein, client.npi, client.code]
   );
 
@@ -85,7 +83,7 @@ exports.signup = async (req, res) => {
   }
 
   const existingUserRows = await db.query(
-    `SELECT 1 FROM user WHERE email=? OR npi=? OR medical_license=? LIMIT 1`,
+    `SELECT 1 FROM users WHERE email=$1 OR npi=$2 OR medical_license=$3 LIMIT 1`,
     [user.email, user.npi, user.medical_license]
   );
 
@@ -94,17 +92,18 @@ exports.signup = async (req, res) => {
       "User is already in our system. Try different values";
     return res.status(status.error).send(errorMessage);
   }
-
   try {
-    const clientResponse = await db.query("INSERT INTO client set ?", client);
+    const clientResponse = await db.query(`INSERT INTO client(name, code, phone, website) VALUES ('${client.name}', '${client.code}', '${client.phone}', '${client.website}') 
+    RETURNING id`);
 
-    if (!clientResponse.insertId) {
+    console.log('clientResponse:', clientResponse)
+    if (!clientResponse.rowCount) {
       errorMessage.message = "Client Cannot be registered";
       res.status(status.notfound).send(errorMessage);
     }
 
-    if (clientResponse.insertId) {
-      user.client_id = clientResponse.insertId; // add user foreign key client_id from clientResponse
+    if (clientResponse.rowCount) {
+      user.client_id = clientResponse.rows[0].id; // add user foreign key client_id from clientResponse
       user.admin = 1;
       user.sign_dt = new Date();
       const forwarded = req.headers["x-forwarded-for"];
@@ -113,61 +112,60 @@ exports.signup = async (req, res) => {
         : req.connection.remoteAddress;
       // TODO: for localhost ::1 might be taken. Need further test
       user.sign_ip_address = userIP;
-      const userResponse = await db.query("INSERT INTO user set ?", user);
+      const userResponse = await db.query(`INSERT INTO users(firstname, lastname, email, password) VALUES ('${user.firstname}', '${user.lastname}', '${user.email}', '${user.password}') RETURNING id`);
       const clientRows = await db.query(
-        `SELECT id, name, email FROM client WHERE id = ${clientResponse.insertId}`
+        "SELECT id, name, email FROM client WHERE id = $1", [clientResponse.rows[0].id]
       );
       const userRows = await db.query(
-        `SELECT id, client_id, firstname, lastname, email, sign_ip_address, sign_dt FROM user WHERE id = ${userResponse.insertId}`
+        "SELECT id, client_id, firstname, lastname, email, sign_ip_address, sign_dt FROM users WHERE id = $1", [userResponse.rows[0].id]
       );
       successMessage.message = "User succesfullly registered!";
       const responseData = {
-        user: userRows[0],
-        client: clientRows[0],
+        user: userRows.rows[0],
+        client: clientRows.rows[0],
       };
       // Create contract PDF
       const contractRows = await db.query(
         "SELECT id, contract, created FROM contract WHERE created=(select max(created) from contract)"
       );
-      const contractContent = contractRows[0];
+      const contractContent = contractRows.rows[0];
 
       if (process.env.NODE_ENV !== "production") {
         const pdf = await signupPDF(
           contractContent.contract,
-          userRows[0],
-          clientRows[0]
+          userRows.rows[0],
+          clientRows.rows[0]
         );
         if (pdf) {
           await db.query(
             `insert into user_contract (client_id, user_id, contract_id, filename, created) 
-              values (${clientResponse.insertId}, ${userResponse.insertId}, ${contractContent.id}, '${pdf.fileName}', now())`
+              values (${clientResponse.rows[0].id}, ${userResponse.rows[0].id}, ${contractContent.id}, '${pdf.fileName}', now())`
           );
         }
         responseData.contractLink = pdf;
         // end Create contract PDF
       }
-      successMessage.data = clientResponse.insertId;
+      successMessage.data = clientResponse.rows[0].id;
       successMessage.data = responseData;
 
       // run database procedure to set up basic data for the new Client
       // clientSetup(responseData.user.client_id, responseData.user.id);
-      try {
-        const clientSetupRows = await db.query("CALL clientSetup(?, ?)", [
+      /*try {
+        const clientSetupRows = await db.query("CALL clientSetup($1, $2)", [
           responseData.user.client_id,
           responseData.user.id,
         ]);
         console.log("clientSetupRows", clientSetupRows);
       } catch (error) {
         console.log("error", error);
-      }
+      } */
 
       res.status(status.created).send(successMessage);
-    }
+    }  
   } catch (err) {
     // handle the error
+    console.log('err:', err)
     errorMessage.message = err.message;
     res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };

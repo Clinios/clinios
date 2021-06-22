@@ -1,8 +1,7 @@
-const { configuration, makeDb } = require("../db/db.js");
+const db  = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const getAgreement = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const rows = await db.query(
       `select contract 
@@ -23,8 +22,6 @@ const getAgreement = async (req, res) => {
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
