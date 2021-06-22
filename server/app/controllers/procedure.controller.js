@@ -5,7 +5,11 @@ const { errorMessage, successMessage, status } = require("../helpers/status");
 const getLabCompnayList = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
-    const dbResponse = await db.query(`select id, name from lab_company order by name limit 100`);
+    const dbResponse = await db.query(`select id, name 
+    from lab_company 
+    order by name 
+    limit 100
+    `);
 
     if (!dbResponse) {
       errorMessage.message = "None found";

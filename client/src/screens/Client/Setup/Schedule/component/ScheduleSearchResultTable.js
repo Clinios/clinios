@@ -107,12 +107,14 @@ const ScheduleSearchResultTable = ({
               <StyledTableCell padding="checkbox" align="center">
                 Status
               </StyledTableCell>
+              {/*
               <StyledTableCell padding="checkbox" align="center">
                 Created
               </StyledTableCell>
               <StyledTableCell padding="checkbox" align="center">
                 Created By
               </StyledTableCell>
+              */}
               <StyledTableCell padding="checkbox" align="center">
                 Updated
               </StyledTableCell>
@@ -170,14 +172,16 @@ const ScheduleSearchResultTable = ({
                       ? "Past"
                       : "Current"}
                 </TableCell>
+                {/*
                 <TableCell padding="checkbox" align="center">
                   {result.created ? moment(result.created).format("lll") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   {result.created_name}
                 </TableCell>
+                */}
                 <TableCell padding="checkbox" align="center">
-                  {result.updated ? moment(result.updated).format("lll") : ""}
+                  {result.updated ? moment(result.updated).format("MMM DD YYYY") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   {result.updated_name}

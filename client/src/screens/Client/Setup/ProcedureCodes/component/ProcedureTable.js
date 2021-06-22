@@ -245,13 +245,13 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
                   onClick={() => handleGroupIsOpen(result.procedure_group)}
                 >
                   {result.procedure_group
-                    ? String(result.procedure_group).length > 22
-                      ? `${String(result.procedure_group).slice(0, 22)}...`
+                    ? String(result.procedure_group).length > 14
+                      ? `${String(result.procedure_group).slice(0, 14)}...`
                       : String(result.procedure_group)
                     : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.updated ? moment(result.updated).format("lll") : ""}
+                  {result.updated ? moment(result.updated).format("MMM DD YYYY") : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   {result.updated_name}
