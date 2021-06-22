@@ -73,7 +73,7 @@ const ProcedureForm = ({
           <TextField
             fullWidth
             name="procedureDescription"
-            label="Procedure Description"
+            label="Description"
             variant="outlined"
             size="small"
             InputLabelProps={{
