@@ -65,11 +65,13 @@ export default function ProcedureCodes() {
           color="textPrimary"
           className={classes.title}
         >
-          Procedure Codes
+          Procedures
         </Typography>
+        {/*
         <Typography component="p" variant="body2" color="textPrimary">
           This page is used to manage procedure codes
         </Typography>
+        */}
         <ProcedureForm
           labCompanyList={labCompanyList}
           fetchProcedureCodeSearch={fetchProcedureCodeSearch}

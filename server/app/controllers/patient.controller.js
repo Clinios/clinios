@@ -865,7 +865,11 @@ const updateBilling = async (req, res) => {
 
   const db = makeDb(configuration, res);
   try {
-    const updateResponse = await db.query(`update tran set ? where patient_id=? and id=?`, [formData, patient_id, id]);
+    const updateResponse = await db.query(`update tran
+    set ? 
+    where patient_id=? 
+    and id=?
+    `, [formData, patient_id, id]);
 
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";

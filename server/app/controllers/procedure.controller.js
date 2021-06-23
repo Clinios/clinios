@@ -5,7 +5,11 @@ const { errorMessage, successMessage, status } = require("../helpers/status");
 const getLabCompnayList = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
-    const dbResponse = await db.query(`select id, name from lab_company order by name limit 100`);
+    const dbResponse = await db.query(`select id, name 
+    from lab_company 
+    order by name 
+    limit 100
+    `);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -97,16 +101,13 @@ const updateClientProcedure = async (req, res) => {
   const { procedureId, favorite, billable, fee, notes } = req.body;
   let $sql;
   try {
-    $sql = `insert into client_proc (client_id, user_id, proc_id, favorite, billable, fee, notes, created, created_user_id, updated, updated_user_id )
-        values (${req.client_id}, ${req.user_id
-      }, '${procedureId}', ${favorite}, ${billable}, ${fee > 0 ? fee : 0
-      } /*TODO if fee is "" then set fee to null*/, '${notes}', now(), ${req.user_id
-      }, now(), ${req.user_id} ) 
+    $sql = `insert into client_proc (client_id, proc_id, favorite, billable, fee, notes, created, created_user_id, updated, updated_user_id )
+        values (${req.client_id}, '${procedureId}', ${favorite}, ${billable}, ${fee >= 0 ? fee : null},
+          '${notes}', now(), ${req.user_id}, now(), ${req.user_id} ) 
          on duplicate key update 
             favorite=${favorite},
             billable=${billable},
-            fee=${fee > 0 ? fee : 0
-      },  /*TODO if fee is "" then set fee to null*/
+            fee=${fee >= 0 ? fee : null},
             notes='${notes}',
             created=now(),
             created_user_id=${req.user_id},

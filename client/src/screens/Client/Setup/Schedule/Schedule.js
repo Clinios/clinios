@@ -129,8 +129,7 @@ const Schedule = () => {
           <Grid container justify="center" spacing={2}>
             <Grid item md={12} xs={12}>
               <Typography component="p" variant="body2" color="textPrimary">
-                This page is used to set availability for new patient
-                appointments.
+                This page is used to set availability for new patient appointments.
               </Typography>
               <ScheduleSearchForm
                 userList={userList}

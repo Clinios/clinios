@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
+// import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
@@ -126,12 +126,14 @@ const EditProcedureCodeModal = ({
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title" className={classes.title}>
-          Edit Procedure Code
+          Edit Procedure
         </DialogTitle>
         <DialogContent className={classes.content}>
+          {/*
           <DialogContentText id="alert-dialog-description">
-            This page is used to edit proc code
+            This page is used to manage procedures
           </DialogContentText>
+          */}
           <div className={classes.root}>
             <FormControl component="div" className={classes.formControl}>
               <Grid item md={3} className={classes.gridMargin}>
@@ -147,13 +149,12 @@ const EditProcedureCodeModal = ({
                   disabled
                 />
               </Grid>
-              <p className={classes.formHelperText}>The name of the appointm</p>
             </FormControl>
             <FormControl component="div" className={classes.formControl}>
               <Grid item xs={6} md={9} className={classes.gridMargin}>
                 <TextField
                   fullWidth
-                  label="Procedure Description"
+                  label="Description"
                   value={procedure_description}
                   variant="outlined"
                   size="small"
@@ -163,9 +164,6 @@ const EditProcedureCodeModal = ({
                   disabled
                 />
               </Grid>
-              <p className={classes.formHelperText}>
-                The name shown in the Appointment
-              </p>
             </FormControl>
             <FormControl component="div" className={classes.formControl}>
               <Grid item md={2} className={classes.gridMargin}>
@@ -186,7 +184,7 @@ const EditProcedureCodeModal = ({
                   onKeyUp={handleKeyUp}
                 />
               </Grid>
-              <p className={classes.formHelperText}>Edit fee here</p>
+              <p className={classes.formHelperText}>The fee you will charge your patients</p>
             </FormControl>
             <FormGroup>
               <FormControlLabel
