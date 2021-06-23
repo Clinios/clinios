@@ -28,6 +28,13 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: "ellipsis",
     padding: theme.spacing(0, 0.5, 0, 0),
   },
+  fullWidth: {
+    width: "44%",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    padding: theme.spacing(0, 0.5, 0, 0),
+  },
   blockAction: {
     width: 55,
     textAlign: "right",
@@ -123,7 +130,7 @@ const BillingContent = (props) => {
               </Typography>
             </Tooltip>
           </Grid>
-          <Grid item className={classes.block}>
+          <Grid item className={classes.fullWidth}>
             <Tooltip title={item?.note}>
               <Typography
                 component="span"

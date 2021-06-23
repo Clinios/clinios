@@ -21,7 +21,7 @@ import Tooltip from "../../../../components/common/CustomTooltip";
 import { StyledTableRowSm, StyledTableCellSm } from "../../../../components/common/StyledTable";
 import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { togglePaymentDialog } from "../../../../providers/Patient/actions";
+import { togglePaymentDialog, resetBilling } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -58,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
   nameInput: {
     color: "rgb(158, 158, 158)",
   },
+  mb1: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const BillingDialog = (props) => {
@@ -82,6 +85,8 @@ const BillingDialog = (props) => {
       storeBilling.name = storeBilling.proc_name;
       setSelectedBilling(storeBilling);
     }
+    return () => !!storeBilling && dispatch(resetBilling());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeBilling]);
 
   const searchBillings = (e, text) => {
@@ -119,8 +124,9 @@ const BillingDialog = (props) => {
     const reqBody = {
       data: {
         amount: selectedTest.client_fee || selectedTest.proc_price || 0,
-        proc_id: selectedTest.id,
+        proc_id: storeBilling ? selectedTest.proc_id : selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
+        note: selectedTest.note,
       },
     };
     if (storeBilling) { // edit scenario
@@ -209,8 +215,8 @@ const BillingDialog = (props) => {
                           </Tooltip>
                         )
                         : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
-                      <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
-                      <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.proc_price ? `$${item.proc_price}` : ""}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.client_fee ? `$${item.client_fee}` : ""}</StyledTableCellSm>
                       <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
@@ -263,8 +269,8 @@ const BillingDialog = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
-                        <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
-                        <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.proc_price ? `$${item.proc_price}` : ""}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.client_fee ? `$${item.client_fee}` : ""}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
@@ -318,8 +324,8 @@ const BillingDialog = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
-                        <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
-                        <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.proc_price ? `$${item.proc_price}` : ""}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.client_fee ? `$${item.client_fee}` : ""}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
@@ -341,6 +347,21 @@ const BillingDialog = (props) => {
 
       <Grid item md={4} className={classes.amountContainer}>
         <form onSubmit={(e) => onFormSubmit(e, selectedBilling)}>
+          <Grid container spacing={2} className={classes.mb1}>
+            <Grid item sm={9} xs={9}>
+              <TextField
+                fullWidth
+                size="small"
+                variant="outlined"
+                label="Notes"
+                value={selectedBilling?.note || ""}
+                onChange={(e) => setSelectedBilling({
+                  ...selectedBilling,
+                  note: e.target.value,
+                })}
+              />
+            </Grid>
+          </Grid>
           <Grid container spacing={2} alignItems="center">
             <Grid item sm={6} xs={6}>
               <TextField

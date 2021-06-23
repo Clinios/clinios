@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 450,
     marginTop: theme.spacing(2),
   },
+  noWrap: {
+    whiteSpace: "noWrap",
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -215,7 +218,7 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
                 >
                   {result.id}
                 </TableCell>
-                <TableCell padding="checkbox" align="left">
+                <TableCell padding="checkbox" align="left" className={classes.noWrap}>
                   {result.proc}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
