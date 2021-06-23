@@ -19,7 +19,7 @@ const jwt = require("jsonwebtoken");
 const moment = require("moment");
 const { validationResult } = require("express-validator");
 const sgMail = require("@sendgrid/mail");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -60,16 +60,16 @@ exports.verifyConfirmation = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
   try {
     // Check if user is already verified
     const userRows = await db.query(
-      "SELECT id, token, email_confirm_dt FROM user WHERE id = ?",
+      "SELECT id, token, email_confirm_dt FROM users WHERE id = $1",
       [req.params.userId]
     );
 
-    const user = userRows[0];
+    const user = userRows.rows[0];
     if (user) {
+      //TODO:: Check if user provided valid token or not
       // Check if user is already confirmed his/her email
       if (user.email_confirm_dt && !user.token) {
         successMessage.message = "User is already verified!";
@@ -79,7 +79,7 @@ exports.verifyConfirmation = async (req, res) => {
       // update email_confirm_dt if it's null and remove token
       const now = moment().format("YYYY-MM-DD HH:mm:ss");
       await db.query(
-        `UPDATE user SET email_confirm_dt='${now}', token=null, updated= now() WHERE id = ?`,
+        `UPDATE users SET email_confirm_dt='${now}', token=null, updated= now() WHERE id = $1`,
         [req.params.userId]
       );
 
@@ -96,8 +96,6 @@ exports.verifyConfirmation = async (req, res) => {
     // handle the error
     errorMessage.message = error;
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -114,26 +112,26 @@ exports.sendSignupConfirmationEmail = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.error).send(errorMessage);
   }
-  const db = makeDb(configuration, res);
-  const rows = await db.query(
-    "SELECT id, client_id, firstName, lastName, email, password, created FROM user WHERE email = ?",
+
+  const usersQueryResponse = await db.query(
+    "SELECT id, client_id, firstName, lastName, email, password, created FROM users WHERE email = $1",
     [req.body.email]
   );
 
-  if (rows.length < 1) {
+  if (usersQueryResponse.rows.length < 1) {
     errorMessage.message =
       "We couldn't find any record with that email address.";
     return res.status(status.notfound).send(errorMessage);
   }
 
-  const user = rows[0];
+  const user = usersQueryResponse.rows[0];
   const accesstToken = usePasswordHashToMakeToken(user);
   const url = getEmailVerificationURL(user, accesstToken);
   const emailTemplate = signUpConfirmationTemplate(user, url);
 
   // update token field on that user table
   await db.query(
-    `UPDATE user SET token=?, updated= now() WHERE id =?`, [accesstToken, user.id]
+    `UPDATE users SET token=$1, updated= now() WHERE id =$2`, [accesstToken, user.id]
   );
 
   // send mail with defined transport object
@@ -162,20 +160,18 @@ exports.resendSignupConfirmationEmail = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
-
   // Check where user already signed up or not
-  const userRows = await db.query(
-    "SELECT id, email, firstname, lastname, token, email_confirm_dt, created FROM user WHERE id = ?",
+  const usersQueryResponse = await db.query(
+    "SELECT id, email, firstname, lastname, token, email_confirm_dt, created FROM users WHERE id = $1",
     [req.body.id]
   );
-  if (userRows.length < 1) {
+  if (usersQueryResponse.rows.length < 1) {
     errorMessage.message =
       "We couldn't find any record with that email address.";
     return res.status(status.notfound).send(errorMessage);
   }
 
-  const user = userRows[0];
+  const user = usersQueryResponse.rows[0];
   let accesstToken;
   if (user.token) {
     accesstToken = user.token;
@@ -183,7 +179,7 @@ exports.resendSignupConfirmationEmail = async (req, res) => {
     accesstToken = usePasswordHashToMakeToken(user);
     // update token field on that user table
     await db.query(
-      `UPDATE user SET token=?, updated= now() WHERE id =?`, [accesstToken, user.id]
+      `UPDATE users SET token=$1, updated= now() WHERE id =$2`, [accesstToken, user.id]
     );
   }
   const url = getEmailVerificationURL(user, accesstToken);
@@ -194,7 +190,6 @@ exports.resendSignupConfirmationEmail = async (req, res) => {
     console.info("Email sent:", info);
   }
 
-  successMessage.message =
-    "We have email verification link on your email address!";
+  successMessage.message = "We have email verification link on your email address!";
   return res.status(status.success).send(successMessage);
 };
