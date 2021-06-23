@@ -213,8 +213,8 @@ const BillingDialog = (props) => {
                           </Tooltip>
                         )
                         : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
-                      <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
-                      <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.proc_price ? `$${item.proc_price}` : ""}</StyledTableCellSm>
+                      <StyledTableCellSm>{item.client_fee ? `$${item.client_fee}` : ""}</StyledTableCellSm>
                       <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
@@ -267,8 +267,8 @@ const BillingDialog = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
-                        <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
-                        <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.proc_price ? `$${item.proc_price}` : ""}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.client_fee ? `$${item.client_fee}` : ""}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
@@ -322,8 +322,8 @@ const BillingDialog = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
-                        <StyledTableCellSm>{item.proc_price}</StyledTableCellSm>
-                        <StyledTableCellSm>{item.client_fee}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.proc_price ? `$${item.proc_price}` : ""}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.client_fee ? `$${item.client_fee}` : ""}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
