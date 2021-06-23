@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -96,6 +96,15 @@ const RequisitionsDetails = (props) => {
       });
   };
 
+  const isDeleteIconDisabled = useCallback((requisition) => {
+    let res = false;
+    if (requisition.dt !== null || requisition.completed_dt !== null
+      || requisition.lab_receipt_dt !== null || requisition.sent_to_patient_dt !== null) {
+      res = true;
+    }
+    return res;
+  }, []);
+
   return (
     <>
       <Alert
@@ -147,7 +156,7 @@ const RequisitionsDetails = (props) => {
                     <IconButton
                       className={classes.button}
                       onClick={() => openDeleteDialog(item)}
-                      disabled={item.dt !== null}
+                      disabled={isDeleteIconDisabled(item)}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>

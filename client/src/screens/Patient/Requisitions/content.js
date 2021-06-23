@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { Grid, Typography, IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -94,6 +94,15 @@ const RequisitionsContent = (props) => {
     setSelectedRequisition(null);
   };
 
+  const isDeleteIconDisabled = useCallback((requisition) => {
+    let res = false;
+    if (requisition.dt !== null || requisition.completed_dt !== null
+      || requisition.lab_receipt_dt !== null || requisition.sent_to_patient_dt !== null) {
+      res = true;
+    }
+    return res;
+  }, []);
+
   return (
     <>
       <Alert
@@ -141,7 +150,7 @@ const RequisitionsContent = (props) => {
             <Grid item className={classes.blockAction}>
               <IconButton
                 onClick={() => openDeleteDialog(item)}
-                disabled={item.dt !== null}
+                disabled={isDeleteIconDisabled(item)}
               >
                 <DeleteIcon />
               </IconButton>
