@@ -123,7 +123,7 @@ const BillingDialog = (props) => {
     const reqBody = {
       data: {
         amount: selectedTest.client_fee || selectedTest.proc_price || 0,
-        proc_id: selectedTest.id,
+        proc_id: storeBilling ? selectedTest.proc_id : selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
         note: selectedTest.note,
       },
