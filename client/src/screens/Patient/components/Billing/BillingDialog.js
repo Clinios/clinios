@@ -21,7 +21,7 @@ import Tooltip from "../../../../components/common/CustomTooltip";
 import { StyledTableRowSm, StyledTableCellSm } from "../../../../components/common/StyledTable";
 import useDidMountEffect from "../../../../hooks/useDidMountEffect";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { togglePaymentDialog } from "../../../../providers/Patient/actions";
+import { togglePaymentDialog, resetBilling } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -85,6 +85,7 @@ const BillingDialog = (props) => {
       storeBilling.name = storeBilling.proc_name;
       setSelectedBilling(storeBilling);
     }
+    return () => !!storeBilling && dispatch(resetBilling());
   }, [storeBilling]);
 
   const searchBillings = (e, text) => {
@@ -124,7 +125,7 @@ const BillingDialog = (props) => {
         amount: selectedTest.client_fee || selectedTest.proc_price || 0,
         proc_id: selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
-        note: selectedTest.notes,
+        note: selectedTest.note,
       },
     };
     if (storeBilling) { // edit scenario
@@ -352,10 +353,10 @@ const BillingDialog = (props) => {
                 size="small"
                 variant="outlined"
                 label="Notes"
-                value={selectedBilling?.notes || ""}
+                value={selectedBilling?.note || ""}
                 onChange={(e) => setSelectedBilling({
                   ...selectedBilling,
-                  notes: e.target.value,
+                  note: e.target.value,
                 })}
               />
             </Grid>
