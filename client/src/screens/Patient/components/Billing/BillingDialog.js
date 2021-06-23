@@ -86,6 +86,7 @@ const BillingDialog = (props) => {
       setSelectedBilling(storeBilling);
     }
     return () => !!storeBilling && dispatch(resetBilling());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeBilling]);
 
   const searchBillings = (e, text) => {
