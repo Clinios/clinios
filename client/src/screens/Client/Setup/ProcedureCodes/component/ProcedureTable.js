@@ -222,10 +222,10 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
                   {result.lab_company}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.favorite ? "Yes" : "No"}
+                  {result.favorite ? "Yes" : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
-                  {result.billable ? "Yes" : "No"}
+                  {result.billable ? "Yes" : ""}
                 </TableCell>
                 <TableCell padding="checkbox" align="center">
                   <NumberFormat
