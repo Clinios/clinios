@@ -58,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
   nameInput: {
     color: "rgb(158, 158, 158)",
   },
+  mb1: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const BillingDialog = (props) => {
@@ -121,6 +124,7 @@ const BillingDialog = (props) => {
         amount: selectedTest.client_fee || selectedTest.proc_price || 0,
         proc_id: selectedTest.id,
         type_id: 1, // the 1 is hardcoded as per CLIN-203
+        note: selectedTest.notes,
       },
     };
     if (storeBilling) { // edit scenario
@@ -341,6 +345,21 @@ const BillingDialog = (props) => {
 
       <Grid item md={4} className={classes.amountContainer}>
         <form onSubmit={(e) => onFormSubmit(e, selectedBilling)}>
+          <Grid container spacing={2} className={classes.mb1}>
+            <Grid item sm={9} xs={9}>
+              <TextField
+                fullWidth
+                size="small"
+                variant="outlined"
+                label="Notes"
+                value={selectedBilling?.notes || ""}
+                onChange={(e) => setSelectedBilling({
+                  ...selectedBilling,
+                  notes: e.target.value,
+                })}
+              />
+            </Grid>
+          </Grid>
           <Grid container spacing={2} alignItems="center">
             <Grid item sm={6} xs={6}>
               <TextField
