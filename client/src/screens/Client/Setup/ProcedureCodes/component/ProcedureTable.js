@@ -30,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   noWrap: {
-    whiteSpace: "noWrap"
-  }
+    whiteSpace: "noWrap",
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
