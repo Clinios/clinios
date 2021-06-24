@@ -3,7 +3,7 @@ const multer = require("multer");
 const moment = require("moment");
 const fs = require("fs");
 const { validationResult } = require("express-validator");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const storage = multer.diskStorage({
@@ -51,41 +51,34 @@ const upload = multer({
 });
 
 const getPatient = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select p.firstname, p.middlename, p.lastname, p.gender, p.dob, p.ssn, p.preferred_name, p.referred_by, p.phone_home, p.phone_cell, p.phone_work, p.phone_other, p.phone_note, p.email, concat(u.firstname, ' ', u.lastname) provider, p.client_id
+      `select p.firstname, p.middlename, p.lastname, p.gender, p.dob, p.ssn, p.preferred_name, p.referred_by, p.phone_home, p.phone_cell, p.phone_work, p.phone_other, p.phone_note, p.email, concat(u.firstname, ' ', u.lastname) AS provider, p.client_id
         , p.admin_note, p.medical_note, p.address, p.address2, p.country, p.city, p.postal, p.state, p.emergency_firstname, p.emergency_middlename, p.emergency_lastname, p.emergency_relationship, p.emergency_email, p.stripe_customer_id,
         p.emergency_phone, p.insurance_name, p.insurance_group, p.insurance_member, p.insurance_phone, p.insurance_desc, p.height, p.waist, p.weight, p.medical_note, p.pharmacy_id, p.pharmacy2_id
         from patient p
-        left join user u on u.id=p.user_id
+        left join users u on u.id=p.user_id
         where p.client_id=${req.client_id}
-        and p.id=?`, [patient_id]
+        and p.id=$1`, [patient_id]
     );
 
     // Call DB query without assigning into a variable
     await db.query(`insert into user_log values (1, 1, now(), 1, null)`);
 
-    const functionalRange = await db.query(
-      `select functional_range
-        from client
-        where id=${req.client_id}`
-    );
+    const functionalRange = await db.query(`select functional_range from client where id=${req.client_id}`);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    const resData = { ...dbResponse[0], functional_range: functionalRange };
+    const resData = { ...dbResponse.rows[0], functional_range: functionalRange.rows[0] };
     successMessage.data = resData;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -158,7 +151,6 @@ const updatePatient = async (req, res) => {
     pharmacy2_id,
   } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     let $sql;
 
@@ -274,23 +266,21 @@ const updatePatient = async (req, res) => {
     }
     $sql += `, updated='${moment().format("YYYY-MM-DD HH:mm:ss")}',
       updated_user_id=${req.user_id}
-      where id=${patient_id}`;
+      where id=${patient_id} RETURNING id`;
 
     const updateResponse = await db.query($sql);
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.error).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -303,55 +293,52 @@ const search = async (req, res) => {
   const { patient_id } = req.params;
   const { text } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select 'Encounter', id, dt, notes, client_id
         from encounter
         where patient_id=${patient_id}
-        and notes like '%${text}%'
+        and notes ILIKE '%${text}%'
         union
         select 'Message', id, created, message, client_id
         from message
         where (patient_id_to=${patient_id} or patient_id_from=${patient_id})
-        and message like '%${text}%'
+        and message ILIKE '%${text}%'
         union
         select 'Admin Note', id, created, admin_note, client_id
         from patient
         where id=${patient_id}
-        and admin_note like '%${text}%'
+        and admin_note ILIKE '%${text}%'
         union
         select 'Medical Note', id, created, medical_note, client_id
         from patient
         where id=${patient_id}
-        and medical_note like '%${text}%'
+        and medical_note ILIKE '%${text}%'
         union
         select 'Lab Note', id, created, note, client_id
         from lab
         where patient_id=${patient_id}
-        and note like '%${text}%'
+        and note ILIKE '%${text}%'
         union
         select 'Lab Assignment Note', id, created, note_assign, client_id
         from lab
         where patient_id=${patient_id}
-        and note_assign like '%${text}%'
+        and note_assign ILIKE '%${text}%'
         order by 1,2,3
       `
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -542,33 +529,29 @@ const adminNoteupdate = async (req, res) => {
   const { admin_note, old_admin_note } = req.body.data;
   const { patient_id } = req.params;
 
-  const db = makeDb(configuration, res);
   try {
     // Call DB query without assigning into a variable
     await db.query(
       `insert into patient_history (id, admin_note, created, created_user_id) values (${patient_id}, '${old_admin_note}', now(), ${req.user_id})`
     );
-    const updateResponse = await db.query(`update patient set admin_note=? where id=? `, [admin_note, patient_id]);
+    const updateResponse = await db.query(`update patient set admin_note=$1 where id=$2 RETURNING id`, [admin_note, patient_id]);
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getForms = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
@@ -576,24 +559,22 @@ const getForms = async (req, res) => {
         from patient_form pf
         left join client_form cf on cf.id=pf.form_id
         where pf.client_id=${req.client_id}
-        and pf.patient_id=?
+        and pf.patient_id=$1
         order by pf.created
       `, [patient_id]
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
