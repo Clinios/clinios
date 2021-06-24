@@ -17,9 +17,9 @@ const getAll = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select uc.id, uc.user_id, uc.patient_id, uc.start_dt, uc.end_dt, uc.status, uc.title, uc.notes, uc.client_id, uc.approved, uc.declined
-        , concat(au.firstname, ' ', au.lastname) approved_user
-        , concat(du.firstname, ' ', du.lastname) declined_user
-        , p.firstname, p.lastname, p.email, concat(u.firstname, ' ', u.lastname) provider_name
+        , concat(au.firstname, ' ', au.lastname) "approved_user"
+        , concat(du.firstname, ' ', du.lastname) "declined_user"
+        , p.firstname, p.lastname, p.email, concat(u.firstname, ' ', u.lastname) "provider_name"
         from user_calendar uc
         left join patient p on p.id=uc.patient_id
         left join users u on u.id=uc.user_id
@@ -133,21 +133,12 @@ const createAppointment = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { title, notes, ApptStatus, patient, start_dt, end_dt, provider } = req.body.data;
-
-  const userCalendarData = {};
-  userCalendarData.client_id = req.client_id;
-  userCalendarData.user_id = provider.id;
-  userCalendarData.patient_id = patient.id;
-  userCalendarData.start_dt = moment(start_dt).format("YYYY-MM-DD HH:mm:ss");
-  userCalendarData.end_dt = moment(end_dt).format("YYYY-MM-DD HH:mm:ss");
-  userCalendarData.status = ApptStatus;
-  userCalendarData.title = title;
-  userCalendarData.notes = notes;
-  userCalendarData.created = new Date();
-  userCalendarData.created_user_id = req.user_id;
   try {
-    const insertResponse = await db.query(`insert into user_calendar set ?`, [userCalendarData])
-    if (!insertResponse.affectedRows) {
+    const insertResponse = await db.query(`insert into user_calendar(client_id, user_id, patient_id, start_dt, end_dt, status, title, notes, created, created_user_id ) 
+    VALUES (${req.client_id}, ${provider.id}, ${patient.id}, '${moment(start_dt).format("YYYY-MM-DD HH:mm:ss")}', '${moment(end_dt).format("YYYY-MM-DD HH:mm:ss")}',
+     '${ApptStatus}', '${title}', '${notes}', now(), ${req.user_id}) RETURNING id`);
+
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -182,9 +173,9 @@ const cancelAppointment = async (req, res) => {
   try {
     const updateResponse = await db.query(
       `update user_calendar set status='D', declined=now(), updated= now(),
-       updated_user_id='${req.user_id}' where id=?`, [id]
+       updated_user_id='${req.user_id}' where id=$1 RETURNING id`, [id]
     );
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -230,7 +221,6 @@ const updateAppointment = async (req, res) => {
     old_start_dt,
   } = req.body.data;
 
- // const db = makeDb(configuration, res);
   try {
     let $sql = `update user_calendar
     set status='${ApptStatus}'`;
@@ -261,10 +251,10 @@ const updateAppointment = async (req, res) => {
       $sql += `, approved=now(), approved_user_id=${req.user_id}`;
     }
     $sql += `, updated=now(), updated_user_id='${req.user_id}'
-    where id=$1`;
+    where id=$1 RETURNING id`;
 
     const updateResponse = await db.query($sql, [id]);
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -335,22 +325,22 @@ const getUnreadMessages = async (req, res) => {
   const { providerId } = req.params;
   try {
     const dbResponse = await db.query(
-      `select m.id, m.created, m.unread_notify_dt, p.id patient_id, concat(p.firstname, ' ', p.lastname) name, m.message
+      `select m.id, m.created, m.unread_notify_dt, p.id patient_id, concat(p.firstname, ' ', p.lastname) AS name, m.message
         from message m
         left join patient p on p.id=m.patient_id_to
         where m.client_id=${req.client_id}
-        and m.user_id_from=?
+        and m.user_id_from=$1
         and m.read_dt is null
-        and m.unread_notify_dt<=current_date()
+        and m.unread_notify_dt<=CURRENT_DATE
         order by m.unread_notify_dt
       `, [providerId]
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
