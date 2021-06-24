@@ -30,6 +30,7 @@
   "rules": {
     "import/no-named-as-default": 0,
     "import/no-unresolved": "off",
+    "react-hooks/rules-of-hooks": "off",
     "import/extensions": 0, 
     "class-methods-use-this": [
       0

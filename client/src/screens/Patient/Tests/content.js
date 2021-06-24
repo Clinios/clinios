@@ -15,11 +15,12 @@ import { mdiInformationOutline, mdiChartBoxOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { orderBy } from "lodash";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import usePatientContext from "../../../hooks/usePatientContext";
 import { toggleTestsChartExpandDialog, setSelectedTest } from "../../../providers/Patient/actions";
 import { calculateFunctionalRange, calculatePercentageFlag } from "../../../utils/FunctionalRange";
-import { calculateAge, hasValue } from "../../../utils/helpers";
+import { calculateAge, hasValue, useLocalStore } from "../../../utils/helpers";
 import { getMarkerDefinition } from "../../../utils/markerDefinition";
 import { getMarkerInterpretation } from "../../../utils/markerInterpretation";
 import MarkerDefinition from "../components/MarkerDefinition";
@@ -96,12 +97,15 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-const TestsContent = () => {
+const TestsContent = (props) => {
   const classes = useStyles();
-  const { state, dispatch } = usePatientContext();
+  const { isEncounter } = props;
+  const { state, dispatch } = isEncounter ? useLocalStore() : usePatientContext();
   const { data, expandDialog } = state.tests;
   const { gender, dob } = state.patientInfo.data;
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
+
+  console.log({ gender, dob, data, expandDialog })
 
   const [tests, setTests] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -331,7 +335,12 @@ const TestsContent = () => {
   );
 };
 
+TestsContent.defaultProps = {
+  isEncounter: false,
+};
+
 TestsContent.propTypes = {
+  isEncounter: PropTypes.bool,
 };
 
 export default TestsContent;

@@ -11,6 +11,7 @@ import Alert from "../../../../components/Alert";
 import Tooltip from "../../../../components/common/CustomTooltip";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import PatientService from "../../../../services/patient.service";
+import { useLocalStore } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   text12: {
@@ -49,11 +50,10 @@ const useStyles = makeStyles((theme) => ({
 const DiagnosesContent = (props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { state } = usePatientContext();
+  const { reloadData, isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { data, activeData, status } = state.diagnoses;
   const { patientId } = state;
-
-  const { reloadData } = props;
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -145,8 +145,13 @@ const DiagnosesContent = (props) => {
   );
 };
 
+DiagnosesContent.defaultProps = {
+  isEncounter: false,
+};
+
 DiagnosesContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default DiagnosesContent;

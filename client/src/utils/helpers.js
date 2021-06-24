@@ -451,5 +451,15 @@ export const calculate_time_slot = (startTime, endTime, interval = "30") => {
   return time_slots;
 };
 
-
 /** End of create time slots * */
+
+export const openInNewTab = (url) => window.open(url, "_blank");
+
+export const useLocalStore = () => {
+  const state = JSON.parse(localStorage.getItem("store"));
+  const dispatch = () => { };
+  return {
+    state,
+    dispatch,
+  };
+};

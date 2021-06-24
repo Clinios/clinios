@@ -90,6 +90,13 @@ const routes = [
     exact: true,
     guard: ClientPortalGuard,
     layout: DashboardLayout,
+    path: "/patients/:patientId/encounter",
+    component: lazy(() => import("./screens/Patient/Encounters/index.old")),
+  },
+  {
+    exact: true,
+    guard: ClientPortalGuard,
+    layout: DashboardLayout,
     path: "/lab/:userId",
     component: lazy(() => import("./screens/Lab")),
   },

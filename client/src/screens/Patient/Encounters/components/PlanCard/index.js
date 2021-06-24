@@ -1,13 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { Typography } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 import usePatientContext from "../../../../../hooks/usePatientContext";
 import PatientService from "../../../../../services/patient.service";
+import { useLocalStore } from "../../../../../utils/helpers";
 
-const PlanCard = () => {
+const PlanCard = (props) => {
+  const { isEncounter } = props;
   const [encounterPlans, setEncounterPlans] = useState([]);
-  const { state } = usePatientContext();
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { patientId } = state;
   const { selectedEncounter } = state.encounters;
   const encounterId = selectedEncounter?.id;
@@ -36,6 +39,14 @@ const PlanCard = () => {
       }
     </>
   );
+};
+
+PlanCard.defaultProps = {
+  isEncounter: false,
+};
+
+PlanCard.propTypes = {
+  isEncounter: PropTypes.bool,
 };
 
 export default PlanCard;

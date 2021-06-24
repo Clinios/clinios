@@ -3,9 +3,11 @@ import React from "react";
 import { Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import Tooltip from "../../../components/common/CustomTooltip";
 import usePatientContext from "../../../hooks/usePatientContext";
+import { useLocalStore } from "../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
@@ -30,9 +32,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const FormContent = () => {
+const FormContent = (props) => {
   const classes = useStyles();
-  const { state } = usePatientContext();
+  const { isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { data } = state.forms;
 
   return (
@@ -75,6 +78,14 @@ const FormContent = () => {
       }
     </>
   );
+};
+
+FormContent.defaultProps = {
+  isEncounter: false,
+};
+
+FormContent.propTypes = {
+  isEncounter: PropTypes.bool,
 };
 
 export default FormContent;

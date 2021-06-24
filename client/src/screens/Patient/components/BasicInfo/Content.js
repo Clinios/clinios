@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Grid, Typography, Popover } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import usePatientContext from "../../../../hooks/usePatientContext";
 import PatientService from "../../../../services/patient.service";
@@ -12,6 +13,7 @@ import {
   dateDiffInMonths,
   dateDiffInYears,
   dateDiffInHours,
+  useLocalStore,
 } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
@@ -45,9 +47,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BasicInfoContent = () => {
+const BasicInfoContent = (props) => {
   const classes = useStyles();
-  const { state } = usePatientContext();
+  const { isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { data } = state.patientInfo;
   const { patientId } = state;
   const [nextAppointment, setNextAppointment] = useState(null);
@@ -286,6 +289,14 @@ const BasicInfoContent = () => {
       </Grid>
     </>
   );
+};
+
+BasicInfoContent.defaultProps = {
+  isEncounter: false,
+};
+
+BasicInfoContent.propTypes = {
+  isEncounter: PropTypes.bool,
 };
 
 export default BasicInfoContent;

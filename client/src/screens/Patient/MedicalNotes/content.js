@@ -2,8 +2,10 @@ import React from "react";
 
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 
 import usePatientContext from "../../../hooks/usePatientContext";
+import { useLocalStore } from "../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
@@ -15,9 +17,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MedicalNotesContent = () => {
+const MedicalNotesContent = (props) => {
   const classes = useStyles();
-  const { state } = usePatientContext();
+  const { isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { medical_note } = state.patientInfo.data;
 
   return (
@@ -25,6 +28,14 @@ const MedicalNotesContent = () => {
       {medical_note}
     </Typography>
   );
+};
+
+MedicalNotesContent.defaultProps = {
+  isEncounter: false,
+};
+
+MedicalNotesContent.propTypes = {
+  isEncounter: PropTypes.bool,
 };
 
 export default MedicalNotesContent;

@@ -12,12 +12,13 @@ import TableRow from "@material-ui/core/TableRow";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import Popover from "../../../../components/common/Popover";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import { InsightsTests, MissingTests } from "../../../../static/insightsTests";
 import { calculateFunctionalRange, calculatePercentage } from "../../../../utils/FunctionalRange";
-import { calculateAge, hasValue } from "../../../../utils/helpers";
+import { calculateAge, hasValue, useLocalStore } from "../../../../utils/helpers";
 import { getMarkerDefinition } from "../../../../utils/markerDefinition";
 import { getMarkerInterpretation } from "../../../../utils/markerInterpretation";
 import MarkerDefinition from "../MarkerDefinition";
@@ -88,9 +89,10 @@ const StyledTableRow = withStyles(() => ({
   },
 }))(TableRow);
 
-const InsightsContent = () => {
+const InsightsContent = (props) => {
   const classes = useStyles();
-  const { state } = usePatientContext();
+  const { isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { data } = state.tests;
   const { gender, dob } = state.patientInfo.data;
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
@@ -300,7 +302,12 @@ const InsightsContent = () => {
   );
 };
 
+InsightsContent.defaultProps = {
+  isEncounter: false,
+};
+
 InsightsContent.propTypes = {
+  isEncounter: PropTypes.bool,
 };
 
 export default InsightsContent;

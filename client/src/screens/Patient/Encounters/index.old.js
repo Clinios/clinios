@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import {
+  Box,
   TextField,
   Button,
   Grid,
@@ -14,19 +15,23 @@ import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import useAuth from "../../../hooks/useAuth";
-import usePatientContext from "../../../hooks/usePatientContext";
 import {
   resetEncounter,
   toggleEncountersDialog,
 } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
-import { EncountersFormFields } from "../../../static/encountersForm";
+import { EncountersFields as EncountersFormFields } from "../../../static/encountersForm";
 import {
   FirstColumnPatientCards,
+  SecondColumnPatientCards,
   ThirdColumnPatientCards,
   FourthColumnPatientCards,
 } from "../../../static/patient";
-import { encounterTypeToLetterConversion, encounterLetterToTypeConversion } from "../../../utils/helpers";
+import {
+  encounterTypeToLetterConversion,
+  encounterLetterToTypeConversion,
+  useLocalStore,
+} from "../../../utils/helpers";
 import { AdminNotesCardContent } from "../components/AdminNotes";
 import { AllergiesCardContent } from "../components/Allergies";
 import { PatientCardContent } from "../components/BasicInfo";
@@ -35,6 +40,7 @@ import { DiagnosesCardContent } from "../components/Diagnoses";
 import DiagnosesSelectList from "../components/Diagnoses/DiagnosesSelectList";
 import { DocumentsCardContent } from "../components/Documents";
 import { HandoutsCardContent } from "../components/Handouts";
+import InsightsCardContent from "../components/Insights/content";
 import FormCardContent from "../Form/content";
 import MedicalNotesCardContent from "../MedicalNotes/content";
 import MedicationsCardContent from "../Medications/content";
@@ -79,7 +85,7 @@ const Encounters = (props) => {
   const classes = useStyles();
   const currentDate = new Date();
   const { enqueueSnackbar } = useSnackbar();
-  const { state, dispatch } = usePatientContext();
+  const { state, dispatch } = useLocalStore();
   const { reloadData } = props;
   const [formFields, setFormFields] = useState({
     title: "",
@@ -172,34 +178,36 @@ const Encounters = (props) => {
   const renderCardData = (value) => {
     switch (value) {
       case "Patient":
-        return <PatientCardContent />;
+        return <PatientCardContent isEncounter />;
       case "Admin Notes":
-        return <AdminNotesCardContent />;
+        return <AdminNotesCardContent isEncounter />;
       case "Forms":
-        return <FormCardContent />;
+        return <FormCardContent isEncounter />;
       case "Billing":
-        return <BillingCardContent />;
+        return <BillingCardContent isEncounter />;
       case "Allergies":
-        return <AllergiesCardContent />;
+        return <AllergiesCardContent isEncounter />;
       case "Medical Notes":
-        return <MedicalNotesCardContent />;
+        return <MedicalNotesCardContent isEncounter />;
       case "Handouts":
-        return <HandoutsCardContent />;
+        return <HandoutsCardContent isEncounter />;
       case "Messages":
-        return <MessagesCardContent />;
+        return <MessagesCardContent isEncounter />;
       case "Medications":
-        return <MedicationsCardContent />;
+        return <MedicationsCardContent isEncounter />;
       case "Diagnoses":
-        return <DiagnosesCardContent />;
+        return <DiagnosesCardContent isEncounter />;
       case "Requisitions":
-        return <RequisitionsCardContent />;
+        return <RequisitionsCardContent isEncounter />;
+      case "Insights":
+      // return <InsightsCardContent isEncounter />;
       default:
         return <div />;
     }
   };
 
   return (
-    <>
+    <Box mt={2}>
       <Grid container spacing={1}>
         <Grid
           item
@@ -207,6 +215,14 @@ const Encounters = (props) => {
           md={2}
         >
           {FirstColumnPatientCards.map((item) => (
+            <Grid key={item.title}>
+              <Card
+                title={item.title}
+                data={renderCardData(item.title)}
+              />
+            </Grid>
+          ))}
+          {SecondColumnPatientCards.map((item) => (
             <Grid key={item.title}>
               <Card
                 title={item.title}
@@ -353,12 +369,12 @@ const Encounters = (props) => {
                   />
                   <Card
                     title="Plan"
-                    data={<PlanCard />}
+                    data={<PlanCard isEncounter />}
                     icon
                   />
                   <Card
                     title="Billing"
-                    data={<BillingCard />}
+                    data={<BillingCard isEncounter />}
                     icon
                   />
 
@@ -379,7 +395,8 @@ const Encounters = (props) => {
                         <Button
                           fullWidth
                           variant="outlined"
-                          onClick={() => dispatch(toggleEncountersDialog())}
+                          // onClick={() => dispatch(toggleEncountersDialog())}
+                          onClick={() => window.close()}
                         >
                           Exit
                         </Button>
@@ -436,21 +453,23 @@ const Encounters = (props) => {
           <Card
             title="Documents"
             data={(
-              <DocumentsCardContent
-                reloadData={() => { }}
-                actionsEnable={false}
-              />
+              // <DocumentsCardContent
+              //   reloadData={() => { }}
+              //   actionsEnable={false}
+              //   isEncounter
+              // />
+              <p>HAHAHA</p>
             )}
           />
         </Grid>
         <Grid item md={6} sm={12} className={classes.w100}>
           <Card
             title="Tests"
-            data={<TestsCardContent />}
+          // data={<TestsCardContent isEncounter />}
           />
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };
 

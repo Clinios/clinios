@@ -12,6 +12,7 @@ import Alert from "../../../components/Alert";
 import usePatientContext from "../../../hooks/usePatientContext";
 import { setSelectedMedication, toggleMedicationDialog } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
+import { useLocalStore } from "../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   text12: {
@@ -44,9 +45,9 @@ const useStyles = makeStyles((theme) => ({
 
 const MedicationsContent = (props) => {
   const classes = useStyles();
-  const { reloadData } = props;
+  const { reloadData, isEncounter } = props;
   const { enqueueSnackbar } = useSnackbar();
-  const { state, dispatch } = usePatientContext();
+  const { state, dispatch } = isEncounter ? useLocalStore() : usePatientContext();
   const { patientId } = state;
   const { data } = state.medications;
 
@@ -136,8 +137,13 @@ const MedicationsContent = (props) => {
   );
 };
 
+MedicationsContent.defaultProps = {
+  isEncounter: false,
+};
+
 MedicationsContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default MedicationsContent;

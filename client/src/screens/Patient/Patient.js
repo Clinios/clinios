@@ -85,7 +85,7 @@ import {
   ThirdColumnPatientCards,
   FourthColumnPatientCards,
 } from "../../static/patient";
-import { isDev } from "../../utils/helpers";
+import { isDev, openInNewTab } from "../../utils/helpers";
 import {
   getSecondColumnHeight,
   getThirdColumnHeight,
@@ -483,6 +483,11 @@ const Patient = () => {
     PatientService.searchPatient(patientId, reqBody).then(() => { });
   };
 
+  const openEncountersPageinNewTab = () => {
+    localStorage.setItem("store", JSON.stringify(state));
+    openInNewTab(`/patients/${patientId}/encounter`);
+  };
+
   const mapPrimaryButtonHandlers = (value) => {
     switch (value) {
       case "Patient":
@@ -496,7 +501,8 @@ const Patient = () => {
       case "Billing":
         return dispatch(toggleNewTransactionDialog());
       case "Encounters":
-        return dispatch(toggleEncountersDialog());
+        // return dispatch(toggleEncountersDialog());
+        return openEncountersPageinNewTab();
       case "Allergies":
         return dispatch(toggleAllergyDialog());
       case "Medical Notes":

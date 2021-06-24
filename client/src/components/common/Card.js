@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PatientCard = (props) => {
+const CustomCard = (props) => {
   const classes = useStyles();
   const {
     data,
@@ -327,7 +327,7 @@ const PatientCard = (props) => {
   );
 };
 
-PatientCard.defaultProps = {
+CustomCard.defaultProps = {
   title: "Title",
   showActions: false,
   showEditorActions: false,
@@ -349,7 +349,7 @@ PatientCard.defaultProps = {
   hasMinHeight: false,
 };
 
-PatientCard.propTypes = {
+CustomCard.propTypes = {
   title: PropTypes.string,
   showActions: PropTypes.bool,
   showEditorActions: PropTypes.bool,
@@ -372,5 +372,5 @@ PatientCard.propTypes = {
   hasMinHeight: PropTypes.bool,
 };
 
-// export default rglDynamicHeight(PatientCard);
-export default PatientCard;
+// export default rglDynamicHeight(CustomCard);
+export default CustomCard;

@@ -38,6 +38,46 @@ export const EncountersFormFields = {
   },
 };
 
+export const EncountersFields = [
+  {
+    name: "title",
+    id: "title",
+    label: "Title",
+    baseType: "input",
+    type: "text",
+    options: [],
+  },
+  {
+    name: "encounter_type",
+    id: "encounter_type",
+    label: "Type",
+    baseType: "select",
+    type: null,
+    options: [
+      {
+        label: "Office Visit",
+        value: "O",
+      },
+      {
+        label: "Email",
+        value: "E",
+      },
+      {
+        label: "Admin Note",
+        value: "A",
+      },
+      {
+        label: "Phone Call",
+        value: "P",
+      },
+      {
+        label: "Refill",
+        value: "R",
+      },
+    ],
+  },
+];
+
 export const EncountersCards = [
   {
     title: "Diagnose",

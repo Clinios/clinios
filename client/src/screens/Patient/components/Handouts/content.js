@@ -15,6 +15,7 @@ import Dialog from "../../../../components/Dialog";
 import useAuth from "../../../../hooks/useAuth";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import PatientService from "../../../../services/patient.service";
+import { useLocalStore } from "../../../../utils/helpers";
 import SampleDocViewer from "../../Encounters/components/SampleDocViewer";
 
 const useStyles = makeStyles((theme) => ({
@@ -54,12 +55,11 @@ const useStyles = makeStyles((theme) => ({
 const HandoutsContent = (props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { state } = usePatientContext();
+  const { reloadData, isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { user } = useAuth();
   const { patientId } = state;
   const { data } = state.handouts;
-
-  const { reloadData } = props;
 
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -179,8 +179,13 @@ const HandoutsContent = (props) => {
   );
 };
 
+HandoutsContent.defaultProps = {
+  isEncounter: false,
+};
+
 HandoutsContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default HandoutsContent;

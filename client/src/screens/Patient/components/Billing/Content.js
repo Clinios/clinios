@@ -16,6 +16,7 @@ import {
   toggleNewTransactionDialog, togglePaymentDialog, setSelectedBilling,
 } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
+import { useLocalStore } from "../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   text12: {
@@ -51,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
 
 const BillingContent = (props) => {
   const classes = useStyles();
-  const { reloadData } = props;
+  const { reloadData, isEncounter } = props;
   const { enqueueSnackbar } = useSnackbar();
 
-  const { state, dispatch } = usePatientContext();
+  const { state, dispatch } = isEncounter ? useLocalStore() : usePatientContext();
   const { patientId } = state;
   const { data } = state.billing;
 
@@ -130,7 +131,7 @@ const BillingContent = (props) => {
               </Typography>
             </Tooltip>
           </Grid>
-          <Grid item className={classes.fullWidth}>
+          <Grid item className={isEncounter ? classes.block : classes.fullWidth}>
             <Tooltip title={item?.note || ""}>
               <Typography
                 component="span"
@@ -152,28 +153,35 @@ const BillingContent = (props) => {
               {item.encounter_title}
             </Typography>
           </Grid> */}
-          <Grid item className={classes.blockAction}>
-            <IconButton
-              onClick={() => editItemHandler(item)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              // disabled check added as per CLIN-174
-              disabled={(item.payment_type === "C" || item.payment_type === "CH")}
-              onClick={() => openDeleteDialog(item)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Grid>
+          {!isEncounter && (
+            <Grid item className={classes.blockAction}>
+              <IconButton
+                onClick={() => editItemHandler(item)}
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                // disabled check added as per CLIN-174
+                disabled={(item.payment_type === "C" || item.payment_type === "CH")}
+                onClick={() => openDeleteDialog(item)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+          )}
         </Grid>
       ))}
     </>
   );
 };
 
+BillingContent.defaultProps = {
+  isEncounter: false,
+};
+
 BillingContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default BillingContent;

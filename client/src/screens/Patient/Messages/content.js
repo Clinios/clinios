@@ -16,7 +16,7 @@ import {
   setSelectedMessage, resetSelectedMessage, toggleMessageDialog, toggleMessageDialogPage, setMessageType,
 } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
-import { urlify } from "../../../utils/helpers";
+import { urlify, useLocalStore } from "../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
@@ -43,11 +43,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MessagesContent = (props) => {
-  const { reloadData } = props;
+  const { reloadData, isEncounter } = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
-  const { state, dispatch } = usePatientContext();
+  const { state, dispatch } = isEncounter ? useLocalStore() : usePatientContext();
   const patientData = state.patientInfo.data;
   const patientName = `${patientData.firstname} ${patientData.lastname}`;
   const { data, selectedMessage } = state.messages;
@@ -252,10 +252,12 @@ const MessagesContent = (props) => {
 
 MessagesContent.defaultProps = {
   reloadData: () => { },
+  isEncounter: false,
 };
 
 MessagesContent.propTypes = {
   reloadData: PropTypes.func,
+  isEncounter: PropTypes.bool,
 };
 
 export default MessagesContent;

@@ -21,7 +21,7 @@ import useAuth from "../../../../hooks/useAuth";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import PatientService from "../../../../services/patient.service";
 import { calculatePercentageFlag, calculateFunctionalRange } from "../../../../utils/FunctionalRange";
-import { calculateAge } from "../../../../utils/helpers";
+import { calculateAge, useLocalStore } from "../../../../utils/helpers";
 // import Lab from "./Dialog/Lab";
 import ProcessLab from "../../../Lab";
 
@@ -100,9 +100,9 @@ const StyledTableRow = withStyles((theme) => ({
 }))(TableRow);
 
 const DocumentsContent = (props) => {
-  const { reloadData, actionsEnable } = props;
+  const { reloadData, actionsEnable, isEncounter } = props;
   const { enqueueSnackbar } = useSnackbar();
-  const { state } = usePatientContext();
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const classes = useStyles();
   const [selectedDocument, setSelectedDocument] = useState("");
   const [tabValue, setTabValue] = useState(0);
@@ -422,9 +422,14 @@ const DocumentsContent = (props) => {
   );
 };
 
+DocumentsContent.defaultProps = {
+  isEncounter: false,
+};
+
 DocumentsContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
   actionsEnable: PropTypes.bool.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default DocumentsContent;

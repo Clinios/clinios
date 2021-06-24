@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import Alert from "../../../../components/Alert";
 import usePatientContext from "../../../../hooks/usePatientContext";
 import PatientService from "../../../../services/patient.service";
+import { useLocalStore } from "../../../../utils/helpers";
 
 const useStyles = makeStyles(() => ({
   text12: {
@@ -34,11 +35,11 @@ const useStyles = makeStyles(() => ({
 const AllergiesContent = (props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { state } = usePatientContext();
+  const { reloadData, isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
+
   const { patientId } = state;
   const { data } = state.allergies;
-
-  const { reloadData } = props;
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -99,8 +100,13 @@ const AllergiesContent = (props) => {
   );
 };
 
+AllergiesContent.defaultProps = {
+  isEncounter: false,
+};
+
 AllergiesContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default AllergiesContent;

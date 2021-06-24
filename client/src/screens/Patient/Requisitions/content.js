@@ -11,6 +11,7 @@ import Alert from "../../../components/Alert";
 import Popover from "../../../components/common/Popover";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
+import { useLocalStore } from "../../../utils/helpers";
 import ToolTipContent from "./components/ToolTipContent";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,8 +52,8 @@ const useStyles = makeStyles((theme) => ({
 
 const RequisitionsContent = (props) => {
   const classes = useStyles();
-  const { reloadData } = props;
-  const { state } = usePatientContext();
+  const { reloadData, isEncounter } = props;
+  const { state } = isEncounter ? useLocalStore() : usePatientContext();
   const { enqueueSnackbar } = useSnackbar();
   const { patientId } = state;
   const { data } = state.requisitions;
@@ -162,8 +163,13 @@ const RequisitionsContent = (props) => {
   );
 };
 
+RequisitionsContent.defaultProps = {
+  isEncounter: false,
+};
+
 RequisitionsContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default RequisitionsContent;
