@@ -57,10 +57,6 @@ const useStyles = makeStyles((theme) => ({
     width: "220px",
     marginTop: theme.spacing(2.5),
   },
-  boldPrice: {
-    fontWeight: "bold",
-    padding: theme.spacing(0, 0.5),
-  },
   link: {
     padding: theme.spacing(0, 0.5),
   },
@@ -217,15 +213,13 @@ const PurchaseLabs = () => {
                   color="textPrimary"
                   className={classes.title}
                 >
-                  Purchase Lab Confirmation
+                  Purchase Confirmation
                 </Typography>
                 <Box mt={2}>
                   <Typography variant="h5" gutterBottom>
-                    This is a confirmation that you have purchased lab(s) for
-                    <span className={classes.boldPrice}>
-                      $
-                      {total?.toFixed(2)}
-                    </span>
+                    This is a confirmation that you have purchased lab(s) for $
+                    {total?.toFixed(2)}
+                    .
                   </Typography>
                   <Typography variant="h5" gutterBottom>
                     Next step is to
