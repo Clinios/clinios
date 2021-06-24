@@ -24,7 +24,9 @@ const ToolTipContent = (props) => {
 
   const createdDaysDiff = created && calculateDateDifference(new Date(created), currentDate);
   const paymentDaysDiff = dt && calculateDateDifference(new Date(dt), currentDate);
+  // eslint-disable-next-line max-len
   const completedDaysDiff = lab_completed_dt && calculateDateDifference(new Date(lab_completed_dt), currentDate);
+  // eslint-disable-next-line max-len
   const labReceiptDaysDiff = lab_sample_received_dt && calculateDateDifference(new Date(lab_sample_received_dt), currentDate);
   // eslint-disable-next-line max-len
   const labOrderReceivedDateDiff = lab_order_received_dt && calculateDateDifference(new Date(lab_order_received_dt), currentDate);
