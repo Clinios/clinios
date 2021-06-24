@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -96,6 +96,15 @@ const RequisitionsDetails = (props) => {
       });
   };
 
+  const isDeleteIconDisabled = useCallback((requisition) => {
+    let res = false;
+    if (requisition.dt !== null || requisition.lab_completed_dt !== null
+      || requisition.lab_sample_received_dt !== null || requisition.lab_order_received_dt !== null) {
+      res = true;
+    }
+    return res;
+  }, []);
+
   return (
     <>
       <Alert
@@ -135,19 +144,19 @@ const RequisitionsDetails = (props) => {
                     {item.dt ? dateFormat(item.dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.sent_to_patient_dt ? dateFormat(item.sent_to_patient_dt) : ""}
+                    {item.lab_order_received_dt ? dateFormat(item.lab_order_received_dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.lab_receipt_dt ? dateFormat(item.lab_receipt_dt) : ""}
+                    {item.lab_sample_received_dt ? dateFormat(item.lab_sample_received_dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.completed_dt ? dateFormat(item.completed_dt) : ""}
+                    {item.lab_completed_dt ? dateFormat(item.lab_completed_dt) : ""}
                   </TableCell>
                   <TableCell className={classes.actions}>
                     <IconButton
                       className={classes.button}
                       onClick={() => openDeleteDialog(item)}
-                      disabled={item.dt !== null}
+                      disabled={isDeleteIconDisabled(item)}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>

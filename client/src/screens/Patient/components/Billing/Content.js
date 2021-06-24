@@ -108,7 +108,7 @@ const BillingContent = (props) => {
           className={classes.inputRow}
         >
           <Grid item className={classes.block}>
-            <Tooltip title={item?.note}>
+            <Tooltip title={item?.note || ""}>
               <Typography
                 component="span"
                 className={classes.text12}
@@ -119,7 +119,7 @@ const BillingContent = (props) => {
             </Tooltip>
           </Grid>
           <Grid item className={classes.block}>
-            <Tooltip title={item?.note}>
+            <Tooltip title={item?.note || ""}>
               <Typography
                 component="span"
                 className={classes.text12}
@@ -131,7 +131,7 @@ const BillingContent = (props) => {
             </Tooltip>
           </Grid>
           <Grid item className={classes.fullWidth}>
-            <Tooltip title={item?.note}>
+            <Tooltip title={item?.note || ""}>
               <Typography
                 component="span"
                 className={classes.text12}

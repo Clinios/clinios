@@ -19,15 +19,17 @@ const ToolTipContent = (props) => {
   const classes = useStyles();
   const { data } = props;
   const {
-    marker_name, created, dt, completed_dt, lab_receipt_dt, sent_to_patient_dt,
+    marker_name, created, dt, lab_completed_dt, lab_sample_received_dt, lab_order_received_dt,
   } = data;
 
   const createdDaysDiff = created && calculateDateDifference(new Date(created), currentDate);
   const paymentDaysDiff = dt && calculateDateDifference(new Date(dt), currentDate);
-  const completedDaysDiff = completed_dt && calculateDateDifference(new Date(completed_dt), currentDate);
-  const labReceiptDaysDiff = lab_receipt_dt && calculateDateDifference(new Date(lab_receipt_dt), currentDate);
   // eslint-disable-next-line max-len
-  const sentToDaysDiff = sent_to_patient_dt && calculateDateDifference(new Date(sent_to_patient_dt), currentDate);
+  const completedDaysDiff = lab_completed_dt && calculateDateDifference(new Date(lab_completed_dt), currentDate);
+  // eslint-disable-next-line max-len
+  const labReceiptDaysDiff = lab_sample_received_dt && calculateDateDifference(new Date(lab_sample_received_dt), currentDate);
+  // eslint-disable-next-line max-len
+  const labOrderReceivedDateDiff = lab_order_received_dt && calculateDateDifference(new Date(lab_order_received_dt), currentDate);
   const constText = "ago";
 
   return (
@@ -68,8 +70,8 @@ const ToolTipContent = (props) => {
           </Grid>
           <Grid item xs={5}>
             <Typography gutterBottom>
-              {sent_to_patient_dt
-                ? `${dateFormat(sent_to_patient_dt)} (${sentToDaysDiff} ${constText})` : ""}
+              {lab_order_received_dt
+                ? `${dateFormat(lab_order_received_dt)} (${labOrderReceivedDateDiff} ${constText})` : ""}
             </Typography>
           </Grid>
         </Grid>
@@ -81,8 +83,8 @@ const ToolTipContent = (props) => {
           </Grid>
           <Grid item xs={5}>
             <Typography gutterBottom>
-              {lab_receipt_dt
-                ? `${dateFormat(lab_receipt_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
+              {lab_sample_received_dt
+                ? `${dateFormat(lab_sample_received_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
             </Typography>
           </Grid>
         </Grid>
@@ -94,8 +96,8 @@ const ToolTipContent = (props) => {
           </Grid>
           <Grid item xs={5}>
             <Typography>
-              {completed_dt
-                ? `${dateFormat(completed_dt)} (${completedDaysDiff} ${constText})` : ""}
+              {lab_completed_dt
+                ? `${dateFormat(lab_completed_dt)} (${completedDaysDiff} ${constText})` : ""}
             </Typography>
           </Grid>
         </Grid>
@@ -109,9 +111,9 @@ ToolTipContent.propTypes = {
     marker_name: PropTypes.string,
     created: PropTypes.string,
     dt: PropTypes.string,
-    completed_dt: PropTypes.string,
-    lab_receipt_dt: PropTypes.string,
-    sent_to_patient_dt: PropTypes.string,
+    lab_completed_dt: PropTypes.string,
+    lab_sample_received_dt: PropTypes.string,
+    lab_order_received_dt: PropTypes.string,
   }).isRequired,
 };
 
