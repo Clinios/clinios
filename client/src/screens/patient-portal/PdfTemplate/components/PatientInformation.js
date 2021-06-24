@@ -82,6 +82,7 @@ const PatientInformation = (props) => {
           ,
           {" "}
           {testProfileInfo.state}
+          {" "}
           {testProfileInfo.postal}
         </Typography>
         <Typography className={classes.infoSpace}>
