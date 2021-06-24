@@ -55,6 +55,7 @@ const EventCalendar = ({
     dateClick={(arg) => onDayClick(arg.dateStr)}
     eventClick={(info) => onEventClick(info)}
     selectable
+    fixedWeekCount={false}
   />
 );
 
