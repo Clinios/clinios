@@ -96,8 +96,8 @@ const RequisitionsContent = (props) => {
 
   const isDeleteIconDisabled = useCallback((requisition) => {
     let res = false;
-    if (requisition.dt !== null || requisition.completed_dt !== null
-      || requisition.lab_receipt_dt !== null || requisition.sent_to_patient_dt !== null) {
+    if (requisition.dt !== null || requisition.lab_completed_dt !== null
+      || requisition.lab_sample_received_dt !== null || requisition.lab_order_received_dt !== null) {
       res = true;
     }
     return res;

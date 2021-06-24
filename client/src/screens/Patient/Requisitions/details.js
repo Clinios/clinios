@@ -98,8 +98,8 @@ const RequisitionsDetails = (props) => {
 
   const isDeleteIconDisabled = useCallback((requisition) => {
     let res = false;
-    if (requisition.dt !== null || requisition.completed_dt !== null
-      || requisition.lab_receipt_dt !== null || requisition.sent_to_patient_dt !== null) {
+    if (requisition.dt !== null || requisition.lab_completed_dt !== null
+      || requisition.lab_sample_received_dt !== null || requisition.lab_order_received_dt !== null) {
       res = true;
     }
     return res;
@@ -144,13 +144,13 @@ const RequisitionsDetails = (props) => {
                     {item.dt ? dateFormat(item.dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.sent_to_patient_dt ? dateFormat(item.sent_to_patient_dt) : ""}
+                    {item.lab_order_received_dt ? dateFormat(item.lab_order_received_dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.lab_receipt_dt ? dateFormat(item.lab_receipt_dt) : ""}
+                    {item.lab_sample_received_dt ? dateFormat(item.lab_sample_received_dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.completed_dt ? dateFormat(item.completed_dt) : ""}
+                    {item.lab_completed_dt ? dateFormat(item.lab_completed_dt) : ""}
                   </TableCell>
                   <TableCell className={classes.actions}>
                     <IconButton
