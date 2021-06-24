@@ -59,6 +59,7 @@ const EventCalendar = ({
       eventContent={renderEventContent}
       dateClick={(arg) => onDayClick(arg.dateStr)}
       eventClick={(info) => onEventClick(info)}
+      fixedWeekCount={false}
     />
   );
 };
