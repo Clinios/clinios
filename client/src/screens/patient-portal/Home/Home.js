@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.borderColor,
     borderWidth: "1px",
     borderStyle: "solid",
-    padding: "7px",
+    padding: theme.spacing(1),
     margin: "10px 0",
   },
   formBox: {
@@ -43,8 +43,11 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.borderColor,
     borderWidth: "1px",
     borderStyle: "solid",
-    padding: "7px",
-    margin: "5px 0 40px 0",
+    padding: theme.spacing(1),
+    margin: "5px 0 10px 0",
+    "& p": {
+      lineHeight: "21px",
+    }
   },
   pageTitle: {
     marginBottom: theme.spacing(2),
@@ -69,6 +72,9 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     textDecorationLine: "underline",
   },
+  linkTag: {
+    margin: theme.spacing(0, 0.5),
+  },
 }));
 
 const Home = () => {
@@ -77,9 +83,18 @@ const Home = () => {
   const { lastVisitedPatient } = useAuth();
   const [clientForms, setClientForms] = useState({});
   const [upcomingAppointments, setUpcomingAppointments] = useState({});
+  const [purchaseLabs, setPurchaseLabs] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    HomeService.getPurchaseLabs(lastVisitedPatient).then(
+      (response) => {
+        setPurchaseLabs(response.data);
+      },
+      (error) => {
+        console.error("error", error);
+      },
+    );
     HomeService.getClientHeader(lastVisitedPatient).then(
       (response) => {
         setHeader(response.data[0]);
@@ -151,7 +166,7 @@ const Home = () => {
       {Boolean(upcomingAppointments?.length)
         && upcomingAppointments?.filter(((appointment) => appointment?.status !== "D")).map((appointment) => (
           <Box component="div" className={classes.BoxStyle} key={appointment.id}>
-            <p>
+            <Typography>
               {renderAppointmentRowText(appointment)}
               {appointment?.reschedule_id === null && (
                 <Link
@@ -172,17 +187,31 @@ const Home = () => {
                   Cancel Request Reschedule Appointment
                 </Button>
               )}
-            </p>
+            </Typography>
           </Box>
         ))}
 
       {clientForms && (
         <Box component="div" className={classes.formBox}>
-          <p>
+          <Typography>
             Please fill out the following forms:
-            {" "}
-            <Link to="/">{clientForms.title}</Link>
-          </p>
+            <Link to="/" className={classes.linkTag}>{clientForms.title}</Link>
+          </Typography>
+        </Box>
+      )}
+
+      {Boolean(purchaseLabs?.length) && (
+        <Box component="div" className={classes.formBox}>
+          <Typography>
+            There is a new lab requisition for you,
+            <Link
+              className={classes.linkTag}
+              to="/patient/purchase-labs"
+            >
+              click here
+            </Link>
+            to proceed.
+          </Typography>
         </Box>
       )}
     </div>
