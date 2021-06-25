@@ -1910,18 +1910,21 @@ const searchTests = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     let $sql = `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
-      from proc c
-      left join lab_company lc on lc.id=c.lab_company_id
-      left join client_proc cc on cc.client_id=${req.client_id}
-      and cc.proc_id=c.id
-      where c.type='L'
-      and c.name like '%${text}%'
+    from proc c
+    left join lab_company lc on lc.id=c.lab_company_id
+    left join client_proc cc on cc.client_id=${req.client_id}
+    and cc.proc_id=c.id
+    where c.type='L'
+    and c.name like '%${text}%'
     `;
+    
     if (typeof company_id !== "undefined") {
-      $sql += `and lc.id=${company_id}`;
+      $sql += `and lc.id=${company_id} \n`;
     }
 
-    $sql += ` order by lc.name, c.name limit 20`;
+    $sql += `order by lc.name, c.name
+    limit 30
+    `;
 
     const dbResponse = await db.query($sql);
 
