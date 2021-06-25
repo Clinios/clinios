@@ -43,6 +43,20 @@ class HomeService {
       })
       .then((res) => res.data);
   }
+
+  // purchase-labs
+  getPurchaseLabs(patient) {
+    let url = `${API_BASE}/patient-portal/purchase-labs`;
+    if (patient) {
+      // eslint-disable-next-line max-len
+      url = `${API_BASE}/patient-portal/purchase-labs/?patient_id=${patient.id}&client_id=${patient.client_id}`;
+    }
+    return axios
+      .get(url, {
+        headers: authHeader(),
+      })
+      .then((res) => res.data);
+  }
 }
 
 export default new HomeService();
