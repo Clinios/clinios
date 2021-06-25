@@ -144,10 +144,12 @@ const RequisitionsDetails = (props) => {
                     {item.dt ? dateFormat(item.dt) : ""}
                   </TableCell>
                   <TableCell>
-                    {item.lab_order_received_dt ? dateFormat(item.lab_order_received_dt) : ""}
+                    {item.lab_order_received_dt && Boolean(item.specialty_lab)
+                      ? dateFormat(item.lab_order_received_dt) : "NA"}
                   </TableCell>
                   <TableCell>
-                    {item.lab_sample_received_dt ? dateFormat(item.lab_sample_received_dt) : ""}
+                    {item.lab_sample_received_dt && Boolean(item.specialty_lab)
+                      ? dateFormat(item.lab_sample_received_dt) : "NA"}
                   </TableCell>
                   <TableCell>
                     {item.lab_completed_dt ? dateFormat(item.lab_completed_dt) : ""}
