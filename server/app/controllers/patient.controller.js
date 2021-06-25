@@ -640,7 +640,6 @@ const searchHandouts = async (req, res) => {
 };
 
 const handouts = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
@@ -648,24 +647,22 @@ const handouts = async (req, res) => {
         from patient_handout ph
         left join handout h on h.id=ph.handout_id
         where ph.client_id=${req.client_id}
-        and ph.patient_id=?
+        and ph.patient_id=$1
         order by h.filename
         limit 100`, [patient_id]
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -676,86 +673,74 @@ const handoutDelete = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { id, patient_id } = req.params;
-  const db = makeDb(configuration, res);
+  
   try {
     const deleteResponse = await db.query(
-      `delete from patient_handout
-        where patient_id=? and handout_id=?`,
+      `delete from patient_handout where patient_id=$1 and handout_id=$2`,
       [patient_id, id]
     );
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const CreatePatientHandouts = async (req, res) => {
   const { patient_id } = req.params;
-  const formData = req.body.data;
-  formData.patient_id = patient_id;
-  formData.client_id = req.client_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
+  console.log('req.body.data:', req.body.data)
+  const {handout_id} = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(`insert into patient_handout set ?`, [formData]);
+    const insertResponse = await db.query(`insert into patient_handout(patient_id, client_id, handout_id, created, created_user_id) 
+    VALUES(${patient_id}, ${req.client_id}, ${handout_id}, now(), ${req.user_id}) RETURNING patient_id, handout_id`);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const patientHandouts = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select h.id, h.filename, h.created, concat(u.firstname, ' ', u.lastname) name
+      `select h.id, h.filename, h.created, concat(u.firstname, ' ', u.lastname) AS name
         from handout h
         left join patient_handout ph on h.id=ph.handout_id
-        left join user u on u.id=ph.created_user_id
+        left join users u on u.id=ph.created_user_id
         where h.client_id=${req.client_id}
         order by h.filename
-        limit 100
-      `
+        limit 100`
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -766,20 +751,19 @@ const DeletePatientHandouts = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { patient_id, handout_id } = req.params;
-  const db = makeDb(configuration, res);
 
   try {
     const dbResponse = await db.query(
-      `delete from patient_handout where patient_id=? and handout_id=?`,
+      `delete from patient_handout where patient_id=$1 and handout_id=$2`,
       [patient_id, handout_id]
     );
 
-    if (!dbResponse.affectedRows) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
