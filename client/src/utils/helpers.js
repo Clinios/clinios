@@ -1,6 +1,8 @@
 import { intersection } from "lodash";
 import moment from "moment";
 
+const presentDate = new Date();
+
 export const getAcronym = (str) => {
   if (!str || typeof str === "undefined" || str === "") {
     return "";
@@ -144,7 +146,7 @@ export const dateDiffInMonths = (d1, d2) => {
 
 export const dateDiffInYears = (d1, d2) => d2.getFullYear() - d1.getFullYear();
 
-export const calculateDateDifference = (d1, d2) => {
+export const calculateDateDifference = (d1, d2 = presentDate) => {
   const hoursDiff = dateDiffInHours(d1, d2);
   const daysDiff = dateDiffInDays(d1, d2);
   const monthsDiff = dateDiffInMonths(d1, d2);

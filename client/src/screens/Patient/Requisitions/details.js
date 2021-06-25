@@ -14,9 +14,10 @@ import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
+import Tooltip from "../../../components/common/CustomTooltip";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
-import { dateFormat } from "../../../utils/helpers";
+import { dateFormat, calculateDateDifference } from "../../../utils/helpers";
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -105,6 +106,14 @@ const RequisitionsDetails = (props) => {
     return res;
   }, []);
 
+  const renderToolTipContent = (value, specialty = true) => {
+    let result = "";
+    if (value && specialty) {
+      result = `${calculateDateDifference(new Date(value))} ago`;
+    }
+    return result;
+  };
+
   return (
     <>
       <Alert
@@ -135,25 +144,35 @@ const RequisitionsDetails = (props) => {
               && data.length
               ? data.map((item) => (
                 <StyledTableRow key={`${item.created}_${item.id}`}>
-                  <TableCell component="th" scope="item">
-                    {dateFormat(item.created)}
-                  </TableCell>
+                  <Tooltip title={renderToolTipContent(item.created)}>
+                    <TableCell component="th" scope="item">
+                      {dateFormat(item.created)}
+                    </TableCell>
+                  </Tooltip>
                   <TableCell>{item.marker_name}</TableCell>
                   <TableCell>{item.lab_name}</TableCell>
-                  <TableCell>
-                    {item.dt ? dateFormat(item.dt) : ""}
-                  </TableCell>
-                  <TableCell>
-                    {item.lab_order_received_dt && Boolean(item.specialty_lab)
-                      ? dateFormat(item.lab_order_received_dt) : "NA"}
-                  </TableCell>
-                  <TableCell>
-                    {item.lab_sample_received_dt && Boolean(item.specialty_lab)
-                      ? dateFormat(item.lab_sample_received_dt) : "NA"}
-                  </TableCell>
-                  <TableCell>
-                    {item.lab_completed_dt ? dateFormat(item.lab_completed_dt) : ""}
-                  </TableCell>
+                  <Tooltip title={renderToolTipContent(item.dt)}>
+                    <TableCell>
+                      {item.dt ? dateFormat(item.dt) : ""}
+                    </TableCell>
+                  </Tooltip>
+                  <Tooltip title={renderToolTipContent(item.lab_order_received_dt, item.specialty_lab)}>
+                    <TableCell>
+                      {item.lab_order_received_dt && Boolean(item.specialty_lab)
+                        ? dateFormat(item.lab_order_received_dt) : "NA"}
+                    </TableCell>
+                  </Tooltip>
+                  <Tooltip title={renderToolTipContent(item.lab_sample_received_dt, item.specialty_lab)}>
+                    <TableCell>
+                      {item.lab_sample_received_dt && Boolean(item.specialty_lab)
+                        ? dateFormat(item.lab_sample_received_dt) : "NA"}
+                    </TableCell>
+                  </Tooltip>
+                  <Tooltip title={renderToolTipContent(item.lab_completed_dt)}>
+                    <TableCell>
+                      {item.lab_completed_dt ? dateFormat(item.lab_completed_dt) : ""}
+                    </TableCell>
+                  </Tooltip>
                   <TableCell className={classes.actions}>
                     <IconButton
                       className={classes.button}
