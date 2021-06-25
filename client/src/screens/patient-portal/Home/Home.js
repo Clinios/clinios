@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     margin: "5px 0 10px 0",
     "& p": {
       lineHeight: "21px",
-    }
+    },
   },
   pageTitle: {
     marginBottom: theme.spacing(2),
