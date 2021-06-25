@@ -1910,18 +1910,21 @@ const searchTests = async (req, res) => {
   const db = makeDb(configuration, res);
   try {
     let $sql = `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
-      from proc c
-      left join lab_company lc on lc.id=c.lab_company_id
-      left join client_proc cc on cc.client_id=${req.client_id}
-      and cc.proc_id=c.id
-      where c.type='L'
-      and c.name like '%${text}%'
+    from proc c
+    left join lab_company lc on lc.id=c.lab_company_id
+    left join client_proc cc on cc.client_id=${req.client_id}
+    and cc.proc_id=c.id
+    where c.type='L'
+    and c.name like '%${text}%'
     `;
+    
     if (typeof company_id !== "undefined") {
-      $sql += `and lc.id=${company_id}`;
+      $sql += `and lc.id=${company_id} \n`;
     }
 
-    $sql += ` order by lc.name, c.name limit 20`;
+    $sql += `order by lc.name, c.name
+    limit 30
+    `;
 
     const dbResponse = await db.query($sql);
 
@@ -1946,14 +1949,17 @@ const getRecentTests = async (req, res) => {
 
   try {
     const dbResponse = await db.query(
-      `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null  then true end favorite
+      `select distinct c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
       from patient_proc pc
       left join proc c on c.id=pc.proc_id
       left join lab_company lc on lc.id=c.lab_company_id
       left join client_proc cc on cc.client_id=${req.client_id}
-      and cc.proc_id=c.id
+        and cc.proc_id=c.id
+      where pc.client_id=${req.client_id}
+      and pc.created > date_sub(current_date, interval 30 day)
       order by lc.name, c.name
-      limit 20`
+      limit 20
+      `
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
