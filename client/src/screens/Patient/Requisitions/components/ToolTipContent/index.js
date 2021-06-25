@@ -119,7 +119,7 @@ ToolTipContent.propTypes = {
     lab_sample_received_dt: PropTypes.string,
     lab_order_received_dt: PropTypes.string,
     specialty_lab: PropTypes.oneOfType([
-      PropTypes.string,
+      PropTypes.number,
       () => null, // REF:: https://github.com/facebook/react/issues/3163#issuecomment-463656929
     ]),
   }).isRequired,
