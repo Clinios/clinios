@@ -494,7 +494,7 @@ const EventModal = ({
                     KeyboardButtonProps={{
                       "aria-label": "change date",
                     }}
-                    format="EE MMMM do yyyy HH:mm a"
+                    format="EE MMMM dd yyyy h:mm a"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} className={classes.timePickersButtons}>
@@ -551,7 +551,7 @@ const EventModal = ({
                     KeyboardButtonProps={{
                       "aria-label": "change date",
                     }}
-                    format="EE MMMM do yyyy HH:mm a"
+                    format="EE MMMM dd yyyy h:mm a"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} className={classes.timePickersButtons}>
