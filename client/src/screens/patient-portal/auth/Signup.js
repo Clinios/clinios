@@ -125,6 +125,7 @@ const PatientSignUp = () => {
   const onFormSubmit = () => {
     const formData = {
       patient: {
+        status: "A",
         firstname: firstName,
         lastname: lastName,
         email,
