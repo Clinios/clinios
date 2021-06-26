@@ -1,13 +1,11 @@
 import React, { useCallback, useState, useEffect } from "react";
 
 import {
-  makeStyles, Typography, Grid, Box, withStyles,
+  makeStyles, Typography, Grid, Box, withStyles, TextField, MenuItem,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -292,27 +290,25 @@ const PurchaseLabs = () => {
                     className={classes.customSelect}
                     size="small"
                   >
-                    <InputLabel htmlFor="age-native-simple">Select Payment Method</InputLabel>
-                    <Select
+                    {/* <InputLabel htmlFor="age-native-simple">Select Payment Method</InputLabel> */}
+                    <TextField
+                      select
                       native
+                      label="Select Payment Method"
                       value={selectedPaymentMethod}
                       onChange={(event) => handlePaymentMethodChange(event.target.value)}
-                      inputProps={{
-                        name: "type",
-                        id: "age-native-simple",
-                      }}
-                      label="User"
+                      variant="outlined"
+                      size="small"
                     >
-                      <option aria-label="None" value="" />
                       {paymentMethods.map((pm) => (
-                        <option key={pm.id} value={pm.id}>
+                        <MenuItem key={pm.id} value={pm.id}>
                           {paymentMethodType(pm.type)}
                           {pm.id !== 999 ? (
                             ` (${pm.account_number})`
                           ) : ""}
-                        </option>
+                        </MenuItem>
                       ))}
-                    </Select>
+                    </TextField>
                   </FormControl>
                   <Button
                     disabled={(!total || !selectedPaymentMethod)}
