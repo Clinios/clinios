@@ -1300,7 +1300,7 @@ const getDocuments = async (req, res) => {
   const { patient_id } = req.params;
 
   try {
-    const $sql;
+    let $sql;
 
     $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
       , group_concat('"', lc.marker_id, '","', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
