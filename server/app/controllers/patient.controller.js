@@ -1876,15 +1876,14 @@ const searchTests = async (req, res) => {
   }
   const { text, company_id } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
-    let $sql = `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite, c.price
-    from proc c
-    left join lab_company lc on lc.id=c.lab_company_id
-    left join client_proc cc on cc.client_id=${req.client_id}
-    and cc.proc_id=c.id
-    where c.type='L'
-    and c.name like '%${text}%'
+    let $sql = `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
+      from proc c
+      left join lab_company lc on lc.id=c.lab_company_id
+      left join client_proc cc on cc.client_id=${req.client_id}
+      and cc.proc_id=c.id
+      where c.type='L'
+      and c.name ILIKE '%${text}%'
     `;
     
     if (typeof company_id !== "undefined") {
@@ -1897,24 +1896,21 @@ const searchTests = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getRecentTests = async (req, res) => {
-  const db = makeDb(configuration, res);
 
   try {
     const dbResponse = await db.query(
@@ -1930,24 +1926,20 @@ const getRecentTests = async (req, res) => {
       limit 20
       `
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getFavoriteTests = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   try {
     const dbResponse = await db.query(
       `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite, c.price
@@ -1959,18 +1951,16 @@ const getFavoriteTests = async (req, res) => {
       order by lc.name, c.name
       limit 20`
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -2268,7 +2258,6 @@ const deleteMedications = async (req, res) => {
 };
 
 const getRequisitions = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
 
   try {
@@ -2279,93 +2268,78 @@ const getRequisitions = async (req, res) => {
         left join proc c on c.id=pc.proc_id
         left join lab_company lc on lc.id=c.lab_company_id
         left join tranc t on t.id = pc.tranc_id
-        where pc.patient_id=?
-        order by pc.created desc, c.name
+        where pc.patient_id=$1
+        order by pc.created desc
         limit 500
         `, [patient_id]
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createRequisitions = async (req, res) => {
   const { patient_id } = req.params;
-  const formData = req.body.data;
-  formData.patient_id = patient_id;
-  formData.proc_id = formData.marker_id;
-  formData.client_id = req.client_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
+  const {marker_id, encounter_id} = req.body.data;
 
-  delete formData.marker_id;
-
-  const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(`insert into patient_proc set ?`, [formData]);
+    const insertResponse = await db.query(`insert into patient_proc (client_id, patient_id, proc_id, encounter_id, created, created_user_id) 
+    VALUES(${req.client_id}, ${patient_id}, '${marker_id}', ${encounter_id}, now(), ${req.user_id}) RETURNING proc_id`);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const deleteRequisitions = async (req, res) => {
   const { id } = req.params;
-  const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(`delete from patient_proc where id=?`, [id]);
+    const deleteResponse = await db.query(`delete from patient_proc where id=$1`, [id]);
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getLayout = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { user_id } = req.params;
 
   try {
-    const dbResponse = await db.query(`select * from user_grid where user_id=?`, [user_id]);
-    if (!dbResponse) {
+    const dbResponse = await db.query(`select * from user_grid where user_id=$1`, [user_id]);
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
@@ -2505,8 +2479,8 @@ const deletePaymentMethod = async (req, res) => {
 
 const saveLayout = async (req, res) => {
   const { user_id } = req.params;
-  const { layout } = req.body;
-  const db = makeDb(configuration, res);
+  const { layout } = req.body.data;
+
   try {
     const now = moment().format("YYYY-MM-DD HH:mm:ss");
     const insertResponse = await db.query(
@@ -2521,25 +2495,23 @@ const saveLayout = async (req, res) => {
         '${layout}',
         '${now}'
       )
-        on duplicate key update 
+      ON CONFLICT (user_id) DO UPDATE SET
         layout='${layout}',
         updated='${now}'
       `
     );
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
