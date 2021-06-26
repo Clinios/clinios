@@ -1298,7 +1298,6 @@ const getDocuments = async (req, res) => {
   const db = makeDb(configuration, res);
 
   const { patient_id } = req.params;
-  const { tab } = req.query;
 
   try {
     let $sql;
@@ -1309,24 +1308,11 @@ const getDocuments = async (req, res) => {
       left join lab_marker lc on lc.lab_id=l.id
       left join marker c on c.id=lc.marker_id
       where l.client_id=${req.client_id}
-      and l.patient_id=${patient_id} \n`;
-
-    if (tab === "Labs") {
-      $sql += "and l.type='L' and l.deleted=false \n";
-    } else if (tab === "Imaging") {
-      $sql += "and l.type='I' and l.deleted=false \n";
-    } else if (tab === "Misc") {
-      $sql += "and l.type='M' and l.deleted=false \n";
-    } else if (tab === "Uncategorized") {
-      $sql += "and l.type is null and l.deleted=false \n";
-    } else if (tab === "Trash") {
-      $sql += "and l.deleted=true \n";
-    }
-
-    $sql += `group by l.id, l.created, l.filename, right(l.filename,3), l.status, l.lab_dt, l.physician, l.note
-        order by l.created desc
-        limit 200
-        `;
+      and l.patient_id=${patient_id}
+      group by l.id, l.created, l.filename, right(l.filename,3), l.status, l.lab_dt, l.physician, l.note
+      order by l.created desc
+      limit 200
+      `;
 
     const dbResponse = await db.query($sql);
     if (!dbResponse) {
