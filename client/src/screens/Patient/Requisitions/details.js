@@ -106,13 +106,13 @@ const RequisitionsDetails = (props) => {
     return res;
   }, []);
 
-  const renderToolTipContent = (value, specialty = true) => {
+  const renderToolTipContent = useCallback((value, specialty = true) => {
     let result = "";
     if (value && specialty) {
       result = `${calculateDateDifference(new Date(value))} ago`;
     }
     return result;
-  };
+  }, []);
 
   return (
     <>
