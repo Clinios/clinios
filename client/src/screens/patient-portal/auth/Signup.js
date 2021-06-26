@@ -304,10 +304,10 @@ const PatientSignUp = () => {
                 </form>
                 <Grid container className={classes.meta}>
                   <Grid item xs={12}>
-                    Already have an account?
-                    {" "}
                     <Link href={`/login/${clientCode}`}>
-                      Login here
+                      Already have an account?
+                      {" "}
+                      Login here.
                     </Link>
                   </Grid>
                 </Grid>
