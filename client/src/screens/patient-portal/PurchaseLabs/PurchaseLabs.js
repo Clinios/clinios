@@ -1,4 +1,6 @@
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, {
+  useCallback, useState, useEffect, useRef,
+} from "react";
 
 import {
   makeStyles, Typography, Grid, Box, withStyles, TextField, MenuItem,
@@ -191,7 +193,7 @@ const PurchaseLabs = () => {
   const isSelected = (patient_procedure_id) => selected.indexOf(patient_procedure_id) !== -1;
 
   useEffect(() => {
-    if(paymentMethods.length > 1) {
+    if (paymentMethods.length > 1) {
       const firstPaymentMethod = paymentMethods[0].id;
       selectInputRef.current.focus();
       setSelectedPaymentMethod(firstPaymentMethod);
