@@ -110,6 +110,8 @@ const PurchaseLabs = () => {
   const [isNewPaymentMethodOpen, setIsNewPaymentMethodOpen] = useState(false);
   const [isConfirmDialog, setIsConfirmDialog] = useState(false);
   const [showPurchaseConfirmation, setShowPurchaseConfirmation] = useState(false);
+  const [specialtyLabsCount, setSpecialtyLabsCount] = useState(0);
+  const [conventionalLabsCount, setConventionalLabs] = useState(0);
 
   const fetchPaymentMethods = useCallback(() => {
     PaymentMethodService.getPaymentMethods(lastVisitedPatient).then((res) => {
@@ -142,6 +144,10 @@ const PurchaseLabs = () => {
     const sLabs = labs.filter((lab) => selectedLabIds.includes(lab.patient_procedure_id));
     setSelectedLabs(sLabs);
     const sumOfSelectedLabs = sLabs.reduce((acc, lab) => (acc + lab.price), 0);
+    const sumOfSpecialityLabs = sLabs.filter((x) => Boolean(x.specialty_lab)).length;
+    const sumOfConventionalLabs = sLabs.filter((x) => Boolean(!x.specialty_lab)).length;
+    setSpecialtyLabsCount(sumOfSpecialityLabs);
+    setConventionalLabs(sumOfConventionalLabs);
     setTotal(sumOfSelectedLabs);
   };
 
@@ -230,16 +236,23 @@ const PurchaseLabs = () => {
                     {total?.toFixed(2)}
                     .
                   </Typography>
-                  <Typography variant="h5" gutterBottom>
-                    Next step is to
-                    <Link
-                      className={classes.link}
-                      to="/patient/labs-requisition"
-                    >
-                      click here
-                    </Link>
-                    to print your lab requisition.
-                  </Typography>
+                  {conventionalLabsCount > 0 && (
+                    <Typography variant="h5" gutterBottom>
+                      Next step is to
+                      <Link
+                        className={classes.link}
+                        to="/patient/labs-requisition"
+                      >
+                        click here
+                      </Link>
+                      to print your lab requisition.
+                    </Typography>
+                  )}
+                  {specialtyLabsCount > 0 && (
+                    <Typography variant="h5" gutterBottom>
+                      We will send you an email once your lab kit has been mailed to you.
+                    </Typography>
+                  )}
                 </Box>
               </>
             )
