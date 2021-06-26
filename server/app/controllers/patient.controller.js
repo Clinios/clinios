@@ -2049,7 +2049,6 @@ const createDiagnoses = async (req, res) => {
 };
 
 const getMedications = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
 
   try {
@@ -2060,82 +2059,75 @@ const getMedications = async (req, res) => {
         left join drug d on d.id=pd.drug_id
         left join drug_strength ds on ds.id=pd.drug_strength_id
         left join drug_frequency df on df.id=pd.drug_frequency_id
-        where pd.patient_id=? order by d.name limit 50`,
+        where pd.patient_id=$1 order by d.name limit 50`,
       [patient_id]
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createMedications = async (req, res) => {
   const { patient_id } = req.params;
-  const formData = req.body.data;
-  formData.patient_id = patient_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
-
-  const db = makeDb(configuration, res);
+  const {drug_id, drug_frequency_id, drug_strength_id, start_dt,
+     expires, amount, refills, generic, patient_instructions, pharmacy_instructions} = req.body.data;
 
   try {
     const insertResponse = await db.query(
-      "insert into patient_drug set ? ",
-      formData
+      `insert into patient_drug(patient_id, drug_id, drug_frequency_id, drug_strength_id, start_dt, expires,
+         amount, refills, generic, patient_instructions, pharmacy_instructions, created, created_user_id) 
+      VALUES(${patient_id}, ${drug_id}, '${drug_frequency_id}', ${drug_strength_id}, '${moment(start_dt).format("YYYY-MM-DD")}', ${expires}, ${amount}, ${refills},
+         ${generic}, '${patient_instructions}', '${pharmacy_instructions}', now(), ${req.user_id}) RETURNING id`
     );
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const updateMedications = async (req, res) => {
   const { patient_id, id } = req.params;
-  const formData = req.body.data;
-  formData.updated = new Date();
-  formData.updated_user_id = req.user_id;
+  const {drug_id, drug_frequency_id, drug_strength_id, start_dt,
+    expires, amount, refills, generic, patient_instructions, pharmacy_instructions} = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const updateResponse = await db.query(
-      `update patient_drug set ? where patient_id=${patient_id} and id=${id}`,
-      formData
+      `update patient_drug set patient_id=$1, drug_id=$2, drug_frequency_id=$3, drug_strength_id=$4, start_dt=$5, expires=$6,
+         amount=$7, refills=$8, generic=$9, patient_instructions=$10, pharmacy_instructions=$11, updated=$12, updated_user_id=$13 WHERE patient_id=$14 AND id=$15 RETURNING id`,
+          [patient_id, drug_id, drug_frequency_id, drug_strength_id, moment(start_dt).format("YYYY-MM-DD"), expires, amount, refills,
+         generic, patient_instructions, pharmacy_instructions, new Date(), req.user_id, patient_id, id]
     );
-    if (!updateResponse.affectedRows) {
+
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -2236,24 +2228,20 @@ const getMedicationRecents = async (req, res) => {
 
 const deleteMedications = async (req, res) => {
   const { drug_id } = req.params;
-  const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(`delete from patient_drug where id= ?`, [drug_id]);
+    const deleteResponse = await db.query(`delete from patient_drug where id= $1 RETURNING id`, [drug_id]);
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
