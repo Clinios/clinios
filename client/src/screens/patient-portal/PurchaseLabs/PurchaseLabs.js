@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 
 import {
   makeStyles, Typography, Grid, Box, withStyles, TextField, MenuItem,
@@ -96,6 +96,7 @@ const StyledTableRow = withStyles(() => ({
 
 const PurchaseLabs = () => {
   const classes = useStyles();
+  const selectInputRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
   const { lastVisitedPatient, user } = useAuth();
   const [selected, setSelected] = useState([]);
@@ -188,6 +189,14 @@ const PurchaseLabs = () => {
   };
 
   const isSelected = (patient_procedure_id) => selected.indexOf(patient_procedure_id) !== -1;
+
+  useEffect(() => {
+    if(paymentMethods.length > 1) {
+      const firstPaymentMethod = paymentMethods[0].id;
+      selectInputRef.current.focus();
+      setSelectedPaymentMethod(firstPaymentMethod);
+    }
+  }, [paymentMethods]);
 
   return (
     <>
@@ -290,15 +299,14 @@ const PurchaseLabs = () => {
                     className={classes.customSelect}
                     size="small"
                   >
-                    {/* <InputLabel htmlFor="age-native-simple">Select Payment Method</InputLabel> */}
                     <TextField
                       select
-                      native
                       label="Select Payment Method"
-                      value={selectedPaymentMethod}
+                      value={selectedPaymentMethod || ""}
                       onChange={(event) => handlePaymentMethodChange(event.target.value)}
                       variant="outlined"
                       size="small"
+                      inputRef={selectInputRef}
                     >
                       {paymentMethods.map((pm) => (
                         <MenuItem key={pm.id} value={pm.id}>
