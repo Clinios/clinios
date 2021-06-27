@@ -16,6 +16,7 @@ import ClientPortalGuard from "./components/ClientPortalGuard";
 import GuestGuard from "./components/GuestGuard";
 import LoadingScreen from "./components/LoadingScreen";
 import PatientPortalGuard from "./components/PatientPortalGuard";
+import AppLayout from "./layouts/AppLayout/AppLayout";
 import DashboardLayout from "./layouts/Dashboard";
 import MainLayout from "./layouts/MainLayout";
 import { WithLeftSidebar } from "./layouts/PatientPortal";
@@ -92,6 +93,12 @@ const routes = [
     layout: DashboardLayout,
     path: "/lab/:userId",
     component: lazy(() => import("./screens/Lab")),
+  },
+  {
+    exact: true,
+    layout: AppLayout,
+    path: "/catalog",
+    component: lazy(() => import("./screens/Catalog")),
   },
   {
     exact: true,
