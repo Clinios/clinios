@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 
 import { Topbar, Sidebar, Footer } from "./components";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: "flex",
     flexDirection: "column",
