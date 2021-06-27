@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import {
   makeStyles, Typography, Grid, Box, TextField, useMediaQuery, useTheme,
@@ -6,10 +6,12 @@ import {
 import Button from "@material-ui/core/Button";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
+import { CountryRegionData } from "react-country-region-selector";
 
 import CountrySelect from "../../../../components/common/CountrySelect";
 import RegionSelect from "../../../../components/common/RegionSelect";
-// import useAuth from "../../../../hooks/useAuth";
+import useAuth from "../../../../hooks/useAuth";
+import PatientPortalService from "../../../../services/patient_portal/patient-portal.service";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -27,20 +29,51 @@ const AddressConfirmationForm = (props) => {
   const { onSubmit } = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  // const { lastVisitedPatient, user } = useAuth();
+  const { user } = useAuth();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"), {
     defaultMatches: true,
   });
 
+  const [country, setCountry] = useState("");
+  const [region, setRegion] = useState("");
   const [formFields, setFormFields] = useState({
-    address1: "",
+    address: "",
     address2: "",
     country: "",
     state: "",
     city: "",
-    zipPostal: "",
+    postal: "",
   });
+
+  const fetchProfile = useCallback(() => {
+    PatientPortalService.getProfile().then((res) => {
+      const profile = res.data?.[0];
+      setFormFields((formFieldValues) => ({
+        ...formFieldValues,
+        ...profile,
+      }));
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  useEffect(() => {
+    const selectedCountry = CountryRegionData.filter(
+      (countryArray) => countryArray[1] === formFields.country,
+    );
+    if (selectedCountry.length) { // country and state is present in the db
+      setCountry(selectedCountry[0]);
+      const regions = selectedCountry[0][2].split("|").map((regionPair) => {
+        const [regionName = null, regionInShort] = regionPair.split("~");
+        return [regionName, regionInShort];
+      });
+      const selectedRegion = regions.filter((x) => x[1] === formFields.state);
+      setRegion(selectedRegion[0][1]);
+    }
+  }, [formFields]);
 
   const handleInputChnage = (e) => {
     const { value, name } = e.target;
@@ -67,8 +100,27 @@ const AddressConfirmationForm = (props) => {
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    enqueueSnackbar("Address saved!");
-    onSubmit();
+    // * Deleting these fields as they don't exists in database structure.
+    delete formFields.code;
+    delete formFields.role;
+    delete formFields.login_url;
+    delete formFields.dob;
+    delete formFields.provider;
+
+    const payload = {
+      data: {
+        ...formFields,
+        country: country[1],
+        state: region,
+      },
+    };
+
+    PatientPortalService.updateProfile(payload, user.id).then((res) => {
+      enqueueSnackbar(res.data.message, {
+        variant: "success",
+      });
+      onSubmit();
+    });
   };
 
   return (
@@ -98,6 +150,7 @@ const AddressConfirmationForm = (props) => {
             type="text"
             fullWidth
             required
+            value={formFields.address}
             onChange={(e) => handleInputChnage(e)}
           />
           <TextField
@@ -110,6 +163,7 @@ const AddressConfirmationForm = (props) => {
             type="text"
             fullWidth
             required
+            value={formFields.address2}
             onChange={(e) => handleInputChnage(e)}
           />
         </Grid>
@@ -125,6 +179,7 @@ const AddressConfirmationForm = (props) => {
               type="text"
               fullWidth
               required
+              value={formFields.city}
               onChange={(e) => handleInputChnage(e)}
             />
           </Grid>
@@ -134,11 +189,12 @@ const AddressConfirmationForm = (props) => {
                 size="small"
                 variant="outlined"
                 label="Zip/Postal"
-                name="zipPostal"
-                id="zipPostal"
+                name="postal"
+                id="postal"
                 type="text"
                 fullWidth
                 required
+                value={formFields.postal}
                 onChange={(e) => handleInputChnage(e)}
               />
             </Box>
@@ -155,7 +211,7 @@ const AddressConfirmationForm = (props) => {
                   label="Country"
                   outlined
                   handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
-                  country={formFields.country}
+                  country={country}
                   className={classes.mt2}
                 />
               </Box>
@@ -171,8 +227,8 @@ const AddressConfirmationForm = (props) => {
                   label="State"
                   outlined
                   handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
-                  country={formFields.country}
-                  region={formFields.state}
+                  country={country}
+                  region={region}
                 />
               </Box>
             </Grid>
