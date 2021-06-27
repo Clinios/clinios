@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap",
-  }
+  },
 }));
 
 const Requisitions = (props) => {
