@@ -5,10 +5,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 
-import useAuth from "../../../../hooks/useAuth";
-import { client_pages, corporate_pages } from "../../../../static/nav-pages";
-import { getAllowedRoutes } from "../../../../utils/helpers";
-import { Profile, SidebarNav, SearchBar } from "./components";
+// import useAuth from "../../../../hooks/useAuth";
+// import { client_pages, corporate_pages } from "../../../../static/nav-pages";
+// import { getAllowedRoutes } from "../../../../utils/helpers";
+import { Profile, /* SidebarNav */ SearchBar } from "./components";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -42,9 +42,9 @@ const Sidebar = (props) => {
     ...rest
   } = props;
   const classes = useStyles();
-  const { user } = useAuth();
-  const navPages = (user.role === "CORPORATE") ? corporate_pages : client_pages;
-  const allowedPages = getAllowedRoutes(navPages, (user && user.permissions) ? user.permissions : []);
+  // const { user } = useAuth();
+  // const navPages = (user.role === "CORPORATE") ? corporate_pages : client_pages;
+  // const allowedPages = getAllowedRoutes(navPages, (user && user.permissions) ? user.permissions : []);
   return (
     <Drawer
       anchor="left"
@@ -56,7 +56,7 @@ const Sidebar = (props) => {
       <div {...rest} className={clsx(classes.root, className)}>
         <Profile />
         <Divider className={classes.divider} />
-        <SidebarNav className={classes.nav} pages={allowedPages} />
+        {/* <SidebarNav className={classes.nav} pages={allowedPages} /> */}
         <SearchBar />
       </div>
     </Drawer>
@@ -65,7 +65,7 @@ const Sidebar = (props) => {
 
 Sidebar.defaultProps = {
   className: null,
-  onClose: () => {},
+  onClose: () => { },
 };
 
 Sidebar.propTypes = {
