@@ -116,9 +116,11 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
   },
   loginButton: {
-    minHeight: 48,
+    minHeight: 47,
     maxWidth: 75,
     background: "#335eea",
+    fontWeight: 600,
+    lineHeight: 1.6,
   },
   navLink: {
     color: "#506690",
