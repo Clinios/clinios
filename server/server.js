@@ -96,6 +96,9 @@ app.use(baseAPIPath, require("./app/routes/corporate/case.routes"));
 
 app.use(baseAPIPath, require("./app/routes/stripe.routes"));
 
+// Catalog
+app.use(baseAPIPath, require("./app/routes/catalog.routes"));
+
 app.listen(config.port).on("listening", () => {
   console.log(`API is live on ${config.port}`);
 });
