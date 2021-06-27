@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import {
-  Box, Grid, Typography, Button, TextField, Link, FormControlLabel, Checkbox,
+  Box, Grid, Typography, Button, TextField, FormControlLabel, Checkbox,
   TableContainer, Table, TableRow, TableBody, TableHead,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,6 +21,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     padding: theme.spacing(1, 1.5),
     minHeight: 120,
+  },
+  link: {
+    color: theme.palette.text.primary,
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
+    }
   },
 }));
 
@@ -86,7 +93,7 @@ const Catalog = () => {
             <Box mb={2}>
               <form onSubmit={(e) => searchTests(e, searchText)}>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item sm={9} xs={8}>
+                  <Grid item sm={9} xs={9}>
                     <TextField
                       autoFocus
                       fullWidth
@@ -129,7 +136,12 @@ const Catalog = () => {
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_name === "Quest"
-                            ? `$${item.price}` : <Link href="/app.avonehr.com">Login to see price</Link>}
+                            ? `$${item.price}`
+                            : (
+                              <a className={classes.link} href="https://app.avonehr.com">
+                                Login to see price
+                              </a>
+                            )}
                         </StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
