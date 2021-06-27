@@ -19,7 +19,7 @@ const ToolTipContent = (props) => {
   const classes = useStyles();
   const { data } = props;
   const {
-    marker_name, created, dt, lab_completed_dt, lab_sample_received_dt, lab_order_received_dt,
+    marker_name, created, dt, lab_completed_dt, lab_sample_received_dt, lab_order_received_dt, specialty_lab,
   } = data;
 
   const createdDaysDiff = created && calculateDateDifference(new Date(created), currentDate);
@@ -62,32 +62,36 @@ const ToolTipContent = (props) => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid container>
-          <Grid item xs>
-            <Typography gutterBottom>
-              Lab kit mailed to patient:
-            </Typography>
-          </Grid>
-          <Grid item xs={5}>
-            <Typography gutterBottom>
-              {lab_order_received_dt
-                ? `${dateFormat(lab_order_received_dt)} (${labOrderReceivedDateDiff} ${constText})` : ""}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid item xs>
-            <Typography gutterBottom>
-              Lab kit received from patient:
-            </Typography>
-          </Grid>
-          <Grid item xs={5}>
-            <Typography gutterBottom>
-              {lab_sample_received_dt
-                ? `${dateFormat(lab_sample_received_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
-            </Typography>
-          </Grid>
-        </Grid>
+        {Boolean(specialty_lab) && (
+          <>
+            <Grid container>
+              <Grid item xs>
+                <Typography gutterBottom>
+                  Lab kit mailed to patient:
+                </Typography>
+              </Grid>
+              <Grid item xs={5}>
+                <Typography gutterBottom>
+                  {lab_order_received_dt
+                    ? `${dateFormat(lab_order_received_dt)} (${labOrderReceivedDateDiff} ${constText})` : ""}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs>
+                <Typography gutterBottom>
+                  Lab kit received from patient:
+                </Typography>
+              </Grid>
+              <Grid item xs={5}>
+                <Typography gutterBottom>
+                  {lab_sample_received_dt
+                    ? `${dateFormat(lab_sample_received_dt)} (${labReceiptDaysDiff} ${constText})` : ""}
+                </Typography>
+              </Grid>
+            </Grid>
+          </>
+        )}
         <Grid container>
           <Grid item xs>
             <Typography gutterBottom>
@@ -114,6 +118,10 @@ ToolTipContent.propTypes = {
     lab_completed_dt: PropTypes.string,
     lab_sample_received_dt: PropTypes.string,
     lab_order_received_dt: PropTypes.string,
+    specialty_lab: PropTypes.oneOfType([
+      PropTypes.number,
+      () => null, // REF:: https://github.com/facebook/react/issues/3163#issuecomment-463656929
+    ]),
   }).isRequired,
 };
 

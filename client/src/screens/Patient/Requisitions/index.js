@@ -48,6 +48,12 @@ const useStyles = makeStyles((theme) => ({
   menuOption: {
     minHeight: 26,
   },
+  overFlowControl: {
+    maxWidth: "130px",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+  },
 }));
 
 const Requisitions = (props) => {
@@ -182,8 +188,10 @@ const Requisitions = (props) => {
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
+                  <StyledTableCellSm>Lab Name</StyledTableCellSm>
                   <StyledTableCellSm>Name</StyledTableCellSm>
-                  <StyledTableCellSm width="15%">Favorite</StyledTableCellSm>
+                  <StyledTableCellSm>Price</StyledTableCellSm>
+                  <StyledTableCellSm>Favorite</StyledTableCellSm>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -194,7 +202,18 @@ const Requisitions = (props) => {
                       className={classes.pointer}
                       onClick={() => onFormSubmit(item)}
                     >
-                      {!!item.name && item.name.length > 30
+                      {!!item.lab_name && item.lab_name.length > 25
+                        ? (
+                          <Tooltip title={item.lab_name}>
+                            <StyledTableCellSm
+                              className={classes.overFlowControl}
+                            >
+                              {item.lab_name}
+                            </StyledTableCellSm>
+                          </Tooltip>
+                        )
+                        : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
+                      {!!item.name && item.name.length > 25
                         ? (
                           <Tooltip title={item.name}>
                             <StyledTableCellSm
@@ -205,6 +224,7 @@ const Requisitions = (props) => {
                           </Tooltip>
                         )
                         : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
+                      <StyledTableCellSm>{item.price ? `$${item.price}` : ""}</StyledTableCellSm>
                       <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                     </StyledTableRowSm>
                   ))
@@ -232,8 +252,10 @@ const Requisitions = (props) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
+                    <StyledTableCellSm>Lab Name</StyledTableCellSm>
                     <StyledTableCellSm>Name</StyledTableCellSm>
-                    <StyledTableCellSm width="15%">Favorite</StyledTableCellSm>
+                    <StyledTableCellSm>Price</StyledTableCellSm>
+                    <StyledTableCellSm>Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -244,7 +266,18 @@ const Requisitions = (props) => {
                         className={classes.pointer}
                         onClick={() => onFormSubmit(item)}
                       >
-                        {!!item.name && item.name.length > 30
+                        {!!item.lab_name && item.lab_name.length > 25
+                          ? (
+                            <Tooltip title={item.lab_name}>
+                              <StyledTableCellSm
+                                className={classes.overFlowControl}
+                              >
+                                {item.lab_name}
+                              </StyledTableCellSm>
+                            </Tooltip>
+                          )
+                          : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
+                        {!!item.name && item.name.length > 25
                           ? (
                             <Tooltip title={item.name}>
                               <StyledTableCellSm
@@ -255,6 +288,7 @@ const Requisitions = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
+                        <StyledTableCellSm>{item.price ? `$${item.price}` : ""}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
@@ -283,8 +317,10 @@ const Requisitions = (props) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
+                    <StyledTableCellSm>Lab Name</StyledTableCellSm>
                     <StyledTableCellSm>Name</StyledTableCellSm>
-                    <StyledTableCellSm width="15%">Favorite</StyledTableCellSm>
+                    <StyledTableCellSm>Price</StyledTableCellSm>
+                    <StyledTableCellSm>Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -295,7 +331,18 @@ const Requisitions = (props) => {
                         className={classes.pointer}
                         onClick={() => onFormSubmit(item)}
                       >
-                        {!!item.name && item.name.length > 30
+                        {!!item.lab_name && item.lab_name.length > 25
+                          ? (
+                            <Tooltip title={item.lab_name}>
+                              <StyledTableCellSm
+                                className={classes.overFlowControl}
+                              >
+                                {item.lab_name}
+                              </StyledTableCellSm>
+                            </Tooltip>
+                          )
+                          : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
+                        {!!item.name && item.name.length > 25
                           ? (
                             <Tooltip title={item.name}>
                               <StyledTableCellSm
@@ -306,6 +353,7 @@ const Requisitions = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.name}</StyledTableCellSm>}
+                        <StyledTableCellSm>{item.price ? `$${item.price}` : ""}</StyledTableCellSm>
                         <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
