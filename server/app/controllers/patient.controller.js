@@ -1895,7 +1895,7 @@ const searchTests = async (req, res) => {
 
   const db = makeDb(configuration, res);
   try {
-    let $sql = `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
+    let $sql = `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite, c.price
     from proc c
     left join lab_company lc on lc.id=c.lab_company_id
     left join client_proc cc on cc.client_id=${req.client_id}
@@ -1935,7 +1935,7 @@ const getRecentTests = async (req, res) => {
 
   try {
     const dbResponse = await db.query(
-      `select distinct c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
+      `select distinct c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite, c.price
       from patient_proc pc
       left join proc c on c.id=pc.proc_id
       left join lab_company lc on lc.id=c.lab_company_id
@@ -1967,7 +1967,7 @@ const getFavoriteTests = async (req, res) => {
 
   try {
     const dbResponse = await db.query(
-      `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite
+      `select c.id marker_id, lc.name lab_name, c.name, case when cc.proc_id is not null then true end favorite, c.price
       from proc c
       left join lab_company lc on lc.id=c.lab_company_id
       join client_proc cc on cc.client_id=${req.client_id}
