@@ -21,7 +21,7 @@ export const CatalogLabCompanies = [
     id: 9,
   },
   {
-    name: "9Precision Analytical / DUTCH",
+    name: "Precision Analytical / DUTCH",
     id: 13,
   },
   {
