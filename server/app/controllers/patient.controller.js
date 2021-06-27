@@ -1781,7 +1781,6 @@ const getAllTests = async (req, res) => {
 };
 
 const getDiagnoses = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   const { active } = req.query;
   try {
@@ -1797,19 +1796,17 @@ const getDiagnoses = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1966,85 +1963,70 @@ const getFavoriteTests = async (req, res) => {
 
 const updateDiagnose = async (req, res) => {
   const { patient_id, icd_id } = req.params;
-  const db = makeDb(configuration, res);
-
-  const formData = req.body.data;
-  formData.updated = new Date();
-  formData.updated_user_id = req.user_id;
+  const { is_primary, active, encounter_id} = req.body.data;
+  
   try {
-    const updateResponse = await db.query(`update patient_icd set ? where patient_id=? and icd_id=?`,
-      [formData, patient_id, icd_id]
+    const updateResponse = await db.query(
+      `UPDATE patient_icd SET is_primary=$1, active=$2, encounter_id=$3, updated=$4, updated_user_id=$5 WHERE patient_id=$6 AND icd_id=$7 RETURNING id`,
+      [is_primary, active, encounter_id, new Date(), req.user_id, patient_id, icd_id]
     );
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const deleteDiagnose = async (req, res) => {
   const { patient_id, icd_id } = req.params;
-  const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(`delete from patient_icd where patient_id=? and icd_id=?`,
+    const deleteResponse = await db.query(`DELETE FROM patient_icd WHERE patient_id=$1 AND icd_id=$2 RETURNING id`,
       [patient_id, icd_id]
     );
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createDiagnoses = async (req, res) => {
   const { patient_id } = req.params;
-  const formData = req.body.data;
-  formData.patient_id = patient_id;
-  formData.active = true;
-  formData.client_id = req.client_id;
-  formData.user_id = req.user_id;
-  formData.encounter_id = 1;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
+  const { icd_id } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(`insert into patient_icd set ?`, [formData]);
+    const insertResponse = await db.query(
+      `insert into patient_icd(patient_id, icd_id, active, client_id, user_id, encounter_id, created, created_user_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`, [patient_id, icd_id, true, req.client_id, req.user_id, 1, new Date(), req.user_id]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
