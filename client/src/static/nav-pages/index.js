@@ -234,3 +234,31 @@ export const corporate_pages = [
     logout: true,
   },
 ];
+
+export const catalog_pages = [
+  {
+    id: 1,
+    title: "Home",
+    href: "/",
+  },
+  {
+    id: 2,
+    title: "Resources",
+    href: "/resources",
+  },
+  {
+    id: 3,
+    title: "Catalog",
+    href: "/catalog",
+  },
+  {
+    id: 4,
+    title: "About",
+    href: "/about",
+  },
+  {
+    id: 5,
+    title: "Contact",
+    href: "/contact",
+  },
+];
