@@ -1624,7 +1624,6 @@ const medicalNotesHistoryUpdate = async (req, res) => {
 };
 
 const getMessages = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
@@ -1633,55 +1632,45 @@ const getMessages = async (req, res) => {
         , concat(u2.firstname, ' ', u2.lastname) user_to_name
         , m.read_dt, m.message
         from message m
-        left join user u on u.id=m.user_id_from
-        left join user u2 on u2.id=m.user_id_to
-        where (patient_id_from=? or patient_id_to=?)
+        left join users u on u.id=m.user_id_from
+        left join users u2 on u2.id=m.user_id_to
+        where (patient_id_from=$1 or patient_id_to=$2)
         order by m.created desc
         limit 50`, [patient_id, patient_id]
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createMessage = async (req, res) => {
   const { patient_id } = req.params;
+  const { message, unread_notify_dt } = req.body.data;
 
-  const formData = req.body.data;
-  formData.client_id = req.client_id;
-  formData.user_id_from = req.user_id;
-  formData.patient_id_to = patient_id;
-  formData.unread_notify_dt = moment(formData.unread_notify_dt).format("YYYY-MM-DD");
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
-
-  const db = makeDb(configuration, res);
   try {
-    const insertResponse = await db.query(`insert into message set ?`, [formData]);
-    if (!insertResponse.affectedRows) {
+    const insertResponse = await db.query(`insert into message(client_id, user_id_from, patient_id_to, message, unread_notify_dt, created, created_user_id) 
+    VALUES(${req.client_id}, ${req.user_id}, $1, $2, $3, now(), ${req.user_id}) RETURNING id`, [patient_id, message, moment(unread_notify_dt).format("YYYY-MM-DD")]);
+
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1743,7 +1732,6 @@ const deleteMessage = async (req, res) => {
 };
 
 const getAllTests = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
 
   try {
@@ -1752,7 +1740,7 @@ const getAllTests = async (req, res) => {
         select lc.marker_id, max(lc2.lab_id) lab_id, count from (
           select marker_id, max(lab_dt) lab_dt, count( * ) count
           from lab_marker 
-          where patient_id=? 
+          where patient_id=$1
           group by marker_id
           ) lc
         left join lab_marker lc2 on lc2.marker_id=lc.marker_id and lc2.lab_dt=lc.lab_dt
@@ -1764,19 +1752,17 @@ const getAllTests = async (req, res) => {
         limit 500
         `, [patient_id]
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1964,7 +1950,7 @@ const getFavoriteTests = async (req, res) => {
 const updateDiagnose = async (req, res) => {
   const { patient_id, icd_id } = req.params;
   const { is_primary, active, encounter_id} = req.body.data;
-  
+
   try {
     const updateResponse = await db.query(
       `UPDATE patient_icd SET is_primary=$1, active=$2, encounter_id=$3, updated=$4, updated_user_id=$5 WHERE patient_id=$6 AND icd_id=$7 RETURNING id`,
