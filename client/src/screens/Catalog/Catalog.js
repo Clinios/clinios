@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
-  Box, Grid, Typography, Button, TextField, TableContainer, Table, TableRow, TableBody, TableHead,
+  Box, Grid, Typography, Button, TextField, Link, FormControlLabel, Checkbox,
+  TableContainer, Table, TableRow, TableBody, TableHead,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { StyledTableRowSm, StyledTableCellSm } from "../../components/common/StyledTable";
-// import EmailService from "../../services/email.service";
+import CatalogService from "../../services/catalog.service";
+import { CatalogLabCompanies } from "../../static/catalog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    padding: "30px 0px",
+    padding: "20px 0px",
   },
   borderSection: {
     position: "relative",
     border: "1px solid #aaa",
     borderRadius: "4px",
-    padding: theme.spacing(0.5, 1.5),
+    padding: theme.spacing(1, 1.5),
     minHeight: 120,
   },
 }));
@@ -25,26 +27,24 @@ const useStyles = makeStyles((theme) => ({
 const Catalog = () => {
   const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
-  // const [catalog, setCatalog] = useState([]);
-  const catalog = [];
+  const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-
-  }, []);
-
-  const searchTests = (e) => {
+  const searchTests = (e, text) => {
     e.preventDefault();
     setIsLoading(true);
-    // const reqBody = {
-    //   data: {
-    //     text,
-    //     company_id: selectedCompany.length ? selectedCompany : undefined,
-    //   },
-    // };
-    // PatientService.searchTests(patientId, reqBody).then((res) => {
-    //   setCatalog(res.data);
-    // });
+    const reqBody = {
+      data: {
+        text,
+      },
+    };
+    CatalogService.searchCatalog(reqBody).then((res) => {
+      setCatalog(res.data);
+      setIsLoading(false);
+    })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -53,7 +53,6 @@ const Catalog = () => {
         component="h1"
         variant="h2"
         color="textPrimary"
-        className={classes.title}
       >
         Lab Test Catalog
       </Typography>
@@ -63,12 +62,24 @@ const Catalog = () => {
             <Grid className={classes.borderSection}>
               <Typography
                 component="h4"
-                variant="h5"
+                variant="h4"
                 color="textPrimary"
                 className={classes.title}
+                gutterBottom
               >
                 Lab Company
               </Typography>
+              {
+                CatalogLabCompanies.map((item) => (
+                  <Grid key={item.id}>
+                    <FormControlLabel
+                      value={item.id}
+                      label={item.name}
+                      control={<Checkbox color="primary" />}
+                    />
+                  </Grid>
+                ))
+              }
             </Grid>
           </Grid>
           <Grid item md={8}>
@@ -113,11 +124,13 @@ const Catalog = () => {
                       <StyledTableRowSm
                         key={item.marker_id}
                         className={classes.pointer}
-                      // onClick={() => onFormSubmit(item)}
                       >
-                        <StyledTableCellSm>{item.price ? `$${item.price}` : ""}</StyledTableCellSm>
-                        <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
-                        <StyledTableCellSm>{item.favorite ? "Yes" : ""}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>
+                        <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
+                        <StyledTableCellSm>
+                          {item.lab_name === null || item.lab_name === "Quest"
+                            ? `$${item.price}` : <Link href="/app.avonehr.com">Login to see price</Link>}
+                        </StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
                     : null}
