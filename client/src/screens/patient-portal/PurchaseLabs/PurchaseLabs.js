@@ -22,8 +22,8 @@ import useAuth from "../../../hooks/useAuth";
 import PaymentMethodService from "../../../services/patient_portal/payment-method.service";
 import PurchaseLabsService from "../../../services/patient_portal/purchase-lab.service";
 import { paymentMethodType } from "../../../utils/helpers";
+import AddressConfirmationForm from "./components/AddressConfirmationForm";
 import PaymentMethodsForm from "./components/PaymentMethodsForm";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -110,6 +110,7 @@ const PurchaseLabs = () => {
   const [isNewPaymentMethodOpen, setIsNewPaymentMethodOpen] = useState(false);
   const [isConfirmDialog, setIsConfirmDialog] = useState(false);
   const [showPurchaseConfirmation, setShowPurchaseConfirmation] = useState(false);
+  const [showAddressConfirmation, setShowAddressConfirmation] = useState(false);
   const [specialtyLabsCount, setSpecialtyLabsCount] = useState(0);
   const [conventionalLabsCount, setConventionalLabs] = useState(0);
 
@@ -257,94 +258,106 @@ const PurchaseLabs = () => {
               </>
             )
             : (
-              <>
-                <Typography
-                  component="h1"
-                  variant="h2"
-                  color="textPrimary"
-                  className={classes.title}
-                >
-                  Purchase Lab Tests
-                </Typography>
-                <Grid item md={6} sm={12} xs={12}>
-                  <TableContainer className={classes.tableContainer}>
-                    <Table size="small" className={classes.table} aria-label="a dense table">
-                      <TableHead>
-                        <TableRow>
-                          <StyledTableCell>Select</StyledTableCell>
-                          <StyledTableCell>Lab Name</StyledTableCell>
-                          <StyledTableCell>Price</StyledTableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {labs.map((lab) => {
-                          const isChecked = isSelected(lab.patient_procedure_id);
-                          return (
-                            <StyledTableRow
-                              hover
-                              key={lab.patient_procedure_id}
-                              onClick={(event) => handleClick(event, lab.patient_procedure_id)}
-                              role="checkbox"
-                            >
-                              <StyledTableCell scope="item">
-                                <Checkbox
-                                  onClick={(event) => handleClick(event, lab.patient_procedure_id)}
-                                  className={classes.selectCheckbox}
-                                  checked={isChecked}
-                                />
-                              </StyledTableCell>
-                              <StyledTableCell scope="item">{lab.procedure_name}</StyledTableCell>
-                              <StyledTableCell scope="item">
-                                $
-                                {lab?.price?.toFixed(2)}
-                              </StyledTableCell>
-                            </StyledTableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  <div className={classes.Total}>
-                    <span>Total:</span>
-                    $
-                    {total?.toFixed(2)}
-                  </div>
-                  <FormControl
-                    variant="outlined"
-                    className={classes.customSelect}
-                    size="small"
-                  >
-                    <TextField
-                      select
-                      label="Select Payment Method"
-                      value={selectedPaymentMethod || ""}
-                      onChange={(event) => handlePaymentMethodChange(event.target.value)}
-                      variant="outlined"
-                      size="small"
-                      inputRef={selectInputRef}
+              showAddressConfirmation
+                ? (
+                  <AddressConfirmationForm onSubmit={() => setIsConfirmDialog(true)} />
+                )
+                : (
+                  <>
+                    <Typography
+                      component="h1"
+                      variant="h2"
+                      color="textPrimary"
+                      className={classes.title}
                     >
-                      {paymentMethods.map((pm) => (
-                        <MenuItem key={pm.id} value={pm.id}>
-                          {paymentMethodType(pm.type)}
-                          {pm.id !== 999 ? (
-                            ` (${pm.account_number})`
-                          ) : ""}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </FormControl>
-                  <Button
-                    disabled={(!total || !selectedPaymentMethod)}
-                    variant="outlined"
-                    color="primary"
-                    size="medium"
-                    onClick={() => setIsConfirmDialog(true)}
-                    className={classes.purchaseButton}
-                  >
-                    Purchase
-                  </Button>
-                </Grid>
-              </>
+                      Purchase Lab Tests
+                    </Typography>
+                    <Grid item md={6} sm={12} xs={12}>
+                      <TableContainer className={classes.tableContainer}>
+                        <Table size="small" className={classes.table} aria-label="a dense table">
+                          <TableHead>
+                            <TableRow>
+                              <StyledTableCell>Select</StyledTableCell>
+                              <StyledTableCell>Lab Name</StyledTableCell>
+                              <StyledTableCell>Price</StyledTableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {labs.map((lab) => {
+                              const isChecked = isSelected(lab.patient_procedure_id);
+                              return (
+                                <StyledTableRow
+                                  hover
+                                  key={lab.patient_procedure_id}
+                                  onClick={(event) => handleClick(event, lab.patient_procedure_id)}
+                                  role="checkbox"
+                                >
+                                  <StyledTableCell scope="item">
+                                    <Checkbox
+                                      onClick={(event) => handleClick(event, lab.patient_procedure_id)}
+                                      className={classes.selectCheckbox}
+                                      checked={isChecked}
+                                    />
+                                  </StyledTableCell>
+                                  <StyledTableCell scope="item">{lab.procedure_name}</StyledTableCell>
+                                  <StyledTableCell scope="item">
+                                    $
+                                    {lab?.price?.toFixed(2)}
+                                  </StyledTableCell>
+                                </StyledTableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                      <div className={classes.Total}>
+                        <span>Total:</span>
+                        $
+                        {total?.toFixed(2)}
+                      </div>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.customSelect}
+                        size="small"
+                      >
+                        <TextField
+                          select
+                          label="Select Payment Method"
+                          value={selectedPaymentMethod || ""}
+                          onChange={(event) => handlePaymentMethodChange(event.target.value)}
+                          variant="outlined"
+                          size="small"
+                          inputRef={selectInputRef}
+                        >
+                          {paymentMethods.map((pm) => (
+                            <MenuItem key={pm.id} value={pm.id}>
+                              {paymentMethodType(pm.type)}
+                              {pm.id !== 999 ? (
+                                ` (${pm.account_number})`
+                              ) : ""}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </FormControl>
+                      <Button
+                        disabled={(!total || !selectedPaymentMethod)}
+                        variant="outlined"
+                        color="primary"
+                        size="medium"
+                        onClick={() => {
+                          if (specialtyLabsCount > 0) {
+                            setShowAddressConfirmation(true);
+                          } else {
+                            setIsConfirmDialog(true);
+                          }
+                        }}
+                        className={classes.purchaseButton}
+                      >
+                        Purchase
+                      </Button>
+                    </Grid>
+                  </>
+                )
             )
         }
         <PaymentMethodsForm
