@@ -12,11 +12,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    paddingTop: 56,
     height: "100%",
-    [theme.breakpoints.up("sm")]: {
-      paddingTop: 50,
-    },
   },
   shiftContent: {
     paddingLeft: 0,
@@ -24,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flex: 1,
     maxWidth: "1040px",
-    marginTop: 50,
   },
 }));
 

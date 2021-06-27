@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     boxShadow: "none",
     padding: "20px 0",
+    background: "white",
   },
   flexGrow: {
     flexGrow: 1,
@@ -148,7 +149,7 @@ const Topbar = (props) => {
   const classes = useStyles();
 
   return (
-    <AppBar color="transparent" {...rest} className={clsx(classes.root, className)}>
+    <AppBar position="relative" {...rest} className={clsx(classes.root, className)}>
       <Container maxWidth="lg" className={classes.container}>
         <Toolbar className={classes.toolbar} disableGutters>
           <RouterLink to="/dashboard">

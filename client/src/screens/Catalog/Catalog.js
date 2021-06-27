@@ -58,7 +58,7 @@ const Catalog = () => {
       </Typography>
       <Box mt={3}>
         <Grid container spacing={3}>
-          <Grid item md={4}>
+          <Grid item md={4} xs={12}>
             <Grid className={classes.borderSection}>
               <Typography
                 component="h4"
@@ -82,7 +82,7 @@ const Catalog = () => {
               }
             </Grid>
           </Grid>
-          <Grid item md={8}>
+          <Grid item md={8} xs={12}>
             <Box mb={2}>
               <form onSubmit={(e) => searchTests(e, searchText)}>
                 <Grid container spacing={2} alignItems="center">
