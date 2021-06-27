@@ -13,6 +13,7 @@ import PropTypes from "prop-types";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import Logo from "../../../../assets/img/Logo.svg";
+import { catalog_pages } from "../../../../static/nav-pages";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,21 +70,11 @@ const Topbar = (props) => {
           </RouterLink>
           <Hidden mdDown>
             <Grid className={classes.linksContainer}>
-              <RouterLink to="/" className={classes.navLink}>
-                Home
-              </RouterLink>
-              <RouterLink to="/resources" className={classes.navLink}>
-                Resources
-              </RouterLink>
-              <RouterLink to="/catalog" className={classes.navLink}>
-                Catalog
-              </RouterLink>
-              <RouterLink to="/about" className={classes.navLink}>
-                About
-              </RouterLink>
-              <RouterLink to="/contact" className={classes.navLink}>
-                Contact
-              </RouterLink>
+              {catalog_pages.map((link) => (
+                <RouterLink key={link.id} to={link.href} className={classes.navLink}>
+                  {link.title}
+                </RouterLink>
+              ))}
             </Grid>
             <a className={classes.link} href="https://app.avonehr.com">
               <Button
