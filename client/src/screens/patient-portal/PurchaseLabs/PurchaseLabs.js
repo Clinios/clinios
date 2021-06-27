@@ -260,7 +260,10 @@ const PurchaseLabs = () => {
             : (
               showAddressConfirmation
                 ? (
-                  <AddressConfirmationForm onSubmit={() => setIsConfirmDialog(true)} />
+                  <AddressConfirmationForm
+                    onSubmit={() => setIsConfirmDialog(true)}
+                    onClose={() => setShowAddressConfirmation(false)}
+                  />
                 )
                 : (
                   <>

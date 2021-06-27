@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddressConfirmationForm = (props) => {
-  const { onSubmit } = props;
+  const { onSubmit, onClose } = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
@@ -233,13 +233,24 @@ const AddressConfirmationForm = (props) => {
               </Box>
             </Grid>
           </Grid>
-          <Button
-            type="submit"
-            variant="outlined"
-            className={classes.mt2}
-          >
-            Save
-          </Button>
+          <Grid item md={8} sm={8} xs={12}>
+            <Grid container justify="space-between">
+              <Button
+                type="submit"
+                variant="outlined"
+                className={classes.mt2}
+              >
+                Save
+              </Button>
+              <Button
+                variant="outlined"
+                className={classes.mt2}
+                onClick={onClose}
+              >
+                Back
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </form>
     </>
@@ -248,6 +259,7 @@ const AddressConfirmationForm = (props) => {
 
 AddressConfirmationForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default AddressConfirmationForm;
