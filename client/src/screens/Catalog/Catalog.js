@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const Catalog = () => {
   const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
+  const [hasUserSearched, setHasUserSearched] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
 
@@ -47,6 +48,7 @@ const Catalog = () => {
     };
     CatalogService.searchCatalog(reqBody).then((res) => {
       setCatalog(res.data);
+      setHasUserSearched(true);
       setIsLoading(false);
     })
       .catch(() => {
@@ -64,7 +66,7 @@ const Catalog = () => {
         Lab Test Catalog
       </Typography>
       <Box mt={3}>
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           <Grid item md={4} xs={12}>
             <Grid className={classes.borderSection}>
               <Typography
@@ -145,7 +147,7 @@ const Catalog = () => {
                         </StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
-                    : (
+                    : hasUserSearched ? (
                       <StyledTableRowSm>
                         <StyledTableCellSm colSpan={3}>
                           <Typography align="center" variant="body1">
@@ -153,7 +155,7 @@ const Catalog = () => {
                           </Typography>
                         </StyledTableCellSm>
                       </StyledTableRowSm>
-                    )}
+                    ) : null}
                 </TableBody>
               </Table>
             </TableContainer>
