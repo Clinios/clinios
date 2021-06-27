@@ -5,7 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import MenuIcon from "@material-ui/icons/MenuOutlined";
 import clsx from "clsx";
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
   },
   link: {
-    color: "#ffffff",
+    color: theme.palette.common.white,
     textDecoration: "none",
   },
   loginButton: {
