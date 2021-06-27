@@ -20,101 +20,13 @@ const useStyles = makeStyles((theme) => ({
     padding: "20px 0",
     background: "white",
   },
-  flexGrow: {
-    flexGrow: 1,
-  },
   toolbar: {
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  title: {
-    display: "none",
-    letterSpacing: "0.1em",
-    fontWeight: 700,
-    fontSize: "18px",
-    marginRight: theme.spacing(3),
-    [theme.breakpoints.up("sm")]: {
-      display: "block",
-    },
-    "& a": {
-      color: theme.palette.white,
-      textDecoration: "none",
-    },
-  },
-  navs: {
-    display: "block",
-  },
   link: {
     color: "#ffffff",
-    padding: "10px 10px",
     textDecoration: "none",
-  },
-  patientLink: {
-    color: "#ffffff",
-    padding: "10px 10px",
-    textDecoration: "none",
-  },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto",
-    },
-  },
-  grow: {
-    flexGrow: 0,
-  },
-  headerWithSearchBar: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  sectionDesktop: {
-    display: "none",
-    [theme.breakpoints.up("md")]: {
-      display: "flex",
-      alignItems: "center",
-    },
-  },
-  name: {
-    marginRight: theme.spacing(2),
-    fontSize: 14,
-    color: theme.palette.primary.contrastText,
-  },
-  date: {
-    fontSize: 14,
-    color: theme.palette.primary.contrastText,
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-  signOutButton: {
-    marginLeft: theme.spacing(1),
   },
   loginButton: {
     minHeight: 47,
@@ -173,18 +85,20 @@ const Topbar = (props) => {
                 Contact
               </RouterLink>
             </Grid>
-            <Button
-              className={classes.loginButton}
-              size="large"
-              variant="contained"
-              color="primary"
-              disableElevation
-            >
-              Login
-            </Button>
+            <a className={classes.link} href="https://app.avonehr.com">
+              <Button
+                className={classes.loginButton}
+                size="large"
+                variant="contained"
+                color="primary"
+                disableElevation
+              >
+                Login
+              </Button>
+            </a>
           </Hidden>
           <Hidden lgUp>
-            <IconButton color="inherit" onClick={onSidebarOpen}>
+            <IconButton onClick={onSidebarOpen}>
               <MenuIcon />
             </IconButton>
           </Hidden>
