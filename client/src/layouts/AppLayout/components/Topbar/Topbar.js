@@ -121,6 +121,7 @@ const useStyles = makeStyles((theme) => ({
     background: "#335eea",
     fontWeight: 600,
     lineHeight: 1.6,
+    borderRadius: ".375rem",
   },
   navLink: {
     color: "#506690",
