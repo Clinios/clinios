@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
     "&:hover": {
       textDecoration: "underline",
-    }
+    },
   },
 }));
 
@@ -145,7 +145,15 @@ const Catalog = () => {
                         </StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
-                    : null}
+                    : (
+                      <StyledTableRowSm>
+                        <StyledTableCellSm colSpan={3}>
+                          <Typography align="center" variant="body1">
+                            {isLoading ? "Loading..." : "No Records Found..."}
+                          </Typography>
+                        </StyledTableCellSm>
+                      </StyledTableRowSm>
+                    )}
                 </TableBody>
               </Table>
             </TableContainer>
