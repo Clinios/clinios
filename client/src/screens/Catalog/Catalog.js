@@ -17,10 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
   borderSection: {
     position: "relative",
-    border: "1px solid #aaa",
+    border: "1px solid rgba(0, 0, 0, 0.23)",
     borderRadius: "4px",
     padding: theme.spacing(1, 1.5),
     minHeight: 120,
+    marginRight: theme.spacing(1),
   },
   link: {
     color: theme.palette.text.primary,
@@ -66,7 +67,7 @@ const Catalog = () => {
         Lab Test Catalog
       </Typography>
       <Box mt={3}>
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           <Grid item md={4} xs={12}>
             <Grid className={classes.borderSection}>
               <Typography
@@ -131,7 +132,7 @@ const Catalog = () => {
                   {(!isLoading && catalog.length)
                     ? catalog.map((item) => (
                       <StyledTableRowSm
-                        key={item.marker_id}
+                        key={item.proc_id}
                         className={classes.pointer}
                       >
                         <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>
