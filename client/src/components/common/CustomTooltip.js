@@ -8,6 +8,9 @@ const CustomTooltip = withStyles((theme) => ({
     boxShadow: theme.shadows[1],
     fontSize: 13,
   },
+  tooltipPlacementBottom: {
+    margin: "4px 0",
+  },
 }))(Tooltip);
 
 
