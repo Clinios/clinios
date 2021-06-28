@@ -1733,18 +1733,17 @@ const deleteMessage = async (req, res) => {
 
 const getAllTests = async (req, res) => {
   const { patient_id } = req.params;
-
   try {
     const dbResponse = await db.query(
       `select lc.marker_id, c.name, date(lc2.lab_dt) lab_dt, lc2.value, lc2.range_high, lc2.range_low, lc2.unit, lc.count from (
         select lc.marker_id, max(lc2.lab_id) lab_id, count from (
-          select marker_id, max(lab_dt) lab_dt, count( * ) count
-          from lab_marker 
-          where patient_id=$1
-          group by marker_id
-          ) lc
+        select marker_id, max(lab_dt) lab_dt, count( * ) count
+        from lab_marker
+        where patient_id=$1
+        group by marker_id
+        ) lc
         left join lab_marker lc2 on lc2.marker_id=lc.marker_id and lc2.lab_dt=lc.lab_dt
-        group by lc.marker_id
+        group by lc.marker_id, count
         ) lc
         left join lab_marker lc2 on lc2.lab_id=lc.lab_id and lc2.marker_id=lc.marker_id
         left join marker c on c.id=lc2.marker_id
