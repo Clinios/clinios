@@ -14,6 +14,7 @@ import SettingsInputComponentIcon from "@material-ui/icons/SettingsInputComponen
 import TimelineIcon from "@material-ui/icons/TimelineOutlined";
 import TuneIcon from "@material-ui/icons/TuneOutlined";
 
+import { APP_LINK } from "../catalog";
 
 export const client_pages = [
   {
@@ -239,12 +240,12 @@ export const catalog_pages = [
   {
     id: 1,
     title: "Home",
-    href: "https://avonehr.com",
+    href: APP_LINK,
   },
   {
     id: 2,
     title: "Resources",
-    href: "https://avonehr.com/resources.html",
+    href: `${APP_LINK}/resources.html`,
   },
   {
     id: 3,
@@ -254,11 +255,11 @@ export const catalog_pages = [
   {
     id: 4,
     title: "About",
-    href: "https://avonehr.com/about.html",
+    href: `${APP_LINK}/about.html`,
   },
   {
     id: 5,
     title: "Contact",
-    href: "https://avonehr.com/contact.html",
+    href: `${APP_LINK}/contact.html`,
   },
 ];

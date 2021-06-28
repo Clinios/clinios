@@ -29,3 +29,5 @@ export const CatalogLabCompanies = [
     id: "2",
   },
 ];
+
+export const APP_LINK = "https://avonehr.com";
