@@ -202,7 +202,7 @@ const Requisitions = (props) => {
                       className={classes.pointer}
                       onClick={() => onFormSubmit(item)}
                     >
-                      {!!item.lab_name && item.lab_name.length > 25
+                      {!!item.lab_name && item.lab_name.length > 30
                         ? (
                           <Tooltip title={item.lab_name}>
                             <StyledTableCellSm
@@ -213,7 +213,7 @@ const Requisitions = (props) => {
                           </Tooltip>
                         )
                         : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
-                      {!!item.name && item.name.length > 25
+                      {!!item.name && item.name.length > 30
                         ? (
                           <Tooltip title={item.name}>
                             <StyledTableCellSm
@@ -266,7 +266,7 @@ const Requisitions = (props) => {
                         className={classes.pointer}
                         onClick={() => onFormSubmit(item)}
                       >
-                        {!!item.lab_name && item.lab_name.length > 25
+                        {!!item.lab_name && item.lab_name.length > 30
                           ? (
                             <Tooltip title={item.lab_name}>
                               <StyledTableCellSm
@@ -277,7 +277,7 @@ const Requisitions = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
-                        {!!item.name && item.name.length > 25
+                        {!!item.name && item.name.length > 30
                           ? (
                             <Tooltip title={item.name}>
                               <StyledTableCellSm
@@ -331,7 +331,7 @@ const Requisitions = (props) => {
                         className={classes.pointer}
                         onClick={() => onFormSubmit(item)}
                       >
-                        {!!item.lab_name && item.lab_name.length > 25
+                        {!!item.lab_name && item.lab_name.length > 30
                           ? (
                             <Tooltip title={item.lab_name}>
                               <StyledTableCellSm
@@ -342,7 +342,7 @@ const Requisitions = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
-                        {!!item.name && item.name.length > 25
+                        {!!item.name && item.name.length > 30
                           ? (
                             <Tooltip title={item.name}>
                               <StyledTableCellSm
