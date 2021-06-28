@@ -388,7 +388,7 @@ const NewTransactionForm = (props) => {
                         {option.label}
                       </MenuItem>
                     ))
-                      : renderOptionsForDropdowns(item.id)}
+                    : renderOptionsForDropdowns(item.id)}
                   </TextField>
                 )}
               </Grid>
