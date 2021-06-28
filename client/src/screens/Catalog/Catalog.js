@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Box, Grid, Typography, Button, TextField, FormControlLabel, Checkbox,
@@ -39,8 +39,7 @@ const Catalog = () => {
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
 
-  const searchTests = (e, text) => {
-    e.preventDefault();
+  const fetchCatalogData = (text) => {
     setIsLoading(true);
     const reqBody = {
       data: {
@@ -56,6 +55,15 @@ const Catalog = () => {
         setIsLoading(false);
       });
   };
+
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    fetchCatalogData(searchText);
+  };
+
+  useEffect(() => {
+    fetchCatalogData("");
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -94,7 +102,7 @@ const Catalog = () => {
           </Grid>
           <Grid item md={8} xs={12}>
             <Box mb={2}>
-              <form onSubmit={(e) => searchTests(e, searchText)}>
+              <form onSubmit={onFormSubmit}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item sm={9} xs={9}>
                     <TextField
@@ -139,7 +147,7 @@ const Catalog = () => {
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_name === "Quest"
-                            ? `$${item.price}`
+                            ? `$${item.price.toFixed(2)}`
                             : (
                               <a className={classes.link} href="https://app.avonehr.com">
                                 Login to see price
