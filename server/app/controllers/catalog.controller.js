@@ -8,18 +8,24 @@ const searchCatalog = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.bad).send(errorMessage);
   }
-  const { text } = req.body.data;
+  const { text, labCompanyId } = req.body.data;
 
   const db = makeDb(configuration, res);
   try {
-    const dbResponse = await db.query(
-      `select p.id proc_id, lc.name lab_name, p.name proc_name, p.price
+    let $sql = `
+      select p.id proc_id, lc.name lab_name, p.name proc_name, p.price
       from proc p left join lab_company lc on lc.id=p.lab_company_id
       where p.type='L'and p.name like '%${text}%'
-      order by lc.name, p.name
-      limit 20
       `
-    );
+      ;
+
+    if (labCompanyId) {
+      $sql += `and lc.id in (${labCompanyId}) \n`;
+    }
+
+    $sql += `order by lc.name, p.name limit 20`;
+
+    const dbResponse = await db.query($sql);
 
     if (!dbResponse) {
       errorMessage.message = "None found";

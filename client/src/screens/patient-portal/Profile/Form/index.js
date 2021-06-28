@@ -153,6 +153,7 @@ const ProfileForm = () => {
     delete formFields.login_url;
     delete formFields.dob;
     delete formFields.provider;
+    delete formFields.created_user_id;
 
     // * status is in need to be formated back to it's original state.
     // formFields.status = formFields?.status === "active" ? "A" : null;

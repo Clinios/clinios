@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   Box, Grid, Typography, Button, TextField, FormControlLabel, Checkbox,
@@ -38,13 +38,14 @@ const Catalog = () => {
   const [hasUserSearched, setHasUserSearched] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
 
-  const searchTests = (e, text) => {
-    e.preventDefault();
+  const fetchCatalogData = useCallback((text) => {
     setIsLoading(true);
     const reqBody = {
       data: {
         text,
+        labCompanyId: selectedCompanies.length ? selectedCompanies : null,
       },
     };
     CatalogService.searchCatalog(reqBody).then((res) => {
@@ -55,6 +56,28 @@ const Catalog = () => {
       .catch(() => {
         setIsLoading(false);
       });
+  }, [selectedCompanies]);
+
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    fetchCatalogData(searchText);
+  };
+
+  useEffect(() => {
+    fetchCatalogData(searchText);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCompanies]);
+
+  const onCheckBoxChangeHandler = (e) => {
+    const tempSelectedCompanies = [...selectedCompanies];
+    if (e.target.checked) {
+      tempSelectedCompanies.push(e.target.name);
+      setSelectedCompanies([...tempSelectedCompanies]);
+    } else {
+      const index = selectedCompanies.findIndex((x) => x === e.target.name);
+      tempSelectedCompanies.splice(index, 1);
+      setSelectedCompanies([...tempSelectedCompanies]);
+    }
   };
 
   return (
@@ -85,7 +108,14 @@ const Catalog = () => {
                     <FormControlLabel
                       value={item.id}
                       label={item.name}
-                      control={<Checkbox color="primary" />}
+                      control={(
+                        <Checkbox
+                          name={item.id}
+                          color="primary"
+                          checked={selectedCompanies?.includes(item.id)}
+                          onChange={(e) => onCheckBoxChangeHandler(e)}
+                        />
+                      )}
                     />
                   </Grid>
                 ))
@@ -94,7 +124,7 @@ const Catalog = () => {
           </Grid>
           <Grid item md={8} xs={12}>
             <Box mb={2}>
-              <form onSubmit={(e) => searchTests(e, searchText)}>
+              <form onSubmit={onFormSubmit}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item sm={9} xs={9}>
                     <TextField
@@ -139,7 +169,7 @@ const Catalog = () => {
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_name === "Quest"
-                            ? `$${item.price}`
+                            ? `$${item.price.toFixed(2)}`
                             : (
                               <a className={classes.link} href="https://app.avonehr.com">
                                 Login to see price

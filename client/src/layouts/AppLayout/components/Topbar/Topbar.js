@@ -5,6 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import MenuIcon from "@material-ui/icons/MenuOutlined";
@@ -13,6 +14,7 @@ import PropTypes from "prop-types";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import Logo from "../../../../assets/img/Logo.svg";
+import { catalog_pages } from "../../../../static/nav-pages";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,13 +40,13 @@ const useStyles = makeStyles((theme) => ({
   },
   navLink: {
     color: "#506690",
-    textDecoration: "none",
     padding: ".5rem 1rem",
     fontSize: 17,
     fontWeight: 500,
 
     "&:hover": {
       color: "#335eea",
+      textDecoration: "none",
     },
   },
   container: {
@@ -69,21 +71,11 @@ const Topbar = (props) => {
           </RouterLink>
           <Hidden mdDown>
             <Grid className={classes.linksContainer}>
-              <RouterLink to="/" className={classes.navLink}>
-                Home
-              </RouterLink>
-              <RouterLink to="/resources" className={classes.navLink}>
-                Resources
-              </RouterLink>
-              <RouterLink to="/catalog" className={classes.navLink}>
-                Catalog
-              </RouterLink>
-              <RouterLink to="/about" className={classes.navLink}>
-                About
-              </RouterLink>
-              <RouterLink to="/contact" className={classes.navLink}>
-                Contact
-              </RouterLink>
+              {catalog_pages.map((link) => (
+                <Link key={link.id} href={link.href} className={classes.navLink}>
+                  {link.title}
+                </Link>
+              ))}
             </Grid>
             <a className={classes.link} href="https://app.avonehr.com">
               <Button

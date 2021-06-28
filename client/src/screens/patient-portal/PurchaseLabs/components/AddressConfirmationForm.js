@@ -106,6 +106,7 @@ const AddressConfirmationForm = (props) => {
     delete formFields.login_url;
     delete formFields.dob;
     delete formFields.provider;
+    delete formFields.created_user_id;
 
     const payload = {
       data: {

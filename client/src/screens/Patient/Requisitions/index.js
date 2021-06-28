@@ -188,10 +188,10 @@ const Requisitions = (props) => {
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
-                  <StyledTableCellSm>Lab Name</StyledTableCellSm>
+                  <StyledTableCellSm width="10%">Lab Name</StyledTableCellSm>
                   <StyledTableCellSm>Name</StyledTableCellSm>
-                  <StyledTableCellSm>Price</StyledTableCellSm>
-                  <StyledTableCellSm>Favorite</StyledTableCellSm>
+                  <StyledTableCellSm width="10%">Price</StyledTableCellSm>
+                  <StyledTableCellSm width="10%">Favorite</StyledTableCellSm>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -202,7 +202,7 @@ const Requisitions = (props) => {
                       className={classes.pointer}
                       onClick={() => onFormSubmit(item)}
                     >
-                      {!!item.lab_name && item.lab_name.length > 25
+                      {!!item.lab_name && item.lab_name.length > 30
                         ? (
                           <Tooltip title={item.lab_name}>
                             <StyledTableCellSm
@@ -213,7 +213,7 @@ const Requisitions = (props) => {
                           </Tooltip>
                         )
                         : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
-                      {!!item.name && item.name.length > 25
+                      {!!item.name && item.name.length > 30
                         ? (
                           <Tooltip title={item.name}>
                             <StyledTableCellSm
@@ -252,10 +252,10 @@ const Requisitions = (props) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCellSm>Lab Name</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Lab Name</StyledTableCellSm>
                     <StyledTableCellSm>Name</StyledTableCellSm>
-                    <StyledTableCellSm>Price</StyledTableCellSm>
-                    <StyledTableCellSm>Favorite</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Price</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -266,7 +266,7 @@ const Requisitions = (props) => {
                         className={classes.pointer}
                         onClick={() => onFormSubmit(item)}
                       >
-                        {!!item.lab_name && item.lab_name.length > 25
+                        {!!item.lab_name && item.lab_name.length > 30
                           ? (
                             <Tooltip title={item.lab_name}>
                               <StyledTableCellSm
@@ -277,7 +277,7 @@ const Requisitions = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
-                        {!!item.name && item.name.length > 25
+                        {!!item.name && item.name.length > 30
                           ? (
                             <Tooltip title={item.name}>
                               <StyledTableCellSm
@@ -317,10 +317,10 @@ const Requisitions = (props) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCellSm>Lab Name</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Lab Name</StyledTableCellSm>
                     <StyledTableCellSm>Name</StyledTableCellSm>
-                    <StyledTableCellSm>Price</StyledTableCellSm>
-                    <StyledTableCellSm>Favorite</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Price</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -331,7 +331,7 @@ const Requisitions = (props) => {
                         className={classes.pointer}
                         onClick={() => onFormSubmit(item)}
                       >
-                        {!!item.lab_name && item.lab_name.length > 25
+                        {!!item.lab_name && item.lab_name.length > 30
                           ? (
                             <Tooltip title={item.lab_name}>
                               <StyledTableCellSm
@@ -342,7 +342,7 @@ const Requisitions = (props) => {
                             </Tooltip>
                           )
                           : <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>}
-                        {!!item.name && item.name.length > 25
+                        {!!item.name && item.name.length > 30
                           ? (
                             <Tooltip title={item.name}>
                               <StyledTableCellSm
