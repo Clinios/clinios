@@ -188,10 +188,10 @@ const Requisitions = (props) => {
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
-                  <StyledTableCellSm>Lab Name</StyledTableCellSm>
+                  <StyledTableCellSm width="10%">Lab Name</StyledTableCellSm>
                   <StyledTableCellSm>Name</StyledTableCellSm>
-                  <StyledTableCellSm>Price</StyledTableCellSm>
-                  <StyledTableCellSm>Favorite</StyledTableCellSm>
+                  <StyledTableCellSm width="10%">Price</StyledTableCellSm>
+                  <StyledTableCellSm width="10%">Favorite</StyledTableCellSm>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -252,10 +252,10 @@ const Requisitions = (props) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCellSm>Lab Name</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Lab Name</StyledTableCellSm>
                     <StyledTableCellSm>Name</StyledTableCellSm>
-                    <StyledTableCellSm>Price</StyledTableCellSm>
-                    <StyledTableCellSm>Favorite</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Price</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -317,10 +317,10 @@ const Requisitions = (props) => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCellSm>Lab Name</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Lab Name</StyledTableCellSm>
                     <StyledTableCellSm>Name</StyledTableCellSm>
-                    <StyledTableCellSm>Price</StyledTableCellSm>
-                    <StyledTableCellSm>Favorite</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Price</StyledTableCellSm>
+                    <StyledTableCellSm width="10%">Favorite</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
                 <TableBody>
