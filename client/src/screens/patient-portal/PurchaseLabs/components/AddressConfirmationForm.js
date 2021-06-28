@@ -75,7 +75,7 @@ const AddressConfirmationForm = (props) => {
     }
   }, [formFields]);
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
@@ -152,7 +152,7 @@ const AddressConfirmationForm = (props) => {
             fullWidth
             required
             value={formFields.address}
-            onChange={(e) => handleInputChnage(e)}
+            onChange={(e) => handleInputChange(e)}
           />
           <TextField
             size="small"
@@ -165,7 +165,7 @@ const AddressConfirmationForm = (props) => {
             fullWidth
             required
             value={formFields.address2}
-            onChange={(e) => handleInputChnage(e)}
+            onChange={(e) => handleInputChange(e)}
           />
         </Grid>
         <Grid container>
@@ -181,7 +181,7 @@ const AddressConfirmationForm = (props) => {
               fullWidth
               required
               value={formFields.city}
-              onChange={(e) => handleInputChnage(e)}
+              onChange={(e) => handleInputChange(e)}
             />
           </Grid>
           <Grid item md={4} sm={6} xs={12}>
@@ -196,7 +196,7 @@ const AddressConfirmationForm = (props) => {
                 fullWidth
                 required
                 value={formFields.postal}
-                onChange={(e) => handleInputChnage(e)}
+                onChange={(e) => handleInputChange(e)}
               />
             </Box>
           </Grid>
