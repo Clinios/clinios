@@ -1563,63 +1563,53 @@ const deleteEncounter = async (req, res) => {
 };
 
 const getMedicalNotesHistory = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select ph.created, ph.medical_note, concat(u.firstname, ' ', u.lastname) name
+      `select ph.created, ph.medical_note, concat(u.firstname, ' ', u.lastname) AS name
         from patient_history ph
-        left join user u on u.id=ph.created_user_id
-        where ph.id=?
+        left join users u on u.id=ph.created_user_id
+        where ph.id=$1
         and ph.medical_note is not null
         order by ph.created desc
         limit 50`, [patient_id]
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const medicalNotesHistoryUpdate = async (req, res) => {
   const { medical_note, old_medical_note } = req.body.data;
   const { patient_id } = req.params;
-  const patientHistoryData = {};
-  patientHistoryData.id = patient_id;
-  patientHistoryData.medical_note = old_medical_note;
-  patientHistoryData.created = new Date();
-  patientHistoryData.created_user_id = req.user_id;
 
-  const db = makeDb(configuration, res);
   try {
     // Call DB query without assigning into a variable
-    await db.query(`insert into patient_history set ?`, [patientHistoryData]);
-    const updateResponse = await db.query(`update patient set medical_note=? where id=?`, [medical_note, patient_id]);
+     await db.query(`insert into patient_history (id, medical_note, created, created_user_id) VALUES ($1, $2, now(), ${req.user_id})`,
+     [patient_id, old_medical_note]);
+    const updateResponse = await db.query(`update patient set medical_note=$1 where id=$2 RETURNING id`, [medical_note, patient_id]);
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
