@@ -71,7 +71,7 @@ const PaymentMethodsForm = (props) => {
     });
   };
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     updateFormState(name, value);
   };
@@ -146,7 +146,7 @@ const PaymentMethodsForm = (props) => {
                   variant="outlined"
                   value={formFields.cardNumber}
                   mask="9999/9999/9999/9999"
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
                 {!!formFields.cardType && formFields.cardType.length ? (
                   <Typography gutterBottom>{formFields.cardType}</Typography>
@@ -165,7 +165,7 @@ const PaymentMethodsForm = (props) => {
                   label="CVV"
                   className={classes.gutterBottom}
                   value={formFields.cvv}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   onInput={(e) => {
                     e.target.value = Math.max(0, parseInt(e.target.value, 10)).toString().slice(0, 3);
                   }}
@@ -183,7 +183,7 @@ const PaymentMethodsForm = (props) => {
                   variant="outlined"
                   value={formFields.expiryDate}
                   mask="99/99"
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
               </Grid>
             </Grid>

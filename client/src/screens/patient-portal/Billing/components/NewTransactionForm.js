@@ -45,7 +45,7 @@ const NewTransactionForm = (props) => {
     notes: "",
   });
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
@@ -110,7 +110,7 @@ const NewTransactionForm = (props) => {
                         required
                         fullWidth
                         value={formFields[item.name]}
-                        onChange={(e) => handleInputChnage(e)}
+                        onChange={(e) => handleInputChange(e)}
                       />
                     ) : (
                       <TextField
@@ -121,7 +121,7 @@ const NewTransactionForm = (props) => {
                         value={formFields[item.name]}
                         required
                         fullWidth
-                        onChange={(e) => handleInputChnage(e)}
+                        onChange={(e) => handleInputChange(e)}
                       >
                         {item.options.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
@@ -147,7 +147,7 @@ const NewTransactionForm = (props) => {
                   required
                   fullWidth
                   value={formFields.notes}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   multiline
                   rows={5}
                 />
