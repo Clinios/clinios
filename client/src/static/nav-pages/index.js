@@ -239,12 +239,12 @@ export const catalog_pages = [
   {
     id: 1,
     title: "Home",
-    href: "/",
+    href: "https://avonehr.com",
   },
   {
     id: 2,
     title: "Resources",
-    href: "/resources",
+    href: "https://avonehr.com/resources.html",
   },
   {
     id: 3,
@@ -254,11 +254,11 @@ export const catalog_pages = [
   {
     id: 4,
     title: "About",
-    href: "/about",
+    href: "https://avonehr.com/about.html",
   },
   {
     id: 5,
     title: "Contact",
-    href: "/contact",
+    href: "https://avonehr.com/contact.html",
   },
 ];

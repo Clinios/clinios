@@ -4,6 +4,7 @@ import { Grid, Container } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
+import Link from "@material-ui/core/Link";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -39,13 +40,13 @@ const useStyles = makeStyles((theme) => ({
   },
   navLink: {
     color: "#506690",
-    textDecoration: "none",
     padding: ".5rem 1rem",
     fontSize: 17,
     fontWeight: 500,
 
     "&:hover": {
       color: "#335eea",
+      textDecoration: "none",
     },
   },
   container: {
@@ -71,9 +72,9 @@ const Topbar = (props) => {
           <Hidden mdDown>
             <Grid className={classes.linksContainer}>
               {catalog_pages.map((link) => (
-                <RouterLink key={link.id} to={link.href} className={classes.navLink}>
+                <Link key={link.id} href={link.href} className={classes.navLink}>
                   {link.title}
-                </RouterLink>
+                </Link>
               ))}
             </Grid>
             <a className={classes.link} href="https://app.avonehr.com">
