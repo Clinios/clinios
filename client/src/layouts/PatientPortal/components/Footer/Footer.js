@@ -17,12 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomTypography = withStyles((theme) => ({
+const CustomTypography = withStyles(() => ({
   root: {
     fontSize: "11px",
     lineHeight: "4px",
     letterSpacing: ".65px",
-    color: theme.palette.secondary.main,
   },
 }))(Typography);
 
