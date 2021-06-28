@@ -1677,27 +1677,30 @@ const createMessage = async (req, res) => {
 const updateMessage = async (req, res) => {
   const { id } = req.params;
   const formData = req.body.data;
+  const { message, unread_notify_dt } = req.body.data;
+
   formData.unread_notify_dt = moment(formData.unread_notify_dt).format("YYYY-MM-DD");
   formData.updated = new Date();
   formData.updated_user_id = req.user_id;
 
-  const db = makeDb(configuration, res);
   try {
-    const updateResponse = await db.query(`update message set ? where id=?`, [formData, id]);
-    if (!updateResponse.affectedRows) {
+    const updateResponse = await db.query(`update message set message=$1, unread_notify_dt=$2,
+     updated='${moment(formData.unread_notify_dt).format("YYYY-MM-DD")}', updated_user_id=${req.user_id} where id=$3 RETURNING id`,
+     [message, unread_notify_dt, id]
+    );
+
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1708,26 +1711,23 @@ const deleteMessage = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { id } = req.params;
-  const db = makeDb(configuration, res);
   try {
     // Call DB query without assigning into a variable
-    await db.query(`delete from message_history where id=?`, [id]);
-    const deleteMsgResponse = await db.query(`delete from message where id=?`, [id]);
+    await db.query(`delete from message_history where id=$1`, [id]);
+    const deleteMsgResponse = await db.query(`delete from message where id=$1 RETURNING id`, [id]);
 
-    if (!deleteMsgResponse.affectedRows) {
+    if (!deleteMsgResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteMsgResponse;
+    successMessage.data = deleteMsgResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
