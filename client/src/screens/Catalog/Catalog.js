@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   Box, Grid, Typography, Button, TextField, FormControlLabel, Checkbox,
@@ -38,12 +38,14 @@ const Catalog = () => {
   const [hasUserSearched, setHasUserSearched] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
 
-  const fetchCatalogData = (text) => {
+  const fetchCatalogData = useCallback((text) => {
     setIsLoading(true);
     const reqBody = {
       data: {
         text,
+        labCompanyId: selectedCompanies.length ? selectedCompanies : null,
       },
     };
     CatalogService.searchCatalog(reqBody).then((res) => {
@@ -54,7 +56,7 @@ const Catalog = () => {
       .catch(() => {
         setIsLoading(false);
       });
-  };
+  }, [selectedCompanies]);
 
   const onFormSubmit = (e) => {
     e.preventDefault();
@@ -62,8 +64,21 @@ const Catalog = () => {
   };
 
   useEffect(() => {
-    fetchCatalogData("");
-  }, []);
+    fetchCatalogData(searchText);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCompanies]);
+
+  const onCheckBoxChangeHandler = (e) => {
+    const tempSelectedCompanies = [...selectedCompanies];
+    if (e.target.checked) {
+      tempSelectedCompanies.push(e.target.name);
+      setSelectedCompanies([...tempSelectedCompanies]);
+    } else {
+      const index = selectedCompanies.findIndex((x) => x === e.target.name);
+      tempSelectedCompanies.splice(index, 1);
+      setSelectedCompanies([...tempSelectedCompanies]);
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -93,7 +108,14 @@ const Catalog = () => {
                     <FormControlLabel
                       value={item.id}
                       label={item.name}
-                      control={<Checkbox color="primary" />}
+                      control={(
+                        <Checkbox
+                          name={item.id}
+                          color="primary"
+                          checked={selectedCompanies?.includes(item.id)}
+                          onChange={(e) => onCheckBoxChangeHandler(e)}
+                        />
+                      )}
                     />
                   </Grid>
                 ))
