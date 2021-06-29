@@ -16,7 +16,7 @@ router.post(
   patientEmailController.createEmailHistory
 );
 router.put(
-  "/email/history",
+  "/email/history/:date",
   [authJwt.verifyToken, authorization.isReadOnly],
   patientEmailController.updateEmailHistory
 );

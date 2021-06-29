@@ -1,8 +1,8 @@
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
+const moment = require('moment');
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const search = async (req, res) => {
-  const db = makeDb(configuration, res);
   const {
     firstname,
     lastname,
@@ -17,6 +17,7 @@ const search = async (req, res) => {
     paymentFrom,
     paymentTo,
   } = req.body.data;
+
   let $sql;
 
   try {
@@ -35,10 +36,10 @@ const search = async (req, res) => {
       $sql += `join tran t on t.client_id=${req.client_id} and t.patient_id=p.id \n`;
     }
     if (paymentFrom) {
-      $sql += `  and t.dt >= ${paymentFrom} \n`;
+      $sql += `  and t.dt >= '${paymentFrom}' \n`;
     }
     if (paymentTo) {
-      $sql += `  and t.dt <= ${paymentTo} \n`;
+      $sql += `  and t.dt <= '${paymentTo}' \n`;
     }
     $sql += `where p.client_id=${req.client_id} \n`;
     if (firstname) {
@@ -60,7 +61,7 @@ const search = async (req, res) => {
       $sql += `and p.status = ${patientStatus}  \n`;
     }
     if (createdFrom) {
-      $sql += `and p.created >= '${createdFrom}' \n`;
+      $sql += `and p.created => '${createdFrom}' \n`;
     }
     if (createdTo) {
       $sql += `and p.created <= '${createdTo}' \n`;
@@ -69,18 +70,16 @@ const search = async (req, res) => {
     $sql += `limit 20 \n`;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
