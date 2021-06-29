@@ -426,13 +426,10 @@ const getAppointmenthistory = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const nextAppointment = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
   try {
@@ -445,73 +442,63 @@ const nextAppointment = async (req, res) => {
       `
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const balance = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
       `select sum(t.amount) amount from tran t
-        where t.patient_id=?`, [patient_id]
+        where t.patient_id=$1`, [patient_id]
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const AdminNotehistory = async (req, res) => {
   const { patient_id } = req.params;
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
-      `select ph.created, ph.admin_note, concat(u.firstname, ' ', u.lastname) name
+      `select ph.created, ph.admin_note, concat(u.firstname, ' ', u.lastname) AS name
         from patient_history ph
-        left join user u on u.id=ph.created_user_id
-        where ph.id=? 
-        and ph.admin_note is not null
+        left join users u on u.id=ph.created_user_id
+        where ph.id=$1 and ph.admin_note is not null
         order by ph.created desc
         limit 50`, [patient_id]);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -599,8 +586,6 @@ const getFormById = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -612,15 +597,13 @@ const searchHandouts = async (req, res) => {
   }
   const { text } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select id, filename, created
         from handout
-        where filename like '%${text}%'
+        where filename ILIKE '%${text}%'
         order by filename
-        limit 100
-      `
+        limit 100`
     );
 
     if (!dbResponse) {
@@ -634,8 +617,6 @@ const searchHandouts = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -697,7 +678,6 @@ const handoutDelete = async (req, res) => {
 
 const CreatePatientHandouts = async (req, res) => {
   const { patient_id } = req.params;
-  console.log('req.body.data:', req.body.data)
   const {handout_id} = req.body.data;
 
   try {
@@ -770,34 +750,28 @@ const DeletePatientHandouts = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Deletion not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getTranType = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(`select id, name, amount, note, status from tran_type`);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getBilling = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   let { limit } = req.query;
   if (typeof limit === "undefined") {
@@ -805,36 +779,27 @@ const getBilling = async (req, res) => {
   }
   try {
     const dbResponse = await db.query(
-      `select t.id, t.type_id, t.dt, t.amount, t.proc_id, t.note, tt.name tran_type, e.title encounter_title, pm.type payment_type, pm.account_number, p.name proc_name
-      , t.created, concat(u.firstname, ' ', u.lastname) created_user
-      , t.updated, concat(u2.firstname, ' ', u2.lastname) updated_user
-      from tran t
-      left join encounter e on e.id=t.encounter_id
-      left join tran_type tt on tt.id=t.type_id
-      left join payment_method pm on pm.id=t.payment_method_id
-      left join proc p on p.id=t.proc_id
-      left join user u on u.id=t.created_user_id
-      left join user u2 on u2.id=t.updated_user_id
-      where t.client_id=${req.client_id}
-      and t.patient_id=? 
-      order by t.dt desc
-      limit ${limit}
-      `, [patient_id]
+      `select t.id, t.dt, t.amount, tt.name tran_type, e.title encounter_title, t.note, pm.type payment_type, pm.account_number
+        from tran t
+        left join encounter e on e.id=t.encounter_id
+        left join tran_type tt on tt.id=t.type_id
+        left join payment_method pm on pm.id=t.payment_method_id
+        where t.client_id=${req.client_id}
+        and t.patient_id=$1
+        order by t.dt desc
+        limit ${limit}`, [patient_id]
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -848,56 +813,46 @@ const updateBilling = async (req, res) => {
   // Delete customer_id as it's not on our table
   delete formData.customer_id;
 
-  const db = makeDb(configuration, res);
   try {
-    const updateResponse = await db.query(`update tran
-    set ? 
-    where patient_id=? 
-    and id=?
-    `, [formData, patient_id, id]);
+    const updateResponse = await db.query(`update tran set dt=now(), type_id=$1, payment_type=$2, amount=$3, note=$4
+    where patient_id=$5 and id=$6`, [type_id, payment_type, amount, note, patient_id, id]);
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const deleteBilling = async (req, res) => {
   const { patient_id, id } = req.params;
-  const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(`delete from tran where patient_id=? and id=?`, [patient_id, id]);
+    const deleteResponse = await db.query(`delete from tran where patient_id=$1 and id=$2`, [patient_id, id]);
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getBillingTransactionTypes = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select id, name
@@ -911,42 +866,36 @@ const getBillingTransactionTypes = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-
     successMessage.data = dbResponse;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getBillingPaymentOptions = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
       `select id, type, account_number, exp, stripe_payment_method_token, created
       from payment_method
-      where patient_id=? and (status is null or status <> 'D')
+      where patient_id=$1 and (status is null or status <> 'D')
       order by 1`, [patient_id]
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -958,7 +907,6 @@ const searchBilling = async (req, res) => {
   }
   const { text } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select p.id, p.name, cp.billable favorite_billing, p.price proc_price, cp.fee client_fee
@@ -966,30 +914,26 @@ const searchBilling = async (req, res) => {
         left join client_proc cp on cp.proc_id = p.id
         and cp.billable=True
         and cp.client_id=${req.client_id}
-        where p.name like '%${text}%'
+        where p.name ILIKE '%${text}%'
         order by p.name desc
-        limit 20
-      `
+        limit 20`
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 
 const getBillingFavorites = async (req, res) => {
-  const db = makeDb(configuration, res);
   // const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
@@ -1002,24 +946,20 @@ const getBillingFavorites = async (req, res) => {
       limit 20`
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.row) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getBillingRecents = async (req, res) => {
-  const db = makeDb(configuration, res);
-  // const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
       `select p.id, p.name, cp.billable favorite_billing, p.price proc_price, cp.fee client_fee
@@ -1030,22 +970,20 @@ const getBillingRecents = async (req, res) => {
       and cp.client_id=${req.client_id}
       where t.client_id=${req.client_id}
       order by t.dt desc
-      limit 10
-      `
+      limit 10`
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.error('err:', err)
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1081,68 +1019,64 @@ const createNewBilling = async (req, res) => {
 
 const createBilling = async (req, res) => {
   const { patient_id } = req.params;
-  const { type_id } = req.body.data;
+  let { type_id } = req.body.data;
 
-  const formData = req.body.data;
-  formData.patient_id = patient_id;
-  formData.client_id = req.client_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
-
-  const db = makeDb(configuration, res);
+  let { amount } = req.body.data;
+  const { stripe_payment_method_token, customer_id, note } = req.body.data;
 
   const $sql = `select p.id, c.name, c.stripe_api_key from patient p
-    left join client c on c.id=p.client_id where p.id=?`;
+    left join client c on c.id=p.client_id where p.id=$1`;
 
   const getStripeResponse = await db.query($sql, [patient_id]);
 
+  let pp_status;
+  let pp_return;
   // transaction type 3 'Payment' and 3 'Payment refund' goes to stripe
   if (type_id === 3 || type_id === 4) {
     const stripe = Stripe(getStripeResponse[0].stripe_api_key);
     const intentData = {
-      payment_method: formData.stripe_payment_method_token,
-      customer: formData.customer_id,
-      description: `${formData.note}; patient_id: ${patient_id}`,
-      amount: Number(formData.amount) * 100, // it accepts cents
+      payment_method: stripe_payment_method_token,
+      customer: customer_id,
+      description: `${note}; patient_id: ${patient_id}`,
+      amount: Number(amount) * 100, // it accepts cents
       currency: "usd",
       confirmation_method: "manual",
       confirm: true,
     };
     const intent = await stripe.paymentIntents.create(intentData);
     if (intent.status === "succeeded") {
-      formData.pp_status = 1;
-      formData.pp_return = JSON.stringify(intent);
+      pp_status = 1;
+      pp_return = JSON.stringify(intent);
     } else {
       console.log("error:", intent);
-      formData.pp_status = -1;
-      formData.pp_return = JSON.stringify(intent);
+      pp_status = -1;
+      pp_return = JSON.stringify(intent);
     }
   }
 
   // transaction type 2 'Service Credit' and 3 'Payment' are stored in the database as negative numbers, david march 2021
   if (type_id === 2 || type_id === 3) {
     // Change for localdatabase
-    formData.amount *= -1;
+    amount *= -1;
   }
 
   try {
     delete formData.customer_id; // Delete customer_id
     delete formData.stripe_payment_method_token; // Delete stripe_payment_method_token
-    const insertResponse = await db.query(`insert into tran set ?`, [formData]);
+    const insertResponse = await db.query(`insert into tran(dt, type_id, payment_method_id, amount, note, patient_id, client_id, pp_status, pp_return) 
+    VALUES (now(), $1, $2, $3, $4, ${req.client_id}, $5, $6) RETURNING id`, [type_id, payment_method_id, amount, note, patient_id, pp_status, pp_return]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1420,32 +1354,29 @@ const createDocuments = async (req, res) => {
 };
 
 const getEncounters = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
 
   try {
     const dbResponse = await db.query(
-      `select e.dt, e.id, e.title, et.name encounter_type, concat(u.firstname, ' ', u.lastname) name, notes, treatment
+      `select e.dt, e.id, e.title, et.name encounter_type, concat(u.firstname, ' ', u.lastname) AS name, notes, treatment
       from encounter e 
       left join encounter_type et on et.id=e.type_id
-      left join user u on u.id=e.user_id
-      where e.patient_id=?
+      left join users u on u.id=e.user_id
+      where e.patient_id=$1
       order by e.dt desc
       limit 50`, [patient_id]
     );
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1462,7 +1393,6 @@ const createEncounter = async (req, res) => {
   formData.created_user_id = req.user_id;
   delete formData.name;
 
-  const db = makeDb(configuration, res);
   try {
     const insertResponse = await db.query(`insert into encounter set ?`, [formData]);
 
@@ -1479,8 +1409,6 @@ const createEncounter = async (req, res) => {
     console.error('excepErr:', excepErr)
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
