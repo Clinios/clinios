@@ -281,6 +281,7 @@ const PurchaseLabs = () => {
                           <TableHead>
                             <TableRow>
                               <StyledTableCell>Select</StyledTableCell>
+                              <StyledTableCell>Lab Company</StyledTableCell>
                               <StyledTableCell>Lab Name</StyledTableCell>
                               <StyledTableCell>Price</StyledTableCell>
                             </TableRow>
@@ -302,6 +303,7 @@ const PurchaseLabs = () => {
                                       checked={isChecked}
                                     />
                                   </StyledTableCell>
+                                  <StyledTableCell scope="item">{lab.lab_company_name}</StyledTableCell>
                                   <StyledTableCell scope="item">{lab.procedure_name}</StyledTableCell>
                                   <StyledTableCell scope="item">
                                     $
