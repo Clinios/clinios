@@ -1148,31 +1148,28 @@ const createBilling = async (req, res) => {
 
 const getAllergies = async (req, res) => {
   const { patient_id } = req.params;
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select pa.created, pa.drug_id, d.name
         from patient_allergy pa
         left join drug d on d.id=pa.drug_id
         where pa.client_id=${req.client_id}
-        and pa.patient_id=?
+        and pa.patient_id=$1
         order by d.name
         limit 100`,
       [patient_id]);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1183,25 +1180,22 @@ const deleteAllergy = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { patient_id, drug_id } = req.params;
-  const db = makeDb(configuration, res);
 
   try {
-    const dbResponse = await db.query(`delete from patient_allergy where patient_id=? and drug_id=?`, [patient_id, drug_id]);
+    const dbResponse = await db.query(`delete from patient_allergy where patient_id=$1 and drug_id=$2 RETURNING patient_id, drug_id`, [patient_id, drug_id]);
 
-    if (!dbResponse.affectedRows) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Deletion not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1213,30 +1207,26 @@ const searchAllergies = async (req, res) => {
   }
   const { text } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select d.id, d.name
         from drug d
         where d.name like '%${text}%'
         order by d.name
-        limit 15
-      `
+        limit 15`
     );
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1247,35 +1237,29 @@ const createPatientAllergy = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { patient_id } = req.params;
+  const { drug_id } = req.body.data;
 
-  const formData = req.body.data;
-  formData.patient_id = patient_id;
-  formData.client_id = req.client_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
 
-  const db = makeDb(configuration, res);
   try {
-    const selectQueryRes = await db.query(`select 1 from patient_allergy where drug_id=?`, [formData.drug_id]);
-    if (selectQueryRes.length > 0) {
+    const selectQueryRes = await db.query(`select 1 from patient_allergy where drug_id=$1`, [drug_id]);
+    if (selectQueryRes.rows.length > 0) {
       errorMessage.message = "This patient allergy already exists.";
       return res.status(status.notfound).send(errorMessage);
     }
-    const insertResponse = await db.query(`insert into patient_allergy set ?`, [formData]);
+    const insertResponse = await db.query(`insert into patient_allergy(drug_id, patient_id, client_id, created, created_user_id) 
+    VALUES($1, $2, $3, now(), ${req.user_id}) RETURNING drug_id`, [drug_id, patient_id, req.client_id]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
