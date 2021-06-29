@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { StyledTableRowSm, StyledTableCellSm } from "../../components/common/StyledTable";
 import CatalogService from "../../services/catalog.service";
-import { CatalogLabCompanies, APP_LINK } from "../../static/catalog";
+import { CatalogLabCompanies, APP_LOGIN_LINK } from "../../static/catalog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -173,7 +173,7 @@ const Catalog = () => {
                           {item.lab_name === null || item.lab_name === "Quest"
                             ? `$${item.price.toFixed(2)}`
                             : (
-                              <a className={classes.link} href={APP_LINK}>
+                              <a className={classes.link} href={APP_LOGIN_LINK}>
                                 Login to see price
                               </a>
                             )}

@@ -13,7 +13,7 @@ import clsx from "clsx";
 import PropTypes from "prop-types";
 
 import Logo from "../../../../assets/img/Logo.svg";
-import { APP_LINK } from "../../../../static/catalog";
+import { APP_LINK, APP_LOGIN_LINK } from "../../../../static/catalog";
 import { catalog_pages } from "../../../../static/nav-pages";
 
 const useStyles = makeStyles((theme) => ({
@@ -77,7 +77,7 @@ const Topbar = (props) => {
                 </Link>
               ))}
             </Grid>
-            <a className={classes.link} href={APP_LINK}>
+            <a className={classes.link} href={APP_LOGIN_LINK}>
               <Button
                 className={classes.loginButton}
                 size="large"
