@@ -1280,12 +1280,13 @@ const createPatientAllergy = async (req, res) => {
 };
 
 const getDocuments = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   const { patient_id } = req.params;
-
+  const { tab } = req.query;
   try {
-    const $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
+    let $sql;
+
+    //TODO:: Replace group_concat with string_agg
+    $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
       , group_concat('"', lc.marker_id, '","', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
       from lab l
       left join lab_marker lc on lc.lab_id=l.id
@@ -1298,19 +1299,17 @@ const getDocuments = async (req, res) => {
       `;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1321,7 +1320,7 @@ const updateDocuments = async (req, res) => {
   }
   const { id } = req.params;
   const { type } = req.body.data;
-  const db = makeDb(configuration, res);
+
   try {
     const now = moment().format("YYYY-MM-DD HH:mm:ss");
     let $sql = `update lab set status='${type}'`;
@@ -1331,44 +1330,39 @@ const updateDocuments = async (req, res) => {
       $sql += `, deleted_dt=null, `;
     }
 
-    $sql += `updated=now(), updated_user_id=${req.user_id} where id=?`;
+    $sql += `updated=now(), updated_user_id=${req.user_id} where id=$1 RETURNING id`;
 
     const updateResponse = await db.query($sql, [id]);
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const checkDocument = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient_id } = req.params;
   try {
-    const dbResponse = await db.query(`select 1 from lab where patient_id=? and filename=filename limit 1`, [patient_id]);
-    if (!dbResponse) {
+    const dbResponse = await db.query(`select 1 from lab where patient_id=$1 and filename=filename limit 1`, [patient_id]);
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -1377,7 +1371,7 @@ const documentUpload = upload.single("file");
 const removeFile = (file) => {
   fs.unlink(file.path, (err) => {
     if (err) {
-      console.error(err);
+      console.error('unlink error:', err);
     }
     console.log(file.path, "removed successfully!");
   });
@@ -1397,7 +1391,6 @@ const createDocuments = async (req, res) => {
 
     const { patient_id } = req.params;
     const uploadedFilename = req.file.originalname;
-    const db = makeDb(configuration, res);
     try {
       const existingLabDocument = await db.query(
         `select 1
@@ -1406,7 +1399,8 @@ const createDocuments = async (req, res) => {
         and filename='${uploadedFilename}'
         limit 1`
       );
-      if (existingLabDocument.length > 0) {
+    
+      if (existingLabDocument.rows.length > 0) {
         removeFile(req.file);
         errorMessage.message = "Same file is already in our database system!";
         return res.status(status.error).send(errorMessage);
@@ -1414,10 +1408,10 @@ const createDocuments = async (req, res) => {
 
       const insertResponse = await db.query(
         `insert into lab (client_id, user_id, patient_id, filename, source, status, created, created_user_id) values 
-          (${req.client_id}, ${req.user_id}, ${patient_id}, '${uploadedFilename}', 'U', 'R', now(), ${req.user_id})`
+          (${req.client_id}, ${req.user_id}, ${patient_id}, '${uploadedFilename}', 'U', 'R', now(), ${req.user_id}) RETURNING id`
       );
 
-      if (!insertResponse.affectedRows) {
+      if (!insertResponse.rowCount) {
         removeFile(req.file);
         errorMessage.message = "Insert not successful";
         return res.status(status.notfound).send(errorMessage);
@@ -1430,14 +1424,13 @@ const createDocuments = async (req, res) => {
         req.file.path.replace("undefined", patient_id)
       );
 
-      successMessage.data = insertResponse;
+      successMessage.data = insertResponse.rows;
       successMessage.message = "Insert successful";
       return res.status(status.created).send(successMessage);
     } catch (excepErr) {
+      console.log('excepErr', excepErr)
       errorMessage.message = "Insert not successful";
       return res.status(status.error).send(errorMessage);
-    } finally {
-      await db.close();
     }
   });
 };
