@@ -280,10 +280,10 @@ const PurchaseLabs = () => {
                         <Table size="small" className={classes.table} aria-label="a dense table">
                           <TableHead>
                             <TableRow>
-                              <StyledTableCell>Select</StyledTableCell>
+                              <StyledTableCell width="5%">Select</StyledTableCell>
                               <StyledTableCell>Lab Company</StyledTableCell>
                               <StyledTableCell>Lab Name</StyledTableCell>
-                              <StyledTableCell>Price</StyledTableCell>
+                              <StyledTableCell width="5%">Price</StyledTableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
