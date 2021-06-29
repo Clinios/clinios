@@ -14,7 +14,7 @@ import Alert from "../../../components/Alert";
 import usePatientContext from "../../../hooks/usePatientContext";
 import { toggleEncountersDialog, setEncounter } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
-import { urlify } from "../../../utils/helpers";
+import { urlify, useLocalStore } from "../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   inputRow: {
@@ -49,9 +49,9 @@ const useStyles = makeStyles((theme) => ({
 
 const EncountersContent = (props) => {
   const classes = useStyles();
-  const { reloadData } = props;
+  const { reloadData, isEncounter } = props;
   const { enqueueSnackbar } = useSnackbar();
-  const { state, dispatch } = usePatientContext();
+  const { state, dispatch } = isEncounter ? useLocalStore() : usePatientContext();
   const { patientId } = state;
   const { data } = state.encounters;
 
@@ -170,8 +170,13 @@ const EncountersContent = (props) => {
   );
 };
 
+EncountersContent.defaultProps = {
+  isEncounter: false,
+};
+
 EncountersContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
+  isEncounter: PropTypes.bool,
 };
 
 export default EncountersContent;

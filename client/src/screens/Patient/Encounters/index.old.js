@@ -12,13 +12,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import moment from "moment";
 import { useSnackbar } from "notistack";
-import PropTypes from "prop-types";
 
 import useAuth from "../../../hooks/useAuth";
-import {
-  resetEncounter,
-  toggleEncountersDialog,
-} from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
 import { EncountersFields as EncountersFormFields } from "../../../static/encountersForm";
 import {
@@ -51,6 +46,7 @@ import BillingCard from "./components/BillingCard";
 import Card from "./components/Card";
 import ClockTimer from "./components/ClockTimer";
 import PlanCard from "./components/PlanCard";
+import EncountersCardContent from "./content";
 
 const useStyles = makeStyles((theme) => ({
   btnsContainer: {
@@ -81,12 +77,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Encounters = (props) => {
+const Encounters = () => {
   const classes = useStyles();
   const currentDate = new Date();
   const { enqueueSnackbar } = useSnackbar();
-  const { state, dispatch } = useLocalStore();
-  const { reloadData } = props;
+  const { state } = useLocalStore();
   const [formFields, setFormFields] = useState({
     title: "",
     encounter_type: "",
@@ -114,7 +109,6 @@ const Encounters = (props) => {
     if (encounter) {
       updateFields();
     }
-    return () => !!encounter && dispatch(resetEncounter());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter]);
 
@@ -152,8 +146,6 @@ const Encounters = (props) => {
       PatientService.updateEncounters(patientId, encounterId, reqBody)
         .then((response) => {
           enqueueSnackbar(`${response.data.message}`, { variant: "success" });
-          reloadData();
-          dispatch(toggleEncountersDialog());
         });
     } else {
       const reqBody = {
@@ -169,8 +161,6 @@ const Encounters = (props) => {
       PatientService.createEncounter(patientId, reqBody)
         .then((response) => {
           enqueueSnackbar(`${response.data.message}`, { variant: "success" });
-          reloadData();
-          dispatch(toggleEncountersDialog());
         });
     }
   };
@@ -184,26 +174,33 @@ const Encounters = (props) => {
       case "Forms":
         return <FormCardContent isEncounter />;
       case "Billing":
-        return <BillingCardContent isEncounter />;
+        return <BillingCardContent isEncounter reloadData={() => { }} />;
       case "Allergies":
-        return <AllergiesCardContent isEncounter />;
+        return <AllergiesCardContent isEncounter reloadData={() => { }} />;
       case "Medical Notes":
         return <MedicalNotesCardContent isEncounter />;
       case "Handouts":
-        return <HandoutsCardContent isEncounter />;
+        return <HandoutsCardContent isEncounter reloadData={() => { }} />;
       case "Messages":
         return <MessagesCardContent isEncounter />;
       case "Medications":
-        return <MedicationsCardContent isEncounter />;
+        return <MedicationsCardContent isEncounter reloadData={() => { }} />;
       case "Diagnoses":
-        return <DiagnosesCardContent isEncounter />;
+        return <DiagnosesCardContent isEncounter reloadData={() => { }} />;
       case "Requisitions":
-        return <RequisitionsCardContent isEncounter />;
+        return <RequisitionsCardContent isEncounter reloadData={() => { }} />;
       case "Insights":
-      // return <InsightsCardContent isEncounter />;
+        return <InsightsCardContent isEncounter />;
+      case "Encounters":
+        return <EncountersCardContent isEncounter reloadData={() => { }} />;
       default:
         return <div />;
     }
+  };
+
+  const closeEncounterTab = () => {
+    localStorage.removeItem("store");
+    window.close();
   };
 
   return (
@@ -395,8 +392,7 @@ const Encounters = (props) => {
                         <Button
                           fullWidth
                           variant="outlined"
-                          // onClick={() => dispatch(toggleEncountersDialog())}
-                          onClick={() => window.close()}
+                          onClick={() => closeEncounterTab()}
                         >
                           Exit
                         </Button>
@@ -453,28 +449,23 @@ const Encounters = (props) => {
           <Card
             title="Documents"
             data={(
-              // <DocumentsCardContent
-              //   reloadData={() => { }}
-              //   actionsEnable={false}
-              //   isEncounter
-              // />
-              <p>HAHAHA</p>
+              <DocumentsCardContent
+                actionsEnable={false}
+                isEncounter
+                reloadData={() => { }}
+              />
             )}
           />
         </Grid>
         <Grid item md={6} sm={12} className={classes.w100}>
           <Card
             title="Tests"
-          // data={<TestsCardContent isEncounter />}
+            data={<TestsCardContent isEncounter />}
           />
         </Grid>
       </Grid>
     </Box>
   );
-};
-
-Encounters.propTypes = {
-  reloadData: PropTypes.func.isRequired,
 };
 
 export default Encounters;

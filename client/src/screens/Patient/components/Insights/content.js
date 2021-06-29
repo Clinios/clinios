@@ -131,9 +131,16 @@ const InsightsContent = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  useEffect(() => {
+  useEffect(() => { // for encounters.png
     filterRequiredTests();
-  }, [filterRequiredTests]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => { // for patient.png
+    if (!isEncounter) {
+      filterRequiredTests();
+    }
+  }, [filterRequiredTests, isEncounter]);
 
   const getFlag = (val, functionalRange) => {
     const result = {};

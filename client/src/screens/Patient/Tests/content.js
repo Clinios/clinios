@@ -105,8 +105,6 @@ const TestsContent = (props) => {
   const { gender, dob } = state.patientInfo.data;
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
 
-  console.log({ gender, dob, data, expandDialog })
-
   const [tests, setTests] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
 
@@ -196,9 +194,16 @@ const TestsContent = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, gender, patientAge]);
 
-  useEffect(() => {
+  useEffect(() => { // for encounters.png
     addCalculatedTests();
-  }, [addCalculatedTests]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => { // for patient.png
+    if (!isEncounter) {
+      addCalculatedTests();
+    }
+  }, [addCalculatedTests, isEncounter]);
 
   const showPopoverIcon = (marker) => (
     // eslint-disable-next-line max-len

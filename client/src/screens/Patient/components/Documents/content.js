@@ -137,9 +137,16 @@ const DocumentsContent = (props) => {
     }
   }, [data]);
 
-  useEffect(() => {
+  useEffect(() => { // for encounters.png
     fetchDocuments(tabValue);
-  }, [data, tabValue, fetchDocuments]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabValue]);
+
+  useEffect(() => { // for patient.png
+    if (!isEncounter) {
+      fetchDocuments(tabValue);
+    }
+  }, [data, tabValue, fetchDocuments, isEncounter]);
 
   const updateDocumentStatusHandler = (selectedItemId, status, e) => {
     e.stopPropagation();
