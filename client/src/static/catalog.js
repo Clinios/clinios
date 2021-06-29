@@ -1,7 +1,7 @@
 
 export const CatalogLabCompanies = [
   {
-    name: "Cyrex",
+    name: "Cyrex Laboratories",
     id: "5",
   },
   {
@@ -13,19 +13,19 @@ export const CatalogLabCompanies = [
     id: "7",
   },
   {
-    name: "Genova",
+    name: "Genova Diagnostics",
     id: "8",
   },
+  // {
+  //  name: "Great Plains",
+  //  id: "9",
+  // },
   {
-    name: "Great Plains",
-    id: "9",
-  },
-  {
-    name: "Precision Analytical / DUTCH",
+    name: "Precision Analytical",
     id: "13",
   },
   {
-    name: "Quest",
+    name: "Quest Diagnostics",
     id: "2",
   },
 ];
