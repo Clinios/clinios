@@ -34,11 +34,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Catalog = () => {
   const classes = useStyles();
+  const DEFAULT_SELECTED_CHECKBOX = ["5"]; // Cyrex
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasUserSearched, setHasUserSearched] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [selectedCompanies, setSelectedCompanies] = useState(DEFAULT_SELECTED_CHECKBOX);
 
   const fetchCatalogData = useCallback((text) => {
     setIsLoading(true);
