@@ -12,7 +12,7 @@ const searchCatalog = async (req, res) => {
 
   const db = makeDb(configuration, res);
   try {
-    let $sql = `select p.id proc_id, lc.name lab_name, p.name proc_name, p.price
+    let $sql = `select p.id proc_id, lc.id lab_id, lc.name lab_name, p.name proc_name, p.price
       from proc p 
       left join lab_company lc on lc.id=p.lab_company_id
       where p.type='L'
