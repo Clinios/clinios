@@ -170,7 +170,7 @@ const Catalog = () => {
                         <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         <StyledTableCellSm>
-                          {item.lab_name === null || item.lab_name === "Quest"
+                          {item.lab_name === null || item.lab_id === 2 // Quest
                             ? `$${item.price.toFixed(2)}`
                             : (
                               <a className={classes.link} href={APP_LOGIN_LINK}>
