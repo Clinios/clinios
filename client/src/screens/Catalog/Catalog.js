@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Catalog = () => {
   const classes = useStyles();
-  const DEFAULT_SELECTED_CHECKBOX = ["5"]; // Cyrex
+  const DEFAULT_SELECTED_CHECKBOX = ["2"]; // Quest
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasUserSearched, setHasUserSearched] = useState(false);
