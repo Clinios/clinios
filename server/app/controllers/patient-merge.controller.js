@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const mergePatient = async (req, res) => {
@@ -20,16 +20,15 @@ const mergePatient = async (req, res) => {
 
   const { patient_id_to_keep, patient_id_to_delete } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const patientToKeepResponse = await db.query(
-      `select id, client_id, firstname, lastname from patient where id=?`, [patient_id_to_keep]
+      `select id, client_id, firstname, lastname from patient where id=$1`, [patient_id_to_keep]
     );
-    const patientToKeep = patientToKeepResponse[0];
+    const patientToKeep = patientToKeepResponse.rows[0];
     const patientToDeleteResponse = await db.query(
-      `select id, client_id, firstname, lastname from patient where id=?`, [patient_id_to_delete]
+      `select id, client_id, firstname, lastname from patient where id=$1`, [patient_id_to_delete]
     );
-    const patientToDelete = patientToDeleteResponse[0];
+    const patientToDelete = patientToDeleteResponse.rows[0];
 
     if (!patientToKeep || !patientToDelete) {
       errorMessage.message = `We couldn't find both or one of them patient.`;
@@ -50,17 +49,17 @@ const mergePatient = async (req, res) => {
     for (const key in tables) {
       // eslint-disable-next-line no-await-in-loop
       await db.query(
-        `update ${key} set patient_id=? where patient_id=? `,
+        `update ${key} set patient_id=$1 where patient_id=$2 `,
          [patient_id_to_keep, patient_id_to_delete]
       );
     }
 
     // eslint-disable-next-line no-await-in-loop
-    const deleteResponse = await db.query(`delete from patient where id=?`, [patient_id_to_delete]);
+    const deleteResponse = await db.query(`delete from patient where id=$1`, [patient_id_to_delete]);
 
     // eslint-disable-next-line no-await-in-loop
     await db.query(
-      `delete from user_log where patient_id=? `, [patient_id_to_delete]
+      `delete from user_log where patient_id=$1 `, [patient_id_to_delete]
     );
 
     const now = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -78,20 +77,18 @@ const mergePatient = async (req, res) => {
         )}', null, 'Merged patient delete ${patient_id_to_delete}')`
     );
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

@@ -1,4 +1,4 @@
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const deletePatient = async (req, res) => {
@@ -18,7 +18,6 @@ const deletePatient = async (req, res) => {
   };
 
   const { id } = req.params;
-  const db = makeDb(configuration, res);
   try {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const key in tables) {
@@ -30,27 +29,27 @@ const deletePatient = async (req, res) => {
         limit 1`
       );
 
-      if (dbResponse.length > 0) {
+      if (dbResponse.rows.length > 0) {
         errorMessage.message = `Patient can't be deleted because there is ${tables[key]} data for this patient`;
         return res.status(status.error).send(errorMessage);
       }
       // eslint-disable-next-line no-await-in-loop
-      const deleteResponse = await db.query(`delete from patient where id=?`, [id]);
+      const deleteResponse = await db.query(`delete from patient where id=$1 RETURNING id, client_id`, [id]);
 
       // eslint-disable-next-line no-await-in-loop
-      await db.query(`delete from user_log where patient_id=?`, [id]);
+      await db.query(`delete from user_log where patient_id=$1`, [id]);
 
       // eslint-disable-next-line no-await-in-loop
       await db.query(
         `insert into user_log values (${req.client_id}, ${req.user_id}, now(), null, 'Deleted patient {patient.id} {patient.firstname} {patient.lastname}')`
       );
 
-      if (!deleteResponse.affectedRows) {
+      if (!deleteResponse.rowCount) {
         errorMessage.message = "Deletion not successful";
         return res.status(status.notfound).send(errorMessage);
       }
 
-      successMessage.data = deleteResponse;
+      successMessage.data = deleteResponse.rows;
       successMessage.message = "Delete successful";
       return res.status(status.created).send(successMessage);
     }
@@ -58,8 +57,6 @@ const deletePatient = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
