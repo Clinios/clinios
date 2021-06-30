@@ -21,7 +21,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     padding: theme.spacing(1, 1.5),
     minHeight: 120,
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(3),
+
+    [theme.breakpoints.down("md")]: {
+      marginRight: 0,
+    },
   },
   link: {
     color: theme.palette.text.primary,
