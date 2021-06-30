@@ -41,7 +41,6 @@ const Catalog = () => {
   const DEFAULT_SELECTED_CHECKBOX = ["2"]; // Quest
 
   const [isLoading, setIsLoading] = useState(false);
-  const [hasUserSearched, setHasUserSearched] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [selectedCompanies, setSelectedCompanies] = useState(DEFAULT_SELECTED_CHECKBOX);
@@ -56,7 +55,6 @@ const Catalog = () => {
     };
     CatalogService.searchCatalog(reqBody).then((res) => {
       setCatalog(res.data);
-      setHasUserSearched(true);
       setIsLoading(false);
     })
       .catch(() => {
@@ -184,7 +182,7 @@ const Catalog = () => {
                         </StyledTableCellSm>
                       </StyledTableRowSm>
                     ))
-                    : hasUserSearched ? (
+                    : (
                       <StyledTableRowSm>
                         <StyledTableCellSm colSpan={3}>
                           <Typography align="center" variant="body1">
@@ -192,7 +190,7 @@ const Catalog = () => {
                           </Typography>
                         </StyledTableCellSm>
                       </StyledTableRowSm>
-                    ) : null}
+                    )}
                 </TableBody>
               </Table>
             </TableContainer>
