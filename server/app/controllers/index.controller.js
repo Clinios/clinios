@@ -132,11 +132,11 @@ const getFunctionalRange = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
@@ -149,16 +149,16 @@ const updateFunctionalRange = async (req, res) => {
   try {
     const updateResponse = await db.query(
       `update client
-        set functional_range='${functional_range}'
-        where id=${req.client_id}`
+        set functional_range=$1
+        where id=$2 RETURNING id`, [functional_range, req.client_id]
     );
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
