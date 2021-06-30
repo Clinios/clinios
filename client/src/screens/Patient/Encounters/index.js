@@ -87,7 +87,7 @@ const Encounters = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter]);
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
@@ -174,7 +174,7 @@ const Encounters = (props) => {
                 name={EncountersFormFields.typeField.name}
                 value={formFields[EncountersFormFields.typeField.name]}
                 fullWidth
-                onChange={(e) => handleInputChnage(e)}
+                onChange={(e) => handleInputChange(e)}
                 required
               >
                 {EncountersFormFields.typeField.options.map((option) => (
@@ -194,7 +194,7 @@ const Encounters = (props) => {
                 type={EncountersFormFields.titleField.type}
                 value={formFields[EncountersFormFields.titleField.name]}
                 fullWidth
-                onChange={(e) => handleInputChnage(e)}
+                onChange={(e) => handleInputChange(e)}
                 required
               />
             </Grid>
@@ -214,7 +214,7 @@ const Encounters = (props) => {
                 type="text"
                 fullWidth
                 value={formFields.notes}
-                onChange={(e) => handleInputChnage(e)}
+                onChange={(e) => handleInputChange(e)}
                 multiline
                 rows={12}
                 required
@@ -236,7 +236,7 @@ const Encounters = (props) => {
                 type="text"
                 fullWidth
                 value={formFields.treatment}
-                onChange={(e) => handleInputChnage(e)}
+                onChange={(e) => handleInputChange(e)}
                 multiline
                 rows={12}
                 required

@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { StyledTableRowSm, StyledTableCellSm } from "../../components/common/StyledTable";
 import CatalogService from "../../services/catalog.service";
-import { CatalogLabCompanies } from "../../static/catalog";
+import { CatalogLabCompanies, APP_LOGIN_LINK } from "../../static/catalog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,7 +21,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     padding: theme.spacing(1, 1.5),
     minHeight: 120,
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(3),
+
+    [theme.breakpoints.down("md")]: {
+      marginRight: 0,
+    },
   },
   link: {
     color: theme.palette.text.primary,
@@ -34,11 +38,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Catalog = () => {
   const classes = useStyles();
+  const DEFAULT_SELECTED_CHECKBOX = ["2"]; // Quest
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasUserSearched, setHasUserSearched] = useState(false);
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [selectedCompanies, setSelectedCompanies] = useState(DEFAULT_SELECTED_CHECKBOX);
 
   const fetchCatalogData = useCallback((text) => {
     setIsLoading(true);
@@ -168,10 +174,10 @@ const Catalog = () => {
                         <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         <StyledTableCellSm>
-                          {item.lab_name === null || item.lab_name === "Quest"
+                          {item.lab_name === null || item.lab_id === 2 // Quest
                             ? `$${item.price.toFixed(2)}`
                             : (
-                              <a className={classes.link} href="https://app.avonehr.com">
+                              <a className={classes.link} href={APP_LOGIN_LINK}>
                                 Login to see price
                               </a>
                             )}

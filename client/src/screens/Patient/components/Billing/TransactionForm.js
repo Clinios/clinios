@@ -187,7 +187,7 @@ const NewTransactionForm = (props) => {
     }
   };
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     if (name === "type" && (value === 3 || value === 4) && formFields.paymentType === "") {
       formFields.paymentType = "C";
@@ -362,7 +362,7 @@ const NewTransactionForm = (props) => {
                     required
                     fullWidth
                     value={formFields[item.name]}
-                    onChange={(e) => handleInputChnage(e)}
+                    onChange={(e) => handleInputChange(e)}
                     error={item.name === "amount" ? hasAmountError : false}
                     helperText={hasAmountError && "Amount should be greater than 0"}
                     disabled={checkIfDisabled}
@@ -380,7 +380,7 @@ const NewTransactionForm = (props) => {
                       item.name === "accountNum" ? isPaymentMethodRequired : checkIfRequired(item.name)
                     }
                     fullWidth
-                    onChange={(e) => handleInputChnage(e)}
+                    onChange={(e) => handleInputChange(e)}
                     disabled={checkIfDisabled}
                   >
                     {!!item.options && item.options.length ? item.options.map((option) => (
@@ -402,7 +402,7 @@ const NewTransactionForm = (props) => {
               type="text"
               fullWidth
               value={formFields.notes}
-              onChange={(e) => handleInputChnage(e)}
+              onChange={(e) => handleInputChange(e)}
               multiline
               rows={5}
             />

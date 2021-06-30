@@ -11,9 +11,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import MenuIcon from "@material-ui/icons/MenuOutlined";
 import clsx from "clsx";
 import PropTypes from "prop-types";
-import { NavLink as RouterLink } from "react-router-dom";
 
 import Logo from "../../../../assets/img/Logo.svg";
+import { APP_LINK, APP_LOGIN_LINK } from "../../../../static/catalog";
 import { catalog_pages } from "../../../../static/nav-pages";
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     maxWidth: "1040px",
   },
+  mr: {
+    marginRight: 10,
+  },
 }));
 
 
@@ -66,9 +69,9 @@ const Topbar = (props) => {
     <AppBar position="relative" {...rest} className={clsx(classes.root, className)}>
       <Container maxWidth="lg" className={classes.container}>
         <Toolbar className={classes.toolbar} disableGutters>
-          <RouterLink to="/dashboard">
-            <img src={Logo} alt="Logo" />
-          </RouterLink>
+          <Link href={APP_LINK}>
+            <img src={Logo} alt="Logo" className={classes.mr} />
+          </Link>
           <Hidden mdDown>
             <Grid className={classes.linksContainer}>
               {catalog_pages.map((link) => (
@@ -77,7 +80,7 @@ const Topbar = (props) => {
                 </Link>
               ))}
             </Grid>
-            <a className={classes.link} href="https://app.avonehr.com">
+            <a className={classes.link} href={APP_LOGIN_LINK}>
               <Button
                 className={classes.loginButton}
                 size="large"

@@ -59,7 +59,7 @@ const Form = () => {
     contactPreference: "",
   });
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
@@ -117,11 +117,11 @@ const Form = () => {
                     id={item.id}
                     type={item.type}
                     fullWidth
-                    onChange={(e) => handleInputChnage(e)}
+                    onChange={(e) => handleInputChange(e)}
                   />
                 ) : (
                   <TextField
-                      // className={classes.select}
+                    // className={classes.select}
                     size="small"
                     variant="outlined"
                     select
@@ -131,7 +131,7 @@ const Form = () => {
                     name={item.name}
                     value={formFields[item.name]}
                     fullWidth
-                    onChange={(e) => handleInputChnage(e)}
+                    onChange={(e) => handleInputChange(e)}
                   >
                     {item.options.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -162,7 +162,7 @@ const Form = () => {
                   id={item.id}
                   type={item.type}
                   fullWidth
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
               </Grid>
             ))}
@@ -214,13 +214,13 @@ const Form = () => {
                     id={item.id}
                     type={item.type}
                     fullWidth
-                    onChange={(e) => handleInputChnage(e)}
+                    onChange={(e) => handleInputChange(e)}
                   />
                 ) : (
                   <TextField
                     size="small"
                     variant="outlined"
-                      // className={classes.select}
+                    // className={classes.select}
                     select
                     placeholder={item.label}
                     label={item.label}
@@ -228,7 +228,7 @@ const Form = () => {
                     name={item.name}
                     value={formFields[item.name]}
                     fullWidth
-                    onChange={(e) => handleInputChnage(e)}
+                    onChange={(e) => handleInputChange(e)}
                   >
                     {item.options.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -259,7 +259,7 @@ const Form = () => {
                   id={item.id}
                   type={item.type}
                   fullWidth
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
               </Grid>
             ))}
@@ -281,7 +281,7 @@ const Form = () => {
                   id={item.id}
                   type={item.type}
                   fullWidth
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
               </Grid>
             ))}
@@ -305,7 +305,7 @@ const Form = () => {
                   id={item.id}
                   type={item.type}
                   fullWidth
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
               </Grid>
             ))}
@@ -319,7 +319,7 @@ const Form = () => {
                   id={item.id}
                   type={item.type}
                   fullWidth
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   multiline
                   rows={5}
                 />
@@ -345,7 +345,7 @@ const Form = () => {
                   id={item.id}
                   type={item.type}
                   fullWidth
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 />
               </Grid>
             ))}

@@ -42,7 +42,7 @@ const NewPaymentForm = (props) => {
     notes: "",
   });
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
@@ -127,7 +127,7 @@ const NewPaymentForm = (props) => {
                 required
                 fullWidth
                 value={formFields.notes}
-                onChange={(e) => handleInputChnage(e)}
+                onChange={(e) => handleInputChange(e)}
               />
             </Grid>
 

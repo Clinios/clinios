@@ -99,7 +99,7 @@ const NewLabRange = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNewDialog, selectedItem]);
 
-  const handleInputChnage = (e) => {
+  const handleInputChange = (e) => {
     const { value, name } = e.target;
     setFormFields({
       ...formFields,
@@ -268,7 +268,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.compareItem}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 >
                   {CompareItemOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value} className={classes.menuOption}>
@@ -288,7 +288,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.compareOperator}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 >
                   {formFields.compareItem === "A"
                     ? AgeCompareOperatorOptions.map((option) => (
@@ -314,7 +314,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.compareTo}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                 >
                   {CompareToOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value} className={classes.menuOption}>
@@ -334,7 +334,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.rangeLow}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   onBlur={() => populateDecimalValue("rangeLow")}
                 />
 
@@ -349,7 +349,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.rangeHigh}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   onBlur={() => populateDecimalValue("rangeHigh")}
                 />
 
@@ -364,7 +364,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.created}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   inputProps={{ readOnly: true }}
                 />
 
@@ -379,7 +379,7 @@ const NewLabRange = (props) => {
                   fullWidth
                   className={classes.gutterBottom}
                   value={formFields.updated}
-                  onChange={(e) => handleInputChnage(e)}
+                  onChange={(e) => handleInputChange(e)}
                   inputProps={{ readOnly: true }}
                 />
               </Grid>

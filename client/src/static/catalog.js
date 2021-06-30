@@ -1,4 +1,8 @@
 
+export const APP_LINK = "https://avonehr.com";
+
+export const APP_LOGIN_LINK = "https://app.avonehr.com";
+
 export const CatalogLabCompanies = [
   {
     name: "Cyrex Laboratories",
