@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     maxWidth: "1040px",
   },
+  mr: {
+    marginRight: 10,
+  },
 }));
 
 
@@ -67,7 +70,7 @@ const Topbar = (props) => {
       <Container maxWidth="lg" className={classes.container}>
         <Toolbar className={classes.toolbar} disableGutters>
           <Link href={APP_LINK}>
-            <img src={Logo} alt="Logo" />
+            <img src={Logo} alt="Logo" className={classes.mr} />
           </Link>
           <Hidden mdDown>
             <Grid className={classes.linksContainer}>
