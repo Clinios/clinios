@@ -106,7 +106,7 @@ const TestsContent = () => {
   const [tests, setTests] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
 
-  const onIconHover = (event, marker) => {
+  const onIconHover = (marker) => {
     setSelectedMarker(marker);
   };
 
@@ -244,19 +244,18 @@ const TestsContent = () => {
                     <TableCell className={classes.iconContainer}>
                       {showPopoverIcon(row) && (
                         <Grid
-                          onMouseEnter={(e) => onIconHover(e, row)}
+                          onMouseEnter={() => onIconHover(row)}
                         >
                           <ClickableHoverPopover
-                            hoverElement={(
-                              <Icon
-                                path={mdiInformationOutline}
-                                size={0.85}
-                              />
-                            )}
                             bodyElement={(
                               selectedMarker ? <MarkerDefinition data={selectedMarker} /> : ""
                             )}
-                          />
+                          >
+                            <Icon
+                              path={mdiInformationOutline}
+                              size={0.85}
+                            />
+                          </ClickableHoverPopover>
                         </Grid>
                       )}
                     </TableCell>
