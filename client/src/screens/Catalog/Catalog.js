@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: 120,
     marginRight: theme.spacing(3),
 
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("sm")]: {
       marginRight: 0,
     },
   },
