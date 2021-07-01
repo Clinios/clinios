@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ClickableHoverPopover = (props) => {
   const {
-    hoverElement,
+    children,
     bodyElement,
   } = props;
   const [openedPopover, setOpenedPopover] = useState(false);
@@ -45,7 +45,7 @@ const ClickableHoverPopover = (props) => {
         onMouseEnter={popoverEnter}
         onMouseLeave={popoverLeave}
       >
-        {hoverElement}
+        {children}
       </span>
       <Popover
         id="mouse-over-popover"
@@ -72,7 +72,7 @@ const ClickableHoverPopover = (props) => {
 };
 
 ClickableHoverPopover.propTypes = {
-  hoverElement: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
   bodyElement: PropTypes.node.isRequired,
 };
 
