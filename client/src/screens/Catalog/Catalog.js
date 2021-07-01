@@ -91,7 +91,7 @@ const Catalog = () => {
         variant="h2"
         color="textPrimary"
       >
-        Lab Test Catalog
+        Test Catalog
       </Typography>
       <Box mt={3}>
         <Grid container spacing={2}>
