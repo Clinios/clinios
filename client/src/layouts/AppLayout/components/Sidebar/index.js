@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 
-import { APP_LINK } from "../../../../static/catalog";
+import { APP_LOGIN_LINK } from "../../../../static/catalog";
 import { catalog_pages } from "../../../../static/nav-pages";
 import { Profile, SidebarNav } from "./components";
 
@@ -57,7 +57,7 @@ const Sidebar = (props) => {
         <Profile />
         <Divider className={classes.divider} />
         <SidebarNav className={classes.nav} pages={catalog_pages} />
-        <a className={classes.link} href={APP_LINK}>
+        <a className={classes.link} href={APP_LOGIN_LINK}>
           <Button
             fullWidth
             variant="contained"
