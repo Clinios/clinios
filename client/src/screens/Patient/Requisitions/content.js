@@ -8,9 +8,9 @@ import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
-import Popover from "../../../components/common/Popover";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
+import ClickableHoverPopover from "../Tests/components/ClickableHoverPopover";
 import ToolTipContent from "./components/ToolTipContent";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,7 +59,6 @@ const RequisitionsContent = (props) => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRequisition, setSelectedRequisition] = useState(null);
 
   const openDeleteDialog = (item) => {
@@ -82,16 +81,8 @@ const RequisitionsContent = (props) => {
       });
   };
 
-  const showPopover = Boolean(selectedRequisition);
-
-  const handlePopoverOpen = (event, requisition) => {
-    setAnchorEl(event.currentTarget);
+  const handlePopoverOpen = (requisition) => {
     setSelectedRequisition(requisition);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setSelectedRequisition(null);
   };
 
   const isDeleteIconDisabled = useCallback((requisition) => {
@@ -115,38 +106,32 @@ const RequisitionsContent = (props) => {
         cancelForm={closeDeleteDialog}
       />
       {
-        showPopover && (
-          <Popover
-            open={showPopover}
-            anchorEl={anchorEl}
-            handlePopoverClose={handlePopoverClose}
-          >
-            <ToolTipContent data={selectedRequisition} />
-          </Popover>
-        )
-      }
-      {
         data.map((item) => (
           <Grid
             key={item.id}
             className={classes.inputRow}
-            onMouseEnter={(e) => handlePopoverOpen(e, item)}
-            onMouseLeave={handlePopoverClose}
+            onMouseEnter={() => handlePopoverOpen(item)}
           >
-            <Typography
-              component="span"
-              className={`${classes.text12} ${classes.block}`}
-              color="textPrimary"
+            <ClickableHoverPopover
+              bodyElement={(
+                selectedRequisition ? <ToolTipContent data={selectedRequisition} /> : ""
+              )}
             >
-              {moment(item.created).format("MMM D YYYY")}
-            </Typography>
-            <Typography
-              component="span"
-              className={`${classes.text12} ${classes.fullWidth}`}
-              color="textPrimary"
-            >
-              {item.marker_name}
-            </Typography>
+              <Typography
+                component="span"
+                className={`${classes.text12} ${classes.block}`}
+                color="textPrimary"
+              >
+                {moment(item.created).format("MMM D YYYY")}
+              </Typography>
+              <Typography
+                component="span"
+                className={`${classes.text12} ${classes.fullWidth}`}
+                color="textPrimary"
+              >
+                {item.marker_name}
+              </Typography>
+            </ClickableHoverPopover>
             <Grid item className={classes.blockAction}>
               <IconButton
                 onClick={() => openDeleteDialog(item)}
