@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const moment = require("moment");
 const config = require("../../../config");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -15,25 +15,29 @@ const {
  * @returns {object} response
  */
 exports.signin = async (req, res) => {
-  const db = makeDb(configuration, res);
-
+ 
   const { client_id, email } = req.body;
-  const rows = await db.query(
+  const patientResponse = await db.query(
     `select p.id, p.client_id, p.firstname, p.lastname, p.password, p.status, p.stripe_customer_id, 
       p.corp_stripe_customer_id, client.code 
       from patient p 
       join client on p.client_id=client.id 
-      where p.client_id=? and p.email=?`,
+      where p.client_id=$1 and p.email=$2`,
       [client_id, email]
   );
 
-  const patient = rows[0];
-  if (!patient) {
+  //const patient = patientResponse.rows;
+  console.log('patientResponse:', patientResponse);
+  if (patientResponse.rows.length === 0) {
     errorMessage.message = "Patient not found";
-    errorMessage.patient = patient;
+    errorMessage.patient = patientResponse.rows;
     return res.status(status.notfound).send(errorMessage);
   }
 
+  const patient = patientResponse.rows[0];
+
+  console.log('patient:', patient);
+  
   const isPasswordValid = bcrypt.compareSync(
     req.body.password,
     patient.password
@@ -52,12 +56,7 @@ exports.signin = async (req, res) => {
   }
 
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
-  await db.query(
-    `update patient 
-    set login_dt='${now}', updated= now() 
-    where id=${patient.id}
-    `
-  );
+  await db.query(`update patient set login_dt='${now}', updated=now() where id=$1`,[patient.id]);
 
   const token = jwt.sign(
     { id: patient.id, client_id: patient.client_id, role: "PATIENT" },

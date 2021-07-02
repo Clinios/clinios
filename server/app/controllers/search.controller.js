@@ -7,8 +7,7 @@ const getResult = async (req, res) => {
   let $sql;
   try {
     $sql = `select id, firstname, middlename, lastname, email
-    from patient
-    where client_id=${req.client_id}
+    from patient where client_id=${req.client_id}
     and (firstname ILIKE '${query}%' or lastname ILIKE '${query}%')
     order by firstname, middlename, lastname
     limit 10`;
