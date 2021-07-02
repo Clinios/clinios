@@ -306,8 +306,7 @@ const PurchaseLabs = () => {
                                   <StyledTableCell scope="item">{lab.lab_company_name}</StyledTableCell>
                                   <StyledTableCell scope="item">{lab.procedure_name}</StyledTableCell>
                                   <StyledTableCell scope="item">
-                                    $
-                                    {lab?.price?.toFixed(2)}
+                                    {lab.price ? `$${lab.price.toFixed(2)}` : ""}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );
