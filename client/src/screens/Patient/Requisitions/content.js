@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import Alert from "../../../components/Alert";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
-import ClickableHoverPopover from "../Tests/components/ClickableHoverPopover";
+import HoverPopover from "../../../components/HoverPopover";
 import ToolTipContent from "./components/ToolTipContent";
 
 const useStyles = makeStyles((theme) => ({
@@ -112,7 +112,7 @@ const RequisitionsContent = (props) => {
             className={classes.inputRow}
             onMouseEnter={() => handlePopoverOpen(item)}
           >
-            <ClickableHoverPopover
+            <HoverPopover
               bodyElement={(
                 selectedRequisition ? <ToolTipContent data={selectedRequisition} /> : ""
               )}
@@ -131,7 +131,7 @@ const RequisitionsContent = (props) => {
               >
                 {item.marker_name}
               </Typography>
-            </ClickableHoverPopover>
+            </HoverPopover>
             <Grid item className={classes.blockAction}>
               <IconButton
                 onClick={() => openDeleteDialog(item)}
