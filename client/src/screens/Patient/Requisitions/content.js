@@ -8,9 +8,9 @@ import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
 import Alert from "../../../components/Alert";
+import HoverPopover from "../../../components/HoverPopover";
 import usePatientContext from "../../../hooks/usePatientContext";
 import PatientService from "../../../services/patient.service";
-import HoverPopover from "../../../components/HoverPopover";
 import ToolTipContent from "./components/ToolTipContent";
 
 const useStyles = makeStyles((theme) => ({
