@@ -26,8 +26,6 @@ exports.signin = async (req, res) => {
       [client_id, email]
   );
 
-  //const patient = patientResponse.rows;
-  console.log('patientResponse:', patientResponse);
   if (patientResponse.rows.length === 0) {
     errorMessage.message = "Patient not found";
     errorMessage.patient = patientResponse.rows;
@@ -35,8 +33,6 @@ exports.signin = async (req, res) => {
   }
 
   const patient = patientResponse.rows[0];
-
-  console.log('patient:', patient);
   
   const isPasswordValid = bcrypt.compareSync(
     req.body.password,
