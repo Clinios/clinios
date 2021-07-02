@@ -254,11 +254,16 @@ export const catalog_pages = [
   },
   {
     id: 4,
+    title: "Pricing",
+    href: `${APP_LINK}/pricing.html`,
+  },
+  {
+    id: 5,
     title: "About",
     href: `${APP_LINK}/about.html`,
   },
   {
-    id: 5,
+    id: 6,
     title: "Contact",
     href: `${APP_LINK}/contact.html`,
   },
