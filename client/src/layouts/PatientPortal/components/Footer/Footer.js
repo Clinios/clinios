@@ -31,7 +31,7 @@ export default function Footer() {
   return (
     <Container component="footer" maxWidth={false} className={classes.footer}>
       <Box pt={2} pb={2}>
-        <CustomTypography variant="body2" color="textPrimary" align="center">
+        <CustomTypography variant="body2" color="textSecondary" align="center">
           {"Copyright © "}
           {" "}
           {new Date().getFullYear()}
