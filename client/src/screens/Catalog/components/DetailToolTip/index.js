@@ -31,16 +31,16 @@ const DetailToolTip = (props) => {
 
   const details = useMemo(() => {
     const detailString = detail && detail.split(`",`);
-    const detailsArray = chunk(detailString, 2);
+    const detailsChunk = chunk(detailString, 2);
 
-    const trimmedValues = !!detailsArray && detailsArray.length && detailsArray.map((detailElem) => (
+    const detailsArray = !!detailsChunk && detailsChunk.length && detailsChunk.map((detailElem) => (
       detailElem.map((elem) => {
         elem.trim();
         return elem.replace(/["]/g, ``);
       })
     ));
 
-    return trimmedValues;
+    return detailsArray;
   }, [detail]);
 
   return (
