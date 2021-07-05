@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     "& svg": {
       cursor: "pointer",
       position: "relative",
-      top: 4,
+      top: 3,
     },
   },
 }));
