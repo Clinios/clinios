@@ -240,7 +240,7 @@ const ForgotPassword = () => {
                   autoFocus
                   onChange={(event) => setEmail(event.target.value)}
                 />
-                <KeyboardDatePicker
+                {/* <KeyboardDatePicker
                   disabled={errors.length > 0}
                   className={classes.dateOfBirth}
                   margin="dense"
@@ -278,7 +278,7 @@ const ForgotPassword = () => {
                   value={postal}
                   autoFocus
                   onChange={(event) => setPostal(event.target.value)}
-                />
+                /> */}
                 <Button
                   type="submit"
                   fullWidth
