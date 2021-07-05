@@ -5,6 +5,7 @@ import {
   TableContainer, Table, TableRow, TableBody, TableHead,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import InfoIcon from '@material-ui/icons/InfoOutlined';
 
 import { StyledTableRowSm, StyledTableCellSm } from "../../components/common/StyledTable";
 import HoverPopover from "../../components/HoverPopover";
@@ -34,6 +35,13 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
     "&:hover": {
       textDecoration: "underline",
+    },
+  },
+  iconContainer: {
+    "& svg": {
+      cursor: "pointer",
+      position: "relative",
+      top: 4,
     },
   },
 }));
@@ -180,13 +188,16 @@ const Catalog = () => {
                         <StyledTableCellSm padding="checkbox">{item.lab_name}</StyledTableCellSm>
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         {item.detail ? (
-                          <StyledTableCellSm onMouseEnter={() => handlePopoverOpen(item)}>
+                          <StyledTableCellSm
+                            onMouseEnter={() => handlePopoverOpen(item)}
+                            className={classes.iconContainer}
+                          >
                             <HoverPopover
                               bodyElement={(
                                 selectedItem ? <DetailToolTip data={selectedItem} /> : ""
                               )}
                             >
-                              Detail
+                              <InfoIcon fontSize="small" />
                             </HoverPopover>
                           </StyledTableCellSm>
                         ) : (
