@@ -7,8 +7,10 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 
 import { StyledTableRowSm, StyledTableCellSm } from "../../components/common/StyledTable";
+import HoverPopover from "../../components/HoverPopover";
 import CatalogService from "../../services/catalog.service";
 import { CatalogLabCompanies, APP_LOGIN_LINK } from "../../static/catalog";
+import DetailToolTip from "./components/DetailToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +46,7 @@ const Catalog = () => {
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [selectedCompanies, setSelectedCompanies] = useState(DEFAULT_SELECTED_CHECKBOX);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const fetchCatalogData = useCallback((text) => {
     setIsLoading(true);
@@ -82,6 +85,10 @@ const Catalog = () => {
       tempSelectedCompanies.splice(index, 1);
       setSelectedCompanies([...tempSelectedCompanies]);
     }
+  };
+
+  const handlePopoverOpen = (lab) => {
+    setSelectedItem(lab);
   };
 
   return (
@@ -159,6 +166,7 @@ const Catalog = () => {
                   <TableRow>
                     <StyledTableCellSm padding="checkbox">Lab Company</StyledTableCellSm>
                     <StyledTableCellSm>Test Name</StyledTableCellSm>
+                    <StyledTableCellSm>Detail</StyledTableCellSm>
                     <StyledTableCellSm>Price</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
@@ -171,6 +179,20 @@ const Catalog = () => {
                       >
                         <StyledTableCellSm padding="checkbox">{item.lab_name}</StyledTableCellSm>
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
+                        {item.detail ? (
+                          <StyledTableCellSm onMouseEnter={() => handlePopoverOpen(item)}>
+                            <HoverPopover
+                              bodyElement={(
+                                selectedItem ? <DetailToolTip data={selectedItem} /> : ""
+                              )}
+                            >
+                              Detail
+                            </HoverPopover>
+                          </StyledTableCellSm>
+                        ) : (
+                          <StyledTableCellSm /> // empty column
+                        )}
+
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_id === 2 // Quest
                             ? `$${item.price.toFixed(2)}`
@@ -184,7 +206,7 @@ const Catalog = () => {
                     ))
                     : (
                       <StyledTableRowSm>
-                        <StyledTableCellSm colSpan={3}>
+                        <StyledTableCellSm colSpan={4}>
                           <Typography align="center" variant="body1">
                             {isLoading ? "Loading..." : "No Records Found..."}
                           </Typography>
