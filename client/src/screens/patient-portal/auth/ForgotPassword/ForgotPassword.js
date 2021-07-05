@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "right",
     "& a": {
       color: theme.palette.text.secondary,
+      fontSize: "12px",
     },
   },
 }));
