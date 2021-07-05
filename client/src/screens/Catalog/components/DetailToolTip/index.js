@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useMemo } from "react";
 
 import {
   Typography, TableContainer, Table, TableRow, TableBody, TableHead, Box,
@@ -28,9 +28,8 @@ const DetailToolTip = (props) => {
   const {
     lab_name, proc_name, price, lab_id, detail,
   } = data;
-  const [details, setDetails] = useState([]);
 
-  const calculateDetails = useCallback(() => {
+  const details = useMemo(() => {
     const detailString = detail && detail.split(`",`);
     const detailsArray = chunk(detailString, 2);
 
@@ -41,12 +40,8 @@ const DetailToolTip = (props) => {
       })
     ));
 
-    setDetails([...trimmedValues]);
+    return trimmedValues;
   }, [detail]);
-
-  useEffect(() => {
-    calculateDetails();
-  }, [calculateDetails]);
 
   return (
     <Box minWidth={300}>
