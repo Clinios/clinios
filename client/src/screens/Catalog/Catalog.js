@@ -157,7 +157,7 @@ const Catalog = () => {
               <Table stickyHeader size="small">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCellSm>Lab Company</StyledTableCellSm>
+                    <StyledTableCellSm padding="checkbox">Lab Company</StyledTableCellSm>
                     <StyledTableCellSm>Test Name</StyledTableCellSm>
                     <StyledTableCellSm>Price</StyledTableCellSm>
                   </TableRow>
@@ -169,7 +169,7 @@ const Catalog = () => {
                         key={item.proc_id}
                         className={classes.pointer}
                       >
-                        <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>
+                        <StyledTableCellSm padding="checkbox">{item.lab_name}</StyledTableCellSm>
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_id === 2 // Quest
