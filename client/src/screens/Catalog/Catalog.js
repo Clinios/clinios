@@ -160,7 +160,7 @@ const Catalog = () => {
               </form>
             </Box>
             {/* Table starts here  */}
-            <TableContainer className={classes.tableContainer}>
+            <TableContainer>
               <Table stickyHeader size="small">
                 <TableHead>
                   <TableRow>
