@@ -101,13 +101,20 @@ const getUserContracts = async (req, res) => {
 const getCorporateUser = async (req, res) => {
   try {
     const dbResponse = await db.query(
-      `select id, admin, firstname, lastname, password from user where id='${req.user_id}' and client_id is null`
+      `select id, admin, firstname, lastname, password from users where id='${req.user_id}' and client_id is null`
     );
-    if (!dbResponse) {
+    console.log('dbResponse:', dbResponse.rows)
+
+
+    console.log('dbResponse.rows.length < 1', dbResponse.rows.length < 1)
+    console.log('!dbResponse.rows', dbResponse.rows)
+
+    if (dbResponse.rows && dbResponse.rows.length < 1) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    const user = dbResponse[0];
+    
+    const user = dbResponse.rows[0];
     if (user.admin) {
       user.permissions = ["ADMIN"];
     }
@@ -115,6 +122,7 @@ const getCorporateUser = async (req, res) => {
     user.login_url = `/login_corp`;
     successMessage.data = { user };
     return res.status(status.created).send(successMessage);
+  
   } catch (error) {
     console.log("error:", error);
     errorMessage.message = "Select not successful";
