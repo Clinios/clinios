@@ -995,11 +995,11 @@ const createBillingPayment = async (req, res) => {
         ('${dt}', ${type_id}, ${payment_type}, ${amount}, ${encounter_id}, ${req.client_id}, ${req.user_id}, ${patient_id}, now(), ${req.user_id})`
     );
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
