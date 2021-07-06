@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -16,6 +17,7 @@ import PropTypes from "prop-types";
 
 import Alert from "../../../../components/Alert";
 import usePatientContext from "../../../../hooks/usePatientContext";
+import { toggleAllergyDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +37,15 @@ const useStyles = makeStyles((theme) => ({
     border: "none",
     "& button": {
       fontSize: "12px",
+    },
+  },
+  newButton: {
+    position: "absolute",
+    right: "20%",
+    top: "10px",
+
+    [theme.breakpoints.down("md")]: {
+      right: "15%",
     },
   },
 }));
@@ -71,7 +82,7 @@ const AllergiesDetails = (props) => {
   const { reloadData } = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { state } = usePatientContext();
+  const { state, dispatch } = usePatientContext();
   const { data } = state.allergies;
   const { patientId } = state;
 
@@ -109,6 +120,14 @@ const AllergiesDetails = (props) => {
         applyForm={() => deleteItemHandler(selectedItem)}
         cancelForm={closeDeleteDialog}
       />
+      <Button
+        variant="outlined"
+        className={classes.newButton}
+        size="small"
+        onClick={() => dispatch(toggleAllergyDialog())}
+      >
+        New
+      </Button>
       <TableContainer className={classes.tableContainer}>
         <Table size="small" className={classes.table}>
           <TableHead>
