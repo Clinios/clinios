@@ -1,4 +1,4 @@
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -6,7 +6,6 @@ const {
 } = require("../../helpers/status");
 
 const getInvoice = async (req, res) => {
-  const db = makeDb(configuration, res);
 
   let $sql;
   try {
@@ -21,17 +20,15 @@ const getInvoice = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
