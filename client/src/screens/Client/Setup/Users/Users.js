@@ -121,7 +121,7 @@ const Users = () => {
             New
           </Button>
         </div>
-        <Grid container justify="center" spacing={8}>
+        <Grid container justify="center">
           <Grid item md={12} xs={12}>
             <Typography component="p" variant="body2" color="textPrimary">
               This page is used to manage users
