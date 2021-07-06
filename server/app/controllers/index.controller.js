@@ -40,11 +40,11 @@ const getPatient = async (req, res) => {
       where p.id=${req.user_id}
       `);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    const user = dbResponse[0];
+    const user = dbResponse.rows[0];
     user.role = "PATIENT";
     user.login_url = `/login/${user.code}`;
     successMessage.data = { user };

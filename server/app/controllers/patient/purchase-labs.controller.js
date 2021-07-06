@@ -1,5 +1,5 @@
 const Stripe = require("stripe");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -7,9 +7,8 @@ const {
 } = require("../../helpers/status");
 
 const getPurchaseLabs = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
-    const $sql = `select pc.id patient_procedure_id, c.id procedure_id, c.name procedure_name, c.price, pc.created, lc.name lab_company_name, lc.specialty_lab
+    const $sql = `select pc.id patient_procedure_id, c.id procedure_id, c.name procedure_name, c.price, pc.created, lc.name lab_company_name
     from patient_proc pc
     left join tranc t on t.id = pc.tranc_id
     left join proc c on c.id=pc.proc_id
@@ -22,17 +21,16 @@ const getPurchaseLabs = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err)
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -48,7 +46,6 @@ const createPurchaseLabs = async (req, res) => {
     payment_method_id: formData.payment_method_id,
   };
 
-  const db = makeDb(configuration, res);
   try {
     const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY);
 
@@ -101,15 +98,15 @@ const createPurchaseLabs = async (req, res) => {
       trancData.pp_return = JSON.stringify(intent);
     }
 
-    const insertResponse = await db.query(`insert into tranc set ?`, [
+    const insertResponse = await db.query(`insert into tranc set $1 RETURNING id`, [
       trancData,
     ]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    if (insertResponse.insertId) {
+    if (insertResponse.rows[0].id) {
       const trancDetailsData = {
         tranc_id: insertResponse.insertId,
         // procedure_id: formData.procedure_ids,
@@ -118,7 +115,7 @@ const createPurchaseLabs = async (req, res) => {
         formData.selectedLabs.map(async (lab) => {
           trancDetailsData.proc_id = lab.procedure_id;
           trancDetailsData.patient_proc_id = lab.patient_procedure_id;
-          await db.query(`insert into tranc_detail set ?`, [trancDetailsData]);
+          await db.query(`insert into tranc_detail set $1`, [trancDetailsData]);
         });
       }
 
@@ -132,8 +129,6 @@ const createPurchaseLabs = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

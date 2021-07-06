@@ -74,15 +74,7 @@ const createBilling = async (req, res) => {
     payment_type = null;
   } else {
     payment_type = `'${payment_type}'`;
-  }
-
-  /*
-  const formData = req.body.data;
-  formData.client_id = formData.client_id ? formData.client_id : req.client_id; 
-  formData.patient_id = formData.patient_id ? formData.patient_id : req.user_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
-*/
+  }s
 
   try {
 
