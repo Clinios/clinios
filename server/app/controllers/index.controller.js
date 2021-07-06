@@ -89,7 +89,7 @@ const getUserContracts = async (req, res) => {
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     console.log("error:", error);
@@ -147,6 +147,7 @@ const getFunctionalRange = async (req, res) => {
     successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   }

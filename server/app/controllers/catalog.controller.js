@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const searchCatalog = async (req, res) => {
@@ -10,7 +10,6 @@ const searchCatalog = async (req, res) => {
   }
   const { text, labCompanyId } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     let $sql = `select p.id proc_id, lc.id lab_id, lc.name lab_name, p.name proc_name, p.price
       , group_concat('"', q.id, '","', q.name, '"' order by q.name) detail
@@ -19,9 +18,7 @@ const searchCatalog = async (req, res) => {
       left join proc_item pi on pi.proc_id=p.id
       left join quest q on pi.quest_id=q.id
       where p.type='L'
-      and p.name like '%${text}%'
-      `
-      ;
+      and p.name like '%${text}%'`;
 
     if (labCompanyId) {
       $sql += `and lc.id in (${labCompanyId}) \n`;
@@ -39,14 +36,12 @@ const searchCatalog = async (req, res) => {
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log(err)
     errorMessage.message = "Search not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

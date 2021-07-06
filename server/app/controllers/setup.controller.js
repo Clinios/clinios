@@ -1,9 +1,8 @@
 const fs = require("fs");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const backup = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { client_id } = req.params;
   let $sql;
 
@@ -58,7 +57,7 @@ const backup = async (req, res) => {
         updated,
         updated_user_id
         from patient
-        where client_id=? order by 1`;
+        where client_id=$1 order by 1`;
 
     const dbResponse = await db.query($sql, [client_id]);
 
@@ -66,17 +65,16 @@ const backup = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    fs.writeFile("result.txt", JSON.stringify(dbResponse[0]), (err) => {
+    fs.writeFile("result.txt", JSON.stringify(dbResponse.rows[0]), (err) => {
       if (err) throw err;
       console.log("File successfully written to disk");
     });
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
