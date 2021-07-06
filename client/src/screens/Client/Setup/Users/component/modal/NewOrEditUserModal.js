@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import {
   Button,
-  colors,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid,
@@ -28,11 +23,6 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-  content: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    fontSize: "18px",
-  },
   formControl: {
     margin: "10px 0",
     display: "flex",
@@ -51,23 +41,8 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: "5px",
     },
   },
-  formHelperText: {
-    width: "220px",
-    fontSize: "12px",
-    paddingLeft: "10px",
-  },
-  statusText: {
-    width: "220px",
-    fontSize: "14px",
-  },
   modalAction: {
-    borderTop: `1px solid ${theme.palette.background.default}`,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -80,7 +55,6 @@ const errorsInitialState = {
 };
 
 const NewOrEditUserModal = ({
-  isOpen,
   handleOnClose,
   isNewUser,
   forwardEmailList,
@@ -233,12 +207,13 @@ const NewOrEditUserModal = ({
   };
 
   const handleOnChange = (event) => {
-    const isChecked = event.target.type === "checkbox";
+    const {
+      name, value, type, checked,
+    } = event.target;
+    const isChecked = type === "checkbox";
     setUser({
       ...user,
-      [event.target.name]: isChecked
-        ? event.target.checked
-        : event.target.value.trim(),
+      [name]: isChecked ? checked : value,
     });
     setErrorChecking(errorsInitialState);
   };
@@ -251,400 +226,388 @@ const NewOrEditUserModal = ({
 
   return (
     <div>
-      <Dialog
-        maxWidth="sm"
-        fullWidth
-        open={isOpen}
-        onClose={handleOnClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title" className={classes.title}>
-          {isNewUser ? "New User" : "Edit User"}
-        </DialogTitle>
-        <DialogContent className={classes.content}>
-          {errors
-            && errors.map((error, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Alert severity="error" key={index}>
-                {error.msg}
-              </Alert>
-            ))}
-          <div className={classes.root}>
-            <Grid container justify="center" spacing={1}>
-              <Grid item xs={12} md={4} className={classes.gridMargin}>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    required
-                    label="Firstname"
-                    name="firstname"
-                    value={user.firstname ? String(user.firstname) : ""}
-                    onChange={handleOnChange}
-                    onKeyUp={handleKeyUp}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    error={errorChecking.one || nameError || firstnameError}
-                    helperText={
-                      (errorChecking.one && errorChecking.one)
-                      || (nameError
-                        && "This firstname and lastname already exists!")
-                      || (firstnameError
-                        && "Firstname can't be less then 0 or greater then 255 characters!")
-                    }
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    required
-                    fullWidth
-                    label="Lastname"
-                    name="lastname"
-                    value={user.lastname ? String(user.lastname) : ""}
-                    onChange={handleOnChange}
-                    onKeyUp={handleKeyUp}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    error={errorChecking.two || nameError || lastnameError}
-                    helperText={
-                      (errorChecking.two && errorChecking.two)
-                      || (nameError
-                        && "This firstname and lastname already exists!")
-                      || (lastnameError
-                        && "Lastname can't be less then 0 or greater then 255 characters!")
-                    }
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    label="Title"
-                    name="title"
-                    value={user.title ? String(user.title) : ""}
-                    onChange={handleOnChange}
-                    onKeyUp={handleKeyUp}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    required
-                    label="Email"
-                    name="email"
-                    value={user.email ? String(user.email) : ""}
-                    onChange={handleOnChange}
-                    onKeyUp={handleKeyUp}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    error={
-                      errorChecking.three || emailError || errorChecking.five
-                    }
-                    helperText={
-                      (errorChecking.three && errorChecking.three)
-                      || (emailError && "This email already exists!")
-                      || (errorChecking.five && errorChecking.five)
-                    }
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    label="Phone"
-                    name="phone"
-                    value={user.phone ? String(user.phone) : ""}
-                    onChange={handleOnChange}
-                    onKeyUp={handleKeyUp}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    id="outlined-select-currency"
-                    select
-                    label="Timezone"
-                    name="timezone"
-                    value={user.timezone}
-                    onChange={handleOnChange}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option aria-label="None" value="" />
-                    <option aria-label="None" value="HST">
-                      HST &#45; Hawaii Standard Time
-                    </option>
-                    <option aria-label="None" value="AKST">
-                      AKST &#45; Alaska Standard Time
-                    </option>
-                    <option aria-label="None" value="PST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      PST	&#45; Pacific Standard Time
-                    </option>
-                    <option aria-label="None" value="MST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      MST	&#45; Mountain Standard Time
-                    </option>
-                    <option aria-label="None" value="CST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      CST	&#45; Central Standard Time
-                    </option>
-                    <option aria-label="None" value="EST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      EST	&#45; Eastern Standard Time
-                    </option>
-                  </TextField>
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    label="Created"
-                    value={
-                      user.created ? moment(user.created).format("lll") : ""
-                    }
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    label="Created By"
-                    value={user.created_user}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={4} className={classes.gridMargin}>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    id="outlined-select-currency"
-                    select
-                    label="Status"
-                    name="status"
-                    value={user.status}
-                    onChange={handleOnChange}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                    error={statusError}
-                    helperText={
-                      statusError && "You can't set yourself to deleted!"
-                    }
-                  >
-                    <option aria-label="None" value="A">
-                      Active
-                    </option>
-                    <option aria-label="None" value="I">
-                      Inactive
-                    </option>
-                    <option aria-label="None" value="D">
-                      Deleted
-                    </option>
-                  </TextField>
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    required
-                    id="outlined-select-currency"
-                    select
-                    label="Type"
-                    name="type"
-                    value={user.type}
-                    onChange={handleOnChange}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                    error={errorChecking.four}
-                    helperText={errorChecking.four && errorChecking.four}
-                  >
-                    <option aria-label="None" value="" />
-                    <option aria-label="None" value="PP">
-                      Primary Provider
-                    </option>
-                    <option aria-label="None" value="SP">
-                      Secondary Provider
-                    </option>
-                    <option aria-label="None" value="A">
-                      Administrative
-                    </option>
-                    <option aria-label="None" value="L">
-                      Limited
-                    </option>
-                  </TextField>
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    id="outlined-select-currency"
-                    select
-                    label="Schedule"
-                    name="schedule"
-                    value={user.schedule}
-                    onChange={handleOnChange}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option aria-label="None" value="F">
-                      Full
-                    </option>
-                    <option aria-label="None" value="H">
-                      Half
-                    </option>
-                    <option aria-label="None" value="Q">
-                      Quarter
-                    </option>
-                  </TextField>
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    id="outlined-select-currency"
-                    select
-                    label="Forward Email"
-                    name="email_forward_user_id"
-                    value={user.email_forward_user_id}
-                    onChange={handleOnChange}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option aria-label="None" value="" />
-                    {forwardEmailList.map((list) => (
-                      <option key={list.id} value={list.id}>
-                        {list.name}
-                      </option>
-                    ))}
-                  </TextField>
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    label="Last Login"
-                    value={
-                      user.login_dt ? moment(user.login_dt).format("lll") : ""
-                    }
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    label="Updated"
-                    value={
-                      user.updated ? moment(user.updated).format("lll") : ""
-                    }
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-                <FormControl component="div" className={classes.formControl}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    label="Updated By"
-                    value={user.updated_user}
-                    variant="outlined"
-                    size="small"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControlLabel
-                  className={classes.formLabel}
-                  control={(
-                    <Switch
-                      checked={Boolean(user.appointments)}
-                      size="small"
-                      name="appointments"
-                      color="primary"
-                      onChange={handleOnChange}
-                    />
-                  )}
-                  label="Appointments"
+      {errors
+        && errors.map((error, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Alert severity="error" key={index}>
+            {error.msg}
+          </Alert>
+        ))}
+      <div className={classes.root}>
+        <Grid container justify="center" spacing={1}>
+          <Grid item xs={12} md={4} className={classes.gridMargin}>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                autoFocus
+                required
+                label="Firstname"
+                name="firstname"
+                value={user.firstname ? String(user.firstname) : ""}
+                onChange={handleOnChange}
+                onKeyUp={handleKeyUp}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={errorChecking.one || nameError || firstnameError}
+                helperText={
+                  (errorChecking.one && errorChecking.one)
+                  || (nameError
+                    && "This firstname and lastname already exists!")
+                  || (firstnameError
+                    && "Firstname can't be less then 0 or greater then 255 characters!")
+                }
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                required
+                fullWidth
+                label="Lastname"
+                name="lastname"
+                value={user.lastname ? String(user.lastname) : ""}
+                onChange={handleOnChange}
+                onKeyUp={handleKeyUp}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={errorChecking.two || nameError || lastnameError}
+                helperText={
+                  (errorChecking.two && errorChecking.two)
+                  || (nameError
+                    && "This firstname and lastname already exists!")
+                  || (lastnameError
+                    && "Lastname can't be less then 0 or greater then 255 characters!")
+                }
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                label="Title"
+                name="title"
+                value={user.title ? String(user.title) : ""}
+                onChange={handleOnChange}
+                onKeyUp={handleKeyUp}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                required
+                label="Email"
+                name="email"
+                value={user.email ? String(user.email) : ""}
+                onChange={handleOnChange}
+                onKeyUp={handleKeyUp}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  errorChecking.three || emailError || errorChecking.five
+                }
+                helperText={
+                  (errorChecking.three && errorChecking.three)
+                  || (emailError && "This email already exists!")
+                  || (errorChecking.five && errorChecking.five)
+                }
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                label="Phone"
+                name="phone"
+                value={user.phone ? String(user.phone) : ""}
+                onChange={handleOnChange}
+                onKeyUp={handleKeyUp}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                id="outlined-select-currency"
+                select
+                label="Timezone"
+                name="timezone"
+                value={user.timezone}
+                onChange={handleOnChange}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                SelectProps={{
+                  native: true,
+                }}
+              >
+                <option aria-label="None" value="" />
+                <option aria-label="None" value="HST">
+                  HST &#45; Hawaii Standard Time
+                </option>
+                <option aria-label="None" value="AKST">
+                  AKST &#45; Alaska Standard Time
+                </option>
+                <option aria-label="None" value="PST">
+                  {/* eslint-disable-next-line no-tabs */}
+                  PST	&#45; Pacific Standard Time
+                </option>
+                <option aria-label="None" value="MST">
+                  {/* eslint-disable-next-line no-tabs */}
+                  MST	&#45; Mountain Standard Time
+                </option>
+                <option aria-label="None" value="CST">
+                  {/* eslint-disable-next-line no-tabs */}
+                  CST	&#45; Central Standard Time
+                </option>
+                <option aria-label="None" value="EST">
+                  {/* eslint-disable-next-line no-tabs */}
+                  EST	&#45; Eastern Standard Time
+                </option>
+              </TextField>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                disabled
+                label="Created"
+                value={
+                  user.created ? moment(user.created).format("lll") : ""
+                }
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                disabled
+                label="Created By"
+                value={user.created_user}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={4} className={classes.gridMargin}>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                id="outlined-select-currency"
+                select
+                label="Status"
+                name="status"
+                value={user.status}
+                onChange={handleOnChange}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                SelectProps={{
+                  native: true,
+                }}
+                error={statusError}
+                helperText={
+                  statusError && "You can't set yourself to deleted!"
+                }
+              >
+                <option aria-label="None" value="A">
+                  Active
+                </option>
+                <option aria-label="None" value="I">
+                  Inactive
+                </option>
+                <option aria-label="None" value="D">
+                  Deleted
+                </option>
+              </TextField>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                required
+                id="outlined-select-currency"
+                select
+                label="Type"
+                name="type"
+                value={user.type}
+                onChange={handleOnChange}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                SelectProps={{
+                  native: true,
+                }}
+                error={errorChecking.four}
+                helperText={errorChecking.four && errorChecking.four}
+              >
+                <option aria-label="None" value="" />
+                <option aria-label="None" value="PP">
+                  Primary Provider
+                </option>
+                <option aria-label="None" value="SP">
+                  Secondary Provider
+                </option>
+                <option aria-label="None" value="A">
+                  Administrative
+                </option>
+                <option aria-label="None" value="L">
+                  Limited
+                </option>
+              </TextField>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                id="outlined-select-currency"
+                select
+                label="Schedule"
+                name="schedule"
+                value={user.schedule}
+                onChange={handleOnChange}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                SelectProps={{
+                  native: true,
+                }}
+              >
+                <option aria-label="None" value="F">
+                  Full
+                </option>
+                <option aria-label="None" value="H">
+                  Half
+                </option>
+                <option aria-label="None" value="Q">
+                  Quarter
+                </option>
+              </TextField>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                id="outlined-select-currency"
+                select
+                label="Forward Email"
+                name="email_forward_user_id"
+                value={user.email_forward_user_id}
+                onChange={handleOnChange}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                SelectProps={{
+                  native: true,
+                }}
+              >
+                <option aria-label="None" value="" />
+                {forwardEmailList.map((list) => (
+                  <option key={list.id} value={list.id}>
+                    {list.name}
+                  </option>
+                ))}
+              </TextField>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                disabled
+                label="Last Login"
+                value={
+                  user.login_dt ? moment(user.login_dt).format("lll") : ""
+                }
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                disabled
+                label="Updated"
+                value={
+                  user.updated ? moment(user.updated).format("lll") : ""
+                }
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                fullWidth
+                disabled
+                label="Updated By"
+                value={user.updated_user}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <FormControlLabel
+              className={classes.formLabel}
+              control={(
+                <Switch
+                  checked={Boolean(user.appointments)}
+                  size="small"
+                  name="appointments"
+                  color="primary"
+                  onChange={handleOnChange}
                 />
-                <FormControlLabel
-                  className={classes.formLabel}
-                  control={(
-                    <Switch
-                      checked={Boolean(user.admin)}
-                      size="small"
-                      name="admin"
-                      color="primary"
-                      onChange={handleOnChange}
-                    />
-                  )}
-                  label="Administrator"
+              )}
+              label="Appointments"
+            />
+            <FormControlLabel
+              className={classes.formLabel}
+              control={(
+                <Switch
+                  checked={Boolean(user.admin)}
+                  size="small"
+                  name="admin"
+                  color="primary"
+                  onChange={handleOnChange}
                 />
-                {/* TODO {adminError() && (
+              )}
+              label="Administrator"
+            />
+            {/* TODO {adminError() && (
                   <FormHelperText
                     style={{ textAlign: "center", marginTop: "-3PX" }}
                     error={true}
@@ -652,59 +615,43 @@ const NewOrEditUserModal = ({
                     You can't grant yourself administrator permissions!
                   </FormHelperText>
                 )} */}
-              </Grid>
-            </Grid>
+          </Grid>
+        </Grid>
 
-            <FormControl component="div" className={classes.formControl}>
-              <TextField
-                className={classes.noteMargin}
-                fullWidth
-                variant="outlined"
-                multiline
-                name="note"
-                label="Notes"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                InputProps={{
-                  rows: 6,
-                }}
-                value={user.note ? String(user.note) : ""}
-                onChange={handleOnChange}
-                onKeyUp={handleKeyUp}
-              />
-            </FormControl>
-          </div>
-        </DialogContent>
-        <DialogActions className={classes.modalAction}>
-          <Button
-            size="small"
+        <FormControl component="div" className={classes.formControl}>
+          <TextField
+            className={classes.noteMargin}
+            fullWidth
             variant="outlined"
-            onClick={handleOnClose}
-            style={{
-              borderColor: colors.orange[600],
-              color: colors.orange[600],
+            multiline
+            name="note"
+            label="Notes"
+            InputLabelProps={{
+              shrink: true,
             }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={handleCreateNewOrEditUser}
-            disabled={!validate()}
-          >
-            {isNewUser ? "Save" : "Update"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+            InputProps={{
+              rows: 6,
+            }}
+            value={user.note ? String(user.note) : ""}
+            onChange={handleOnChange}
+            onKeyUp={handleKeyUp}
+          />
+        </FormControl>
+      </div>
+      <Grid className={classes.modalAction}>
+        <Button
+          variant="outlined"
+          onClick={handleCreateNewOrEditUser}
+          disabled={!validate()}
+        >
+          {isNewUser ? "Save" : "Update"}
+        </Button>
+      </Grid>
     </div>
   );
 };
 
 NewOrEditUserModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
   handleOnClose: PropTypes.func.isRequired,
   isNewUser: PropTypes.bool.isRequired,
   forwardEmailList: PropTypes.arrayOf(
