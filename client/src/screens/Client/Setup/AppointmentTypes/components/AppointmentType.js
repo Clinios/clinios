@@ -23,10 +23,14 @@ const useStyles = makeStyles((theme) => ({
   actions: {
     textAlign: "center",
     display: "flex",
+    justifyContent: "center",
     border: "none",
     "& button": {
       fontSize: "12px",
     },
+  },
+  button: {
+    padding: 9,
   },
   overflowControl: {
     maxWidth: "130px",
@@ -78,73 +82,73 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
       <Table size="small" className={classes.table} aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <StyledTableCell padding="checkbox">Appointment Type</StyledTableCell>
-            <StyledTableCell padding="checkbox" align="center">Description</StyledTableCell>
-            <StyledTableCell padding="checkbox">Minutes</StyledTableCell>
-            <StyledTableCell padding="checkbox">Fee</StyledTableCell>
-            <StyledTableCell padding="checkbox">Patient Schedule</StyledTableCell>
-            <StyledTableCell padding="checkbox">Status</StyledTableCell>
-            <StyledTableCell padding="checkbox">Created</StyledTableCell>
-            <StyledTableCell padding="checkbox">Created By</StyledTableCell>
-            <StyledTableCell padding="checkbox">Updated</StyledTableCell>
-            <StyledTableCell padding="checkbox">Updated By</StyledTableCell>
-            <StyledTableCell padding="checkbox">Actions</StyledTableCell>
+            <StyledTableCell>Appointment Type</StyledTableCell>
+            <StyledTableCell align="center">Description</StyledTableCell>
+            <StyledTableCell>Minutes</StyledTableCell>
+            <StyledTableCell>Fee</StyledTableCell>
+            <StyledTableCell>Patient Schedule</StyledTableCell>
+            <StyledTableCell>Status</StyledTableCell>
+            <StyledTableCell>Created</StyledTableCell>
+            <StyledTableCell>Created By</StyledTableCell>
+            <StyledTableCell>Updated</StyledTableCell>
+            <StyledTableCell>Updated By</StyledTableCell>
+            <StyledTableCell align="center">Actions</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {appointments.map((appointment) => (
             <StyledTableRow key={appointment.id}>
-              <TableCell padding="checkbox" component="th" scope="row">
+              <TableCell component="th" scope="row">
                 {appointment.appointment_type}
               </TableCell>
               {appointment.descr && appointment.descr.length > 0 ? (
                 <LightTooltip title={appointment.descr}>
-                  <TableCell padding="checkbox" className={classes.overflowControl} align="center">
+                  <TableCell className={classes.overflowControl} align="center">
                     {appointment.descr}
                   </TableCell>
                 </LightTooltip>
               ) : (
-                <TableCell padding="checkbox" className={classes.overflowControl} align="center">
+                <TableCell className={classes.overflowControl} align="center">
                   {appointment.descr || ""}
                 </TableCell>
               )}
-              <TableCell padding="checkbox">{appointment.length}</TableCell>
-              <TableCell padding="checkbox">{`$${appointment.fee?.toFixed(2)}`}</TableCell>
-              <TableCell padding="checkbox">{appointment.allow_patients_schedule ? "Yes" : "No"}</TableCell>
+              <TableCell>{appointment.length}</TableCell>
+              <TableCell>{`$${appointment.fee?.toFixed(2)}`}</TableCell>
+              <TableCell>{appointment.allow_patients_schedule ? "Yes" : "No"}</TableCell>
               {/*
               {appointment.note && appointment.note.length > 0 ? (
                 <LightTooltip title={appointment.note}>
-                  <TableCell padding="checkbox" className={classes.overflowControl} align="center">
+                  <TableCell className={classes.overflowControl} align="center">
                     {appointment.note}
                   </TableCell>
                 </LightTooltip>
               ) : (
-                <TableCell padding="checkbox" className={classes.overflowControl} align="center">
+                <TableCell className={classes.overflowControl} align="center">
                   {appointment.note || ""}
                 </TableCell>
               )}
               */ }
-              <TableCell padding="checkbox">{appointment.active ? "Active" : "-"}</TableCell>
-              <TableCell padding="checkbox">{moment(appointment.created).format("lll")}</TableCell>
-              <TableCell padding="checkbox">{appointment.created_user}</TableCell>
-              <TableCell padding="checkbox">
+              <TableCell>{appointment.active ? "Active" : "-"}</TableCell>
+              <TableCell>{moment(appointment.created).format("lll")}</TableCell>
+              <TableCell>{appointment.created_user}</TableCell>
+              <TableCell>
                 {appointment.updated ? moment(appointment.updated).format("lll") : "-"}
               </TableCell>
-              <TableCell padding="checkbox">{appointment.updated_user || "-"}</TableCell>
-              <TableCell padding="checkbox" className={classes.actions}>
+              <TableCell>{appointment.updated_user || "-"}</TableCell>
+              <TableCell className={classes.actions}>
                 <IconButton
                   aria-label="edit"
-                  className={classes.margin}
                   onClick={() => onEdit(appointment.id)}
+                  className={classes.button}
                 >
-                  <EditIcon fontSize="default" />
+                  <EditIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   aria-label="delete"
-                  className={classes.margin}
                   onClick={() => onDelete(appointment.id)}
+                  className={classes.button}
                 >
-                  <DeleteIcon fontSize="default" />
+                  <DeleteIcon fontSize="small" />
                 </IconButton>
               </TableCell>
             </StyledTableRow>

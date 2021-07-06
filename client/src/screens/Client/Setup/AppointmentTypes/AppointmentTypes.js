@@ -7,10 +7,12 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import _ from "lodash";
+import { useSnackbar } from "notistack";
 
+import Alert from "../../../../components/Alert";
+import Dialog from "../../../../components/Dialog";
 import AppointmentService from "../../../../services/appointmentType.service";
 import { Appointments } from "./components";
-import DeleteAppointmentModal from "./components/modal/DeleteAppointmentType";
 import NewOrEditAppointment from "./components/modal/NewOrEditAppointmentType";
 import useKeyboardShortcuts from "./hooks/useKeyboardShortcuts";
 
@@ -41,13 +43,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AppointmentTypes() {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
   const [selectedappointment, setSelectedAppointment] = useState({});
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [isNewAppointment, setIsNewAppointment] = useState(true);
-
 
   const fetchAppointmentTypes = () => {
     AppointmentService.getAll().then((res) => {
@@ -96,6 +99,17 @@ export default function AppointmentTypes() {
     handleOnNewClick();
   }, { overrideSystem: true });
 
+  const handleDeleteAppointment = (id) => {
+    AppointmentService.deleteById(id).then((response) => {
+      enqueueSnackbar(`${response.data.message}`, {
+        variant: "success",
+      });
+      handleDeleteModalClose();
+    });
+  };
+
+  // eslint-disable-next-line max-len
+  const deleteMessage = "Your appointment type will be deleted forever from our system and you won't be able to access it anymore.";
 
   return (
     <>
@@ -127,17 +141,32 @@ export default function AppointmentTypes() {
             />
           </Grid>
         </Grid>
-        <NewOrEditAppointment
-          appointment={selectedappointment}
-          isOpen={isEditModalOpen}
-          onClose={() => handleEditModalClose(false)}
-          isNewAppointment={isNewAppointment}
-          savedAppointments={appointments}
-        />
-        <DeleteAppointmentModal
-          id={selectedAppointmentId}
-          isOpen={isDeleteModalOpen}
-          onClose={() => handleDeleteModalClose(false)}
+        {isEditModalOpen && (
+          <Dialog
+            open={isEditModalOpen}
+            title={isNewAppointment ? "New Appointment Type" : "Edit Appointment Type"}
+            message={(
+              <NewOrEditAppointment
+                appointment={selectedappointment}
+                isOpen={isEditModalOpen}
+                onClose={() => handleEditModalClose(false)}
+                isNewAppointment={isNewAppointment}
+                savedAppointments={appointments}
+              />
+            )}
+            cancelForm={() => handleEditModalClose()}
+            hideActions
+            size="sm"
+          />
+        )}
+        <Alert
+          open={isDeleteModalOpen}
+          title="Are you sure about deleting this appointment type?"
+          message={deleteMessage}
+          applyButtonText="Delete"
+          cancelButtonText="Cancel"
+          applyForm={() => handleDeleteAppointment(selectedAppointmentId)}
+          cancelForm={handleDeleteModalClose}
         />
       </Container>
     </>
