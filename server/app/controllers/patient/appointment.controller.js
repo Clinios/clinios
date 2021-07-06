@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -7,7 +7,6 @@ const {
 } = require("../../helpers/status");
 
 const getAllPractitioner = async (req, res) => {
-  const db = makeDb(configuration, res);
   let { client_id } = req.query;
 
   if (typeof client_id === "undefined") {
@@ -17,31 +16,28 @@ const getAllPractitioner = async (req, res) => {
   let $sql;
 
   try {
-    $sql = `select u.id user_id, concat(u.firstname, ' ', u.lastname) name
-    from user u
+    $sql = `select u.id user_id, concat(u.firstname, ' ', u.lastname) AS name
+    from users u
     where u.client_id=${client_id}
     order by name
     limit 100`;
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.info("err:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getPractitionerDates = async (req, res) => {
-  const db = makeDb(configuration, res);
   let { client_id } = req.query;
 
   if (typeof client_id === "undefined") {
@@ -52,27 +48,24 @@ const getPractitionerDates = async (req, res) => {
 
   try {
     $sql = `select id, user_id, start_date_time, end_date_time, log_tz, monday, tuesday, wednesday, thursday, friday, active
-    from user_schedule where client_id=? and current_date() between start_date_time and end_date_time`;
+    from user_schedule where client_id=$1 and current_date between start_date_time and end_date_time`;
 
     const dbResponse = await db.query($sql, [client_id]);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.info("err:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getBookedAppointments = async (req, res) => {
-  const db = makeDb(configuration, res);
   let { client_id } = req.query;
   const { practitioner_id } = req.query;
 
@@ -86,30 +79,26 @@ const getBookedAppointments = async (req, res) => {
     $sql = `select start_dt, end_dt, patient_id, user_id
     from user_calendar
     where client_id=${req.client_id}
-    and user_id=?
+    and user_id=$1
     and status in ('A', 'R')
     and start_dt>now()`;
 
     const dbResponse = await db.query($sql, [practitioner_id]);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.info("err:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getAppointmentTypes = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   const { practitioner_id } = req.body.data;
 
   let $sql;
@@ -127,18 +116,16 @@ const getAppointmentTypes = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse.rows) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.info("err:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -151,35 +138,23 @@ const createAppointment = async (req, res) => {
     patient_id,
     appointment_type_id,
   } = req.body.data;
-
-  const userCalendarData = {};
-  userCalendarData.client_id = req.client_id;
-  userCalendarData.user_id = user_id;
-  userCalendarData.patient_id = patient_id;
-  userCalendarData.appointment_type_id = appointment_type_id;
-  userCalendarData.start_dt = moment(start_dt).format("YYYY-MM-DD HH:mm:ss");
-  userCalendarData.end_dt = moment(end_dt).format("YYYY-MM-DD HH:mm:ss");
-  userCalendarData.status = apptStatus;
-  userCalendarData.created = new Date();
-  userCalendarData.created_user_id = req.user_id;
-
-  const db = makeDb(configuration, res);
+  
   try {
-    const insertResponse = await db.query(`insert into user_calendar set ?`, [userCalendarData])
-    if (!insertResponse.affectedRows) {
+    const insertResponse = await db.query(`insert into user_calendar(client_id, user_id, patient_id, appointment_type_id, start_dt, end_dt, status, created, created_user_id)
+    VALUES (${req.user_id}, $1, $2, $3, $4, $5, $6, now(), ${req.user_id}) RETURNING id`, [user_id, patient_id, appointment_type_id, moment(start_dt).format("YYYY-MM-DD HH:mm:ss"),
+     moment(end_dt).format("YYYY-MM-DD HH:mm:ss"), apptStatus])
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
