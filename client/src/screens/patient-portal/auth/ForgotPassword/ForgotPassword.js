@@ -10,9 +10,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import { KeyboardDatePicker } from "@material-ui/pickers";
+// import { KeyboardDatePicker } from "@material-ui/pickers";
 import clsx from "clsx";
-import moment from "moment";
+// import moment from "moment";
 import { useSnackbar } from "notistack";
 import { useSelector, shallowEqual } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "right",
     "& a": {
       color: theme.palette.text.secondary,
+      fontSize: "12px",
     },
   },
 }));
@@ -92,12 +93,12 @@ const ForgotPassword = () => {
   const { clientCode } = useParams();
   const [client, setClient] = useState(null);
   const [email, setEmail] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [postal, setPostal] = useState("");
+  // const [lastname, setLastname] = useState("");
+  // const [postal, setPostal] = useState("");
   const [errors, setErrors] = useState([]);
   const [registrationLink, setRegistrationLink] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [dob, handleDateChange] = useState(new Date());
+  // const [dob, handleDateChange] = useState(new Date());
   const success = useSelector((state) => state.common.success, shallowEqual);
 
 
@@ -131,9 +132,9 @@ const ForgotPassword = () => {
     setIsLoading(true);
     AuthService.passwordChangeRequest(email, {
       patient: {
-        dob: moment(dob).format("YYYY-MM-DD"),
-        lastname,
-        postal,
+        // dob: moment(dob).format("YYYY-MM-DD"),
+        // lastname,
+        // postal,
       },
     }).then(
       (response) => {
@@ -239,7 +240,7 @@ const ForgotPassword = () => {
                   autoFocus
                   onChange={(event) => setEmail(event.target.value)}
                 />
-                <KeyboardDatePicker
+                {/* <KeyboardDatePicker
                   disabled={errors.length > 0}
                   className={classes.dateOfBirth}
                   margin="dense"
@@ -277,7 +278,7 @@ const ForgotPassword = () => {
                   value={postal}
                   autoFocus
                   onChange={(event) => setPostal(event.target.value)}
-                />
+                /> */}
                 <Button
                   type="submit"
                   fullWidth

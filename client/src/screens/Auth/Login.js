@@ -51,6 +51,12 @@ const useStyles = makeStyles((theme) => ({
     height: 65,
     objectFit: "contain",
   },
+  meta: {
+    "& a": {
+      color: theme.palette.text.secondary,
+      fontSize: "12px",
+    },
+  },
 }));
 
 const Login = () => {
@@ -147,7 +153,7 @@ const Login = () => {
             >
               Sign In
             </Button>
-            <Grid container>
+            <Grid container className={classes.meta}>
               <Grid item xs>
                 <Link href="/forgot-password" variant="body2">
                   Forgot password?

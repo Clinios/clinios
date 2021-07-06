@@ -5,10 +5,13 @@ import {
   TableContainer, Table, TableRow, TableBody, TableHead,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import InfoIcon from "@material-ui/icons/InfoOutlined";
 
 import { StyledTableRowSm, StyledTableCellSm } from "../../components/common/StyledTable";
+import HoverPopover from "../../components/HoverPopover";
 import CatalogService from "../../services/catalog.service";
 import { CatalogLabCompanies, APP_LOGIN_LINK } from "../../static/catalog";
+import DetailToolTip from "./components/DetailToolTip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +37,13 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline",
     },
   },
+  iconContainer: {
+    "& svg": {
+      cursor: "pointer",
+      position: "relative",
+      top: 3,
+    },
+  },
 }));
 
 const Catalog = () => {
@@ -44,6 +54,7 @@ const Catalog = () => {
   const [catalog, setCatalog] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [selectedCompanies, setSelectedCompanies] = useState(DEFAULT_SELECTED_CHECKBOX);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const fetchCatalogData = useCallback((text) => {
     setIsLoading(true);
@@ -82,6 +93,10 @@ const Catalog = () => {
       tempSelectedCompanies.splice(index, 1);
       setSelectedCompanies([...tempSelectedCompanies]);
     }
+  };
+
+  const handlePopoverOpen = (lab) => {
+    setSelectedItem(lab);
   };
 
   return (
@@ -153,12 +168,13 @@ const Catalog = () => {
               </form>
             </Box>
             {/* Table starts here  */}
-            <TableContainer className={classes.tableContainer}>
+            <TableContainer>
               <Table stickyHeader size="small">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCellSm>Lab Company</StyledTableCellSm>
+                    <StyledTableCellSm padding="checkbox">Lab Company</StyledTableCellSm>
                     <StyledTableCellSm>Test Name</StyledTableCellSm>
+                    <StyledTableCellSm>Detail</StyledTableCellSm>
                     <StyledTableCellSm>Price</StyledTableCellSm>
                   </TableRow>
                 </TableHead>
@@ -169,8 +185,25 @@ const Catalog = () => {
                         key={item.proc_id}
                         className={classes.pointer}
                       >
-                        <StyledTableCellSm>{item.lab_name}</StyledTableCellSm>
+                        <StyledTableCellSm padding="checkbox">{item.lab_name}</StyledTableCellSm>
                         <StyledTableCellSm>{item.proc_name}</StyledTableCellSm>
+                        {item.detail ? (
+                          <StyledTableCellSm
+                            onMouseEnter={() => handlePopoverOpen(item)}
+                            className={classes.iconContainer}
+                          >
+                            <HoverPopover
+                              bodyElement={(
+                                selectedItem ? <DetailToolTip data={selectedItem} /> : ""
+                              )}
+                            >
+                              <InfoIcon fontSize="small" />
+                            </HoverPopover>
+                          </StyledTableCellSm>
+                        ) : (
+                          <StyledTableCellSm /> // empty column
+                        )}
+
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_id === 2 // Quest
                             ? `$${item.price.toFixed(2)}`
@@ -184,7 +217,7 @@ const Catalog = () => {
                     ))
                     : (
                       <StyledTableRowSm>
-                        <StyledTableCellSm colSpan={3}>
+                        <StyledTableCellSm colSpan={4}>
                           <Typography align="center" variant="body1">
                             {isLoading ? "Loading..." : "No Records Found..."}
                           </Typography>

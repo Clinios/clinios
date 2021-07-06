@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -16,10 +17,11 @@ import PropTypes from "prop-types";
 import Alert from "../../../components/Alert";
 import Tooltip from "../../../components/common/CustomTooltip";
 import usePatientContext from "../../../hooks/usePatientContext";
+import { toggleRequisitionDialog } from "../../../providers/Patient/actions";
 import PatientService from "../../../services/patient.service";
 import { dateFormat, calculateDateDifference } from "../../../utils/helpers";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   button: {
     padding: 9,
   },
@@ -33,6 +35,15 @@ const useStyles = makeStyles(() => ({
     border: "none",
     "& button": {
       fontSize: "12px",
+    },
+  },
+  newButton: {
+    position: "absolute",
+    right: "20%",
+    top: "10px",
+
+    [theme.breakpoints.down("md")]: {
+      right: "15%",
     },
   },
 }));
@@ -68,7 +79,7 @@ const StyledTableRow = withStyles((theme) => ({
 const RequisitionsDetails = (props) => {
   const { reloadData } = props;
   const { enqueueSnackbar } = useSnackbar();
-  const { state } = usePatientContext();
+  const { state, dispatch } = usePatientContext();
   const classes = useStyles();
 
   const { data } = state.requisitions;
@@ -125,6 +136,14 @@ const RequisitionsDetails = (props) => {
         applyForm={() => deleteItemHandler(selectedItem)}
         cancelForm={closeDeleteDialog}
       />
+      <Button
+        variant="outlined"
+        className={classes.newButton}
+        size="small"
+        onClick={() => dispatch(toggleRequisitionDialog())}
+      >
+        New
+      </Button>
       <TableContainer className={classes.tableContainer}>
         <Table size="small" className={classes.table}>
           <TableHead>

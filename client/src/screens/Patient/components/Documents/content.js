@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { Typography, Grid } from "@material-ui/core";
+import { Typography, Grid, Button } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -63,6 +63,15 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "21px",
     fontSize: 12,
   },
+  newButton: {
+    position: "absolute",
+    right: "20%",
+    top: "10px",
+
+    [theme.breakpoints.down("md")]: {
+      right: "15%",
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -100,7 +109,7 @@ const StyledTableRow = withStyles((theme) => ({
 }))(TableRow);
 
 const DocumentsContent = (props) => {
-  const { reloadData, actionsEnable } = props;
+  const { reloadData, actionsEnable, createNewHandler } = props;
   const { enqueueSnackbar } = useSnackbar();
   const { state } = usePatientContext();
   const classes = useStyles();
@@ -108,7 +117,7 @@ const DocumentsContent = (props) => {
   const [tabValue, setTabValue] = useState(0);
   const [tableData, setTableData] = useState([]);
   const [isLabModalOpen, setIsLabModalOpen] = useState(false);
-  const { data } = state.documents;
+  const { data, expandDialog } = state.documents;
   const { patientId } = state;
   const { gender, dob } = state.patientInfo.data;
   const patientAge = Number(calculateAge(dob).split(" ")[0]);
@@ -276,6 +285,16 @@ const DocumentsContent = (props) => {
             hideActions
           />
         )}
+      {expandDialog && (
+        <Button
+          variant="outlined"
+          className={classes.newButton}
+          size="small"
+          onClick={createNewHandler}
+        >
+          New
+        </Button>
+      )}
       <Grid container>
         <Typography
           className={tabValue === 0 ? classes.tabSelected : classes.tab}
@@ -422,9 +441,14 @@ const DocumentsContent = (props) => {
   );
 };
 
+DocumentsContent.defaultProps = {
+  createNewHandler: () => { },
+};
+
 DocumentsContent.propTypes = {
   reloadData: PropTypes.func.isRequired,
   actionsEnable: PropTypes.bool.isRequired,
+  createNewHandler: PropTypes.func,
 };
 
 export default DocumentsContent;

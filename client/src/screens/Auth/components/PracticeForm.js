@@ -34,6 +34,13 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  meta: {
+    textAlign: "right",
+    "& a": {
+      color: theme.palette.text.secondary,
+      fontSize: 12,
+    },
+  },
 }));
 
 const PracticeForm = ({ onFormSubmit, ...props }) => {
@@ -470,7 +477,7 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
       >
         Sign up
       </Button>
-      <Grid container>
+      <Grid container className={classes.meta}>
         <Grid item xs>
           <Link href="/login_client" variant="body2">
             Already a member? Login here

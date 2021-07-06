@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import Button from "@material-ui/core/Button";
+import { Button, Grid, Typography } from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -11,7 +11,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteOutline";
 import moment from "moment";
 import { useSnackbar } from "notistack";
@@ -19,6 +18,7 @@ import PropTypes from "prop-types";
 
 import Alert from "../../../../components/Alert";
 import usePatientContext from "../../../../hooks/usePatientContext";
+import { toggleDiagnosesDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,6 +44,11 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     right: "15%",
     top: "10px",
+    display: "flex",
+    alignItems: "center",
+  },
+  mr1: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -82,7 +87,7 @@ const DiagnosesDetails = (props) => {
   const [status, setStatus] = useState(true);
   const [activeState, setActiveState] = useState({});
 
-  const { state } = usePatientContext();
+  const { state, dispatch } = usePatientContext();
   const { data, activeData } = state.diagnoses;
 
   const cardData = status ? activeData : data;
@@ -156,13 +161,23 @@ const DiagnosesDetails = (props) => {
         applyForm={() => deleteItemHandler(selectedItem)}
         cancelForm={closeDeleteDialog}
       />
-      <Button
-        variant="text"
-        className={classes.statusButton}
-        onClick={() => toggleStatus()}
-      >
-        {`${status ? "Show" : "Hide"} Inactive`}
-      </Button>
+      <Grid className={classes.statusButton}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => toggleStatus()}
+          className={classes.mr1}
+        >
+          {`${status ? "Show" : "Hide"} Inactive`}
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => dispatch(toggleDiagnosesDialog())}
+        >
+          New Diagnoses
+        </Button>
+      </Grid>
       <TableContainer className={classes.tableContainer}>
         <Table size="small" className={classes.table}>
           <TableHead>

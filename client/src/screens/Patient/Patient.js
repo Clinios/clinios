@@ -1153,6 +1153,7 @@ const Patient = () => {
             <DocumentsCardContent
               reloadData={() => fetchDocuments()}
               actionsEnable
+              createNewHandler={onFilePickerClick}
             />
           )}
           applyForm={() => dispatch(toggleDocumentsExpandDialog())}

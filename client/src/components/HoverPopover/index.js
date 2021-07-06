@@ -60,6 +60,8 @@ const HoverPopover = (props) => {
           horizontal: "left",
         }}
         PaperProps={{ onMouseEnter: popoverEnter, onMouseLeave: popoverLeave }}
+        disableAutoFocus
+        disableEnforceFocus
       >
         {bodyElement}
       </Popover>

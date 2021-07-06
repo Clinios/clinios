@@ -148,6 +148,7 @@ const MessagesDetails = (props) => {
       <Button
         variant="outlined"
         className={classes.newButton}
+        size="small"
         onClick={() => dispatch(toggleMessageDialog())}
       >
         New

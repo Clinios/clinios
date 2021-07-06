@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import { colors, useMediaQuery } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import { Grid, Button, Typography } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
 import Alert from "@material-ui/lab/Alert";
-import clsx from "clsx";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
@@ -20,25 +13,12 @@ import useAuth from "../../../../../../hooks/useAuth";
 import AppointmentService from "../../../../../../services/appointmentType.service";
 import { removeEmpty } from "../../../../../../utils/helpers";
 
-
 const useStyles = makeStyles((theme) => ({
   title: {
     backgroundColor: theme.palette.primary.light,
     "& h2": {
       color: "#fff",
     },
-  },
-  root: {
-    width: "500px",
-  },
-  shiftRootContent: {
-    width: "500px",
-    minWidth: 0,
-  },
-  content: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    fontSize: "18px",
   },
   formControl: {
     display: "flex",
@@ -73,13 +53,7 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   modalAction: {
-    borderTop: `1px solid ${theme.palette.background.default}`,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   largeFormField: {
     flex: 1,
@@ -91,23 +65,12 @@ const useStyles = makeStyles((theme) => ({
   textArea: {
     marginTop: "12px",
   },
-  cancelButton: {
-    borderColor: colors.orange[600],
-    color: colors.orange[600],
-  },
 }));
 
 const NewOrEditAppointment = ({
-  isOpen,
-  onClose,
-  isNewAppointment,
-  ...props
+  isOpen, onClose, isNewAppointment, ...props
 }) => {
   const classes = useStyles();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.up("sm"), {
-    defaultMatches: true,
-  });
   const { user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const { savedAppointments } = props;
@@ -142,7 +105,6 @@ const NewOrEditAppointment = ({
       },
     );
   };
-
 
   const checkIfDuplicateType = (state = "new") => {
     if (state === "new") {
@@ -184,10 +146,7 @@ const NewOrEditAppointment = ({
     } else {
       delete formedData.data.created_user_id;
 
-      AppointmentService.update(
-        formedData,
-        props.appointment.id,
-      ).then((response) => {
+      AppointmentService.update(formedData, props.appointment.id).then((response) => {
         enqueueSnackbar(`${response.data.message}`, {
           variant: "success",
         });
@@ -203,33 +162,13 @@ const NewOrEditAppointment = ({
     });
   };
 
-  const clearExistingStatesOfModal = () => {
-    setTypeError();
-    setErrors([]);
-    setAppointment([]);
-  };
-
-  const handleOnModalClose = () => {
-    clearExistingStatesOfModal();
-    onClose();
-  };
-
   return (
-    <Dialog
-      open={isOpen}
-      onClose={handleOnModalClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title" className={classes.title}>
-        {isNewAppointment ? "New Appointment Type" : "Edit Appointment Type"}
-      </DialogTitle>
-      <DialogContent className={classes.content}>
-        <DialogContentText id="alert-dialog-description">
-          {isNewAppointment
-            ? "This page is used to create a new appointment type"
-            : "This page is used to update an appointment type"}
-        </DialogContentText>
+    <>
+      <Grid>
+        <Typography gutterBottom color="textSecondary">
+          {isNewAppointment ? "This page is used to create a new appointment type"
+          : "This page is used to update an appointment type"}
+        </Typography>
         {errors
           && errors.map((error, index) => (
             // eslint-disable-next-line react/no-array-index-key
@@ -237,168 +176,133 @@ const NewOrEditAppointment = ({
               {error.msg}
             </Alert>
           ))}
-        <div className={clsx({
-          [classes.root]: true,
-          [classes.shiftRootContent]: isMobile,
-        })}
-        >
-          <FormControl component="div" className={classes.formControl}>
-            <TextField
-              autoFocus
-              className={classes.largeFormField}
-              variant="outlined"
-              label="Appointment Type"
-              margin="normal"
-              fullWidth
-              name="appointment_type"
-              id="appointment_type"
-              autoComplete="appointment_type"
-              onChange={(event) => handleOnChange(event)}
-              value={appointment.appointment_type}
-              size="small"
-              error={typeError}
-              helperText={typeError ? "You entered a duplicate type" : ""}
-            />
-          </FormControl>
-          <FormControl
-            component="div"
-            className={`${classes.formControl} ${classes.textArea}`}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Description"
-              multiline
-              name="descr"
-              rows={8}
-              rowsMax={rowsMaxForTextArea}
-              value={appointment.descr}
-              onChange={(event) => handleOnChange(event)}
-            />
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <TextField
-              className={classes.smallFormField}
-              variant="outlined"
-              label="Minutes"
-              margin="normal"
-              name="length"
-              id="length"
-              type="number"
-              autoComplete="length"
-              onChange={(event) => handleOnChange(event)}
-              value={appointment.length}
-              size="small"
-            />
-            <p className={classes.formHelperText}>
-              Number of minutes for the appointment
-            </p>
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <TextField
-              className={classes.smallFormField}
-              variant="outlined"
-              label="Fee"
-              margin="normal"
-              name="fee"
-              id="fee"
-              type="number"
-              autoComplete="fee"
-              onChange={(event) => handleOnChange(event)}
-              value={appointment.fee}
-              size="small"
-            />
-            <p className={classes.formHelperText}>
-              The fee for the appointment
-            </p>
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <TextField
-              className={classes.smallFormField}
-              variant="outlined"
-              label="Sort Order"
-              margin="normal"
-              name="sort_order"
-              id="sort_order"
-              autoComplete="sort_order"
-              onChange={(event) => handleOnChange(event)}
-              value={appointment.sort_order}
-              size="small"
-              type="number"
-            />
-            <p className={classes.formHelperText}>
-              The order in which this is shown
-            </p>
-          </FormControl>
-          <FormControl component="div" className={classes.switchControl}>
-            <Switch
-              size="small"
-              checked={appointment.allow_patients_schedule}
-              onChange={(event) => setAppointment({
-                ...appointment,
-                [event.target.name]: !appointment.allow_patients_schedule,
-              })}
-              name="allow_patients_schedule"
-              color="primary"
-              inputProps={{ "aria-label": "primary checkbox" }}
-            />
-            <p className={classes.formHelperText}>
-              Allow patient to select this in the patient portal
-            </p>
-          </FormControl>
-          <FormControl component="div" className={classes.switchControl}>
-            <Switch
-              size="small"
-              checked={appointment.active}
-              onChange={(event) => setAppointment({
-                ...appointment,
-                [event.target.name]: !appointment.active,
-              })}
-              name="active"
-              color="primary"
-              inputProps={{ "aria-label": "primary checkbox" }}
-            />
-            <p className={classes.formHelperText}>
-              Status can be active or inactive
-            </p>
-          </FormControl>
-          <FormControl
-            component="div"
-            className={`${classes.formControl} ${classes.textArea}`}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Note"
-              multiline
-              name="note"
-              rows={4}
-              rowsMax={rowsMaxForTextArea}
-              value={appointment.note}
-              onChange={(event) => handleOnChange(event)}
-            />
-          </FormControl>
-        </div>
-      </DialogContent>
-      <DialogActions className={classes.modalAction}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={() => handleFormSubmission()}
-        >
+        <FormControl component="div" className={classes.formControl}>
+          <TextField
+            autoFocus
+            className={classes.largeFormField}
+            variant="outlined"
+            label="Appointment Type"
+            margin="normal"
+            fullWidth
+            name="appointment_type"
+            id="appointment_type"
+            autoComplete="appointment_type"
+            onChange={(event) => handleOnChange(event)}
+            value={appointment.appointment_type}
+            size="small"
+            error={typeError}
+            helperText={typeError ? "You entered a duplicate type" : ""}
+          />
+        </FormControl>
+        <FormControl component="div" className={`${classes.formControl} ${classes.textArea}`}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="Description"
+            multiline
+            name="descr"
+            rows={8}
+            rowsMax={rowsMaxForTextArea}
+            value={appointment.descr}
+            onChange={(event) => handleOnChange(event)}
+          />
+        </FormControl>
+        <FormControl component="div" className={classes.formControl}>
+          <TextField
+            className={classes.smallFormField}
+            variant="outlined"
+            label="Minutes"
+            margin="normal"
+            name="length"
+            id="length"
+            type="number"
+            autoComplete="length"
+            onChange={(event) => handleOnChange(event)}
+            value={appointment.length}
+            size="small"
+          />
+          <p className={classes.formHelperText}>Number of minutes for the appointment</p>
+        </FormControl>
+        <FormControl component="div" className={classes.formControl}>
+          <TextField
+            className={classes.smallFormField}
+            variant="outlined"
+            label="Fee"
+            margin="normal"
+            name="fee"
+            id="fee"
+            type="number"
+            autoComplete="fee"
+            onChange={(event) => handleOnChange(event)}
+            value={appointment.fee}
+            size="small"
+          />
+          <p className={classes.formHelperText}>The fee for the appointment</p>
+        </FormControl>
+        <FormControl component="div" className={classes.formControl}>
+          <TextField
+            className={classes.smallFormField}
+            variant="outlined"
+            label="Sort Order"
+            margin="normal"
+            name="sort_order"
+            id="sort_order"
+            autoComplete="sort_order"
+            onChange={(event) => handleOnChange(event)}
+            value={appointment.sort_order}
+            size="small"
+            type="number"
+          />
+          <p className={classes.formHelperText}>The order in which this is shown</p>
+        </FormControl>
+        <FormControl component="div" className={classes.switchControl}>
+          <Switch
+            size="small"
+            checked={appointment.allow_patients_schedule}
+            onChange={(event) => setAppointment({
+              ...appointment,
+              [event.target.name]: !appointment.allow_patients_schedule,
+            })}
+            name="allow_patients_schedule"
+            color="primary"
+            inputProps={{ "aria-label": "primary checkbox" }}
+          />
+          <p className={classes.formHelperText}>Allow patient to select this in the patient portal</p>
+        </FormControl>
+        <FormControl component="div" className={classes.switchControl}>
+          <Switch
+            size="small"
+            checked={appointment.active}
+            onChange={(event) => setAppointment({
+              ...appointment,
+              [event.target.name]: !appointment.active,
+            })}
+            name="active"
+            color="primary"
+            inputProps={{ "aria-label": "primary checkbox" }}
+          />
+          <p className={classes.formHelperText}>Status can be active or inactive</p>
+        </FormControl>
+        <FormControl component="div" className={`${classes.formControl} ${classes.textArea}`}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="Note"
+            multiline
+            name="note"
+            rows={4}
+            rowsMax={rowsMaxForTextArea}
+            value={appointment.note}
+            onChange={(event) => handleOnChange(event)}
+          />
+        </FormControl>
+      </Grid>
+      <Grid className={classes.modalAction}>
+        <Button variant="outlined" onClick={() => handleFormSubmission()}>
           {isNewAppointment ? "Save" : "Update"}
         </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => onClose()}
-          className={classes.cancelButton}
-        >
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
+      </Grid>
+    </>
   );
 };
 
