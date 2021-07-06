@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -34,6 +35,15 @@ const useStyles = makeStyles((theme) => ({
     border: "none",
     "& button": {
       fontSize: "12px",
+    },
+  },
+  newButton: {
+    position: "absolute",
+    right: "20%",
+    top: "10px",
+
+    [theme.breakpoints.down("md")]: {
+      right: "15%",
     },
   },
 }));
@@ -114,6 +124,14 @@ const MedicationsDetails = (props) => {
         applyForm={() => deleteItemHandler(selectedItem)}
         cancelForm={closeDeleteDialog}
       />
+      <Button
+        variant="outlined"
+        className={classes.newButton}
+        size="small"
+        onClick={() => dispatch(toggleMedicationDialog())}
+      >
+        New
+      </Button>
       <TableContainer className={classes.tableContainer}>
         <Table size="small" className={classes.table}>
           <TableHead>
