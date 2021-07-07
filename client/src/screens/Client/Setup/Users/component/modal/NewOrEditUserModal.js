@@ -16,6 +16,12 @@ import PropTypes from "prop-types";
 
 import Dialog from "../../../../../../components/Dialog";
 import UserService from "../../../../../../services/users.service";
+import {
+  UserTimezoneOptions,
+  UserStatusOptions,
+  UserProviderOptions,
+  UserScheduleOptions,
+} from "../../../../../../static/setup/user";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -366,28 +372,13 @@ const NewOrEditUserModal = ({
                     }}
                   >
                     <option aria-label="None" value="" />
-                    <option aria-label="None" value="HST">
-                      HST &#45; Hawaii Standard Time
-                    </option>
-                    <option aria-label="None" value="AKST">
-                      AKST &#45; Alaska Standard Time
-                    </option>
-                    <option aria-label="None" value="PST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      PST	&#45; Pacific Standard Time
-                    </option>
-                    <option aria-label="None" value="MST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      MST	&#45; Mountain Standard Time
-                    </option>
-                    <option aria-label="None" value="CST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      CST	&#45; Central Standard Time
-                    </option>
-                    <option aria-label="None" value="EST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      EST	&#45; Eastern Standard Time
-                    </option>
+                    {
+                      UserTimezoneOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -442,15 +433,13 @@ const NewOrEditUserModal = ({
                       statusError && "You can't set yourself to deleted!"
                     }
                   >
-                    <option aria-label="None" value="A">
-                      Active
-                    </option>
-                    <option aria-label="None" value="I">
-                      Inactive
-                    </option>
-                    <option aria-label="None" value="D">
-                      Deleted
-                    </option>
+                    {
+                      UserStatusOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -475,18 +464,13 @@ const NewOrEditUserModal = ({
                     helperText={errorChecking.four && errorChecking.four}
                   >
                     <option aria-label="None" value="" />
-                    <option aria-label="None" value="PP">
-                      Primary Provider
-                    </option>
-                    <option aria-label="None" value="SP">
-                      Secondary Provider
-                    </option>
-                    <option aria-label="None" value="A">
-                      Administrative
-                    </option>
-                    <option aria-label="None" value="L">
-                      Limited
-                    </option>
+                    {
+                      UserProviderOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -507,15 +491,13 @@ const NewOrEditUserModal = ({
                       native: true,
                     }}
                   >
-                    <option aria-label="None" value="F">
-                      Full
-                    </option>
-                    <option aria-label="None" value="H">
-                      Half
-                    </option>
-                    <option aria-label="None" value="Q">
-                      Quarter
-                    </option>
+                    {
+                      UserScheduleOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
