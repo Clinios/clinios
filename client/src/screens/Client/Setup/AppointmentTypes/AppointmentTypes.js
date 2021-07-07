@@ -10,7 +10,6 @@ import _ from "lodash";
 import { useSnackbar } from "notistack";
 
 import Alert from "../../../../components/Alert";
-import Dialog from "../../../../components/Dialog";
 import AppointmentService from "../../../../services/appointmentType.service";
 import { Appointments } from "./components";
 import NewOrEditAppointment from "./components/modal/NewOrEditAppointmentType";
@@ -142,21 +141,12 @@ export default function AppointmentTypes() {
           </Grid>
         </Grid>
         {isEditModalOpen && (
-          <Dialog
-            open={isEditModalOpen}
-            title={isNewAppointment ? "New Appointment Type" : "Edit Appointment Type"}
-            message={(
-              <NewOrEditAppointment
-                appointment={selectedappointment}
-                isOpen={isEditModalOpen}
-                onClose={() => handleEditModalClose(false)}
-                isNewAppointment={isNewAppointment}
-                savedAppointments={appointments}
-              />
-            )}
-            cancelForm={() => handleEditModalClose()}
-            hideActions
-            size="sm"
+          <NewOrEditAppointment
+            appointment={selectedappointment}
+            isOpen={isEditModalOpen}
+            onClose={() => handleEditModalClose(false)}
+            isNewAppointment={isNewAppointment}
+            savedAppointments={appointments}
           />
         )}
         <Alert
