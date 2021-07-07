@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Button, makeStyles, TextField,
+  Button, makeStyles, TextField, Grid,
 } from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
+import Dialog from "../../../../components/Dialog";
 import MessagesService from "../../../../services/patient_portal/messages.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,13 +31,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   modalAction: {
-    borderTop: `1px solid ${theme.palette.background.default}`,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   gutterBottom: {
     marginBottom: theme.spacing(2),
@@ -76,10 +67,6 @@ const MessageModal = (props) => {
     }
   }, [selectedMessage]);
 
-  const handleClose = () => {
-    onClose();
-  };
-
   const handleMessageSubmission = () => {
     const formData = {
       data: {
@@ -92,7 +79,7 @@ const MessageModal = (props) => {
         variant: "success",
       });
       reloadData();
-      handleClose();
+      onClose();
     });
   };
 
@@ -110,48 +97,46 @@ const MessageModal = (props) => {
         variant: "success",
       });
       reloadData();
-      handleClose();
+      onClose();
     });
   };
 
   return (
     <Dialog
-      maxWidth="sm"
+      size="sm"
       open={isOpen}
-      onClose={handleClose}
-    >
-      <DialogTitle className={classes.modalTitle}>
-        {title}
-      </DialogTitle>
-      <DialogContent className={classes.modalContent} style={{ minWidth: "600px" }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <FormControl
-            variant="outlined"
-            className={classes.customSelect}
-            size="small"
-          >
-            <InputLabel htmlFor="age-native-simple">To</InputLabel>
-            <Select
-              native
-              value={selectedUser}
-              onChange={(event) => setSelectedUser(event.target.value)}
-              inputProps={{
-                name: "type",
-                id: "age-native-simple",
-              }}
-              label="To"
-              className={classes.gutterBottom}
+      cancelForm={onClose}
+      title={title}
+      message={(
+        <>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <FormControl
+              variant="outlined"
+              className={classes.customSelect}
+              size="small"
             >
-              <option aria-label="None" value="" />
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {`${user.firstname} ${user.lastname}`}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-          {/* Commented out as per CLIN-114 */}
-          {/* <TextField
+              <InputLabel htmlFor="age-native-simple">To</InputLabel>
+              <Select
+                native
+                value={selectedUser}
+                onChange={(event) => setSelectedUser(event.target.value)}
+                inputProps={{
+                  name: "type",
+                  id: "age-native-simple",
+                }}
+                label="To"
+                className={classes.gutterBottom}
+              >
+                <option aria-label="None" value="" />
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {`${user.firstname} ${user.lastname}`}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            {/* Commented out as per CLIN-114 */}
+            {/* <TextField
             fullWidth
             margin="normal"
             variant="outlined"
@@ -161,54 +146,33 @@ const MessageModal = (props) => {
             onChange={(event) => setSubject(event.target.value)}
             className={classes.gutterBottom}
           /> */}
-          <TextField
-            variant="outlined"
-            name="notes"
-            id="notes"
-            type="text"
-            label="Message"
-            required
-            fullWidth
-            value={message}
-            onChange={(event) => setMessage(event.target.value)}
-            multiline
-            rows={5}
-          />
-        </div>
-      </DialogContent>
-      <DialogActions className={classes.modalAction}>
-        <Button
-          variant="outlined"
-          className={classes.w100}
-          onClick={handleClose}
-        >
-          Cancel
-        </Button>
-        {
-          selectedMessage
-            ? (
-              <Button
-                variant="outlined"
-                color="primary"
-                className={classes.w100}
-                onClick={() => handleMessageUpdate()}
-              >
-                Update
-              </Button>
-            )
-            : (
-              <Button
-                variant="outlined"
-                color="primary"
-                className={classes.w100}
-                onClick={() => handleMessageSubmission()}
-              >
-                Send
-              </Button>
-            )
-        }
-      </DialogActions>
-    </Dialog>
+            <TextField
+              variant="outlined"
+              name="notes"
+              id="notes"
+              type="text"
+              label="Message"
+              required
+              fullWidth
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              multiline
+              rows={5}
+            />
+          </div>
+          <Grid className={classes.modalAction}>
+            <Button
+              variant="outlined"
+              color="primary"
+              className={classes.w100}
+              onClick={selectedMessage ? handleMessageUpdate : handleMessageSubmission}
+            >
+              {selectedMessage ? "Update" : "Send"}
+            </Button>
+          </Grid>
+        </>
+      )}
+    />
   );
 };
 
