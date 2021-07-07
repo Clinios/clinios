@@ -9,9 +9,10 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import _ from "lodash";
 import moment from "moment";
+import { useSnackbar } from "notistack";
 
+import Alert from "../../../../components/Alert";
 import ScheduleService from "../../../../services/schedule.service";
-import DeleteSchedule from "./component/modal/DeleteSchedule";
 import NewOrEditSchedule from "./component/modal/NewOrEditSchedule";
 import ScheduleSearchForm from "./component/ScheduleSearchForm";
 import ScheduleSearchResultTable from "./component/ScheduleSearchResultTable";
@@ -45,6 +46,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Schedule = () => {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isNewSchedule, setIsNewSchedule] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -104,10 +107,27 @@ const Schedule = () => {
     }
   };
 
-  const handleDeleteSchedule = (id) => {
+  const handleOnDeleteClick = (id) => {
     setIsDeleteModalOpen(true);
     setSelectedScheduleId(id);
   };
+
+  const handleDeleteSchedule = (id) => {
+    ScheduleService.deleteSchedule(id).then((res) => {
+      setTimeout(() => {
+        enqueueSnackbar(`${res.data.message}`, {
+          variant: "success",
+        });
+      }, 300);
+    });
+    setIsDeleteModalOpen(false);
+    setTimeout(() => {
+      fetchScheduleSearch();
+    }, 200);
+  };
+
+  // eslint-disable-next-line max-len
+  const deleteMessage = "Your this schedule entry will be deleted forever from our system and you won't be able to access it anymore.";
 
   return (
     <>
@@ -143,27 +163,32 @@ const Schedule = () => {
                     handleOnEditClick={handleOnEditClick}
                     searchResult={searchResult}
                     fetchScheduleSearch={fetchScheduleSearch}
-                    handleDeleteSchedule={handleDeleteSchedule}
+                    handleDeleteSchedule={handleOnDeleteClick}
                   />
                 )
                 : fetchingCompleted && <p className={classes.noContent}>No result found!</p>}
             </Grid>
           </Grid>
-          <NewOrEditSchedule
-            isOpen={isOpen}
-            handleOnClose={() => setIsOpen(false)}
-            isNewSchedule={isNewSchedule}
-            userList={userList}
-            userId={userId}
-            handleChangeOfUserId={handleChangeOfUserId}
-            fetchScheduleSearch={fetchScheduleSearch}
-            schedule={selectedScheduleValues}
-          />
-          <DeleteSchedule
-            isDeleteModalOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-            fetchScheduleSearch={fetchScheduleSearch}
-            id={selectedScheduleId}
+          {isOpen && (
+            <NewOrEditSchedule
+              isOpen={isOpen}
+              handleOnClose={() => setIsOpen(false)}
+              isNewSchedule={isNewSchedule}
+              userList={userList}
+              userId={userId}
+              handleChangeOfUserId={handleChangeOfUserId}
+              fetchScheduleSearch={fetchScheduleSearch}
+              schedule={selectedScheduleValues}
+            />
+          )}
+          <Alert
+            open={isDeleteModalOpen}
+            title="Are you sure about deleting this schedule entry?"
+            message={deleteMessage}
+            applyButtonText="Delete"
+            cancelButtonText="Cancel"
+            applyForm={() => handleDeleteSchedule(selectedScheduleId)}
+            cancelForm={() => setIsDeleteModalOpen(false)}
           />
         </Container>
       </CssBaseline>

@@ -56,9 +56,6 @@ const useStyles = makeStyles((theme) => ({
   modalAction: {
     marginTop: theme.spacing(2),
   },
-  largeFormField: {
-    flex: 1,
-  },
   smallFormField: {
     maxWidth: "100px",
     flex: 1,

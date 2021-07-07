@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Grid, Switch, TextField } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import {
+  Grid, Button, Switch, TextField,
+} from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
@@ -213,16 +214,16 @@ const EditProcedureCodeModal = ({
                 onKeyUp={handleKeyUp}
               />
             </FormControl>
+
+            <Grid className={classes.modalAction}>
+              <Button
+                variant="outlined"
+                onClick={handleEditProcedureCode}
+              >
+                Save
+              </Button>
+            </Grid>
           </div>
-          <Grid className={classes.modalAction}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleEditProcedureCode}
-            >
-              Save
-            </Button>
-          </Grid>
         </>
       )}
     />

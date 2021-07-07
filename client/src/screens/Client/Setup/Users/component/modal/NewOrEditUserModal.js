@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import {
   Button,
-  colors,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid,
@@ -19,6 +14,7 @@ import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
+import Dialog from "../../../../../../components/Dialog";
 import UserService from "../../../../../../services/users.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -27,11 +23,6 @@ const useStyles = makeStyles((theme) => ({
     "& h2": {
       color: "#fff",
     },
-  },
-  content: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    fontSize: "18px",
   },
   formControl: {
     margin: "10px 0",
@@ -51,23 +42,8 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: "5px",
     },
   },
-  formHelperText: {
-    width: "220px",
-    fontSize: "12px",
-    paddingLeft: "10px",
-  },
-  statusText: {
-    width: "220px",
-    fontSize: "14px",
-  },
   modalAction: {
-    borderTop: `1px solid ${theme.palette.background.default}`,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -233,12 +209,13 @@ const NewOrEditUserModal = ({
   };
 
   const handleOnChange = (event) => {
-    const isChecked = event.target.type === "checkbox";
+    const {
+      name, value, type, checked,
+    } = event.target;
+    const isChecked = type === "checkbox";
     setUser({
       ...user,
-      [event.target.name]: isChecked
-        ? event.target.checked
-        : event.target.value.trim(),
+      [name]: isChecked ? checked : value,
     });
     setErrorChecking(errorsInitialState);
   };
@@ -250,19 +227,13 @@ const NewOrEditUserModal = ({
   };
 
   return (
-    <div>
-      <Dialog
-        maxWidth="sm"
-        fullWidth
-        open={isOpen}
-        onClose={handleOnClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title" className={classes.title}>
-          {isNewUser ? "New User" : "Edit User"}
-        </DialogTitle>
-        <DialogContent className={classes.content}>
+    <Dialog
+      size="sm"
+      open={isOpen}
+      cancelForm={handleOnClose}
+      title={isNewUser ? "New User" : "Edit User"}
+      message={(
+        <>
           {errors
             && errors.map((error, index) => (
               // eslint-disable-next-line react/no-array-index-key
@@ -675,31 +646,18 @@ const NewOrEditUserModal = ({
               />
             </FormControl>
           </div>
-        </DialogContent>
-        <DialogActions className={classes.modalAction}>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={handleOnClose}
-            style={{
-              borderColor: colors.orange[600],
-              color: colors.orange[600],
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={handleCreateNewOrEditUser}
-            disabled={!validate()}
-          >
-            {isNewUser ? "Save" : "Update"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+          <Grid className={classes.modalAction}>
+            <Button
+              variant="outlined"
+              onClick={handleCreateNewOrEditUser}
+              disabled={!validate()}
+            >
+              {isNewUser ? "Save" : "Update"}
+            </Button>
+          </Grid>
+        </>
+      )}
+    />
   );
 };
 
