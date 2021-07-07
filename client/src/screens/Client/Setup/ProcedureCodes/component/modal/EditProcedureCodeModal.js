@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Grid, Switch, TextField } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import {
+  Grid, Button, Switch, TextField,
+} from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
@@ -86,8 +87,6 @@ NumberFormatCustom.propTypes = {
 };
 
 const EditProcedureCodeModal = ({
-  isOpen,
-  hendleOnClose,
   procId,
   procedure_description,
   procedure_fee,
@@ -196,22 +195,36 @@ const EditProcedureCodeModal = ({
             </FormControl>
             <FormControl component="div" className={classes.formControl}>
               <TextField
-                className={classes.noteMargin}
                 fullWidth
+                label="Description"
+                value={procedure_description}
                 variant="outlined"
-                multiline
-                name="note"
-                label="Notes"
+                size="small"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                InputProps={{
-                  rows: 8,
-                }}
-                value={procedure_notes}
-                onChange={handleChangeNotes}
-                onKeyUp={handleKeyUp}
+                disabled
               />
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <Grid item md={2} className={classes.gridMargin}>
+                <TextField
+                  fullWidth
+                  autoFocus
+                  label="Fee"
+                  value={procedure_fee || ""}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    inputComponent: NumberFormatCustom,
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={handleChangeFee}
+                  onKeyUp={handleKeyUp}
+                />
+              </Grid>
             </FormControl>
           </div>
           <Grid className={classes.modalAction}>
@@ -230,8 +243,6 @@ const EditProcedureCodeModal = ({
 };
 
 EditProcedureCodeModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  hendleOnClose: PropTypes.func.isRequired,
   procId: PropTypes.string.isRequired,
   procedure_description: PropTypes.string.isRequired,
   procedure_fee: PropTypes.string.isRequired,

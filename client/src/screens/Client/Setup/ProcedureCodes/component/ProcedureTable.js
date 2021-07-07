@@ -19,6 +19,7 @@ import { useSnackbar } from "notistack";
 import Proptypes from "prop-types";
 import NumberFormat from "react-number-format";
 
+import Dialog from "../../../../../components/Dialog";
 import useAuth from "../../../../../hooks/useAuth";
 import ProcedureCodesService from "../../../../../services/procedure.service";
 import EditProcedureCodeModal from "./modal/EditProcedureCodeModal";
@@ -278,21 +279,30 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <EditProcedureCodeModal
-        isOpen={isOpen}
-        hendleOnClose={hendleOnClose}
-        procId={procId}
-        procedure_description={procedure_description}
-        procedure_fee={procedure_fee}
-        procedure_favorite={procedure_favorite}
-        procedure_billable={procedure_billable}
-        procedure_notes={procedure_notes}
-        handleChangeFee={handleChangeFee}
-        handleChangeFavorite={handleChangeFavorite}
-        handleChangeBillable={handleChangeBillable}
-        handleChangeNotes={handleChangeNotes}
-        handleEditProcedureCode={handleEditProcedureCode}
-      />
+      {isOpen && (
+        <Dialog
+          open={isOpen}
+          title="Edit Procedure"
+          message={(
+            <EditProcedureCodeModal
+              procId={procId}
+              procedure_description={procedure_description}
+              procedure_fee={procedure_fee}
+              procedure_favorite={procedure_favorite}
+              procedure_billable={procedure_billable}
+              procedure_notes={procedure_notes}
+              handleChangeFee={handleChangeFee}
+              handleChangeFavorite={handleChangeFavorite}
+              handleChangeBillable={handleChangeBillable}
+              handleChangeNotes={handleChangeNotes}
+              handleEditProcedureCode={handleEditProcedureCode}
+            />
+          )}
+          cancelForm={hendleOnClose}
+          hideActions
+          size="sm"
+        />
+      )}
       <ProcedureGroupMembersModal
         isOpen={groupIsOpen}
         hendleOnClose={hendleGroupOnClose}
