@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const multer = require("multer");
 const fs = require("fs");
 const { errorMessage, successMessage, status } = require("../helpers/status");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -38,12 +38,11 @@ const upload = multer({
 });
 
 const getInit = async (req, res) => {
-  const db = makeDb(configuration, res);
   let $sql;
 
   try {
     $sql = `select id, name, code, address, address2, city, state, postal, country, phone, fax, 
-    website, email, ein, npi, calendar_start_time, calendar_end_time from client where id=?`;
+    website, email, ein, npi, calendar_start_time, calendar_end_time from client where id=$1`;
 
     const dbResponse = await db.query($sql, [req.client_id]);
 
@@ -51,18 +50,15 @@ const getInit = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getHistory = async (req, res) => {
-  const db = makeDb(configuration, res);
   let $sql;
 
   try {
@@ -96,13 +92,11 @@ const getHistory = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -131,7 +125,6 @@ const update = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
   const client = req.body;
 
   client.updated = new Date();
@@ -153,8 +146,6 @@ const update = async (req, res) => {
   } catch (error) {
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
