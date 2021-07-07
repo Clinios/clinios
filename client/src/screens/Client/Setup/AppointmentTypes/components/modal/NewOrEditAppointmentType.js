@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Grid, Button } from "@material-ui/core";
+import { Grid, Button, Typography } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
@@ -55,12 +55,15 @@ const useStyles = makeStyles((theme) => ({
   modalAction: {
     marginTop: theme.spacing(2),
   },
+  largeFormField: {
+    flex: 1,
+  },
   smallFormField: {
     maxWidth: "100px",
     flex: 1,
   },
   textArea: {
-    marginTop: "16px",
+    marginTop: "12px",
   },
 }));
 
@@ -162,10 +165,10 @@ const NewOrEditAppointment = ({
   return (
     <>
       <Grid>
-        {/* <Typography gutterBottom color="textSecondary">
+        <Typography gutterBottom color="textSecondary">
           {isNewAppointment ? "This page is used to create a new appointment type"
           : "This page is used to update an appointment type"}
-        </Typography> */}
+        </Typography>
         {errors
           && errors.map((error, index) => (
             // eslint-disable-next-line react/no-array-index-key
@@ -176,8 +179,10 @@ const NewOrEditAppointment = ({
         <FormControl component="div" className={classes.formControl}>
           <TextField
             autoFocus
+            className={classes.largeFormField}
             variant="outlined"
             label="Appointment Type"
+            margin="normal"
             fullWidth
             name="appointment_type"
             id="appointment_type"

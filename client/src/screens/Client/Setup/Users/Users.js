@@ -12,7 +12,6 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import _ from "lodash";
 
-import Dialog from "../../../../components/Dialog";
 import useAuth from "../../../../hooks/useAuth";
 import UsersService from "../../../../services/users.service";
 import NewOrEditUserModal from "./component/modal/NewOrEditUserModal";
@@ -121,7 +120,7 @@ const Users = () => {
             New
           </Button>
         </div>
-        <Grid container justify="center">
+        <Grid container justify="center" spacing={8}>
           <Grid item md={12} xs={12}>
             <Typography component="p" variant="body2" color="textPrimary">
               This page is used to manage users
@@ -132,26 +131,16 @@ const Users = () => {
             />
           </Grid>
         </Grid>
-        {isOpen && (
-          <Dialog
-            open={isOpen}
-            title={isNewUser ? "New User" : "Edit User"}
-            message={(
-              <NewOrEditUserModal
-                handleOnClose={() => setIsOpen(false)}
-                isNewUser={isNewUser}
-                forwardEmailList={forwardEmailList}
-                fetchAllUsers={fetchAllUsers}
-                authUser={user}
-                user={userValues}
-                allUsers={allUsers}
-              />
-            )}
-            cancelForm={() => setIsOpen(false)}
-            hideActions
-            size="sm"
-          />
-        )}
+        <NewOrEditUserModal
+          isOpen={isOpen}
+          handleOnClose={() => setIsOpen(false)}
+          isNewUser={isNewUser}
+          forwardEmailList={forwardEmailList}
+          fetchAllUsers={fetchAllUsers}
+          authUser={user}
+          user={userValues}
+          allUsers={allUsers}
+        />
       </Container>
     </>
   );
