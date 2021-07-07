@@ -73,7 +73,7 @@ const getUsersByClientId = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     errorMessage.message = "Select not successful";

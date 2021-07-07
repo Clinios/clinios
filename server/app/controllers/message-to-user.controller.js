@@ -1,9 +1,9 @@
-const { configuration, makeDb } = require("../db/db.js");
+const moment = require("moment");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const getUserMessageById = async (req, res) => {
   const { id } = req.params;
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select m.id, m.created
@@ -13,27 +13,24 @@ const getUserMessageById = async (req, res) => {
       , m.patient_id_from, m.user_id_to
       from message m
       left join patient p on p.id=m.patient_id_from
-      left join user u on u.id=m.user_id_to
-      where m.id=?`, [id]
+      left join users u on u.id=m.user_id_to
+      where m.id=$1`, [id]
     );
 
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getUserMessage = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { provider_id } = req.params;
   try {
     const dbResponse = await db.query(
@@ -45,18 +42,18 @@ const getUserMessage = async (req, res) => {
       , m.patient_id_from, m.user_id_to
       from message m
       left join patient p on p.id=m.patient_id_from
-      left join user u on u.id=m.user_id_to
+      left join users u on u.id=m.user_id_to
       where m.patient_id_from=(
           select m.patient_id_from
           from message m
           where m.id=(
               select min(m.id) id
               from message m
-              where m.user_id_to=?
+              where m.user_id_to=$1
               and m.status='O'
               )
       )
-      and m.user_id_to=?
+      and m.user_id_to=$2
       and m.status='O'
       order by m.created
       limit 10`, [provider_id, provider_id]
@@ -66,23 +63,20 @@ const getUserMessage = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getMessageAssignUser = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select firstname, lastname 
-      from user 
+      from users 
       where client_id=${req.client_id} 
       /*and status='A'*/
       order by 1, 2
@@ -93,117 +87,90 @@ const getMessageAssignUser = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createMessage = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const formData = req.body.data;
-  formData.client_id = req.client_id;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
+  const { patient_id, message, user_id_from } = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into message set ?`, [formData]);
+    const insertResponse = await db.query(`insert into message(patient_id_from, message, user_id_from, client_id, created, created_user_id) 
+    VALUES($1, $2, $3, $4, $5, $6) RETURNING id`, [patient_id, message, user_id_from, req.client_id, moment().format('YYYY-MM-DD hh:ss'), req.user_id]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const updateMessage = async (req, res) => {
   const { id } = req.params;
-  const formData = req.body.data;
-  formData.status = formData.message_status;
-  formData.updated = new Date();
-  formData.updated_user_id = req.user_id;
-  delete formData.message_status;
-
-  const db = makeDb(configuration, res);
-  const msgHistoryData = {};
-  msgHistoryData.id = id;
+  const { user_id_to, message_status, note_assign } = req.body.data;
 
   try {
-    const updateResponse = await db.query(`update message set ? where id=?`, [formData, id]);
+    const updateResponse = await db.query(`update message set user_id_to=$1, status=$2, note_assign=$3, updated=$4, updated_user_id=$5 where id=$6 RETURNING id`,
+    [user_id_to, message_status, note_assign, moment().format('YYYY-MM-DD hh:ss'), req.user_id, id]);
 
-    const msgData = {};
-    msgData.id = id;
-    msgData.user_id_to = formData.user_id_to;
-    msgData.note_assign = formData.note_assign;
-    msgData.status = formData.status;
-    msgData.created = new Date();
-    msgData.created_user_id = req.user_id;
+    await db.query(`insert into message_history(id, user_id_to, note_assign, status, created, created_user_id) 
+    VALUES ($1, $2, $3, $4, $5, $6)`, [id, user_id_to, note_assign, message_status, moment().format('YYYY-MM-DD hh:ss'), req.user_id]);
 
-    await db.query(`insert into message_history ?`, [msgData]);
-
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getUserMessageHistory = async (req, res) => {
   const { messageId } = req.params;
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select concat(u2.firstname, ' ', u2.lastname) assigned_to
       , mh.status, mh.created updated
       , concat(u.firstname, ' ', u.lastname) updated_by
       from message_history mh
-      left join user u on u.id=mh.created_user_id
-      left join user u2 on u2.id=mh.user_id_to
+      left join users u on u.id=mh.created_user_id
+      left join users u2 on u2.id=mh.user_id_to
       where mh.client_id=${req.client_id}
-      and mh.id=? order by mh.created desc limit 50`, [messageId]
+      and mh.id=$1 order by mh.created desc limit 50`, [messageId]
     );
 
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getMessageUserHistory = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select l.updated, concat(u.firstname, ' ', u.lastname) updated_name
@@ -212,8 +179,8 @@ const getMessageUserHistory = async (req, res) => {
       , l.note_assign, l.id
       from message l
       left join patient p on p.id=l.patient_id_from
-      left join user u on u.id=l.updated_user_id
-      left join user u2 on u2.id=l.user_id_to
+      left join users u on u.id=l.updated_user_id
+      left join users u2 on u2.id=l.user_id_to
       where l.client_id=${req.client_id}
       and l.updated_user_id=${req.user_id}
       order by l.updated desc 
@@ -225,14 +192,12 @@ const getMessageUserHistory = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
