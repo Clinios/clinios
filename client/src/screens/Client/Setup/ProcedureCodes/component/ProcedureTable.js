@@ -281,7 +281,7 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
       {isOpen && (
         <EditProcedureCodeModal
           isOpen={isOpen}
-          onClose={hendleOnClose}
+          hendleOnClose={hendleOnClose}
           procId={procId}
           procedure_description={procedure_description}
           procedure_fee={procedure_fee}
