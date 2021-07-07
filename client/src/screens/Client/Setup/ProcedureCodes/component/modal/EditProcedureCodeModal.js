@@ -8,6 +8,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
 
+import Dialog from "../../../../../../components/Dialog";
+
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
     margin: "8px 0px",
@@ -30,8 +32,18 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 120,
     },
   },
+  switchControl: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(1.5),
+    marginTop: theme.spacing(1.5),
+    "& .MuiSelect-select": {
+      minWidth: 120,
+    },
+  },
   root: {
-    paddingLeft: "5px",
     "& .MuiTypography-root": {
       marginLeft: "5px",
     },
@@ -43,17 +55,6 @@ const useStyles = makeStyles((theme) => ({
   },
   modalAction: {
     marginTop: theme.spacing(2),
-  },
-  switchControl: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(1.5),
-    marginTop: theme.spacing(1.5),
-    "& .MuiSelect-select": {
-      minWidth: 120,
-    },
   },
 }));
 
@@ -86,6 +87,8 @@ NumberFormatCustom.propTypes = {
 };
 
 const EditProcedureCodeModal = ({
+  isOpen,
+  onClose,
   procId,
   procedure_description,
   procedure_fee,
@@ -106,121 +109,130 @@ const EditProcedureCodeModal = ({
   };
 
   return (
-    <div>
-      <Grid>
-        {/*
+    <Dialog
+      size="sm"
+      open={isOpen}
+      cancelForm={onClose}
+      title="Edit Procedure"
+      message={(
+        <>
+          {/*
           <DialogContentText id="alert-dialog-description">
             This page is used to manage procedures
           </DialogContentText>
           */}
-        <div className={classes.root}>
-          <FormControl component="div" className={classes.formControl}>
-            <Grid item md={3} className={classes.gridMargin}>
-              <TextField
-                fullWidth
-                label="Procedure ID"
-                value={procId}
-                variant="outlined"
+          <div className={classes.root}>
+            <FormControl component="div" className={classes.formControl}>
+              <Grid item md={3} className={classes.gridMargin}>
+                <TextField
+                  fullWidth
+                  label="Procedure ID"
+                  value={procId}
+                  variant="outlined"
+                  size="small"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled
+                />
+              </Grid>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <Grid item xs={6} md={9} className={classes.gridMargin}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  value={procedure_description}
+                  variant="outlined"
+                  size="small"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled
+                />
+              </Grid>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <Grid item md={2} className={classes.gridMargin}>
+                <TextField
+                  fullWidth
+                  autoFocus
+                  label="Fee"
+                  value={procedure_fee || ""}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    inputComponent: NumberFormatCustom,
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={handleChangeFee}
+                  onKeyUp={handleKeyUp}
+                />
+              </Grid>
+              <p className={classes.formHelperText}>The fee you will charge your patients</p>
+            </FormControl>
+            <FormControl component="div" className={classes.switchControl}>
+              <Switch
+                checked={Boolean(procedure_favorite)}
+                color="primary"
                 size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled
-              />
-            </Grid>
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <Grid item xs={6} md={9} className={classes.gridMargin}>
-              <TextField
-                fullWidth
-                label="Description"
-                value={procedure_description}
-                variant="outlined"
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled
-              />
-            </Grid>
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <Grid item md={2} className={classes.gridMargin}>
-              <TextField
-                fullWidth
-                autoFocus
-                label="Fee"
-                value={procedure_fee || ""}
-                variant="outlined"
-                size="small"
-                InputProps={{
-                  inputComponent: NumberFormatCustom,
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handleChangeFee}
+                name="switchBox"
+                onChange={handleChangeFavorite}
                 onKeyUp={handleKeyUp}
               />
+              <p className={classes.formHelperText}>Favorite</p>
+            </FormControl>
+            <FormControl component="div" className={classes.switchControl}>
+              <Switch
+                checked={Boolean(procedure_billable)}
+                size="small"
+                color="primary"
+                name="switchBox"
+                onChange={handleChangeBillable}
+                onKeyUp={handleKeyUp}
+              />
+              <p className={classes.formHelperText}>Billable</p>
+            </FormControl>
+            <FormControl component="div" className={classes.formControl}>
+              <TextField
+                className={classes.noteMargin}
+                fullWidth
+                variant="outlined"
+                multiline
+                name="note"
+                label="Notes"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  rows: 8,
+                }}
+                value={procedure_notes}
+                onChange={handleChangeNotes}
+                onKeyUp={handleKeyUp}
+              />
+            </FormControl>
+
+            <Grid className={classes.modalAction}>
+              <Button
+                variant="outlined"
+                onClick={handleEditProcedureCode}
+              >
+                Save
+              </Button>
             </Grid>
-            <p className={classes.formHelperText}>The fee you will charge your patients</p>
-          </FormControl>
-          <FormControl component="div" className={classes.switchControl}>
-            <Switch
-              checked={Boolean(procedure_favorite)}
-              color="primary"
-              size="small"
-              name="switchBox"
-              onChange={handleChangeFavorite}
-              onKeyUp={handleKeyUp}
-            />
-            <p className={classes.formHelperText}>Favorite</p>
-          </FormControl>
-          <FormControl component="div" className={classes.switchControl}>
-            <Switch
-              checked={Boolean(procedure_billable)}
-              size="small"
-              color="primary"
-              name="switchBox"
-              onChange={handleChangeBillable}
-              onKeyUp={handleKeyUp}
-            />
-            <p className={classes.formHelperText}>Billable</p>
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <TextField
-              className={classes.noteMargin}
-              fullWidth
-              variant="outlined"
-              multiline
-              name="note"
-              label="Notes"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                rows: 8,
-              }}
-              value={procedure_notes}
-              onChange={handleChangeNotes}
-              onKeyUp={handleKeyUp}
-            />
-          </FormControl>
-        </div>
-      </Grid>
-      <Grid className={classes.modalAction}>
-        <Button
-          variant="outlined"
-          onClick={handleEditProcedureCode}
-        >
-          Save
-        </Button>
-      </Grid>
-    </div>
+          </div>
+        </>
+      )}
+    />
   );
 };
 
 EditProcedureCodeModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
   procId: PropTypes.string.isRequired,
   procedure_description: PropTypes.string.isRequired,
   procedure_fee: PropTypes.string.isRequired,

@@ -285,6 +285,8 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
           title="Edit Procedure"
           message={(
             <EditProcedureCodeModal
+              isOpen={isOpen}
+              onClose={hendleOnClose}
               procId={procId}
               procedure_description={procedure_description}
               procedure_fee={procedure_fee}
