@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 
 import {
-  TextField, Button, Grid, Typography, colors,
+  TextField, Button, Grid, Typography,
 } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
@@ -26,19 +26,18 @@ import { paymentMethodType } from "../../../../../utils/helpers";
 
 const useStyles = makeStyles((theme) => ({
   title: {
-    backgroundColor: theme.palette.primary.light,
-    "& h2": {
-      color: "#fff",
-    },
+    textAlign: "center",
+    borderBottom: "1px solid #ddd",
+    minHeight: 53,
   },
   closeButton: {
     position: "absolute",
-    right: theme.spacing(1 / 2),
-    top: theme.spacing(1 / 2),
-    color: "#ffffff",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    padding: theme.spacing(1),
   },
   formContainer: {
-    margin: theme.spacing(3, 0),
+    margin: theme.spacing(1, 0),
   },
   gutterBottom: {
     marginBottom: theme.spacing(1),
@@ -59,10 +58,6 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonsContainer: {
     margin: theme.spacing(3, 0),
-  },
-  cancelButton: {
-    borderColor: colors.orange[600],
-    color: colors.orange[600],
   },
 }));
 
@@ -165,7 +160,7 @@ const PaymentMethodsForm = (props) => {
     const reqBody = {
       data: {
         exp: formFields.expiryDate.replace("/", ""),
-       // type: formFields.cardType[0] || "C",
+        // type: formFields.cardType[0] || "C",
         type: "C",
         cvc: formFields.cvv,
         account_number: formFields.cardNumber.replaceAll("/", ""),
@@ -393,14 +388,6 @@ const PaymentMethodsForm = (props) => {
             <Grid container className={classes.buttonsContainer} justify="space-between">
               <Button color="primary" variant="outlined" type="submit">
                 {`${isEdit ? "Edit" : "Add"} Method`}
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => onClose()}
-                className={classes.cancelButton}
-              >
-                Cancel
               </Button>
             </Grid>
           </form>
