@@ -42,16 +42,15 @@ import * as API from "../../../../../../utils/API";
 
 const useStyles = makeStyles((theme) => ({
   title: {
-    backgroundColor: theme.palette.primary.light,
-    "& h2": {
-      color: "#fff",
-    },
+    textAlign: "center",
+    borderBottom: "1px solid #ddd",
+    minHeight: 53,
   },
   closeButton: {
     position: "absolute",
-    right: theme.spacing(1 / 2),
-    top: theme.spacing(1 / 2),
-    color: "#ffffff",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    padding: theme.spacing(1),
   },
   CircularProgress: {
     textAlign: "center",
@@ -810,15 +809,11 @@ const EventModal = ({
         </div>
       </DialogContent>
       <DialogActions className={classes.modalAction}>
-        <Button size="small" variant="outlined" onClick={() => onClose()}>
-          Close
-        </Button>
         <div>
           <Button
             disabled={!calEvent}
             variant="outlined"
             color="primary"
-            size="small"
             onClick={() => handleSaveOrUpdate()}
           >
             Save
