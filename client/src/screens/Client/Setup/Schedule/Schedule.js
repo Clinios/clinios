@@ -12,7 +12,6 @@ import moment from "moment";
 import { useSnackbar } from "notistack";
 
 import Alert from "../../../../components/Alert";
-import Dialog from "../../../../components/Dialog";
 import ScheduleService from "../../../../services/schedule.service";
 import NewOrEditSchedule from "./component/modal/NewOrEditSchedule";
 import ScheduleSearchForm from "./component/ScheduleSearchForm";
@@ -171,24 +170,15 @@ const Schedule = () => {
             </Grid>
           </Grid>
           {isOpen && (
-            <Dialog
-              open={isOpen}
-              title={isNewSchedule ? "New Schedule" : "Edit Schedule"}
-              message={(
-                <NewOrEditSchedule
-                  isOpen={isOpen}
-                  handleOnClose={() => setIsOpen(false)}
-                  isNewSchedule={isNewSchedule}
-                  userList={userList}
-                  userId={userId}
-                  handleChangeOfUserId={handleChangeOfUserId}
-                  fetchScheduleSearch={fetchScheduleSearch}
-                  schedule={selectedScheduleValues}
-                />
-              )}
-              cancelForm={() => setIsOpen(false)}
-              hideActions
-              size="sm"
+            <NewOrEditSchedule
+              isOpen={isOpen}
+              handleOnClose={() => setIsOpen(false)}
+              isNewSchedule={isNewSchedule}
+              userList={userList}
+              userId={userId}
+              handleChangeOfUserId={handleChangeOfUserId}
+              fetchScheduleSearch={fetchScheduleSearch}
+              schedule={selectedScheduleValues}
             />
           )}
           <Alert

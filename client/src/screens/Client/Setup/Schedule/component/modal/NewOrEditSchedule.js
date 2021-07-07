@@ -15,6 +15,7 @@ import moment from "moment-timezone";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
+import Dialog from "../../../../../../components/Dialog";
 import ScheduleService from "../../../../../../services/schedule.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -75,8 +76,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewOrEditSchedule = ({
-  isNewSchedule,
+  isOpen,
   handleOnClose,
+  isNewSchedule,
   userId,
   userList,
   handleChangeOfUserId,
@@ -179,313 +181,322 @@ const NewOrEditSchedule = ({
   };
 
   return (
-    <div>
-      {/* {isNewSchedule
+    <Dialog
+      size="sm"
+      open={isOpen}
+      cancelForm={handleOnClose}
+      title={isNewSchedule ? "New Schedule" : "Edit Schedule"}
+      message={(
+        <>
+          {/* {isNewSchedule
               ? "This page is used to create a new schedule entry"
               : "This page is used to Edit existing schedule entry"} */}
-      {errors
-        && errors.map((error, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Alert severity="error" key={index}>
-            {error.msg}
-          </Alert>
-        ))}
-      <FormControl component="div" className={classes.formControl}>
-        <Grid item xs={12} md={6} className={classes.gridMargin}>
-          <TextField
-            fullWidth
-            autoFocus
-            required
-            id="user_id"
-            name="user_id"
-            select
-            label="User"
-            value={getScheduleUserId(schedule.user_id, userId)}
-            onChange={(e) => setSchedule({
-              ...schedule,
-              user_id: e.target.value,
-            })}
-            variant="outlined"
-            size="small"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            SelectProps={{
-              native: true,
-            }}
-          >
-            {userList.map((u) => (
-              <option key={u.id} value={u.id}>
-                {`${u.firstname} ${u.lastname}`}
-              </option>
+          {errors
+            && errors.map((error, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Alert severity="error" key={index}>
+                {error.msg}
+              </Alert>
             ))}
-          </TextField>
-        </Grid>
-        <p className={classes.formHelperText}>The name shown in the Appointment</p>
-      </FormControl>
-      <Grid container xs={12} md={12} className={classes.gridMargin}>
-        <Grid item xs={12} sm={6} className={classes.gridMargin}>
-          <p className={classes.scheduleTitle}>Date and Time</p>
           <FormControl component="div" className={classes.formControl}>
-            <KeyboardDatePicker
-              required
-              clearable
-              autoOk
-              KeyboardButtonProps={{
-                "aria-label": "change date",
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              format="yyyy/MM/dd"
-              inputVariant="outlined"
-              variant="outlined"
-              id="dateStart"
-              label="Date Start"
-              className={classes.textField}
+            <Grid item xs={12} md={6} className={classes.gridMargin}>
+              <TextField
+                fullWidth
+                autoFocus
+                required
+                id="user_id"
+                name="user_id"
+                select
+                label="User"
+                value={getScheduleUserId(schedule.user_id, userId)}
+                onChange={(e) => setSchedule({
+                  ...schedule,
+                  user_id: e.target.value,
+                })}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                SelectProps={{
+                  native: true,
+                }}
+              >
+                {userList.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {`${u.firstname} ${u.lastname}`}
+                  </option>
+                ))}
+              </TextField>
+            </Grid>
+            <p className={classes.formHelperText}>The name shown in the Appointment</p>
+          </FormControl>
+          <Grid container xs={12} md={12} className={classes.gridMargin}>
+            <Grid item xs={12} sm={6} className={classes.gridMargin}>
+              <p className={classes.scheduleTitle}>Date and Time</p>
+              <FormControl component="div" className={classes.formControl}>
+                <KeyboardDatePicker
+                  required
+                  clearable
+                  autoOk
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  format="yyyy/MM/dd"
+                  inputVariant="outlined"
+                  variant="outlined"
+                  id="dateStart"
+                  label="Date Start"
+                  className={classes.textField}
+                  size="small"
+                  name="start_date_time"
+                  value={schedule.start_date_time}
+                  onChange={(date) => setSchedule({
+                    ...schedule,
+                    start_date_time: date,
+                  })}
+                  onKeyUp={handleKeyUp}
+                  maxDate={schedule.end_date_time}
+                  maxDateMessage="Date start should not be after date end"
+                />
+              </FormControl>
+              <FormControl component="div" className={classes.formControl}>
+                <KeyboardDatePicker
+                  required
+                  clearable
+                  autoOk
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  format="yyyy/MM/dd"
+                  inputVariant="outlined"
+                  variant="outlined"
+                  id="dateEnd"
+                  label="Date End"
+                  className={classes.textField}
+                  size="small"
+                  name="end_date_time"
+                  value={schedule.end_date_time}
+                  onChange={(date) => setSchedule({
+                    ...schedule,
+                    end_date_time: date,
+                  })}
+                  onKeyUp={handleKeyUp}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  minDate={schedule.start_date_time}
+                  minDateMessage="Date end should not be before date start"
+                />
+              </FormControl>
+              <FormControl component="div" className={classes.formControl}>
+                <KeyboardTimePicker
+                  required
+                  inputVariant="outlined"
+                  KeyboardButtonProps={{
+                    "aria-label": "change time",
+                  }}
+                  id="time_start"
+                  name="start_date_time"
+                  label="Time Start"
+                  value={schedule.start_date_time ? schedule.start_date_time : null}
+                  className={classes.textField}
+                  onChange={(date) => setSchedule({
+                    ...schedule,
+                    start_date_time: date,
+                  })}
+                  size="small"
+                  autoOk
+                  mask="__:__ _M"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  maxDate={schedule.end_date_time}
+                  maxDateMessage="Time start should not be after time end"
+                />
+              </FormControl>
+              <FormControl component="div" className={classes.formControl}>
+                <KeyboardTimePicker
+                  required
+                  inputVariant="outlined"
+                  KeyboardButtonProps={{
+                    "aria-label": "change time",
+                  }}
+                  id="time_end"
+                  name="time_end"
+                  label="Time End"
+                  value={schedule.end_date_time ? schedule.end_date_time : null}
+                  className={classes.textField}
+                  onChange={(date) => setSchedule({
+                    ...schedule,
+                    end_date_time: date,
+                  })}
+                  size="small"
+                  autoOk
+                  mask="__:__ _M"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  minDate={schedule.start_date_time}
+                  minDateMessage="Date end should not be before date start"
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} className={classes.gridMargin}>
+              <p className={classes.scheduleTitle}>Week Plan</p>
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={Boolean(schedule.monday)}
+                    size="small"
+                    name="active"
+                    color="primary"
+                    onChange={(e) => setSchedule({
+                      ...schedule,
+                      monday: e.target.checked,
+                    })}
+                    onKeyUp={handleKeyUp}
+                  />
+                )}
+                label="Monday"
+                className={classes.switchFormControl}
+              />
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={Boolean(schedule.tuesday)}
+                    size="small"
+                    name="active"
+                    color="primary"
+                    onChange={(e) => setSchedule({
+                      ...schedule,
+                      tuesday: e.target.checked,
+                    })}
+                    onKeyUp={handleKeyUp}
+                  />
+                )}
+                label="Tuesday"
+                className={classes.switchFormControl}
+              />
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={Boolean(schedule.wednesday)}
+                    size="small"
+                    name="active"
+                    color="primary"
+                    onChange={(e) => setSchedule({
+                      ...schedule,
+                      wednesday: e.target.checked,
+                    })}
+                    onKeyUp={handleKeyUp}
+                  />
+                )}
+                label="Wednesday"
+                className={classes.switchFormControl}
+              />
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={Boolean(schedule.thursday)}
+                    size="small"
+                    name="active"
+                    color="primary"
+                    onChange={(e) => setSchedule({
+                      ...schedule,
+                      thursday: e.target.checked,
+                    })}
+                    onKeyUp={handleKeyUp}
+                  />
+                )}
+                label="Thursday"
+                className={classes.switchFormControl}
+              />
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={Boolean(schedule.friday)}
+                    size="small"
+                    name="active"
+                    color="primary"
+                    onChange={(e) => setSchedule({
+                      ...schedule,
+                      friday: e.target.checked,
+                    })}
+                    onKeyUp={handleKeyUp}
+                  />
+                )}
+                label="Friday"
+                className={classes.switchFormControl}
+              />
+            </Grid>
+          </Grid>
+          <FormControl component="div" className={classes.switchControl}>
+            <Switch
+              checked={Boolean(schedule.active)}
               size="small"
-              name="start_date_time"
-              value={schedule.start_date_time}
-              onChange={(date) => setSchedule({
+              name="active"
+              color="primary"
+              onChange={(e) => setSchedule({
                 ...schedule,
-                start_date_time: date,
+                active: e.target.checked,
               })}
               onKeyUp={handleKeyUp}
-              maxDate={schedule.end_date_time}
-              maxDateMessage="Date start should not be after date end"
             />
+            <p className={classes.formHelperText}>Active / Inactive</p>
           </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <KeyboardDatePicker
-              required
-              clearable
-              autoOk
-              KeyboardButtonProps={{
-                "aria-label": "change date",
+          <p className={classes.statusText}>
+            <span
+              style={{
+                fontWeight: "500",
               }}
-              format="yyyy/MM/dd"
-              inputVariant="outlined"
-              variant="outlined"
-              id="dateEnd"
-              label="Date End"
-              className={classes.textField}
-              size="small"
-              name="end_date_time"
-              value={schedule.end_date_time}
-              onChange={(date) => setSchedule({
-                ...schedule,
-                end_date_time: date,
-              })}
-              onKeyUp={handleKeyUp}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              minDate={schedule.start_date_time}
-              minDateMessage="Date end should not be before date start"
-            />
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <KeyboardTimePicker
-              required
-              inputVariant="outlined"
-              KeyboardButtonProps={{
-                "aria-label": "change time",
-              }}
-              id="time_start"
-              name="start_date_time"
-              label="Time Start"
-              value={schedule.start_date_time ? schedule.start_date_time : null}
-              className={classes.textField}
-              onChange={(date) => setSchedule({
-                ...schedule,
-                start_date_time: date,
-              })}
-              size="small"
-              autoOk
-              mask="__:__ _M"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              maxDate={schedule.end_date_time}
-              maxDateMessage="Time start should not be after time end"
-            />
-          </FormControl>
-          <FormControl component="div" className={classes.formControl}>
-            <KeyboardTimePicker
-              required
-              inputVariant="outlined"
-              KeyboardButtonProps={{
-                "aria-label": "change time",
-              }}
-              id="time_end"
-              name="time_end"
-              label="Time End"
-              value={schedule.end_date_time ? schedule.end_date_time : null}
-              className={classes.textField}
-              onChange={(date) => setSchedule({
-                ...schedule,
-                end_date_time: date,
-              })}
-              size="small"
-              autoOk
-              mask="__:__ _M"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              minDate={schedule.start_date_time}
-              minDateMessage="Date end should not be before date start"
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6} className={classes.gridMargin}>
-          <p className={classes.scheduleTitle}>Week Plan</p>
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={Boolean(schedule.monday)}
-                size="small"
-                name="active"
-                color="primary"
-                onChange={(e) => setSchedule({
-                  ...schedule,
-                  monday: e.target.checked,
-                })}
-                onKeyUp={handleKeyUp}
-              />
-            )}
-            label="Monday"
-            className={classes.switchFormControl}
-          />
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={Boolean(schedule.tuesday)}
-                size="small"
-                name="active"
-                color="primary"
-                onChange={(e) => setSchedule({
-                  ...schedule,
-                  tuesday: e.target.checked,
-                })}
-                onKeyUp={handleKeyUp}
-              />
-            )}
-            label="Tuesday"
-            className={classes.switchFormControl}
-          />
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={Boolean(schedule.wednesday)}
-                size="small"
-                name="active"
-                color="primary"
-                onChange={(e) => setSchedule({
-                  ...schedule,
-                  wednesday: e.target.checked,
-                })}
-                onKeyUp={handleKeyUp}
-              />
-            )}
-            label="Wednesday"
-            className={classes.switchFormControl}
-          />
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={Boolean(schedule.thursday)}
-                size="small"
-                name="active"
-                color="primary"
-                onChange={(e) => setSchedule({
-                  ...schedule,
-                  thursday: e.target.checked,
-                })}
-                onKeyUp={handleKeyUp}
-              />
-            )}
-            label="Thursday"
-            className={classes.switchFormControl}
-          />
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={Boolean(schedule.friday)}
-                size="small"
-                name="active"
-                color="primary"
-                onChange={(e) => setSchedule({
-                  ...schedule,
-                  friday: e.target.checked,
-                })}
-                onKeyUp={handleKeyUp}
-              />
-            )}
-            label="Friday"
-            className={classes.switchFormControl}
-          />
-        </Grid>
-      </Grid>
-      <FormControl component="div" className={classes.switchControl}>
-        <Switch
-          checked={Boolean(schedule.active)}
-          size="small"
-          name="active"
-          color="primary"
-          onChange={(e) => setSchedule({
-            ...schedule,
-            active: e.target.checked,
-          })}
-          onKeyUp={handleKeyUp}
-        />
-        <p className={classes.formHelperText}>Active / Inactive</p>
-      </FormControl>
-      <p className={classes.statusText}>
-        <span
-          style={{
-            fontWeight: "500",
-          }}
-        >
-          Status:
-        </span>
-        {" "}
-        {status}
-      </p>
+            >
+              Status:
+            </span>
+            {" "}
+            {status}
+          </p>
 
-      <FormControl component="div" className={classes.formControl}>
-        <TextField
-          className={classes.noteMargin}
-          fullWidth
-          variant="outlined"
-          multiline
-          name="note"
-          label="Notes"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          InputProps={{
-            rows: 6,
-          }}
-          value={schedule.note}
-          onChange={(e) => setSchedule({
-            ...schedule,
-            note: e.target.value,
-          })}
-          onKeyUp={handleKeyUp}
-          error={String(schedule.note).length > 1000}
-          helperText={String(schedule.note).length > 1000 && "Note can't be grater than 1000 Chars"}
-        />
-      </FormControl>
-      <Grid className={classes.modalAction}>
-        <Button variant="outlined" onClick={handleCreateNewOrEditSchedule}>
-          {isNewSchedule ? "Save" : "Update"}
-        </Button>
-      </Grid>
-    </div>
+          <FormControl component="div" className={classes.formControl}>
+            <TextField
+              className={classes.noteMargin}
+              fullWidth
+              variant="outlined"
+              multiline
+              name="note"
+              label="Notes"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                rows: 6,
+              }}
+              value={schedule.note}
+              onChange={(e) => setSchedule({
+                ...schedule,
+                note: e.target.value,
+              })}
+              onKeyUp={handleKeyUp}
+              error={String(schedule.note).length > 1000}
+              helperText={String(schedule.note).length > 1000 && "Note can't be grater than 1000 Chars"}
+            />
+          </FormControl>
+          <Grid className={classes.modalAction}>
+            <Button variant="outlined" onClick={handleCreateNewOrEditSchedule}>
+              {isNewSchedule ? "Save" : "Update"}
+            </Button>
+          </Grid>
+        </>
+      )}
+    />
   );
 };
 
 NewOrEditSchedule.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
   userId: PropTypes.bool.isRequired,
   isNewSchedule: PropTypes.bool.isRequired,
   handleOnClose: PropTypes.func.isRequired,
