@@ -1,20 +1,13 @@
 import React from "react";
 
-import {
-  colors, FormControlLabel, FormGroup, Grid,
-} from "@material-ui/core";
+import { Grid, Switch, TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-// import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
-import Switch from "@material-ui/core/Switch";
-import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
 import NumberFormat from "react-number-format";
+
+import Dialog from "../../../../../../components/Dialog";
 
 const useStyles = makeStyles((theme) => ({
   gridMargin: {
@@ -29,11 +22,6 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-  content: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    fontSize: "18px",
-  },
   formControl: {
     display: "flex",
     flexDirection: "row",
@@ -43,8 +31,18 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 120,
     },
   },
+  switchControl: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(1.5),
+    marginTop: theme.spacing(1.5),
+    "& .MuiSelect-select": {
+      minWidth: 120,
+    },
+  },
   root: {
-    paddingLeft: "5px",
     "& .MuiTypography-root": {
       marginLeft: "5px",
     },
@@ -55,13 +53,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: "10px",
   },
   modalAction: {
-    borderTop: `1px solid ${theme.palette.background.default}`,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -116,19 +108,13 @@ const EditProcedureCodeModal = ({
   };
 
   return (
-    <div>
-      <Dialog
-        maxWidth="sm"
-        fullWidth
-        open={isOpen}
-        onClose={hendleOnClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title" className={classes.title}>
-          Edit Procedure
-        </DialogTitle>
-        <DialogContent className={classes.content}>
+    <Dialog
+      size="sm"
+      open={isOpen}
+      cancelForm={hendleOnClose}
+      title="Edit Procedure"
+      message={(
+        <>
           {/*
           <DialogContentText id="alert-dialog-description">
             This page is used to manage procedures
@@ -186,36 +172,28 @@ const EditProcedureCodeModal = ({
               </Grid>
               <p className={classes.formHelperText}>The fee you will charge your patients</p>
             </FormControl>
-            <FormGroup>
-              <FormControlLabel
-                control={(
-                  <Switch
-                    checked={Boolean(procedure_favorite)}
-                    color="primary"
-                    size="small"
-                    name="switchBox"
-                    onChange={handleChangeFavorite}
-                    onKeyUp={handleKeyUp}
-                  />
-                )}
-                label="Favorite"
-                className={classes.root}
+            <FormControl component="div" className={classes.switchControl}>
+              <Switch
+                checked={Boolean(procedure_favorite)}
+                color="primary"
+                size="small"
+                name="switchBox"
+                onChange={handleChangeFavorite}
+                onKeyUp={handleKeyUp}
               />
-              <FormControlLabel
-                control={(
-                  <Switch
-                    checked={Boolean(procedure_billable)}
-                    size="small"
-                    color="primary"
-                    name="switchBox"
-                    onChange={handleChangeBillable}
-                    onKeyUp={handleKeyUp}
-                  />
-                )}
-                label="Billable"
-                className={classes.root}
+              <p className={classes.formHelperText}>Favorite</p>
+            </FormControl>
+            <FormControl component="div" className={classes.switchControl}>
+              <Switch
+                checked={Boolean(procedure_billable)}
+                size="small"
+                color="primary"
+                name="switchBox"
+                onChange={handleChangeBillable}
+                onKeyUp={handleKeyUp}
               />
-            </FormGroup>
+              <p className={classes.formHelperText}>Billable</p>
+            </FormControl>
             <FormControl component="div" className={classes.formControl}>
               <TextField
                 className={classes.noteMargin}
@@ -236,30 +214,18 @@ const EditProcedureCodeModal = ({
               />
             </FormControl>
           </div>
-        </DialogContent>
-        <DialogActions className={classes.modalAction}>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={hendleOnClose}
-            style={{
-              borderColor: colors.orange[600],
-              color: colors.orange[600],
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={handleEditProcedureCode}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+          <Grid className={classes.modalAction}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleEditProcedureCode}
+            >
+              Save
+            </Button>
+          </Grid>
+        </>
+      )}
+    />
   );
 };
 
