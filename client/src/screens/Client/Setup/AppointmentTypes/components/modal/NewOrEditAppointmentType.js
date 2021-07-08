@@ -169,10 +169,6 @@ const NewOrEditAppointment = ({
       message={(
         <>
           <Grid>
-            {/* <Typography gutterBottom color="textSecondary">
-              {isNewAppointment ? "This page is used to create a new appointment type"
-                : "This page is used to update an appointment type"}
-            </Typography> */}
             {errors
               && errors.map((error, index) => (
                 // eslint-disable-next-line react/no-array-index-key
