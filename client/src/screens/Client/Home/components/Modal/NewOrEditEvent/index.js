@@ -61,6 +61,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "15px",
     color: "#2979ff",
   },
+  selfButton: {
+    whiteSpace: "nowrap",
+    maxHeight: "30px",
+    marginLeft: theme.spacing(1),
+    color: "#2979ff",
+  },
   content: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
@@ -126,6 +132,7 @@ const useStyles = makeStyles((theme) => ({
   providerWrap: {
     display: "flex",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   providerSelect: {
     flex: 1,
@@ -769,7 +776,7 @@ const EventModal = ({
                   <FormHelperText>{errorText.provider.length > 0 && errorText.provider}</FormHelperText>
                 </div>
                 <Button
-                  className={classes.Button}
+                  className={classes.selfButton}
                   disableElevation
                   onClick={() => handleSetToSelf()}
                 >
