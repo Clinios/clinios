@@ -1,3 +1,4 @@
+const moment = require("moment");
 const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
@@ -107,35 +108,30 @@ const updateLabStatus = async (req, res) => {
 
 const updateLab = async (req, res) => {
   const { labId } = req.params;
-  const db = makeDb(configuration, res);
-  
-  const formData = req.body.data;
-  formData.id = labId;
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
+  const { type, note, note_assign, user_id, patient_id } = req.body.data;
 
   try {
-    await db.query(`insert into lab_history set ?`, [formData]);
-    delete formData.created;
-    delete formData.created_user_id;
-    formData.updated = new Date();
-    formData.updated_user_id = req.user_id;
+    await db.query(`insert into lab_history(id, type, note, note_assign, user_id, patient_id, created, created_user_id) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [labId, type, note, note_assign, user_id, patient_id, moment().format('YYYY-MM-DD hh:ss'), req.user_id]
+    );
 
-    const updateResponse = await db.query(`update lab set ? where id=?`, [formData, labId]);
-    if (!updateResponse.affectedRows) {
+    const updateResponse = await db.query(`update lab set type=$1, note=$2, note_assign=$3, user_id=$4, patient_id=$5, updated=$6, updated_user_id=$7 where id=$8 RETURNING id`,
+     [type, note, note_assign, user_id, patient_id, moment().format('YYYY-MM-DD hh:ss'), req.user_id, labId]
+    );
+
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
