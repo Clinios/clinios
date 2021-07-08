@@ -57,33 +57,30 @@ const search = async (req, res) => {
 };
 
 const createNewSchedule = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const user_schedule = req.body.data;
-  user_schedule.client_id = req.client_id;
-  user_schedule.user_id = user_schedule.user_id || req.user_id;
-  user_schedule.created = new Date();
-  user_schedule.created_user_id = req.user_id;
+
+  let {user_id} = req.body.data;
+  const {start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday} = req.body.data;
+  user_id = user_id || req.user_id;
 
   try {
     const dbResponse = await db.query(
-      "insert into user_schedule set ?",
-      user_schedule
+      `insert into user_schedule(user_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday, created, created_user_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now(), ${req.user_id}) RETURNING id`,
+      [user_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday]
     );
 
-    if (!dbResponse.insertId) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "Creation not successful";
       res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Creation successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.error(err);
     errorMessage.message = "Creation not not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
