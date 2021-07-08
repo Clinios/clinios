@@ -31,8 +31,9 @@ const useStyles = makeStyles((theme) => ({
   },
   closeButton: {
     position: "absolute",
-    right: theme.spacing(1 / 2),
-    top: theme.spacing(1 / 2),
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    padding: theme.spacing(1),
   },
   tableContainer: {
     minWidth: 850,
