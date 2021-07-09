@@ -162,6 +162,7 @@ const encountersRecentProfiles = async (req, res) => {
   }
 };
 
+//TODO:: Not in use, need to be refactor in future in needed.
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
   const formData = req.body.data;
@@ -173,26 +174,24 @@ const createEncounter = async (req, res) => {
   formData.created = new Date();
   formData.created_user_id = req.user_id;
 
-  const db = makeDb(configuration, res);
   try {
     const insertResponse = await db.query(`insert into encounter set ?`, [formData]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (excepErr) {
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
+//TODO:: Not in use, need to be refactor in future in needed.
 const updateEncounter = async (req, res) => {
   const { patient_id, id } = req.params;
 
@@ -202,7 +201,6 @@ const updateEncounter = async (req, res) => {
   formData.updated = new Date();
   formData.updated_user_id = req.user_id;
 
-  const db = makeDb(configuration, res);
   try {
     const $sql = `update encounter set ? where patient_id=${patient_id} and id=${id}`;
     const updateResponse = await db.query($sql, [formData, patient_id, id]);
@@ -219,32 +217,28 @@ const updateEncounter = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const deleteEncounter = async (req, res) => {
   const { id } = req.params;
 
-  const db = makeDb(configuration, res);
   try {
     // Call DB query without assigning into a variable
     const deleteResponse = await db.query(`delete from encounter where id=?`, [id]);
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -351,6 +345,7 @@ const searchDiagnosesICDs = async (req, res) => {
   }
 };
 
+//TODO:: Not in use, need to be refactor in future in needed.
 const createNewPrescription = async (req, res) => {
   const { patient_id, encounter_id } = req.params;
   const {
@@ -365,7 +360,6 @@ const createNewPrescription = async (req, res) => {
     patient_instructions,
     pharmacy_instructions,
   } = req.body.data;
-  const db = makeDb(configuration, res);
 
   try {
     const insertResponse = await db.query(
@@ -378,7 +372,7 @@ const createNewPrescription = async (req, res) => {
       }, ${req.user_id}, now(), ${req.user_id})`
     );
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -389,8 +383,6 @@ const createNewPrescription = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -453,26 +445,24 @@ const searchDrug = async (req, res) => {
 const createEncounter_ICD = async (req, res) => {
   const { patient_id, encounter_id } = req.params;
   const { icd_id } = req.body.data;
-  const db = makeDb(configuration, res);
+
   try {
     const insertResponse = await db.query(
       `insert into patient_icd (patient_id, icd_id, active, client_id, user_id, encounter_id, created, created_user_id)
-       values (${patient_id}, '${icd_id}', true, ${req.client_id}, ${req.user_id}, ${encounter_id}, now(), ${req.user_id})`
+       values (${patient_id}, '${icd_id}', true, ${req.client_id}, ${req.user_id}, ${encounter_id}, now(), ${req.user_id}) RETURNING id`
     );
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -513,7 +503,6 @@ const getEncounterPlan = async (req, res) => {
 const searchNewPrescriptionDrug = async (req, res) => {
   const { text } = req.body.data;
 
-  const db = makeDb(configuration, res);
   try {
     const $sql = `select d.name, concat(ds.strength, ds.unit) strength
     , case when ds.form='T' then 'Tablets' end form
@@ -904,19 +893,11 @@ const getBillingPayment = async (req, res) => {
 const createBillingPayment = async (req, res) => {
   const { dt, type_id, amount } = req.body.data;
   const { encounter_id, patient_id } = req.params;
-  let { payment_type } = req.body.data;
 
-  const db = makeDb(configuration, res);
-
-  if (!payment_type) {
-    payment_type = null;
-  } else {
-    payment_type = `'${payment_type}'`;
-  }
   try {
     const insertResponse = await db.query(
-      `insert into tran (dt, type_id, payment_type, amount, encounter_id, client_id, user_id, patient_id, created, created_user_id) values 
-        ('${dt}', ${type_id}, ${payment_type}, ${amount}, ${encounter_id}, ${req.client_id}, ${req.user_id}, ${patient_id}, now(), ${req.user_id})`
+      `insert into tran (dt, type_id, amount, encounter_id, client_id, patient_id, created, created_user_id) values 
+        ('${dt}', ${type_id}, ${amount}, ${encounter_id}, ${req.client_id}, ${patient_id}, now(), ${req.user_id}) RETURNING id`
     );
 
     if (!insertResponse.rowCount) {
@@ -927,10 +908,9 @@ const createBillingPayment = async (req, res) => {
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
