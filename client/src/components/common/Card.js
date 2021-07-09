@@ -25,7 +25,8 @@ import PropTypes from "prop-types";
 import useDidMountEffect from "../../hooks/useDidMountEffect";
 import usePatientContext from "../../hooks/usePatientContext";
 import {
-  togglePatientAppointmentHistoryDialog, toggleNewTransactionDialog, togglePaymentDialog,
+  togglePatientAppointmentHistoryDialog, toggleNewTransactionDialog,
+  togglePaymentDialog, togglePatientInfoDialog, togglePatientDialogType,
 } from "../../providers/Patient/actions";
 import Colors from "../../theme/colors";
 
@@ -218,6 +219,13 @@ const PatientCard = (props) => {
                 onClick={() => dispatch(togglePatientAppointmentHistoryDialog())}
                 path={mdiCalendarBlankOutline}
                 size={1}
+              />
+              <AddIcon
+                className={classes.icon}
+                onClick={() => {
+                  dispatch(togglePatientDialogType());
+                  dispatch(togglePatientInfoDialog());
+                }}
               />
             </>
           )}
