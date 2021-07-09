@@ -30,7 +30,7 @@ import CountrySelect from "../../../../components/common/CountrySelect";
 import RegionSelect from "../../../../components/common/RegionSelect";
 import { StyledTableRowLg, StyledTableCellLg } from "../../../../components/common/StyledTable";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { togglePatientInfoDialog } from "../../../../providers/Patient/actions";
+import { togglePatientDialogType, togglePatientInfoDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 import {
   BasicInfoForm,
@@ -89,6 +89,7 @@ const BasicInfo = (props) => {
   const currentDate = new Date();
   const formData = state.patientInfo.data;
   const paymentMethodsData = state.patientInfo.paymentMethods || [];
+  const { isEditDialogType } = state.patientInfo;
   const { patientId } = state;
   const { reloadData, reloadPaymentMethods } = props;
   const FirstRow = BasicInfoForm.firstRow;
@@ -112,7 +113,7 @@ const BasicInfo = (props) => {
     phone_other: "",
     phone_note: "",
     email: "",
-    dob: "",
+    dob: null,
     otherPhone: "",
     phoneNotes: "",
     gender: "",
@@ -142,24 +143,38 @@ const BasicInfo = (props) => {
     setShowDeleteDialog((prevstate) => !prevstate);
   };
 
+  // this method works as a cleanup function only
+  // eslint-disable-next-line
   useEffect(() => {
-    formData.status = formData.status ? formData.status : "active";
-    setBasicInfo({ ...formData });
-    // [Pakistan, PK, ["Azad Kashmir", "Punjab"]]
-    // [United States, US, ["Alabama", "Illinois"]]
-    const selectedCountry = CountryRegionData.filter((countryArray) => countryArray[1] === formData.country);
-    if (selectedCountry.length) { // country and state is present in the db
-      setCountry(selectedCountry[0]);
+    return () => {
+      if (!isEditDialogType) {
+        dispatch(togglePatientDialogType());
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // reset dialotg type to edit if new dialog is opened
 
-      const regions = selectedCountry[0][2].split("|").map((regionPair) => {
-        const [regionName = null, regionInShort] = regionPair.split("~");
-        return [regionName, regionInShort];
-      });
-      const selectedRegion = regions.filter((x) => x[1] === formData.state);
-      if (selectedRegion.length) {
-        setRegion(selectedRegion[0][1]);
+  useEffect(() => {
+    if (isEditDialogType) {
+      formData.status = formData.status ? formData.status : "A";
+      setBasicInfo({ ...formData });
+      // [Pakistan, PK, ["Azad Kashmir", "Punjab"]]
+      // [United States, US, ["Alabama", "Illinois"]]
+      const userCountry = CountryRegionData.filter((countryArray) => countryArray[1] === formData.country);
+      if (userCountry.length) { // country and state is present in the db
+        setCountry(userCountry[0]);
+
+        const regions = userCountry[0][2].split("|").map((regionPair) => {
+          const [regionName = null, regionInShort] = regionPair.split("~");
+          return [regionName, regionInShort];
+        });
+        const selectedRegion = regions.filter((x) => x[1] === formData.state);
+        if (selectedRegion.length) {
+          setRegion(selectedRegion[0][1]);
+        }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   const handleInputChange = (e) => {
@@ -186,12 +201,25 @@ const BasicInfo = (props) => {
         state: region,
       },
     };
-    PatientService.updatePatient(patientId, reqBody)
-      .then((response) => {
-        enqueueSnackbar(`${response.message}`, { variant: "success" });
-        reloadData();
-        dispatch(togglePatientInfoDialog());
-      });
+    if (isEditDialogType) {
+      PatientService.updatePatient(patientId, reqBody)
+        .then((response) => {
+          enqueueSnackbar(`${response.message}`, { variant: "success" });
+          reloadData();
+          dispatch(togglePatientInfoDialog());
+        });
+    } else {
+      delete reqBody.data.provider;
+      delete reqBody.data.otherPhone;
+      delete reqBody.data.phoneNotes;
+      reqBody.data.dob = moment(reqBody.data?.dob || currentDate).format("YYYY-MM-DD");
+      PatientService.createPatient(reqBody)
+        .then((response) => {
+          enqueueSnackbar(`${response.message}`, { variant: "success" });
+          reloadData();
+          dispatch(togglePatientInfoDialog());
+        });
+    }
   };
 
   const toggleNewPaymentMethodDialog = () => {
@@ -398,11 +426,13 @@ const BasicInfo = (props) => {
                     maxDate={currentDate}
                   />
                 </Grid>
-                <Grid item xs={4}>
-                  <Typography gutterBottom>
-                    {`Age: ${calculateAge(basicInfo.dob)}`}
-                  </Typography>
-                </Grid>
+                {basicInfo.dob && (
+                  <Grid item xs={4}>
+                    <Typography gutterBottom>
+                      {`Age: ${calculateAge(basicInfo.dob)}`}
+                    </Typography>
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>
