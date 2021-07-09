@@ -33,11 +33,11 @@ export const BasicInfoForm = {
       options: [
         {
           label: "Active",
-          value: "active",
+          value: "A",
         },
         {
           label: "Inactive",
-          value: "inActive",
+          value: "I",
         },
       ],
     },
