@@ -790,7 +790,7 @@ const Patient = () => {
       {!!patientInfo.editDialog && (
         <Dialog
           open={patientInfo.editDialog}
-          title="Patient Edit"
+          title={patientInfo.isEditDialogType ? "Patient Edit" : "New Patient"}
           message={(
             <BasicInfo
               reloadData={fetchPatientData}
