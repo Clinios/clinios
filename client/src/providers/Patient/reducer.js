@@ -9,6 +9,7 @@ import {
   // Setters
   SET_PATIENT_ID,
   SET_PATIENT_INFO,
+  TOGGLE_PATIENT_DIALOG_TYPE,
   SET_PATIENT_HISTORY,
   SET_ADMIN_NOTES,
   SET_FORMS,
@@ -121,6 +122,15 @@ const reducer = (state = initialState, action) => {
           data: { ...action.payload },
         },
       };
+    case TOGGLE_PATIENT_DIALOG_TYPE:
+      return {
+        ...state,
+        patientInfo: {
+          ...state.patientInfo,
+          isEditDialogType: !state.patientInfo.isEditDialogType,
+        },
+      };
+
     case SET_PATIENT_HISTORY:
       return {
         ...state,
