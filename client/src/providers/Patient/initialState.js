@@ -8,6 +8,7 @@ const initialState = {
     appointmentHistoryDialog: false,
     editDialog: false,
     historyDialog: false,
+    isEditDialogType: true,
   },
   adminNotes: {
     data: [],

@@ -89,6 +89,32 @@ const getPatient = async (req, res) => {
   }
 };
 
+const createPatient = async (req, res) => {
+  const formData = req.body.data;
+  formData.created = new Date();
+  formData.created_user_id = req.user_id;
+  formData.client_id = req.client_id;
+
+  const db = makeDb(configuration, res);
+  try {
+    const insertResponse = await db.query(`insert into patient set ?`, [formData]);
+
+    if (!insertResponse.affectedRows) {
+      errorMessage.message = "Insert not successful";
+      return res.status(status.notfound).send(errorMessage);
+    }
+    successMessage.data = insertResponse;
+    successMessage.message = "Insert successful";
+    return res.status(status.created).send(successMessage);
+  } catch (err) {
+    console.log("err", err);
+    errorMessage.message = "Insert not successful";
+    return res.status(status.error).send(errorMessage);
+  } finally {
+    await db.close();
+  }
+};
+
 const updatePatient = async (req, res) => {
   const { patient_id } = req.params;
   const {
@@ -1300,9 +1326,7 @@ const getDocuments = async (req, res) => {
   const { patient_id } = req.params;
 
   try {
-    let $sql;
-
-    $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
+    const $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
       , group_concat('"', lc.marker_id, '","', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
       from lab l
       left join lab_marker lc on lc.lab_id=l.id
@@ -2661,6 +2685,7 @@ const getIcds = async (req, res) => {
 
 const appointmentTypes = {
   getPatient,
+  createPatient,
   updatePatient,
   search,
   history,

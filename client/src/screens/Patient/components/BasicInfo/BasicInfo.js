@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 
 import {
   Box,
@@ -30,7 +30,7 @@ import CountrySelect from "../../../../components/common/CountrySelect";
 import RegionSelect from "../../../../components/common/RegionSelect";
 import { StyledTableRowLg, StyledTableCellLg } from "../../../../components/common/StyledTable";
 import usePatientContext from "../../../../hooks/usePatientContext";
-import { togglePatientInfoDialog } from "../../../../providers/Patient/actions";
+import { togglePatientDialogType, togglePatientInfoDialog } from "../../../../providers/Patient/actions";
 import PatientService from "../../../../services/patient.service";
 import {
   BasicInfoForm,
@@ -89,6 +89,7 @@ const BasicInfo = (props) => {
   const currentDate = new Date();
   const formData = state.patientInfo.data;
   const paymentMethodsData = state.patientInfo.paymentMethods || [];
+  const { isEditDialogType } = state.patientInfo;
   const { patientId } = state;
   const { reloadData, reloadPaymentMethods } = props;
   const FirstRow = BasicInfoForm.firstRow;
@@ -112,7 +113,7 @@ const BasicInfo = (props) => {
     phone_other: "",
     phone_note: "",
     email: "",
-    dob: "",
+    dob: null,
     otherPhone: "",
     phoneNotes: "",
     gender: "",
@@ -142,24 +143,38 @@ const BasicInfo = (props) => {
     setShowDeleteDialog((prevstate) => !prevstate);
   };
 
+  // this method works as a cleanup function only
+  // eslint-disable-next-line
   useEffect(() => {
-    formData.status = formData.status ? formData.status : "active";
-    setBasicInfo({ ...formData });
-    // [Pakistan, PK, ["Azad Kashmir", "Punjab"]]
-    // [United States, US, ["Alabama", "Illinois"]]
-    const selectedCountry = CountryRegionData.filter((countryArray) => countryArray[1] === formData.country);
-    if (selectedCountry.length) { // country and state is present in the db
-      setCountry(selectedCountry[0]);
+    return () => {
+      if (!isEditDialogType) {
+        dispatch(togglePatientDialogType());
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // reset dialotg type to edit if new dialog is opened
 
-      const regions = selectedCountry[0][2].split("|").map((regionPair) => {
-        const [regionName = null, regionInShort] = regionPair.split("~");
-        return [regionName, regionInShort];
-      });
-      const selectedRegion = regions.filter((x) => x[1] === formData.state);
-      if (selectedRegion.length) {
-        setRegion(selectedRegion[0][1]);
+  useEffect(() => {
+    if (isEditDialogType) {
+      formData.status = formData.status ? formData.status : "A";
+      setBasicInfo({ ...formData });
+      // [Pakistan, PK, ["Azad Kashmir", "Punjab"]]
+      // [United States, US, ["Alabama", "Illinois"]]
+      const userCountry = CountryRegionData.filter((countryArray) => countryArray[1] === formData.country);
+      if (userCountry.length) { // country and state is present in the db
+        setCountry(userCountry[0]);
+
+        const regions = userCountry[0][2].split("|").map((regionPair) => {
+          const [regionName = null, regionInShort] = regionPair.split("~");
+          return [regionName, regionInShort];
+        });
+        const selectedRegion = regions.filter((x) => x[1] === formData.state);
+        if (selectedRegion.length) {
+          setRegion(selectedRegion[0][1]);
+        }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   const handleInputChange = (e) => {
@@ -178,7 +193,8 @@ const BasicInfo = (props) => {
     }
   };
 
-  const onFormSubmit = () => {
+  const onFormSubmit = (e) => {
+    e.preventDefault();
     const reqBody = {
       data: {
         ...basicInfo,
@@ -186,12 +202,25 @@ const BasicInfo = (props) => {
         state: region,
       },
     };
-    PatientService.updatePatient(patientId, reqBody)
-      .then((response) => {
-        enqueueSnackbar(`${response.message}`, { variant: "success" });
-        reloadData();
-        dispatch(togglePatientInfoDialog());
-      });
+    if (isEditDialogType) {
+      PatientService.updatePatient(patientId, reqBody)
+        .then((response) => {
+          enqueueSnackbar(`${response.message}`, { variant: "success" });
+          reloadData();
+          dispatch(togglePatientInfoDialog());
+        });
+    } else {
+      delete reqBody.data.provider;
+      delete reqBody.data.otherPhone;
+      delete reqBody.data.phoneNotes;
+      reqBody.data.dob = moment(reqBody.data?.dob || currentDate).format("YYYY-MM-DD");
+      PatientService.createPatient(reqBody)
+        .then((response) => {
+          enqueueSnackbar(`${response.message}`, { variant: "success" });
+          reloadData();
+          dispatch(togglePatientInfoDialog());
+        });
+    }
   };
 
   const toggleNewPaymentMethodDialog = () => {
@@ -244,6 +273,9 @@ const BasicInfo = (props) => {
     });
     setBasicInfo({ ...basicInfo });
   };
+
+  // eslint-disable-next-line max-len
+  const getLastFourDigits = useCallback((value) => `${value.toString().substring(0, 2)}/${value.toString().substring(2, 4)}`, []);
 
   return (
     <>
@@ -309,325 +341,330 @@ const BasicInfo = (props) => {
         </Grid>
       </Box>
 
-      <SwipeableViews
-        index={tabValue}
-        onChangeIndex={handleChange}
-      >
-        <Grid item xs={12}>
-          <Grid container spacing={2} xs={12} className={classes.inputRow}>
-            {FirstRow.map((item) => (
-              <Grid key={item.name} item xs>
-                {item.baseType === "input" ? (
-                  <TextField
-                    label={item.label}
-                    name={item.name}
-                    value={basicInfo[item.name]}
-                    id={item.id}
-                    type={item.type}
-                    fullWidth
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                ) : (
-                  <TextField
-                    select
-                    placeholder={item.label}
-                    label={item.label}
-                    id={item.id}
-                    name={item.name}
-                    value={basicInfo[item.name]}
-                    fullWidth
-                    onChange={(e) => handleInputChange(e)}
-                  >
-                    {item.options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
+      <form onSubmit={onFormSubmit}>
+        <SwipeableViews
+          index={tabValue}
+          onChangeIndex={handleChange}
+        >
+          <Grid item xs={12}>
+            <Grid container spacing={2} xs={12} className={classes.inputRow}>
+              {FirstRow.map((item) => (
+                <Grid key={item.name} item xs>
+                  {item.baseType === "input" ? (
+                    <TextField
+                      required={item.required}
+                      label={item.label}
+                      name={item.name}
+                      value={basicInfo[item.name]}
+                      id={item.id}
+                      type={item.type}
+                      fullWidth
+                      onChange={(e) => handleInputChange(e)}
+                    />
+                  ) : (
+                    <TextField
+                      select
+                      placeholder={item.label}
+                      label={item.label}
+                      id={item.id}
+                      name={item.name}
+                      value={basicInfo[item.name]}
+                      fullWidth
+                      onChange={(e) => handleInputChange(e)}
+                    >
+                      {item.options.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                </Grid>
+              ))}
+            </Grid>
+            <Grid container spacing={2} xs={12} className={classes.inputRow} alignItems="flex-end">
+              {SecondRow.map((item) => (
+                <Grid key={item.name} item xs>
+                  {item.baseType === "input" ? (
+                    <TextField
+                      required={item.required}
+                      label={item.label}
+                      name={item.name}
+                      value={
+                        item.type === "date"
+                          ? moment(basicInfo[item.name]).format("YYYY-MM-DD")
+                          : basicInfo[item.name]
+                      }
+                      id={item.id}
+                      type={item.type}
+                      fullWidth
+                      onChange={(e) => handleInputChange(e)}
+                    />
+                  ) : (
+                    <TextField
+                      select
+                      placeholder={item.label}
+                      label={item.label}
+                      id={item.id}
+                      name={item.name}
+                      value={basicInfo[item.name]}
+                      fullWidth
+                      onChange={(e) => handleInputChange(e)}
+                    >
+                      {item.options.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                </Grid>
+              ))}
+              <Grid item xs>
+                <Grid container spacing={1} alignItems="flex-end">
+                  <Grid item xs={8}>
+                    <KeyboardDatePicker
+                      required
+                      id="date-picker-dialog"
+                      label="Date of Birth"
+                      format="dd/MM/yyyy"
+                      value={basicInfo.dob}
+                      onChange={handleDateChange}
+                      maxDate={currentDate}
+                    />
+                  </Grid>
+                  {basicInfo.dob && (
+                    <Grid item xs={4}>
+                      <Typography gutterBottom>
+                        {`Age: ${calculateAge(basicInfo.dob)}`}
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
               </Grid>
-            ))}
-          </Grid>
-          <Grid container spacing={2} xs={12} className={classes.inputRow} alignItems="flex-end">
-            {SecondRow.map((item) => (
-              <Grid key={item.name} item xs>
-                {item.baseType === "input" ? (
-                  <TextField
-                    label={item.label}
-                    name={item.name}
-                    value={
-                      item.type === "date"
-                        ? moment(basicInfo[item.name]).format("YYYY-MM-DD")
-                        : basicInfo[item.name]
-                    }
-                    id={item.id}
-                    type={item.type}
-                    fullWidth
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                ) : (
-                  <TextField
-                    select
-                    placeholder={item.label}
-                    label={item.label}
-                    id={item.id}
-                    name={item.name}
-                    value={basicInfo[item.name]}
-                    fullWidth
-                    onChange={(e) => handleInputChange(e)}
-                  >
-                    {item.options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
+            </Grid>
+            <Grid container spacing={2} xs={12} className={classes.inputRow} alignItems="flex-end">
+              {ThirdRow.map((item) => (
+                <Grid key={item.name} item xs>
+                  {item.baseType === "input" ? (
+                    <TextField
+                      label={item.label}
+                      name={item.name}
+                      value={basicInfo[item.name]}
+                      id={item.id}
+                      type={item.type}
+                      fullWidth
+                      onChange={(e) => handleInputChange(e)}
+                    />
+                  ) : (
+                    <TextField
+                      select
+                      placeholder={item.label}
+                      label={item.label}
+                      id={item.id}
+                      name={item.name}
+                      value={basicInfo[item.name]}
+                      fullWidth
+                      onChange={(e) => handleInputChange(e)}
+                    >
+                      {item.options.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                </Grid>
+              ))}
+              <Grid item xs>
+                <Typography gutterBottom>
+                  {`Created: ${moment().format("MMM D, YYYY")}`}
+                </Typography>
               </Grid>
-            ))}
-            <Grid item xs>
-              <Grid container spacing={1} alignItems="flex-end">
-                <Grid item xs={8}>
-                  <KeyboardDatePicker
-                    required
-                    id="date-picker-dialog"
-                    label="Date of Birth"
-                    format="dd/MM/yyyy"
-                    value={basicInfo.dob}
-                    onChange={handleDateChange}
-                    maxDate={currentDate}
+            </Grid>
+
+            <Grid item xs={6} className={classes.inputRow}>
+              <Grid container spacing={1}>
+                <Grid item lg={12}>
+                  <TextField
+                    label="Address"
+                    name="address"
+                    value={basicInfo.address}
+                    fullWidth
+                    onChange={(e) => handleInputChange(e)}
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item lg={12}>
+                  <TextField
+                    label="Address Line 2"
+                    name="address2"
+                    value={basicInfo.address2}
+                    fullWidth
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                </Grid>
+                <Grid item lg={3}>
+                  <TextField
+                    label="City"
+                    name="city"
+                    value={basicInfo.city}
+                    fullWidth
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                </Grid>
+                <Grid item lg={3}>
+                  <TextField
+                    type="number"
+                    label="Zip/Postal"
+                    name="postal"
+                    value={basicInfo.postal}
+                    fullWidth
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                </Grid>
+                <Grid item lg={3}>
+                  <CountrySelect
+                    id="country-select"
+                    error={null}
+                    name="country-select"
+                    helperText=""
+                    label="Country"
+                    handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
+                    country={country}
+                    margin="dense"
+                  />
+                </Grid>
+                <Grid item lg={3}>
+                  <RegionSelect
+                    id="state-select"
+                    error={null}
+                    name="state-select"
+                    helperText=""
+                    label="State"
+                    handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
+                    country={country}
+                    region={region}
+                    margin="dense"
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={1} alignItems="flex-end">
+                <Grid item md={4}>
+                  <TextField
+                    label="Password"
+                    name="password"
+                    id="password"
+                    type="password"
+                    fullWidth
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                </Grid>
+                <Grid item md={4} className={classes.alignCenter}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => resetEmailHandler()}
+                  >
+                    Send Reset Email
+                  </Button>
+                </Grid>
+                <Grid item md={4}>
                   <Typography gutterBottom>
-                    {`Age: ${calculateAge(basicInfo.dob)}`}
+                    {`Last Login: ${moment().format("MMM D, YYYY")}`}
                   </Typography>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid container spacing={2} xs={12} className={classes.inputRow} alignItems="flex-end">
-            {ThirdRow.map((item) => (
+
+          <Grid container spacing={2} xs={12} className={classes.inputRow}>
+            {InsuranceForm.map((item) => (
               <Grid key={item.name} item xs>
-                {item.baseType === "input" ? (
-                  <TextField
-                    label={item.label}
-                    name={item.name}
-                    value={basicInfo[item.name]}
-                    id={item.id}
-                    type={item.type}
-                    fullWidth
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                ) : (
-                  <TextField
-                    select
-                    placeholder={item.label}
-                    label={item.label}
-                    id={item.id}
-                    name={item.name}
-                    value={basicInfo[item.name]}
-                    fullWidth
-                    onChange={(e) => handleInputChange(e)}
-                  >
-                    {item.options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
+                <TextField
+                  label={item.label}
+                  name={item.name}
+                  id={item.id}
+                  type={item.type}
+                  value={basicInfo[item.name]}
+                  fullWidth
+                  onChange={(e) => handleInputChange(e)}
+                />
               </Grid>
             ))}
-            <Grid item xs>
-              <Typography gutterBottom>
-                {`Created: ${moment().format("MMM D, YYYY")}`}
-              </Typography>
-            </Grid>
           </Grid>
 
-          <Grid item xs={6} className={classes.inputRow}>
+          <Grid item xs={6}>
             <Grid container spacing={1}>
-              <Grid item lg={12}>
-                <TextField
-                  label="Address"
-                  name="address"
-                  value={basicInfo.address}
-                  fullWidth
-                  onChange={(e) => handleInputChange(e)}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  label="Address Line 2"
-                  name="address2"
-                  value={basicInfo.address2}
-                  fullWidth
-                  onChange={(e) => handleInputChange(e)}
-                />
-              </Grid>
-              <Grid item lg={3}>
-                <TextField
-                  label="City"
-                  name="city"
-                  value={basicInfo.city}
-                  fullWidth
-                  onChange={(e) => handleInputChange(e)}
-                />
-              </Grid>
-              <Grid item lg={3}>
-                <TextField
-                  type="number"
-                  label="Zip/Postal"
-                  name="postal"
-                  value={basicInfo.postal}
-                  fullWidth
-                  onChange={(e) => handleInputChange(e)}
-                />
-              </Grid>
-              <Grid item lg={3}>
-                <CountrySelect
-                  id="country-select"
-                  error={null}
-                  name="country-select"
-                  helperText=""
-                  label="Country"
-                  handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
-                  country={country}
-                  margin="dense"
-                />
-              </Grid>
-              <Grid item lg={3}>
-                <RegionSelect
-                  id="state-select"
-                  error={null}
-                  name="state-select"
-                  helperText=""
-                  label="State"
-                  handleChange={(identifier, value) => handleCountryRegion(identifier, value)}
-                  country={country}
-                  region={region}
-                  margin="dense"
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={1} alignItems="flex-end">
-              <Grid item md={4}>
-                <TextField
-                  label="Password"
-                  name="password"
-                  id="password"
-                  type="password"
-                  fullWidth
-                  onChange={(e) => handleInputChange(e)}
-                />
-              </Grid>
-              <Grid item md={4} className={classes.alignCenter}>
-                <Button
-                  variant="outlined"
-                  onClick={() => resetEmailHandler()}
-                >
-                  Send Reset Email
-                </Button>
-              </Grid>
-              <Grid item md={4}>
-                <Typography gutterBottom>
-                  {`Last Login: ${moment().format("MMM D, YYYY")}`}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={2} xs={12} className={classes.inputRow}>
-          {InsuranceForm.map((item) => (
-            <Grid key={item.name} item xs>
-              <TextField
-                label={item.label}
-                name={item.name}
-                id={item.id}
-                type={item.type}
-                value={basicInfo[item.name]}
-                fullWidth
-                onChange={(e) => handleInputChange(e)}
+              <PharmaciesSearch
+                pharmacy1Id={basicInfo.pharmacy_id || ""}
+                pharmacy2Id={basicInfo.pharmacy2_id || ""}
+                onChange={(val) => onPharmacySelect(val)}
               />
             </Grid>
-          ))}
-        </Grid>
-
-        <Grid item xs={6}>
-          <Grid container spacing={1}>
-            <PharmaciesSearch
-              pharmacy1Id={basicInfo.pharmacy_id || ""}
-              pharmacy2Id={basicInfo.pharmacy2_id || ""}
-              onChange={(val) => onPharmacySelect(val)}
-            />
           </Grid>
-        </Grid>
 
-        <Grid container>
-          <Grid item xs={12}>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => toggleNewPaymentMethodDialog()}
-            >
-              New
+          <Grid container>
+            <Grid item xs={12}>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() => toggleNewPaymentMethodDialog()}
+              >
+                New
+              </Button>
+              <Table size="small" className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCellLg>Type</StyledTableCellLg>
+                    <StyledTableCellLg align="center">Last Four</StyledTableCellLg>
+                    <StyledTableCellLg align="center">Expires</StyledTableCellLg>
+                    <StyledTableCellLg align="center">Actions</StyledTableCellLg>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paymentMethodsData.length
+                    ? paymentMethodsData.map((item) => (
+                      <StyledTableRowLg key={`${item.type}_${item.account_number}`}>
+                        <StyledTableCellLg>{paymentMethodType(item.type)}</StyledTableCellLg>
+                        <StyledTableCellLg align="center">{item.account_number}</StyledTableCellLg>
+                        <StyledTableCellLg align="center">
+                          {item.exp ? getLastFourDigits(item.exp) : ""}
+                        </StyledTableCellLg>
+                        <StyledTableCellLg align="center">
+                          <IconButton onClick={() => editPaymentMethodHandler(item)}>
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton onClick={() => openDeleteDialog(item)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </StyledTableCellLg>
+                      </StyledTableRowLg>
+                    ))
+                    : (
+                      <StyledTableRowLg>
+                        <TableCell colSpan={4}>
+                          <Typography align="center" variant="body1">
+                            No Records Found...
+                          </Typography>
+                        </TableCell>
+                      </StyledTableRowLg>
+                    )}
+                </TableBody>
+              </Table>
+            </Grid>
+          </Grid>
+        </SwipeableViews>
+
+        <Box mt={2}>
+          <Grid container justify="space-between">
+            <Button type="submit" variant="outlined">
+              Save
             </Button>
-            <Table size="small" className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCellLg>Type</StyledTableCellLg>
-                  <StyledTableCellLg align="center">Last Four</StyledTableCellLg>
-                  <StyledTableCellLg align="center">Expires</StyledTableCellLg>
-                  <StyledTableCellLg align="center">Actions</StyledTableCellLg>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paymentMethodsData.length
-                  ? paymentMethodsData.map((item) => (
-                    <StyledTableRowLg key={`${item.type}_${item.account_number}`}>
-                      <StyledTableCellLg>{paymentMethodType(item.type)}</StyledTableCellLg>
-                      <StyledTableCellLg align="center">{item.account_number}</StyledTableCellLg>
-                      <StyledTableCellLg align="center">
-                        {item.exp
-                          && `${item.exp.toString().substring(0, 2)}/${item.exp.toString().substring(2, 4)}`}
-                      </StyledTableCellLg>
-                      <StyledTableCellLg align="center">
-                        <IconButton onClick={() => editPaymentMethodHandler(item)}>
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton onClick={() => openDeleteDialog(item)}>
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </StyledTableCellLg>
-                    </StyledTableRowLg>
-                  ))
-                  : (
-                    <StyledTableRowLg>
-                      <TableCell colSpan={4}>
-                        <Typography align="center" variant="body1">
-                          No Records Found...
-                        </Typography>
-                      </TableCell>
-                    </StyledTableRowLg>
-                  )}
-              </TableBody>
-            </Table>
+            <Button onClick={() => dispatch(togglePatientInfoDialog())} variant="outlined">
+              Cancel
+            </Button>
           </Grid>
-        </Grid>
-      </SwipeableViews>
-
-      <Box mt={2}>
-        <Grid container justify="space-between">
-          <Button onClick={() => onFormSubmit()} variant="outlined">
-            Save
-          </Button>
-          <Button onClick={() => dispatch(togglePatientInfoDialog())} variant="outlined">
-            Cancel
-          </Button>
-        </Grid>
-      </Box>
+        </Box>
+      </form>
     </>
   );
 };

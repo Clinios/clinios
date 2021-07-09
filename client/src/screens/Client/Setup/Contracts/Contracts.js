@@ -72,7 +72,7 @@ const Contracts = () => {
       <ContractDetailModal
         filePath={selectedFilepath}
         isOpen={isOpen}
-        hendleOnClose={() => setIsOpen(false)}
+        handleOnClose={() => setIsOpen(false)}
       />
     </>
   );

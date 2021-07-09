@@ -5,13 +5,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-// import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-// import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
-// import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/CloseOutlined";
 import Alert from "@material-ui/lab/Alert";
@@ -22,16 +19,15 @@ import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   title: {
-    backgroundColor: theme.palette.primary.light,
-    "& h2": {
-      color: "#fff",
-    },
+    textAlign: "center",
+    borderBottom: "1px solid #ddd",
+    minHeight: 53,
   },
   closeButton: {
     position: "absolute",
-    right: theme.spacing(1 / 2),
-    top: theme.spacing(1 / 2),
-    color: "#ffffff",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    padding: theme.spacing(1),
   },
   content: {
     paddingTop: theme.spacing(2),
@@ -202,7 +198,7 @@ const MessageToPatient = ({
                 onChange={(event) => handleOnChange(event)}
               />
             </FormControl> */}
-            <Typography component="p" variant="body2" color="textPrimary">
+            <Typography gutterBottom component="p" variant="body2" color="textPrimary">
               Message
             </Typography>
             <TextareaAutosize
@@ -292,7 +288,6 @@ const MessageToPatient = ({
         <Button
           variant="outlined"
           color="primary"
-          size="small"
           onClick={(_) => onSubmit(_, message, isNewMessage)}
         >
           {isNewMessage ? "Save" : "Update"}

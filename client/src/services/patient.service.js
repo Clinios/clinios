@@ -586,6 +586,16 @@ class Patient {
   }
 
   // create methods
+  createPatient(data) {
+    return axios.post(
+      `${API_BASE}/patient/create-patient`, data,
+      {
+        headers: authHeader(),
+      },
+    )
+      .then((res) => res.data);
+  }
+
   createPatientHandout(patientId, data) {
     return axios.post(
       `${API_BASE}/patient/${patientId}/patient-handout`,

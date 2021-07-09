@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import {
   Button,
-  colors,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid,
@@ -19,7 +14,14 @@ import moment from "moment";
 import { useSnackbar } from "notistack";
 import PropTypes from "prop-types";
 
+import Dialog from "../../../../../../components/Dialog";
 import UserService from "../../../../../../services/users.service";
+import {
+  UserTimezoneOptions,
+  UserStatusOptions,
+  UserProviderOptions,
+  UserScheduleOptions,
+} from "../../../../../../static/setup/user";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -27,11 +29,6 @@ const useStyles = makeStyles((theme) => ({
     "& h2": {
       color: "#fff",
     },
-  },
-  content: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    fontSize: "18px",
   },
   formControl: {
     margin: "10px 0",
@@ -51,23 +48,8 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: "5px",
     },
   },
-  formHelperText: {
-    width: "220px",
-    fontSize: "12px",
-    paddingLeft: "10px",
-  },
-  statusText: {
-    width: "220px",
-    fontSize: "14px",
-  },
   modalAction: {
-    borderTop: `1px solid ${theme.palette.background.default}`,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -233,12 +215,13 @@ const NewOrEditUserModal = ({
   };
 
   const handleOnChange = (event) => {
-    const isChecked = event.target.type === "checkbox";
+    const {
+      name, value, type, checked,
+    } = event.target;
+    const isChecked = type === "checkbox";
     setUser({
       ...user,
-      [event.target.name]: isChecked
-        ? event.target.checked
-        : event.target.value.trim(),
+      [name]: isChecked ? checked : value,
     });
     setErrorChecking(errorsInitialState);
   };
@@ -250,19 +233,13 @@ const NewOrEditUserModal = ({
   };
 
   return (
-    <div>
-      <Dialog
-        maxWidth="sm"
-        fullWidth
-        open={isOpen}
-        onClose={handleOnClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title" className={classes.title}>
-          {isNewUser ? "New User" : "Edit User"}
-        </DialogTitle>
-        <DialogContent className={classes.content}>
+    <Dialog
+      size="sm"
+      open={isOpen}
+      cancelForm={handleOnClose}
+      title={isNewUser ? "New User" : "Edit User"}
+      message={(
+        <>
           {errors
             && errors.map((error, index) => (
               // eslint-disable-next-line react/no-array-index-key
@@ -395,28 +372,13 @@ const NewOrEditUserModal = ({
                     }}
                   >
                     <option aria-label="None" value="" />
-                    <option aria-label="None" value="HST">
-                      HST &#45; Hawaii Standard Time
-                    </option>
-                    <option aria-label="None" value="AKST">
-                      AKST &#45; Alaska Standard Time
-                    </option>
-                    <option aria-label="None" value="PST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      PST	&#45; Pacific Standard Time
-                    </option>
-                    <option aria-label="None" value="MST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      MST	&#45; Mountain Standard Time
-                    </option>
-                    <option aria-label="None" value="CST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      CST	&#45; Central Standard Time
-                    </option>
-                    <option aria-label="None" value="EST">
-                      {/* eslint-disable-next-line no-tabs */}
-                      EST	&#45; Eastern Standard Time
-                    </option>
+                    {
+                      UserTimezoneOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -471,15 +433,13 @@ const NewOrEditUserModal = ({
                       statusError && "You can't set yourself to deleted!"
                     }
                   >
-                    <option aria-label="None" value="A">
-                      Active
-                    </option>
-                    <option aria-label="None" value="I">
-                      Inactive
-                    </option>
-                    <option aria-label="None" value="D">
-                      Deleted
-                    </option>
+                    {
+                      UserStatusOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -504,18 +464,13 @@ const NewOrEditUserModal = ({
                     helperText={errorChecking.four && errorChecking.four}
                   >
                     <option aria-label="None" value="" />
-                    <option aria-label="None" value="PP">
-                      Primary Provider
-                    </option>
-                    <option aria-label="None" value="SP">
-                      Secondary Provider
-                    </option>
-                    <option aria-label="None" value="A">
-                      Administrative
-                    </option>
-                    <option aria-label="None" value="L">
-                      Limited
-                    </option>
+                    {
+                      UserProviderOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -536,15 +491,13 @@ const NewOrEditUserModal = ({
                       native: true,
                     }}
                   >
-                    <option aria-label="None" value="F">
-                      Full
-                    </option>
-                    <option aria-label="None" value="H">
-                      Half
-                    </option>
-                    <option aria-label="None" value="Q">
-                      Quarter
-                    </option>
+                    {
+                      UserScheduleOptions.map((option) => (
+                        <option aria-label={option.label} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
                   </TextField>
                 </FormControl>
                 <FormControl component="div" className={classes.formControl}>
@@ -675,31 +628,18 @@ const NewOrEditUserModal = ({
               />
             </FormControl>
           </div>
-        </DialogContent>
-        <DialogActions className={classes.modalAction}>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={handleOnClose}
-            style={{
-              borderColor: colors.orange[600],
-              color: colors.orange[600],
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={handleCreateNewOrEditUser}
-            disabled={!validate()}
-          >
-            {isNewUser ? "Save" : "Update"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+          <Grid className={classes.modalAction}>
+            <Button
+              variant="outlined"
+              onClick={handleCreateNewOrEditUser}
+              disabled={!validate()}
+            >
+              {isNewUser ? "Save" : "Update"}
+            </Button>
+          </Grid>
+        </>
+      )}
+    />
   );
 };
 

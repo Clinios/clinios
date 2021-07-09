@@ -120,7 +120,7 @@ const Users = () => {
             New
           </Button>
         </div>
-        <Grid container justify="center" spacing={8}>
+        <Grid container justify="center">
           <Grid item md={12} xs={12}>
             <Typography component="p" variant="body2" color="textPrimary">
               This page is used to manage users
@@ -131,16 +131,18 @@ const Users = () => {
             />
           </Grid>
         </Grid>
-        <NewOrEditUserModal
-          isOpen={isOpen}
-          handleOnClose={() => setIsOpen(false)}
-          isNewUser={isNewUser}
-          forwardEmailList={forwardEmailList}
-          fetchAllUsers={fetchAllUsers}
-          authUser={user}
-          user={userValues}
-          allUsers={allUsers}
-        />
+        {isOpen && (
+          <NewOrEditUserModal
+            isOpen={isOpen}
+            handleOnClose={() => setIsOpen(false)}
+            isNewUser={isNewUser}
+            forwardEmailList={forwardEmailList}
+            fetchAllUsers={fetchAllUsers}
+            authUser={user}
+            user={userValues}
+            allUsers={allUsers}
+          />
+        )}
       </Container>
     </>
   );

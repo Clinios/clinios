@@ -7,6 +7,7 @@ export const BasicInfoForm = {
       baseType: "input",
       type: "text",
       options: [],
+      required: true,
     },
     {
       name: "middlename",
@@ -23,6 +24,7 @@ export const BasicInfoForm = {
       baseType: "input",
       type: "text",
       options: [],
+      required: true,
     },
     {
       name: "status",
@@ -33,11 +35,11 @@ export const BasicInfoForm = {
       options: [
         {
           label: "Active",
-          value: "active",
+          value: "A",
         },
         {
           label: "Inactive",
-          value: "inActive",
+          value: "I",
         },
       ],
     },
@@ -82,6 +84,7 @@ export const BasicInfoForm = {
       baseType: "input",
       type: "email",
       options: [],
+      required: true,
     },
   ],
   thirdRow: [

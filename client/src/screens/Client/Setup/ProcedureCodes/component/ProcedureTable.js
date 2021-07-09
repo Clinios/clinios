@@ -278,21 +278,23 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <EditProcedureCodeModal
-        isOpen={isOpen}
-        hendleOnClose={hendleOnClose}
-        procId={procId}
-        procedure_description={procedure_description}
-        procedure_fee={procedure_fee}
-        procedure_favorite={procedure_favorite}
-        procedure_billable={procedure_billable}
-        procedure_notes={procedure_notes}
-        handleChangeFee={handleChangeFee}
-        handleChangeFavorite={handleChangeFavorite}
-        handleChangeBillable={handleChangeBillable}
-        handleChangeNotes={handleChangeNotes}
-        handleEditProcedureCode={handleEditProcedureCode}
-      />
+      {isOpen && (
+        <EditProcedureCodeModal
+          isOpen={isOpen}
+          hendleOnClose={hendleOnClose}
+          procId={procId}
+          procedure_description={procedure_description}
+          procedure_fee={procedure_fee}
+          procedure_favorite={procedure_favorite}
+          procedure_billable={procedure_billable}
+          procedure_notes={procedure_notes}
+          handleChangeFee={handleChangeFee}
+          handleChangeFavorite={handleChangeFavorite}
+          handleChangeBillable={handleChangeBillable}
+          handleChangeNotes={handleChangeNotes}
+          handleEditProcedureCode={handleEditProcedureCode}
+        />
+      )}
       <ProcedureGroupMembersModal
         isOpen={groupIsOpen}
         hendleOnClose={hendleGroupOnClose}

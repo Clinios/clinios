@@ -25,19 +25,18 @@ import PaymentMethodService from "../../../../services/patient_portal/payment-me
 
 const useStyles = makeStyles((theme) => ({
   title: {
-    backgroundColor: theme.palette.primary.light,
-    "& h2": {
-      color: "#fff",
-    },
+    textAlign: "center",
+    borderBottom: "1px solid #ddd",
+    minHeight: 53,
   },
   closeButton: {
     position: "absolute",
-    right: theme.spacing(1 / 2),
-    top: theme.spacing(1 / 2),
-    color: "#ffffff",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    padding: theme.spacing(1),
   },
   formContainer: {
-    margin: theme.spacing(3, 0),
+    margin: theme.spacing(1, 0),
   },
   gutterBottom: {
     marginBottom: theme.spacing(1),
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   buttonsContainer: {
-    margin: theme.spacing(3, 0),
+    margin: theme.spacing(2, 0),
   },
   cancelButton: {
     borderColor: colors.orange[600],
@@ -319,16 +318,12 @@ const PaymentMethodsForm = (props) => {
             </Grid>
 
             <Grid container className={classes.buttonsContainer} justify="space-between">
-              <Button variant="outlined" color="primary" type="submit">
-                Add Method
-              </Button>
               <Button
-                size="small"
                 variant="outlined"
-                onClick={() => onClose()}
-                className={classes.cancelButton}
+                color="primary"
+                type="submit"
               >
-                Cancel
+                Add Method
               </Button>
             </Grid>
           </form>

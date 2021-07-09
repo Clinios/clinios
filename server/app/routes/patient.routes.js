@@ -12,6 +12,11 @@ router.put(
   Patient.updatePatient
 );
 router.post(
+  "/patient/create-patient",
+  [authJwt.verifyToken, authorization.isReadOnly],
+  Patient.createPatient
+);
+router.post(
   "/patient/:patient_id/search",
   [authJwt.verifyToken, validation.validate("search")],
   Patient.search
