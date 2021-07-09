@@ -83,7 +83,7 @@ const createLabs = async (req, res) => {
         return res.status(status.error).send(errorMessage);
       }
 
-      /*const labData = {};
+      /* const labData = {};
       labData.client_id = req.client_id;
       labData.user_id = req.user_id;
       labData.patient_id = patient_id;
@@ -91,7 +91,7 @@ const createLabs = async (req, res) => {
       labData.status = 'R';
       labData.source = 'P';
       labData.created = new Date();
-      labData.created_user_id = req.user_id;*/
+      labData.created_user_id = req.user_id; */
 
       const insertResponse = await db.query(`insert into lab(client_id, user_id, patient_id, filename, status, source, created, created_user_id) 
       VALUES(${req.client_id}, ${req.user_id}, $1, $2, 'R', 'P', now(), ${req.user_id}) RETURNING id`, [patient_id, uploadedFilename]);

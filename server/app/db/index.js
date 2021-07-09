@@ -1,5 +1,6 @@
 const { Pool } = require('pg')
 const config = require('./config');
+
 const pool = new Pool(config.db)
 
 module.exports = {
@@ -12,8 +13,8 @@ module.exports = {
   },
   async getClient() {
     const client = await pool.connect()
-    const query = client.query
-    const release = client.release
+    const {query} = client
+    const {release} = client
     // set a timeout of 5 seconds, after which we will log this client's last query
     const timeout = setTimeout(() => {
       console.error('A client has been checked out for more than 5 seconds!')

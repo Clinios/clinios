@@ -162,7 +162,7 @@ const encountersRecentProfiles = async (req, res) => {
   }
 };
 
-//TODO:: Not in use, need to be refactor in future in needed.
+// TODO:: Not in use, need to be refactor in future in needed.
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
   const formData = req.body.data;
@@ -191,7 +191,7 @@ const createEncounter = async (req, res) => {
   }
 };
 
-//TODO:: Not in use, need to be refactor in future in needed.
+// TODO:: Not in use, need to be refactor in future in needed.
 const updateEncounter = async (req, res) => {
   const { patient_id, id } = req.params;
 
@@ -345,7 +345,7 @@ const searchDiagnosesICDs = async (req, res) => {
   }
 };
 
-//TODO:: Not in use, need to be refactor in future in needed.
+// TODO:: Not in use, need to be refactor in future in needed.
 const createNewPrescription = async (req, res) => {
   const { patient_id, encounter_id } = req.params;
   const {

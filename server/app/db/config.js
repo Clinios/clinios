@@ -1,4 +1,4 @@
-const env = process.env;
+const {env} = process;
 
 const config = {
   db: { /* do not put password or any sensitive info here, done only for demo */

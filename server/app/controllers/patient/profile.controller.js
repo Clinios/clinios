@@ -55,7 +55,7 @@ const updatePatient = async (req, res) => {
    /* const updateResponse = await db.query(
       `update patient set $1 where id=${req.user_id}`,
       [formData]
-    );*/
+    ); */
     /**
      * "patient": {
         "firstname": "John",

@@ -69,7 +69,7 @@ exports.verifyConfirmation = async (req, res) => {
 
     const user = userRows.rows[0];
     if (user) {
-      //TODO:: Check if user provided valid token or not
+      // TODO:: Check if user provided valid token or not
       // Check if user is already confirmed his/her email
       if (user.email_confirm_dt && !user.token) {
         successMessage.message = "User is already verified!";

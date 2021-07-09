@@ -156,7 +156,7 @@ exports.signup = async (req, res) => {
        /* const clientSetupRows = await db.query("CALL clientSetup($1, $2)", [
           responseData.user.client_id,
           responseData.user.id,
-        ]);*/
+        ]); */
         await pgClient.query(
           `insert into appointment_type (client_id,appointment_type,descr,length,fee,allow_patients_schedule,sort_order,active,note,created,created_user_id,updated,updated_user_id)
           select ${responseData.user.client_id}, appointment_type, descr, length, fee, allow_patients_schedule, sort_order, active, note, now(), ${responseData.user.id}, null, null

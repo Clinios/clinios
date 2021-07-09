@@ -37,7 +37,7 @@ const getPharmacy = async (req, res) => {
   }
 };
 
-//TODO:: This endpoint might not in use. Need to be checked and removed.
+// TODO:: This endpoint might not in use. Need to be checked and removed.
 const updatePharmacy = async (req, res) => {
   const { id } = req.params;
   const formData = req.body.data;

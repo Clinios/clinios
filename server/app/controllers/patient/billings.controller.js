@@ -65,8 +65,7 @@ const getBalance = async (req, res) => {
 
 const createBilling = async (req, res) => {
 
-  const { dt, type_id, amount, note, payment_method_id, customer_id } = req.body.data;
-  const { patient_id } = req.params;
+  const { dt, type_id, amount, note, payment_method_id } = req.body.data;
   let { payment_type } = req.body.data;
 
 
@@ -74,7 +73,7 @@ const createBilling = async (req, res) => {
     payment_type = null;
   } else {
     payment_type = `'${payment_type}'`;
-  }s
+  }
 
   try {
 

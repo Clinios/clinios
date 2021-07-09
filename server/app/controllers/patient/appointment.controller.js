@@ -158,15 +158,15 @@ const createAppointment = async (req, res) => {
   }
 };
 
+// TODO:: Not in use. Need to be refactored in future in needed.
 const updateAppointment = async (req, res) => {
-  const db = makeDb(configuration, res);
   const appointmentId = req.params.id;
   const formData = req.body.data;
   formData.updated = new Date();
   formData.updated_user_id = req.user_id;
 
   try {
-    const updateResponse = await db.query(`update user_calendar set ? where id=?`,[formData, appointmentId]);
+    const updateResponse = await db.query(`update user_calendar set ? where id=?`, [formData, appointmentId]);
     if (!updateResponse.affectedRows) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
@@ -178,32 +178,28 @@ const updateAppointment = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
+// TODO:: Not in use. Need to be refactored in future in needed.
 const cancelRequestRescheduleAppointment = async (req, res) => {
   // TODO: The logic of this controller might change later. 
-  const db = makeDb(configuration, res);
   const appointmentId = req.params.id;
   try {
     const deletedResponse = await db.query(
       `delete from user_calendar where id=?`, [appointmentId]
     );
-    if (!deletedResponse.affectedRows) {
+    if (!deletedResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = deletedResponse;
+    successMessage.data = deletedResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
