@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const moment = require("moment");
 const db = require('../db')
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
@@ -24,10 +25,9 @@ const getAllUsers = async (req, res) => {
     successMessage.data = dbResponse;
     return res.status(status.created).send(successMessage);
   } catch (error) {
+    console.log(error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -126,35 +126,21 @@ const createNewUser = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.bad).send(errorMessage);
   }
-
-  const user = req.body;
-  user.client_id = req.client_id;
-  user.firstname = req.body.firstname;
-  user.lastname = req.body.lastname;
-  user.title = req.body.title;
-  user.email = req.body.email;
-  user.phone = req.body.phone;
-  user.note = req.body.note;
-  user.status = req.body.status;
-  user.appointments = req.body.appointments;
-  user.type = req.body.type;
-  user.schedule = req.body.schedule;
-  user.admin = req.body.admin;
-  user.email_forward_user_id = req.body.email_forward_user_id;
-  user.created = new Date();
-  user.created_user_id = req.user_id;
-  user.updated = new Date();
-  user.updated_user_id = req.user_id;
-
+  const {firstname, lastname, title, email, phone, note, timezone, appointments, type, schedule, admin, email_forward_user_id} = req.body.data;
+ 
   try {
-    const dbResponse = await db.query("insert into users set $1", user);
+    const dbResponse = await db.query(`insert into users(client_id, firstname, lastname, title, email, phone, timezone,
+       note, status, appointments, type, schedule, admin, email_forward_user_id, created, created_user_id) 
+       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id, email`,
+        [req.client_id, firstname, lastname, title, email, phone, timezone, note, req.body.status, appointments, type, schedule, admin, email_forward_user_id,
+           moment().format('YYYY-MM-DD hh:ss'), req.user_id]);
 
-    if (!dbResponse.insertId) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "Creation not successful";
       res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Creation successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
@@ -171,37 +157,63 @@ const updateUser = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
-  const user = req.body;
-
-  user.firstname = req.body.firstname;
-  user.lastname = req.body.lastname;
-  user.title = req.body.title;
-  user.email = req.body.email;
-  user.phone = req.body.phone;
-  user.note = req.body.note;
-  user.status = req.body.status;
-  user.appointments = req.body.appointments;
-  user.type = req.body.type;
-  user.schedule = req.body.schedule;
-  user.admin = req.body.admin;
-  user.email_forward_user_id = req.body.email_forward_user_id;
-  user.updated = new Date();
-  user.updated_user_id = req.user_id;
+  const {firstname, lastname, title, email, phone, note, timezone, appointments, type, schedule, admin, email_forward_user_id} = req.body.data;
 
   try {
-    const updateResponse = await db.query(
-      `update users set $1 where id =${req.params.id}`,
-      [user]
-    );
+    let $sql;
+    $sql = `update users set email='${email}'`;
 
-    if (!updateResponse.affectedRows) {
+    if(firstname) {
+      $sql += `, firstname='${firstname}'`
+    }
+    if(lastname) {
+      $sql += `, lastname='${lastname}'`
+    }
+    if(title) {
+      $sql += `, title='${title}'`
+    }
+    if(phone) {
+      $sql += `, phone='${phone}'`
+    }
+    if(note) {
+      $sql += `, note='${note}'`
+    }
+    if(timezone) {
+      $sql += `, timezone='${timezone}'`
+    }
+    if(req.body.data?.status) {
+      $sql += `, status='${req.body.data.status}'`
+    }
+    if(appointments) {
+      $sql += `, appointments=${appointments}`
+    }
+    if(type) {
+      $sql += `, type='${type}'`
+    }
+    if(schedule) {
+      $sql += `, schedule='${schedule}'`
+    }
+    if(admin) {
+      $sql += `, admin=${admin}`
+    }
+    if(email_forward_user_id) {
+      $sql += `, email_forward_user_id='${email_forward_user_id}'`
+    }
+
+    $sql += `, updated='${moment().format('YYYY-MM-DD hh:ss')}', updated_user_id=${req.user_id} where id=${req.params.id} RETURNING id, email`
+
+
+    const updateResponse = await db.query($sql);
+
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
+    console.log(error);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
   }
