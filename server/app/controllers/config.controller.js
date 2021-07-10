@@ -3,6 +3,7 @@ const multer = require("multer");
 const fs = require("fs");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 const db = require("../db");
+const moment = require("moment");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -88,13 +89,14 @@ const getHistory = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse) {
+    if (!dbResponse || dbResponse.rows.length === 0) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
     successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   }
@@ -125,25 +127,86 @@ const update = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
+  const {address, address2, city, state, website, country, calendar_start_time, calendar_end_time, email, ein, npi, postal, phone, fax} = req.body.data;
+
   const client = req.body;
 
   client.updated = new Date();
   client.updated_user_id = req.user_id;
 
-  try {
-    const updateResponse = await db.query(
-      `update client set ? where id =${req.params.clientId}`,
-      [client]
-    );
+  /**
+   *  "address": "Dakshin Word",
+        "address2": "Dakshin Word 2",
+        "city": "Naogaon",
+        "state": "Rajshahi",
+        "website": "www.dd.dd",
+        "country": "BD",
+        "calendar_start_time": "10:00:00",
+        "calendar_end_time": "16:00:00",
+        "email": "dd@dd.com",
+        "ein": "ein",
+        "npi": "npi",
+        "postal": "12345",
+        "phone": "0303221212",
+        "fax": "03032212122"
+   */
 
-    if (!updateResponse.affectedRows) {
+  try {
+    let $sql;
+    $sql = `update client set email='${email}'`;
+    if(address){
+      $sql +=`, address='${address}'`
+    }
+    if(address2){
+      $sql +=`, address2='${address2}'`
+    }
+    if(city){
+      $sql +=`, city='${city}'`
+    }
+    if(state){
+      $sql +=`, state='${state}'`
+    }
+    if(website){
+      $sql +=`, website='${website}'`
+    }
+    if(country){
+      $sql +=`, country='${country}'`
+    }
+    if(calendar_start_time){
+      $sql +=`, calendar_start_time='${calendar_start_time}'`
+    }
+    if(calendar_end_time){
+      $sql +=`, calendar_end_time='${calendar_end_time}'`
+    }
+    if(ein){
+      $sql +=`, ein='${ein}'`
+    }
+    if(npi){
+      $sql +=`, npi='${npi}'`
+    }
+    if(postal){
+      $sql +=`, postal='${postal}'`
+    }
+    if(phone){
+      $sql +=`, phone='${phone}'`
+    }
+    if(fax){
+      $sql +=`, fax='${fax}'`
+    }
+
+    $sql += `, updated='${moment().format('YYYY-MM-DD hh:ss')}', updated_user_id=${req.user_id} where id =${req.params.clientId} RETURNING id`
+
+    const updateResponse = await db.query($sql);
+
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
+    console.log(error);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
   }

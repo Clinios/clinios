@@ -1369,27 +1369,21 @@ const getEncounters = async (req, res) => {
 
 const createEncounter = async (req, res) => {
   const { patient_id } = req.params;
-
-  const formData = req.body.data;
-  formData.client_id = req.client_id;
-  formData.user_id = req.user_id;
-  formData.patient_id = patient_id;
-  formData.dt = moment(formData.dt).format("YYYY-MM-DD HH:mm:ss");
-  formData.read_dt = moment(formData.read_dt).format("YYYY-MM-DD HH:mm:ss");
-  formData.created = new Date();
-  formData.created_user_id = req.user_id;
-  delete formData.name;
+  const { dt, title, notes, treatment, type_id, read_dt } = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into encounter set ?`, [formData]);
+    const insertResponse = await db.query(`insert into encounter(client_id, user_id, patient_id, dt, title, notes, treatment, type_id, read_dt, created, created_user_id )
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+     [req.client_id, req.user_id, patient_id, moment(dt).format("YYYY-MM-DD HH:mm:ss"), title, notes, treatment, 
+     type_id, moment(read_dt).format("YYYY-MM-DD HH:mm:ss"), moment().format("YYYY-MM-DD HH:mm:ss"), req.user_id]);
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       removeFile(req.file);
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (excepErr) {
