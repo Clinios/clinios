@@ -1,4 +1,3 @@
-const moment = require("moment");
 const { validationResult } = require("express-validator");
 const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");

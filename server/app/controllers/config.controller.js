@@ -1,9 +1,9 @@
 const { validationResult } = require("express-validator");
 const multer = require("multer");
 const fs = require("fs");
+const moment = require("moment");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 const db = require("../db");
-const moment = require("moment");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

@@ -181,7 +181,7 @@ const updateUser = async (req, res) => {
     if(timezone) {
       $sql += `, timezone='${timezone}'`
     }
-    if(req.body.data?.status) {
+    if(req.body.data.status) {
       $sql += `, status='${req.body.data.status}'`
     }
     if(appointments) {

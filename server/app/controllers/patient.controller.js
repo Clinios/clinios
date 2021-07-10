@@ -1009,7 +1009,7 @@ const createBilling = async (req, res) => {
   const { type_id } = req.body.data;
 
   let { amount } = req.body.data;
-  const { stripe_payment_method_token, customer_id, note } = req.body.data;
+  const { stripe_payment_method_token, customer_id, note, payment_method_id } = req.body.data;
 
   const $sql = `select p.id, c.name, c.stripe_api_key from patient p
     left join client c on c.id=p.client_id where p.id=$1`;
@@ -1048,8 +1048,6 @@ const createBilling = async (req, res) => {
   }
 
   try {
-    delete formData.customer_id; // Delete customer_id
-    delete formData.stripe_payment_method_token; // Delete stripe_payment_method_token
     const insertResponse = await db.query(`insert into tran(dt, type_id, payment_method_id, amount, note, patient_id, client_id, pp_status, pp_return) 
     VALUES (now(), $1, $2, $3, $4, ${req.client_id}, $5, $6) RETURNING id`, [type_id, payment_method_id, amount, note, patient_id, pp_status, pp_return]);
 
@@ -1186,12 +1184,9 @@ const createPatientAllergy = async (req, res) => {
 
 const getDocuments = async (req, res) => {
   const { patient_id } = req.params;
-  const { tab } = req.query;
   try {
-    let $sql;
-
     // TODO:: Replace group_concat with string_agg
-    $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
+   const $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
       , group_concat('"', lc.marker_id, '","', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
       from lab l
       left join lab_marker lc on lc.lab_id=l.id
