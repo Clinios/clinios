@@ -113,7 +113,7 @@ const Appointments = ({ appointments, onEdit, onDelete }) => {
                 </TableCell>
               )}
               <TableCell>{appointment.length}</TableCell>
-              <TableCell>{`$${appointment.fee?.toFixed(2)}`}</TableCell>
+              <TableCell>{`$${Number(appointment.fee)?.toFixed(2)}`}</TableCell>
               <TableCell>{appointment.allow_patients_schedule ? "Yes" : "No"}</TableCell>
               {/*
               {appointment.note && appointment.note.length > 0 ? (

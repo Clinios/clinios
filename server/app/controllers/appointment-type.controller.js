@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const moment = require("moment");
 const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
@@ -38,16 +39,16 @@ const create = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.bad).send(errorMessage);
   }
-  const {appointment_type, length, allow_patients_schedule, sort_order, note, active} = req.body.data;
+  const {appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active} = req.body.data;
 
   try {
     const dbResponse = await db.query(
-      `insert into appointment_type(appointment_type, length, allow_patients_schedule, sort_order, note, active, created_user_id, client_id) 
-      VALUES($1, $2, $3, $4, $5, $6, ${req.user_id}, ${req.client_id} ) RETURNING id`,
-      [appointment_type, length, allow_patients_schedule, sort_order, note, active]
+      `insert into appointment_type(appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active, created, created_user_id, client_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, '${moment().format("YYYY-MM-DD hh:ss")}', ${req.user_id}, ${req.client_id}) RETURNING id`,
+      [appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse || dbResponse.rows.length === 0) {
       errorMessage.message = "Creation not successful";
       res.status(status.notfound).send(errorMessage);
     }
@@ -70,13 +71,13 @@ const update = async (req, res) => {
   }
 
   const { id } = req.params;
-  const {appointment_type, length, allow_patients_schedule, sort_order, note, active} = req.body.data;
+  const {appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active} = req.body.data;
 
   try {
     const updateResponse = await db.query(
       `update appointment_type set appointment_type=$1, length=$2, allow_patients_schedule=$3, sort_order=$4, note=$5,
-       active=$6, client_id=${req.client_id}, updated=now(), updated_user_id=${req.user_id} where id =$7 RETURNING id`,
-      [appointment_type, length, allow_patients_schedule, sort_order, note, active, id]
+       active=$6, descr=$7, fee=$8, client_id=${req.client_id}, updated=now(), updated_user_id=${req.user_id} where id =$9 RETURNING id`,
+      [appointment_type, length, allow_patients_schedule, sort_order, note, active, descr, fee, id]
     );
 
     if (!updateResponse.rowCount) {
