@@ -20,8 +20,8 @@ const search = async (req, res) => {
   let $sql;
 
   try {
-    $sql = `select distinct p.id, p.firstname, p.middlename, p.lastname, p.city, p.state, p.postal, p.country, p.phone_cell, p.phone_home, p.email, p.gender, p.created
-    from patient p \n`;
+    $sql = `select distinct p.id, p.firstname, p.middlename, p.lastname, p.city, p.state, p.postal, p.country, p.phone_cell,
+     p.phone_home, p.email, p.gender, p.created from patient p \n`;
     if (appointmentFrom || appointmentTo) {
       $sql += `join user_calendar uc on uc.client_id=${req.client_id} and uc.patient_id=p.id \n`;
     }
@@ -57,7 +57,7 @@ const search = async (req, res) => {
       $sql += `and p.id = ${id} \n`;
     }
     if (patientStatus) {
-      $sql += `and p.status = ${patientStatus}  \n`;
+      $sql += `and p.status = '${patientStatus}'  \n`;
     }
     if (createdFrom) {
       $sql += `and p.created => '${createdFrom}' \n`;
@@ -69,7 +69,7 @@ const search = async (req, res) => {
     $sql += `limit 20 \n`;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse.rows) {
+    if (!dbResponse || dbResponse.rows.length === 0) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

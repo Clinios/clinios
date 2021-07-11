@@ -313,8 +313,8 @@ export default function PatientSearch() {
                       label="Status"
                     >
                       <option aria-label="None" value="" />
-                      <option value={10}>Active</option>
-                      <option value={20}>Inactive</option>
+                      <option value="A">Active</option>
+                      <option value="I">Inactive</option>
                     </Select>
                   </FormControl>
                 </Grid>
