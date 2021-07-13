@@ -76,13 +76,24 @@ const useStyles = makeStyles((theme) => ({
   amount: {
     marginTop: "18px",
   },
-  fileInput: {
-    display: "none",
-  },
   patientIcon: {
     marginBottom: theme.spacing(1 / 2),
     marginLeft: theme.spacing(1),
     color: "rgba(0, 0, 0, 0.38)",
+  },
+  logoLabel: {
+    color: "#A0A0A0",
+  },
+  logoContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  logo: {
+    maxWidth: "200px",
+    maxHeight: "50px",
+  },
+  browseBtn: {
+    marginLeft: theme.spacing(2.5),
   },
 }));
 
@@ -199,14 +210,15 @@ export default function Configuration() {
   };
 
   const _onSelectLogo = async (e) => {
-    if (e.target.files) {
+    const { files } = e.target;
+    if (files && files.length) {
       setFormParams({
         ...formParams,
-        logo: URL.createObjectURL(e.target.files[0]),
+        logo: URL.createObjectURL(files[0]),
       });
       try {
         const formData = new FormData();
-        formData.append("file", e.target.files[0]);
+        formData.append("file", files[0]);
         await ConfigurationService.updateLogo(user.id, formData);
       } catch (err) {
         console.error(err);
@@ -266,7 +278,7 @@ export default function Configuration() {
       )}
       <div className={classes.root}>
         <div className={classes.paper}>
-          <div className={classes.uploadButtons} style={{ paddingRight: "12px" }}>
+          <div className={classes.uploadButtons}>
             <Typography component="h1" variant="h2" color="textPrimary">
               Configuration
             </Typography>
@@ -280,7 +292,7 @@ export default function Configuration() {
         </Typography>
 
         <Error errors={errors} />
-        <form className={classes.form} noValidate onSubmit={() => {}}>
+        <form className={classes.form} noValidate onSubmit={() => { }}>
           <Grid container spacing={4}>
             <Grid item xs={6} sm={7}>
               <Grid container spacing={2}>
@@ -562,27 +574,26 @@ export default function Configuration() {
               <div>
                 <input
                   accept="image/*"
-                  className={classes.fileInput}
-                  id="contained-button-file"
                   multiple
                   onChange={_onSelectLogo}
                   type="file"
                   ref={logoRef}
+                  hidden
                 />
 
                 <div>
-                  <small style={{ color: "#A0A0A0" }}>Logo</small>
+                  <small className={classes.logoLabel}>Logo</small>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img alt="logo" style={{ maxWidth: "200px", maxHeight: "50px" }} src={formParams.logo} />
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                  <label
-                    className="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary"
-                    style={{ marginLeft: "20px" }}
-                    htmlFor="contained-button-file"
+                <div className={classes.logoContainer}>
+                  <img alt="logo" className={classes.logo} src={formParams.logo} />
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    className={classes.browseBtn}
+                    onClick={() => logoRef.current.click()}
                   >
                     Browse
-                  </label>
+                  </Button>
                 </div>
               </div>
             </Grid>
