@@ -1185,9 +1185,8 @@ const createPatientAllergy = async (req, res) => {
 const getDocuments = async (req, res) => {
   const { patient_id } = req.params;
   try {
-    // TODO:: Replace group_concat with string_agg
    const $sql = `select l.id, l.created, l.filename, right(l.filename,3) filetype, l.status, l.type, l.lab_dt, l.physician, l.note
-      , group_concat('"', lc.marker_id, '","', c.name, '","', lc.value, '","', lc.range_low, '","', lc.range_high, '"' order by c.name) tests
+      , ARRAY_TO_STRING(ARRAY_AGG('"' || lc.marker_id || '","' || c.name || '","' || lc.value || '","' || lc.range_low || '","' || lc.range_high  || '"' order by c.name), ',') tests
       from lab l
       left join lab_marker lc on lc.lab_id=l.id
       left join marker c on c.id=lc.marker_id
