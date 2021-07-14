@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { CssBaseline, makeStyles } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { CssBaseline, makeStyles, Typography } from "@material-ui/core";
 
 import ProcedureService from "../../../../services/procedure.service";
 import ProcedureForm from "./component/ProcedureForm";
@@ -14,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     paddingBottom: theme.spacing(0.5),
+  },
+  noContent: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -78,12 +80,18 @@ export default function ProcedureCodes() {
           handleInputChange={handleInputChange}
           labCompanyId={formFields.labCompanyId}
         />
-        {searchResult.length > 0 && (
-          <ProcedureTable
-            searchResult={searchResult}
-            fetchProcedureCodeSearch={fetchProcedureCodeSearch}
-          />
-        )}
+        {searchResult.length > 0
+          ? (
+            <ProcedureTable
+              searchResult={searchResult}
+              fetchProcedureCodeSearch={fetchProcedureCodeSearch}
+            />
+          )
+          : (
+            <Typography align="center" variant="body1" className={classes.noContent}>
+              No Records Found...
+            </Typography>
+          )}
       </div>
     </>
   );

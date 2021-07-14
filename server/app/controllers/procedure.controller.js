@@ -74,7 +74,7 @@ const search = async (req, res) => {
     $sql += `limit 50 \n`;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
