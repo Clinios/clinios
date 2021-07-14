@@ -22,7 +22,7 @@ const getAllUsers = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     console.log(error);
@@ -100,7 +100,7 @@ const getLastVisitedPatient = async (req, res) => {
 
 const getForwardEmailList = async (req, res) => {
   try {
-    const dbResponse = await db.query(`select u.id, concat(u.firstname, ' ', u.lastname) name
+    const dbResponse = await db.query(`select u.id, concat(u.firstname, ' ', u.lastname) as name
         from users u 
         where u.client_id=${req.client_id}
         and u.id<>${req.user_id}
@@ -112,9 +112,10 @@ const getForwardEmailList = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
+    console.log(error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   }
@@ -132,7 +133,7 @@ const createNewUser = async (req, res) => {
     const dbResponse = await db.query(`insert into users(client_id, firstname, lastname, title, email, phone, timezone,
        note, status, appointments, type, schedule, admin, email_forward_user_id, created, created_user_id) 
        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id, email`,
-        [req.client_id, firstname, lastname, title, email, phone, timezone, note, req.body.status, appointments, type, schedule, admin, email_forward_user_id,
+        [req.client_id, firstname, lastname, title, email, phone, timezone, note, req.body.data.status, appointments, type, schedule, admin, email_forward_user_id,
            moment().format('YYYY-MM-DD hh:ss'), req.user_id]);
 
     if (!dbResponse.rowCount) {
