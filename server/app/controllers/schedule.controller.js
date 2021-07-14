@@ -64,9 +64,9 @@ const createNewSchedule = async (req, res) => {
 
   try {
     const dbResponse = await db.query(
-      `insert into user_schedule(user_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday, created, created_user_id) 
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now(), ${req.user_id}) RETURNING id`,
-      [user_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday]
+      `insert into user_schedule(user_id, client_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday, created, created_user_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, now(), ${req.user_id}) RETURNING id`,
+      [user_id, req.client_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday]
     );
 
     if (!dbResponse.rowCount) {
