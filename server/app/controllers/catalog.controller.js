@@ -9,22 +9,21 @@ const searchCatalog = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { text, labCompanyId } = req.body.data;
-
   try {
     let $sql = `select p.id proc_id, lc.id lab_id, lc.name lab_name, p.name proc_name, p.price
-      , group_concat('"', q.id, '","', q.name, '"' order by q.name) detail
+      , ARRAY_TO_STRING(ARRAY_AGG('"' || q.id || '","' || q.name || '"' order by q.name), ',') detail
       from proc p 
       left join lab_company lc on lc.id=p.lab_company_id
       left join proc_item pi on pi.proc_id=p.id
       left join quest q on pi.quest_id=q.id
       where p.type='L'
-      and p.name like '%${text}%'`;
+      and p.name ilike '%${text}%'`;
 
     if (labCompanyId) {
       $sql += `and lc.id in (${labCompanyId}) \n`;
     }
 
-    $sql += `group by p.id, lc.id, lc.name, p.name, p.price
+    $sql += ` group by p.id, lc.id, lc.name, p.name, p.price
     order by lc.name, p.name 
     limit 20
     `;

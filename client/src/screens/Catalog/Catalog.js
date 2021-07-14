@@ -206,7 +206,7 @@ const Catalog = () => {
 
                         <StyledTableCellSm>
                           {item.lab_name === null || item.lab_id === 2 // Quest
-                            ? `$${item.price.toFixed(2)}`
+                            ? `$${Number(item.price).toFixed(2)}`
                             : (
                               <a className={classes.link} href={APP_LOGIN_LINK}>
                                 Login to see price
