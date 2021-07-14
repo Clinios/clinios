@@ -17,7 +17,7 @@ const getProfile = async (req, res) => {
       `
     );
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -86,7 +86,7 @@ const getForwardEmail = async (req, res) => {
       `
     );
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -110,7 +110,7 @@ const getLogins = async (req, res) => {
       `
     );
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -135,7 +135,7 @@ const getActivityHistory = async (req, res) => {
       `
     );
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

@@ -14,7 +14,7 @@ const getLabById = async (req, res) => {
       where l.id=$1`, [labId]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -40,7 +40,7 @@ const getAll = async (req, res) => {
         limit 1`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -158,7 +158,7 @@ const getLabHistory = async (req, res) => {
       limit 50`, [labId]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -186,7 +186,7 @@ const getLabUserHistory = async (req, res) => {
       limit 50`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -211,7 +211,7 @@ const getLabValues = async (req, res) => {
       limit 200`, [labId]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -231,7 +231,7 @@ const getAssignUser = async (req, res) => {
       where client_id=${req.client_id} and status<>'D' order by 1 limit 50`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

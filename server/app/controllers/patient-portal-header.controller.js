@@ -9,7 +9,7 @@ const getClientPortalHeader = async (req, res) => {
     left join users u on u.id=cp.updated_user_id
     where cp.id=${req.client_id}`);
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

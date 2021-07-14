@@ -14,7 +14,7 @@ const getHistory = async (req, res) => {
         limit 50`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

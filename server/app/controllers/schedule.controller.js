@@ -12,7 +12,7 @@ const getAllUser = async (req, res) => {
         order by u.firstname
         limit 100`);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -43,7 +43,7 @@ const search = async (req, res) => {
     $sql += `limit 500`;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

@@ -19,7 +19,7 @@ const getAll = async (req, res) => {
       limit 100`
     )
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

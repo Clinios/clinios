@@ -336,7 +336,7 @@ const getUnreadMessages = async (req, res) => {
       `, [providerId]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

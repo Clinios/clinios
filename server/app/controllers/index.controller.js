@@ -39,7 +39,7 @@ const getPatient = async (req, res) => {
       where p.id=${req.user_id}
       `);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -102,13 +102,8 @@ const getCorporateUser = async (req, res) => {
     const dbResponse = await db.query(
       `select id, admin, firstname, lastname, password from users where id='${req.user_id}' and client_id is null`
     );
-    console.log('dbResponse:', dbResponse.rows)
 
-
-    console.log('dbResponse.rows.length < 1', dbResponse.rows.length < 1)
-    console.log('!dbResponse.rows', dbResponse.rows)
-
-    if (dbResponse.rows && dbResponse.rows.length < 1) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -139,7 +134,7 @@ const getFunctionalRange = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

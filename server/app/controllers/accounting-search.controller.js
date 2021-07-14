@@ -11,7 +11,7 @@ const getAll = async (req, res) => {
       `
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -54,7 +54,7 @@ const search = async (req, res) => {
     $sql += `limit 100 \n`;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

@@ -24,7 +24,7 @@ const getLabRequitions = async (req, res) => {
 
     const dbResponse = await db.query($sql, [patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -56,7 +56,7 @@ const getTestList = async (req, res) => {
 
     const dbResponse = await db.query($sql, [patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -81,7 +81,7 @@ const getTestProfileInfo = async (req, res) => {
 
     const dbResponse = await db.query($sql, [testId]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -108,7 +108,7 @@ const getProfileTests = async (req, res) => {
 
     const dbResponse = await db.query($sql, [testId]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

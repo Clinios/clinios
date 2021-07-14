@@ -16,7 +16,7 @@ const getEncounters = async (req, res) => {
       order by e.dt desc
       limit 50`, [patient_id]
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -45,7 +45,7 @@ const getEncountersPrescriptions = async (req, res) => {
       order by pd.created desc
       limit 20`
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -115,7 +115,7 @@ const encountersPrescriptionsEdit = async (req, res) => {
       and pd.drug_id=1
       and pd.drug_strength_id=1`, [encounter_id]
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -251,7 +251,7 @@ const getEncounterTypes = async (req, res) => {
       order by et.sort_order
       limit 100`
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -278,7 +278,7 @@ const getDiagnoses = async (req, res) => {
       order by i.name
       limit 20`, [encounter_id]
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -305,7 +305,7 @@ const getRecentDiagnoses = async (req, res) => {
       order by pi.created desc
       limit 20`, [encounter_id]
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -486,7 +486,7 @@ const getEncounterPlan = async (req, res) => {
       order by sort
       limit 50`
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

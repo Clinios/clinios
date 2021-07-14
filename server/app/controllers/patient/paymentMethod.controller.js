@@ -26,7 +26,7 @@ const getPaymentMethods = async (req, res) => {
 
     const dbResponse = await db.query($sql, [patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -234,7 +234,7 @@ const deletePaymentMethod = async (req, res) => {
       const dbResponse = await db.query(
         `delete from payment_method where id=$1 and patient_id=${req.user_id} RETURNING id`, [id]
       );
-      if (!dbResponse.rows) {
+      if (!dbResponse) {
         errorMessage.message = "None found";
         return res.status(status.notfound).send(errorMessage);
       }

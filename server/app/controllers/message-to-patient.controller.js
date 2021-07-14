@@ -9,7 +9,7 @@ const getMessageById = async (req, res) => {
       `select id, message, unread_notify_dt, created, client_id from message where id=$1`, [id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

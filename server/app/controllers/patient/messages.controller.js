@@ -31,7 +31,7 @@ const getAllMessages = async (req, res) => {
 
     const dbResponse = await db.query($sql, [patient_id, patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -53,7 +53,7 @@ const getUsers = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

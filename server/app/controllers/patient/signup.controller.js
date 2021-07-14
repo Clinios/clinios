@@ -138,7 +138,7 @@ exports.getClientForm = async (req, res) => {
   const { clientId } = req.params;
   try {
     const dbResponse = await db.query(`select cf.id, cf.form from client_form cf where cf.client_id=$1 and type='S'`, [clientId]);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

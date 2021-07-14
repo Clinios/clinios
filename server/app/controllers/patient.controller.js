@@ -68,7 +68,7 @@ const getPatient = async (req, res) => {
 
     const functionalRange = await db.query(`select functional_range from client where id=${req.client_id}`);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -328,7 +328,7 @@ const search = async (req, res) => {
       `
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -390,7 +390,7 @@ const history = async (req, res) => {
         limit 50`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -415,7 +415,7 @@ const getAppointmenthistory = async (req, res) => {
        order by uc.start_dt desc limit 40`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -442,7 +442,7 @@ const nextAppointment = async (req, res) => {
       `
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -463,7 +463,7 @@ const balance = async (req, res) => {
         where t.patient_id=$1`, [patient_id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -488,7 +488,7 @@ const AdminNotehistory = async (req, res) => {
         order by ph.created desc
         limit 50`, [patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -546,7 +546,7 @@ const getForms = async (req, res) => {
       `, [patient_id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -575,7 +575,7 @@ const getFormById = async (req, res) => {
         where pf.patient_id=$1 and pf.form_id=$2`,
       [patient_id, id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -633,7 +633,7 @@ const handouts = async (req, res) => {
         limit 100`, [patient_id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -710,7 +710,7 @@ const patientHandouts = async (req, res) => {
         limit 100`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -757,7 +757,7 @@ const getTranType = async (req, res) => {
   try {
     const dbResponse = await db.query(`select id, name, amount, note, status from tran_type`);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -790,7 +790,7 @@ const getBilling = async (req, res) => {
         limit ${limit}`, [patient_id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -879,7 +879,7 @@ const getBillingPaymentOptions = async (req, res) => {
       order by 1`, [patient_id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -913,7 +913,7 @@ const searchBilling = async (req, res) => {
         limit 20`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -940,7 +940,7 @@ const getBillingFavorites = async (req, res) => {
       limit 20`
     );
 
-    if (!dbResponse.row) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -967,7 +967,7 @@ const getBillingRecents = async (req, res) => {
       limit 10`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1078,7 +1078,7 @@ const getAllergies = async (req, res) => {
         limit 100`,
       [patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1135,7 +1135,7 @@ const searchAllergies = async (req, res) => {
         limit 15`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1198,7 +1198,7 @@ const getDocuments = async (req, res) => {
       `;
 
     const dbResponse = await db.query($sql);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1252,7 +1252,7 @@ const checkDocument = async (req, res) => {
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(`select 1 from lab where patient_id=$1 and filename=filename limit 1`, [patient_id]);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1347,7 +1347,7 @@ const getEncounters = async (req, res) => {
       order by e.dt desc
       limit 50`, [patient_id]
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1444,7 +1444,7 @@ const getMedicalNotesHistory = async (req, res) => {
         order by ph.created desc
         limit 50`, [patient_id]
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1498,7 +1498,7 @@ const getMessages = async (req, res) => {
         order by m.created desc
         limit 50`, [patient_id, patient_id]
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1611,7 +1611,7 @@ const getAllTests = async (req, res) => {
         limit 500
         `, [patient_id]
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1641,7 +1641,7 @@ const getDiagnoses = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1666,7 +1666,7 @@ const getRecentDiagnoses = async (req, res) => {
       order by pi.created desc
       limit 20`
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1691,7 +1691,7 @@ const getFavoriteDiagnoses = async (req, res) => {
       order by i.name
       limit 20`
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1733,7 +1733,7 @@ const searchTests = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1763,7 +1763,7 @@ const getRecentTests = async (req, res) => {
       limit 20
       `
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1788,7 +1788,7 @@ const getFavoriteTests = async (req, res) => {
       order by lc.name, c.name
       limit 20`
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1884,7 +1884,7 @@ const getMedications = async (req, res) => {
         where pd.patient_id=$1 order by d.name limit 50`,
       [patient_id]
     );
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1968,7 +1968,7 @@ const getMedicationById = async (req, res) => {
       left join drug_frequency df on df.id=pd.drug_frequency_id
       where pd.id=$1`, [medication_id]
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -1995,7 +1995,7 @@ const getMedicationFavorites = async (req, res) => {
       order by d.name
       limit 20`
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2024,7 +2024,7 @@ const getMedicationRecents = async (req, res) => {
       limit 20
       `
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2073,7 +2073,7 @@ const getRequisitions = async (req, res) => {
         limit 500`,
          [patient_id]
     );
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2134,7 +2134,7 @@ const getLayout = async (req, res) => {
 
   try {
     const dbResponse = await db.query(`select * from user_grid where user_id=$1`, [user_id]);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2262,7 +2262,7 @@ const deletePaymentMethod = async (req, res) => {
 
   try {
     const dbResponse = await db.query(`delete from payment_method where id=$1 and patient_id=$2`, [id, patient_id]);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2328,7 +2328,7 @@ const getPaymentMethods = async (req, res) => {
       order by 1`, [patient_id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2353,7 +2353,7 @@ const getDrugs = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -2380,7 +2380,7 @@ const getIcds = async (req, res) => {
 
     const dbResponse = await db.query($sql);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

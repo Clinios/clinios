@@ -17,7 +17,7 @@ const getAll = async (req, res) => {
           limit 100`
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -47,7 +47,7 @@ const getSingleForm = async (req, res) => {
       `, [id]
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }

@@ -21,7 +21,7 @@ const getAll = async (req, res) => {
       `
     );
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -48,7 +48,7 @@ const create = async (req, res) => {
       [appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active]
     );
 
-    if (!dbResponse || dbResponse.rows.length === 0) {
+    if (!dbResponse) {
       errorMessage.message = "Creation not successful";
       res.status(status.notfound).send(errorMessage);
     }

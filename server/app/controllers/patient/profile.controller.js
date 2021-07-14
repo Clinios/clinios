@@ -23,7 +23,7 @@ const getPatient = async (req, res) => {
 
     const dbResponse = await db.query($sql, [patient_id]);
 
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
@@ -137,7 +137,7 @@ const getPatientPaymentMethod = async (req, res) => {
     `;
 
     const dbResponse = await db.query($sql, [patient_id]);
-    if (!dbResponse.rows) {
+    if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
