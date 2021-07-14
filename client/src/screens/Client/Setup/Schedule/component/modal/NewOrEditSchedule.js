@@ -449,13 +449,7 @@ const NewOrEditSchedule = ({
             <p className={classes.formHelperText}>Active / Inactive</p>
           </FormControl>
           <p className={classes.statusText}>
-            <span
-              style={{
-                fontWeight: "500",
-              }}
-            >
-              Status:
-            </span>
+            <span>Status:</span>
             {" "}
             {status}
           </p>
