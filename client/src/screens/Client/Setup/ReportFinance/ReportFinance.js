@@ -115,7 +115,7 @@ export default function ReportFinance() {
                     label="Date From"
                     value={dateFrom}
                     className={classes.textField}
-                    onChange={(date) => setDateFrom(date)}
+                    onChange={(date) => setDateFrom(moment(date).format("YYYY-MM-DD"))}
                     size="small"
                     autoOk
                   />
@@ -132,7 +132,7 @@ export default function ReportFinance() {
                     label="Date To"
                     value={dateTo}
                     className={classes.textField}
-                    onChange={(date) => setDateTo(date)}
+                    onChange={(date) => setDateTo(moment(date).format("YYYY-MM-DD"))}
                     size="small"
                     autoOk
                   />

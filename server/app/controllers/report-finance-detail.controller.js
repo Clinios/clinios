@@ -10,8 +10,8 @@ const getReportFinanceDetail = async (req, res) => {
     left join patient p on p.id=t.patient_id
     left join encounter e on e.id=t.encounter_id
     where t.client_id=${req.client_id}
-    and t.dt>="${req.query.dateFrom}"
-    and t.dt<="${req.query.dateTo}"
+    and t.dt>='${req.query.dateFrom}'
+    and t.dt<='${req.query.dateTo}'
     order by t.dt desc
     limit 100`);
 
