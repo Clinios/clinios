@@ -1,4 +1,5 @@
 const Stripe = require("stripe");
+const moment = require("moment");
 const db = require("../../db");
 const {
   errorMessage,
@@ -36,15 +37,6 @@ const getPurchaseLabs = async (req, res) => {
 
 const createPurchaseLabs = async (req, res) => {
   const formData = req.body.data;
-  const trancData = {
-    client_id: req.client_id,
-    patient_id: req.user_id,
-    type_id: 1,
-    dt: new Date(),
-    created: new Date(),
-    amount: formData.amount * -1,
-    payment_method_id: formData.payment_method_id,
-  };
 
   try {
     const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY);
@@ -54,7 +46,7 @@ const createPurchaseLabs = async (req, res) => {
       const getPatientDetails = await db.query(
         `select id, email, firstname, lastname, gender from patient where id=${req.user_id}`
       );
-      const existingPatient = getPatientDetails[0];
+      const existingPatient = getPatientDetails.rows[0];
 
       const customer = await stripe.customers.create({
         email: existingPatient.email,
@@ -89,40 +81,39 @@ const createPurchaseLabs = async (req, res) => {
 
     const intent = await stripe.paymentIntents.create(intentData);
 
+    let pp_status = 1;
+    let pp_return;
     if (intent.status === "succeeded") {
-      trancData.pp_status = 1;
-      trancData.pp_return = JSON.stringify(intent);
+      pp_return = JSON.stringify(intent);
     } else {
       console.log("error:", intent);
-      trancData.pp_status = -1;
-      trancData.pp_return = JSON.stringify(intent);
+      pp_status = -1;
+      pp_return = JSON.stringify(intent);
     }
 
-    const insertResponse = await db.query(`insert into tranc set $1 RETURNING id`, [
-      trancData,
-    ]);
+
+    const insertResponse = await db.query(`insert into tranc(client_id, patient_id, type_id, dt, created, amount, payment_method_id, pp_status,
+      pp_return) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+       [req.client_id, req.user_id, 1, moment().format('YYYY-MM-DD hh:ss'),  moment().format('YYYY-MM-DD hh:ss'), formData.amount * -1,
+        formData.payment_method_id, pp_status, pp_return]
+      );
 
     if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    if (insertResponse.rows[0].id) {
-      const trancDetailsData = {
-        tranc_id: insertResponse.insertId,
-        // procedure_id: formData.procedure_ids,
-      };
+    const trancId = insertResponse.rows[0].id;
+
+    if (trancId) {
       if (formData.selectedLabs.length > 0) {
         formData.selectedLabs.map(async (lab) => {
-          trancDetailsData.proc_id = lab.procedure_id;
-          trancDetailsData.patient_proc_id = lab.patient_procedure_id;
-          await db.query(`insert into tranc_detail set $1`, [trancDetailsData]);
+          await db.query(`insert into tranc_detail(tranc_id, proc_id, patient_proc_id) VALUES($1, $2, $3)`, [trancId, lab.procedure_id, lab.patient_procedure_id]);
         });
       }
 
-      await db.query(`update patient_proc set tranc_id=${insertResponse.insertId} 
-      where id in (${formData.patient_procedure_ids})`);
+      await db.query(`update patient_proc set tranc_id=${trancId} where id in (${formData.patient_procedure_ids})`);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
