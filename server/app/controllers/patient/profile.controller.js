@@ -52,37 +52,7 @@ const updatePatient = async (req, res) => {
 
 
   try {
-   /* const updateResponse = await db.query(
-      `update patient set $1 where id=${req.user_id}`,
-      [formData]
-    ); */
-    /**
-     * "patient": {
-        "firstname": "John",
-        "middlename": "A",
-        "lastname": "Doe",
-        "gender": "M",
-        "dob": "1949-12-31T23:00:00.000Z",
-        "ssn": "555118888",
-        "preferred_name": "Nickname",
-        "referred_by": "Referred by Internet",
-        "phone_home": "8184159596",
-        "phone_cell": "8184159596",
-        "phone_work": "8184159596",
-        "email": "test.demo@test.com",
-        "client_id": 1,
-        "admin_note": "Always late",
-        "medical_note": "Has Diabetes",
-        "address": "100 Main St",
-        "address2": "#100",
-        "city": "Concord",
-        "postal": "94521",
-        "state": "CA",
-        "height": 72,
-        "waist": 32,
-        "weight": 155
-    }
-     */
+
     const updateResponse = await db.query(
       `update patient set firstname=$1, middlename=$2, lastname=$3, email=$4, gender=$5, dob=$6, preferred_name=$7,
       referred_by=$8, phone_home=$9, phone_cell=$10, phone_work=$11, admin_note=$12, medical_note=$13, address=$14,

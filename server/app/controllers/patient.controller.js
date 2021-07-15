@@ -1,6 +1,7 @@
 const Stripe = require("stripe");
 const multer = require("multer");
 const moment = require("moment");
+const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const { validationResult } = require("express-validator");
 const db = require("../db");
@@ -88,23 +89,36 @@ const createPatient = async (req, res) => {
   formData.created_user_id = req.user_id;
   formData.client_id = req.client_id;
 
-  const db = makeDb(configuration, res);
-  try {
-    const insertResponse = await db.query(`insert into patient set ?`, [formData]);
+  let { password } = req.body.data;
+  const { firstname, middlename, lastname, phone_home, phone_cell,
+  phone_work, phone_other, phone_note, email, dob, gender, ssn, postal, address, address2, city,
+  insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc } = req.body.data;
 
-    if (!insertResponse.affectedRows) {
+
+  if (password && password !== "") {
+    password = bcrypt.hashSync(password, 8);
+  }
+
+  try {
+    const insertResponse = await db.query(`insert into patient(firstname, middlename, lastname, status, phone_home, phone_cell,
+      phone_work, phone_other, phone_note, email, dob, gender, ssn, password, postal, address, address2, city,
+      insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc, client_id, created, created_user_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26) RETURNING id`,
+       [firstname, middlename, lastname, req.body.data.status, phone_home, phone_cell,
+        phone_work, phone_other, phone_note, email, dob, gender, ssn, password, postal, address, address2, city,
+        insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc, req.client_id, moment().format('YYYY-MM-DD hh:ss'), req.user_id]);
+
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
