@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Grid, Button, Switch, TextField,
@@ -97,26 +97,7 @@ const EditProcedureCodeModal = (props) => {
     isOpen, handleOnClose, selectedProcedure, reloadData,
   } = props;
 
-  const [formFields, setFormFields] = useState({
-    description: "",
-    favorite: "",
-    fee: "",
-    billable: "",
-    notes: "",
-  });
-
-  const populateFormFields = (procedure) => {
-    const {
-      proc, fee, favorite, billable, notes,
-    } = procedure;
-
-    formFields.description = proc;
-    formFields.favorite = favorite;
-    formFields.fee = fee;
-    formFields.billable = billable;
-    formFields.notes = notes;
-    setFormFields({ ...formFields });
-  };
+  const [formFields, setFormFields] = useState({ ...selectedProcedure });
 
   const updateFormFields = (key, value) => {
     setFormFields({
@@ -124,13 +105,6 @@ const EditProcedureCodeModal = (props) => {
       [key]: value,
     });
   };
-
-  useEffect(() => {
-    if (selectedProcedure) {
-      populateFormFields(selectedProcedure);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProcedure]);
 
   const handleEditProcedureCode = () => {
     const reqBody = {
@@ -184,7 +158,7 @@ const EditProcedureCodeModal = (props) => {
                   <TextField
                     fullWidth
                     label="Description"
-                    value={formFields.description}
+                    value={formFields.proc}
                     variant="outlined"
                     size="small"
                     InputLabelProps={{
