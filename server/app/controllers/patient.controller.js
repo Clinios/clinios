@@ -1758,10 +1758,10 @@ const getRecentTests = async (req, res) => {
       left join client_proc cc on cc.client_id=${req.client_id}
         and cc.proc_id=c.id
       where pc.client_id=${req.client_id}
-      and pc.created > date_sub(current_date, interval 30 day)
+      /* and pc.created > date_sub(current_date, interval 30 day) */
+      and pc.created > NOW() - '30 MINUTES'::INTERVAL
       order by lc.name, c.name
-      limit 20
-      `
+      limit 20`
     );
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -1771,6 +1771,7 @@ const getRecentTests = async (req, res) => {
     successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
   }
@@ -2089,11 +2090,11 @@ const getRequisitions = async (req, res) => {
 
 const createRequisitions = async (req, res) => {
   const { patient_id } = req.params;
-  const {marker_id, encounter_id} = req.body.data;
+  const {marker_id} = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into patient_proc (client_id, patient_id, proc_id, encounter_id, created, created_user_id) 
-    VALUES(${req.client_id}, ${patient_id}, '${marker_id}', ${encounter_id}, now(), ${req.user_id}) RETURNING proc_id`);
+    const insertResponse = await db.query(`insert into patient_proc (client_id, patient_id, proc_id, created, created_user_id) 
+    VALUES(${req.client_id}, ${patient_id}, '${marker_id}', now(), ${req.user_id}) RETURNING proc_id`);
 
     if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
