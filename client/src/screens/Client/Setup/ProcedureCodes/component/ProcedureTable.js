@@ -13,14 +13,10 @@ import {
   withStyles,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
-import Alert from "@material-ui/lab/Alert";
 import moment from "moment";
-import { useSnackbar } from "notistack";
 import Proptypes from "prop-types";
 import NumberFormat from "react-number-format";
 
-import useAuth from "../../../../../hooks/useAuth";
-import ProcedureCodesService from "../../../../../services/procedure.service";
 import EditProcedureCodeModal from "./modal/EditProcedureCodeModal";
 import ProcedureGroupMembersModal from "./modal/ProcedureGroupMembersModal";
 
@@ -65,37 +61,17 @@ const StyledTableRow = withStyles((theme) => ({
 
 const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuth();
-  const [errors, setErrors] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [groupIsOpen, setGroupIsOpen] = useState(false);
   const [groups, setGroups] = useState([]);
+  const [selectedProcedure, setSelectedProcedure] = useState(null);
 
-  const [procId, setProcId] = useState("");
-  const [procedure_description, set_procedure_description] = useState("");
-  const [procedure_favorite, set_procedure_favorite] = useState("");
-  const [procedure_fee, set_procedure_fee] = useState("");
-  const [procedure_billable, set_procedure_billable] = useState("");
-  const [procedure_notes, set_procedure_notes] = useState("");
-
-  const payload = {
-    procedureId: procId,
-    favorite: procedure_favorite,
-    billable: procedure_billable,
-    fee: procedure_fee,
-    notes: procedure_notes,
-  };
-
-  const handleIsOpen = (id, desc, fee, fav, bill) => {
-    setProcId(id);
-    set_procedure_description(desc);
-    set_procedure_fee(fee);
-    set_procedure_favorite(fav);
-    set_procedure_billable(bill);
+  const handleIsOpen = (selectedItem) => {
+    setSelectedProcedure(selectedItem);
     setIsOpen(true);
   };
-  const hendleOnClose = () => {
+
+  const handleOnClose = () => {
     setIsOpen(false);
   };
 
@@ -124,50 +100,8 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
     setGroupIsOpen(true);
   };
 
-  const handleChangeFee = (e) => {
-    set_procedure_fee(e.target.value);
-  };
-  const handleChangeFavorite = (e) => {
-    set_procedure_favorite(e.target.checked);
-  };
-  const handleChangeBillable = (e) => {
-    set_procedure_billable(e.target.checked);
-  };
-
-  const handleChangeNotes = (e) => {
-    set_procedure_notes(e.target.value);
-  };
-
-  const handleEditProcedureCode = () => {
-    ProcedureCodesService.updateClientProcedure(procId, user.id, payload).then(
-      (response) => {
-        setTimeout(() => {
-          enqueueSnackbar(`${response.data.message}`, {
-            variant: "success",
-          });
-        }, 300);
-      },
-      (error) => {
-        setTimeout(() => {
-          setErrors(error.response.error);
-        }, 300);
-      },
-    );
-    setIsOpen(false);
-    setTimeout(() => {
-      fetchProcedureCodeSearch();
-    }, 200);
-  };
-
   return (
     <div>
-      {errors
-        && errors.map((error, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Alert severity="error" key={index}>
-            {error.msg}
-          </Alert>
-        ))}
       <TableContainer component={Paper} className={classes.tableContainer}>
         <Table className={classes.table} aria-label="a dense table">
           <TableHead>
@@ -262,13 +196,7 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
                 <TableCell padding="checkbox" align="center">
                   <IconButton
                     aria-label="edit"
-                    onClick={() => handleIsOpen(
-                      result.id,
-                      result.proc,
-                      result.fee,
-                      result.favorite,
-                      result.billable,
-                    )}
+                    onClick={() => handleIsOpen(result)}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
@@ -281,18 +209,9 @@ const ProcedureTable = ({ searchResult, fetchProcedureCodeSearch }) => {
       {isOpen && (
         <EditProcedureCodeModal
           isOpen={isOpen}
-          hendleOnClose={hendleOnClose}
-          procId={procId}
-          procedure_description={procedure_description}
-          procedure_fee={procedure_fee}
-          procedure_favorite={procedure_favorite}
-          procedure_billable={procedure_billable}
-          procedure_notes={procedure_notes}
-          handleChangeFee={handleChangeFee}
-          handleChangeFavorite={handleChangeFavorite}
-          handleChangeBillable={handleChangeBillable}
-          handleChangeNotes={handleChangeNotes}
-          handleEditProcedureCode={handleEditProcedureCode}
+          handleOnClose={handleOnClose}
+          selectedProcedure={selectedProcedure}
+          reloadData={fetchProcedureCodeSearch}
         />
       )}
       <ProcedureGroupMembersModal
@@ -310,8 +229,8 @@ ProcedureTable.propTypes = {
       id: Proptypes.string,
       proc: Proptypes.string,
       lab_company: Proptypes.string,
-      favorite: Proptypes.bool,
-      billable: Proptypes.bool,
+      favorite: Proptypes.oneOfType([Proptypes.bool, Proptypes.number]),
+      billable: Proptypes.oneOfType([Proptypes.bool, Proptypes.number]),
       fee: Proptypes.number,
       client_name: Proptypes.string,
       procedure_group: Proptypes.string,
