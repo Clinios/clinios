@@ -218,7 +218,7 @@ const MarkerRanges = () => {
               </Typography>
               <Button
                 variant="outlined"
-                className={classes.w100}
+                color="primary"
                 onClick={() => setShowNewRangeDialog(true)}
               >
                 New
