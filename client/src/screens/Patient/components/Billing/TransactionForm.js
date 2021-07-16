@@ -241,12 +241,12 @@ const NewTransactionForm = (props) => {
   useEffect(() => {
     if (selectedBilling === null) { // only for new billing dialog
       const name = "type";
-      setFormFields({
-        ...formFields,
+      setFormFields((prevState) => ({
+        ...prevState,
         [name]: 3, // PAYMENT id is 3.
-      });
+      }));
     }
-  }, [selectedBilling, formFields]);
+  }, [selectedBilling]);
 
   useDidMountEffect(() => {
     if (hasAmountError) {
