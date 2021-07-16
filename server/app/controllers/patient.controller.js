@@ -819,11 +819,12 @@ const getBilling = async (req, res) => {
 
 const updateBilling = async (req, res) => {
   const { patient_id, id } = req.params;
-  const { type_id, payment_type, amount, note } = req.body.data;
+  const { type_id, amount, note } = req.body.data;
 
   try {
-    const updateResponse = await db.query(`update tran set dt=now(), type_id=$1, payment_type=$2, amount=$3, note=$4, updated=${moment().format('YYYY-MM-DD hh:ss')}, updated_user_id=${req.user_id}
-    where patient_id=$5 and id=$6`, [type_id, payment_type, amount, note, patient_id, id]);
+    const updateResponse = await db.query(`update tran set dt=now(), type_id=$1, amount=$2, note=$3,
+     updated='${moment().format('YYYY-MM-DD hh:ss')}', updated_user_id=${req.user_id} where patient_id=$4 and id=$5 RETURNING id`, [type_id, amount, note, patient_id, id]
+    );
 
     if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
