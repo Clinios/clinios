@@ -118,10 +118,10 @@ const NewPrescription = (props) => {
 
   const handleInputChange = (e) => {
     const { value, name } = e.target;
-    setFormFields({
-      ...formFields,
+    setFormFields((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const handleDateChange = (date) => {

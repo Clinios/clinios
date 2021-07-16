@@ -192,10 +192,10 @@ const NewTransactionForm = (props) => {
     if (name === "type" && (value === 3 || value === 4) && formFields.paymentType === "") {
       formFields.paymentType = "C";
     }
-    setFormFields({
-      ...formFields,
+    setFormFields((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const handleDateChange = (date) => {
