@@ -108,11 +108,13 @@ const EditProcedureCodeModal = (props) => {
 
   const handleEditProcedureCode = () => {
     const reqBody = {
-      procedureId: selectedProcedure?.id,
-      favorite: formFields.favorite,
-      billable: formFields.billable,
-      fee: formFields.fee,
-      notes: formFields.notes,
+      data: {
+        procedureId: selectedProcedure?.id,
+        favorite: formFields.favorite,
+        billable: formFields.billable,
+        fee: formFields.fee,
+        notes: formFields.notes,
+      },
     };
     ProcedureCodesService.updateClientProcedure(selectedProcedure?.id, user.id, reqBody)
       .then((response) => {
