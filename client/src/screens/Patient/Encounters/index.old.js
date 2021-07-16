@@ -114,10 +114,10 @@ const Encounters = (props) => {
 
   const handleInputChnage = (e) => {
     const { value, name } = e.target;
-    setFormFields({
-      ...formFields,
+    setFormFields((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const handleDateChange = (date) => {

@@ -188,13 +188,9 @@ const NewOrEditSchedule = ({
       title={isNewSchedule ? "New Schedule" : "Edit Schedule"}
       message={(
         <>
-          {/* {isNewSchedule
-              ? "This page is used to create a new schedule entry"
-              : "This page is used to Edit existing schedule entry"} */}
           {errors
-            && errors.map((error, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Alert severity="error" key={index}>
+            && errors.map((error) => (
+              <Alert severity="error" key={error.msg}>
                 {error.msg}
               </Alert>
             ))}

@@ -219,10 +219,10 @@ const Medications = (props) => {
 
   const handleInputChange = (e) => {
     const { value, name } = e.target;
-    setFormFields({
-      ...formFields,
+    setFormFields((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const handleDateChange = (date) => {
@@ -275,10 +275,10 @@ const Medications = (props) => {
   };
 
   const inputOptionHandler = (name, value) => {
-    setFormFields({
-      ...formFields,
+    setFormFields((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const renderInputOptions = (value, inputName) => {

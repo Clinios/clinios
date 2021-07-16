@@ -192,10 +192,10 @@ const NewTransactionForm = (props) => {
     if (name === "type" && (value === 3 || value === 4) && formFields.paymentType === "") {
       formFields.paymentType = "C";
     }
-    setFormFields({
-      ...formFields,
+    setFormFields((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const handleDateChange = (date) => {
@@ -241,12 +241,12 @@ const NewTransactionForm = (props) => {
   useEffect(() => {
     if (selectedBilling === null) { // only for new billing dialog
       const name = "type";
-      setFormFields({
-        ...formFields,
+      setFormFields((prevState) => ({
+        ...prevState,
         [name]: 3, // PAYMENT id is 3.
-      });
+      }));
     }
-  }, [selectedBilling, formFields]);
+  }, [selectedBilling]);
 
   useDidMountEffect(() => {
     if (hasAmountError) {
