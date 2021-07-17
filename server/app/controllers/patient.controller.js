@@ -625,7 +625,7 @@ const searchHandouts = async (req, res) => {
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
@@ -1923,8 +1923,9 @@ const createMedications = async (req, res) => {
     const insertResponse = await db.query(
       `insert into patient_drug(patient_id, drug_id, drug_frequency_id, drug_strength_id, start_dt, expires,
          amount, refills, generic, patient_instructions, pharmacy_instructions, created, created_user_id) 
-      VALUES(${patient_id}, ${drug_id}, '${drug_frequency_id}', ${drug_strength_id}, '${moment(start_dt).format("YYYY-MM-DD")}', ${expires}, ${amount}, ${refills},
-         ${generic}, '${patient_instructions}', '${pharmacy_instructions}', now(), ${req.user_id}) RETURNING id`
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
+          [patient_id, drug_id, drug_frequency_id, drug_strength_id, moment(start_dt).format("YYYY-MM-DD"), expires, amount, refills,
+          generic, patient_instructions, pharmacy_instructions, moment().format("YYYY-MM-DD hh:ss"), req.user_id]
     );
 
     if (!insertResponse.rowCount) {
