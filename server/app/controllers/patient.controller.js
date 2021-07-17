@@ -1035,7 +1035,7 @@ const createBilling = async (req, res) => {
   let pp_return;
   // transaction type 3 'Payment' and 3 'Payment refund' goes to stripe
   if (type_id === 3 || type_id === 4) {
-    const stripe = Stripe(getStripeResponse[0].stripe_api_key);
+    const stripe = Stripe(getStripeResponse.rows[0].stripe_api_key);
     const intentData = {
       payment_method: stripe_payment_method_token,
       customer: customer_id,
@@ -1064,7 +1064,7 @@ const createBilling = async (req, res) => {
 
   try {
     const insertResponse = await db.query(`insert into tran(dt, type_id, payment_method_id, amount, note, patient_id, client_id, pp_status, pp_return) 
-    VALUES (now(), $1, $2, $3, $4, ${req.client_id}, $5, $6) RETURNING id`, [type_id, payment_method_id, amount, note, patient_id, pp_status, pp_return]);
+    VALUES (now(), $1, $2, $3, $4, $5, ${req.client_id}, $6, $7) RETURNING id`, [type_id, payment_method_id, amount, note, patient_id, pp_status, pp_return]);
 
     if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
