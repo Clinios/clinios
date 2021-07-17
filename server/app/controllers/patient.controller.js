@@ -2406,8 +2406,6 @@ const getIcds = async (req, res) => {
     console.error("err:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
