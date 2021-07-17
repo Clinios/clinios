@@ -191,7 +191,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Lab = (props) => {
   const {
-    fromHome, userId, documentId, fetchProviderDetails, onClose,
+    fromHome, userId, documentId, fetchProviderDetails, onClose, reloadData,
   } = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -347,6 +347,7 @@ const Lab = (props) => {
       enqueueSnackbar(res.message, { variant: "success" });
       getLabInformation();
       fetchProviderDetails();
+      reloadData();
     });
   };
 
@@ -862,6 +863,7 @@ Lab.defaultProps = {
 };
 
 Lab.propTypes = {
+  reloadData: PropTypes.func.isRequired,
   fromHome: PropTypes.bool.isRequired,
   userId: PropTypes.number.isRequired,
   documentId: PropTypes.number,
