@@ -9,6 +9,6 @@ router.get(
   [authJwt.verifyToken],
   Integrations.getIntegrations
 );
-router.put("/integrations/", [authJwt.verifyToken, authorization.isReadOnly], Integrations.update);
+router.put("/integrations", [authJwt.verifyToken, authorization.isReadOnly], Integrations.update);
 
 module.exports = router;

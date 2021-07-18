@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const moment = require("moment");
 const { validationResult } = require("express-validator");
 const sgMail = require("@sendgrid/mail");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -76,22 +76,20 @@ const sendRecoveryEmail = async (user, res) => {
  * @returns {object} response
  */
 exports.sendPasswordResetEmail = async (req, res) => {
-  const db = makeDb(configuration, res);
   // Check where user already signed up or not
   const { email } = req.params;
   const data = req.body.patient;
 
-  const patientRows = await db.query(
-    "SELECT id, firstname, lastname, email, password, login_dt, created FROM patient WHERE email = ? and dob = ? and lastname = ? and postal = ? LIMIT 1",
-    [email, data.dob, data.lastname, data.postal]
+  const patientResponse = await db.query(
+    "SELECT id, firstname, lastname, email, password, login_dt, created FROM patient WHERE email = $1 LIMIT 1",
+    [email]
   );
-  if (patientRows.length < 1) {
-    errorMessage.message =
-      "We couldn't find any record with that email address.";
+  if (patientResponse.rows.length < 1) {
+    errorMessage.message = "We couldn't find any record with that email address.";
     return res.status(status.notfound).send(errorMessage);
   }
 
-  const patient = patientRows[0];
+  const patient = patientResponse.rows[0];
   if (!patient) {
     errorMessage.message = "Patient not found";
     errorMessage.patient = patient;
@@ -107,9 +105,9 @@ exports.sendPasswordResetEmail = async (req, res) => {
     // update user table for password reset token and expires time
     const patientUpdate = await db.query(
       `UPDATE patient SET reset_password_token='${token}', reset_password_expires='${token_expires}', updated= now() 
-        WHERE id =${patient.id}`
+        WHERE id =${patient.id} RETURNING id`
     );
-    if (patientUpdate.affectedRows) {
+    if (patientUpdate.rowCount) {
       sendRecoveryEmail(patient, res);
     }
   }
@@ -129,18 +127,17 @@ exports.receiveNewPassword = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
   const { patientId, token } = req.params;
   const { password } = req.body;
 
   // find patient with reset_password_token AND patientId
   // check token expires validity
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
-  const patientRows = await db.query(
-    `SELECT id, email, client_id, reset_password_token, reset_password_expires FROM patient WHERE id=? 
-    AND reset_password_token=? AND reset_password_expires > '${now}'`, [patientId, token]
+  const patientResponse = await db.query(
+    `SELECT id, email, client_id, reset_password_token, reset_password_expires FROM patient WHERE id=$1 
+    AND reset_password_token=$2 AND reset_password_expires > '${now}'`, [patientId, token]
   );
-  const patient = patientRows[0];
+  const patient = patientResponse.rows[0];
 
   if (!patient) {
     errorMessage.message = "Patient not found";
@@ -155,12 +152,12 @@ exports.receiveNewPassword = async (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 8);
 
   const updatePatientResponse = await db.query(
-    `UPDATE patient SET password=?, reset_password_token=NULL, reset_password_expires=NULL, updated= now() WHERE id =${patient.id}`, [hashedPassword]
+    `UPDATE patient SET password=$1, reset_password_token=NULL, reset_password_expires=NULL, updated= now() WHERE id =${patient.id}`, [hashedPassword]
   );
 
-  if (updatePatientResponse.affectedRows) {
+  if (updatePatientResponse.rowCount) {
     successMessage.message = "Password changed succesfullly!";
-    successMessage.data = { client: client[0] };
+    successMessage.data = { client: client.rows[0] };
     return res.status(status.success).send(successMessage);
   }
 };

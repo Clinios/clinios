@@ -15,7 +15,7 @@ router.get(
   userMessagesController.getUserMessage
 );
 router.get(
-  "/user/assign-to",
+  "/user/by-client-id",
   [authJwt.verifyToken],
   userMessagesController.getMessageAssignUser
 );

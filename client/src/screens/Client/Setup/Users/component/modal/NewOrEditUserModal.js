@@ -159,19 +159,21 @@ const NewOrEditUserModal = ({
   }, [props.user]);
 
   const payload = {
-    firstname: user.firstname,
-    lastname: user.lastname,
-    title: user.title,
-    email: user.email,
-    phone: user.phone,
-    timezone: user.timezone,
-    note: user.note,
-    status: user.status,
-    appointments: user.appointments,
-    type: user.type,
-    schedule: user.schedule,
-    admin: user.admin,
-    email_forward_user_id: user.email_forward_user_id,
+    data: {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      title: user.title,
+      email: user.email,
+      phone: user.phone,
+      timezone: user.timezone,
+      note: user.note,
+      status: user.status,
+      appointments: user.appointments,
+      type: user.type,
+      schedule: user.schedule,
+      admin: user.admin,
+      email_forward_user_id: user.email_forward_user_id,
+    },
   };
 
   const handleCreateNewOrEditUser = () => {

@@ -212,7 +212,7 @@ const PurchaseLabs = () => {
       <Alert
         open={isConfirmDialog}
         title="Purchase Confirmation"
-        message={`Confirm purchase of $${total?.toFixed(2)}?`}
+        message={`Confirm purchase of $${Number(total)?.toFixed(2)}?`}
         applyButtonText="Confirm"
         cancelButtonText="Cancel"
         applyForm={() => handleOnSubmit()}
@@ -234,7 +234,7 @@ const PurchaseLabs = () => {
                 <Box mt={2}>
                   <Typography variant="h5" gutterBottom>
                     This is a confirmation that you have purchased lab(s) for $
-                    {total?.toFixed(2)}
+                    {Number(total)?.toFixed(2)}
                     .
                   </Typography>
                   {conventionalLabsCount > 0 && (
@@ -306,7 +306,7 @@ const PurchaseLabs = () => {
                                   <StyledTableCell scope="item">{lab.lab_company_name}</StyledTableCell>
                                   <StyledTableCell scope="item">{lab.procedure_name}</StyledTableCell>
                                   <StyledTableCell scope="item">
-                                    {lab.price ? `$${lab.price.toFixed(2)}` : ""}
+                                    {lab.price ? `$${Number(lab.price).toFixed(2)}` : ""}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );
@@ -317,7 +317,7 @@ const PurchaseLabs = () => {
                       <div className={classes.Total}>
                         <span>Total:</span>
                         $
-                        {total?.toFixed(2)}
+                        {Number(total)?.toFixed(2)}
                       </div>
                       <FormControl
                         variant="outlined"

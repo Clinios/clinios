@@ -1,9 +1,9 @@
 const { validationResult } = require("express-validator");
-const { configuration, makeDb } = require("../db/db.js");
+const moment = require("moment");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const getAll = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select at.id, at.appointment_type, at.descr, at.length,
@@ -13,8 +13,8 @@ const getAll = async (req, res) => {
       , at.updated
       , concat(u2.firstname, ' ', u2.lastname) updated_user
       from appointment_type at
-      left join user u on u.id=at.created_user_id
-      left join user u2 on u2.id=at.updated_user_id
+      left join users u on u.id=at.created_user_id
+      left join users u2 on u2.id=at.updated_user_id
       where at.client_id=${req.client_id}
       order by at.sort_order, at.appointment_type
       limit 100
@@ -25,13 +25,11 @@ const getAll = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -41,32 +39,27 @@ const create = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.bad).send(errorMessage);
   }
-  const db = makeDb(configuration, res);
-  const appointment_type = req.body.data;
-  appointment_type.created_user_id = req.user_id;
-  appointment_type.client_id = req.client_id;
-  appointment_type.created = new Date();
+  const {appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active} = req.body.data;
 
   try {
     const dbResponse = await db.query(
-      "insert into appointment_type set ?",
-      appointment_type
+      `insert into appointment_type(appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active, created, created_user_id, client_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, '${moment().format("YYYY-MM-DD hh:ss")}', ${req.user_id}, ${req.client_id}) RETURNING id`,
+      [appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active]
     );
 
-    if (!dbResponse.insertId) {
+    if (!dbResponse) {
       errorMessage.message = "Creation not successful";
       res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Creation successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.error(err);
     errorMessage.message = "Creation not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -77,31 +70,27 @@ const update = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
-  const appointment_type = req.body.data;
-
-  appointment_type.updated = new Date();
-  appointment_type.updated_user_id = req.user_id;
+  const { id } = req.params;
+  const {appointment_type, length, allow_patients_schedule, descr, fee, sort_order, note, active} = req.body.data;
 
   try {
     const updateResponse = await db.query(
-      `update appointment_type set ? where id =?`,
-      [appointment_type, req.params.appointmentId]
+      `update appointment_type set appointment_type=$1, length=$2, allow_patients_schedule=$3, sort_order=$4, note=$5,
+       active=$6, descr=$7, fee=$8, client_id=${req.client_id}, updated=now(), updated_user_id=${req.user_id} where id =$9 RETURNING id`,
+      [appointment_type, length, allow_patients_schedule, sort_order, note, active, descr, fee, id]
     );
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
     console.error(error);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -112,28 +101,27 @@ const deleteAppointment = async (req, res) => {
     return res.status(status.error).send(errorMessage);
   }
   const { id } = req.params;
-  const db = makeDb(configuration, res);
+
   try {
-    const deleteApptResponse = await db.query(
-      `delete from appointment_type_user where appointment_type_id=?`, [id]
-    );
-    console.log("deleteApptResponse:", deleteApptResponse);
-    const deleteResponse = await db.query(
-      `delete from appointment_type where id=?`, [id]
+    await db.query(
+      `DELETE FROM appointment_type_user WHERE appointment_type_id=$1`, [id]
     );
 
-    if (!deleteResponse.affectedRows) {
+    const deleteResponse = await db.query(
+      `DELETE FROM appointment_type WHERE id=$1 RETURNING id`, [id]
+    );
+
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Deletion successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
+    console.log('error:', error);
     errorMessage.message = "Deletion not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

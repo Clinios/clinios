@@ -118,7 +118,7 @@ const BillingDetails = (props) => {
       />
       <Grid className={classes.newButton}>
         <Typography className={classes.balanceText}>
-          {`Balance $${patientBalance.toFixed(2)}`}
+          {`Balance $${Number(patientBalance).toFixed(2)}`}
         </Typography>
         <Grid>
           <IconButton

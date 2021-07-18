@@ -117,6 +117,7 @@ jobs:
           VALIDATE_KOTLIN: false
           VALIDATE_LATEX: false
           VALIDATE_JAVA: false
+          VALIDATE_JAVASCRIPT_ES: false
           VALIDATE_DOCKERFILE_HADOLINT: false
           VALIDATE_ENV: false
           VALIDATE_CSHARP: false

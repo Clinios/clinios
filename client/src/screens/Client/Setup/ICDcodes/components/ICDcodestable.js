@@ -73,7 +73,9 @@ const ICDcodestable = ({ result, fetchSearchIcdCodes }) => {
 
   const changeHandler = (event, icdcode_id) => {
     const payload = {
-      icd_id: icdcode_id,
+      data: {
+        icd_id: icdcode_id,
+      },
     };
     const { checked } = event.target;
     setState(

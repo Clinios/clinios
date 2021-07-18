@@ -1,12 +1,11 @@
 const { validationResult } = require("express-validator");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const getAllUser = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(`select u.id, u.firstname, u.lastname
-        from user u
+        from users u
         where u.client_id=${req.client_id}
         /*and u.status='A'
         and u.appointments=true*/
@@ -17,107 +16,96 @@ const getAllUser = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     console.error(error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
+
 const search = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const { userId } = req.body;
+  const { userId } = req.body.data;
   let $sql;
   try {
-    $sql = `select us.id, us.user_id, concat(u.firstname, ' ', u.lastname) user_name, u.timezone, us.start_date_time,
-    us.end_date_time, us.monday, us.tuesday, us.wednesday, us.thursday, us.friday, us.active, us.created, concat(u2.firstname, ' ', u2.lastname) created_name, us.updated, concat(u3.firstname, ' ', u3.lastname) updated_name
+    $sql = `select us.id, us.user_id, concat(u.firstname, ' ', u.lastname) AS user_name, u.timezone, us.start_date_time,
+    us.end_date_time, us.monday, us.tuesday, us.wednesday, us.thursday, us.friday, us.active, us.created,
+    concat(u2.firstname, ' ', u2.lastname) AS created_name, us.updated, concat(u3.firstname, ' ', u3.lastname) AS updated_name
     from user_schedule us
-    left join user u on u.id=us.user_id
-    left join user u2 on u2.id=us.created_user_id
-    left join user u3 on u3.id=us.updated_user_id
+    left join users u on u.id=us.user_id
+    left join users u2 on u2.id=us.created_user_id
+    left join users u3 on u3.id=us.updated_user_id
     where us.client_id=${req.client_id} \n`;
     if (userId) {
-      $sql += `and us.user_id=? \n`;
+      $sql += `and us.user_id=${userId} \n`;
     }
     $sql += `limit 500`;
 
-    const dbResponse = await db.query($sql, [userId]);
+    const dbResponse = await db.query($sql);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     console.error(error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createNewSchedule = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const user_schedule = req.body.data;
-  user_schedule.client_id = req.client_id;
-  user_schedule.user_id = user_schedule.user_id || req.user_id;
-  user_schedule.created = new Date();
-  user_schedule.created_user_id = req.user_id;
+
+  let {user_id} = req.body.data;
+  const {start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday} = req.body.data;
+  user_id = user_id || req.user_id;
 
   try {
     const dbResponse = await db.query(
-      "insert into user_schedule set ?",
-      user_schedule
+      `insert into user_schedule(user_id, client_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday, created, created_user_id) 
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, now(), ${req.user_id}) RETURNING id`,
+      [user_id, req.client_id, start_date_time, end_date_time, log_tz, active, note, monday, tuesday, wednesday, thursday, friday]
     );
 
-    if (!dbResponse.insertId) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "Creation not successful";
       res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Creation successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.error(err);
     errorMessage.message = "Creation not not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const updateSchedule = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const user_schedule = req.body.data;
-  user_schedule.client_id = req.client_id;
-  user_schedule.user_id = user_schedule.user_id || req.user_id;
-  user_schedule.updated = new Date();
-  user_schedule.updated_user_id = req.user_id;
 
+  const { user_id, monday, tuesday, wednesday, thursday, friday, note } = req.body.data;
+  const userId = user_id || req.user_id;
   try {
     const updateResponse = await db.query(
-      `update user_schedule set ? where id =${req.params.id}`,
-      [user_schedule]
+      `UPDATE user_schedule SET client_id=${req.client_id}, user_id=$1, monday=$2, tuesday=$3, wednesday=$4, thursday=$5, friday=$6, note=$7,
+       updated=now(), updated_user_id=${req.user_id} WHERE id=$8 RETURNING id`,
+      [userId, monday, tuesday, wednesday, thursday, friday, note, req.params.id]
     );
 
-    if (!updateResponse.affectedRows) {
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
     console.error(error);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -127,23 +115,21 @@ const deleteSchedule = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.error).send(errorMessage);
   }
-  const db = makeDb(configuration, res);
-  try {
-    const deleteResponse = await db.query(`delete from user_schedule where id=?`, [req.params.id]);
 
-    if (!deleteResponse.affectedRows) {
+  try {
+    const deleteResponse = await db.query(`delete from user_schedule where id=$1 RETURNING id`, [req.params.id]);
+
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Deletion successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
     console.error(error);
     errorMessage.message = "Deletion not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

@@ -1,32 +1,28 @@
-const db  = require("../db");
+const db = require('../db')
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
-const getAgreement = async (req, res) => {
+const getAllUsers = async (req, res) => {
+  const client = await db.getClient()
   try {
-    const rows = await db.query(
-      `select contract 
-       from contract
-       where created = (
-         select max(created)
-         from contract
-         )`
-    );
-    const dbResponse = rows[0];
+    const dbResponse = await db.query(`select * from client limit 100`);
 
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
-  } catch (err) {
+  } catch (error) {
+    console.log('error:', error)
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
+  } finally {
+    client.release()
   }
 };
 
-const clients = {
-  getAgreement,
+const users = {
+  getAllUsers
 };
 
-module.exports = clients;
+module.exports = users;

@@ -78,7 +78,8 @@ const Reports = ({ reports, ...props }) => {
   const classes = useStyles();
   const history = useHistory();
 
-  const formatAmount = (value) => value?.toFixed(2) || "0.00";
+  const formatAmount = (value) => Number(value)?.toFixed(2) || "0.00";
+
   return (
     <TableContainer component={Paper} className={classes.tableContainer}>
       <Table className={classes.table} size="small" aria-label="a dense table">
@@ -106,11 +107,11 @@ const Reports = ({ reports, ...props }) => {
                 {report.year}
               </TableCell>
               <TableCell>{moment(report.month, "M").format("MMM")}</TableCell>
-              <TableCell padding="checkbox">{`$${formatAmount(report.Total)}`}</TableCell>
-              <TableCell padding="checkbox">{`$${formatAmount(report.Service)}`}</TableCell>
-              <TableCell padding="checkbox">{`$${formatAmount(report.Credit)}`}</TableCell>
-              <TableCell padding="checkbox">{`$${formatAmount(report.Payment)}`}</TableCell>
-              <TableCell padding="checkbox">{`$${formatAmount(report.Refund)}`}</TableCell>
+              <TableCell padding="checkbox">{`$${formatAmount(report.total)}`}</TableCell>
+              <TableCell padding="checkbox">{`$${formatAmount(report.service)}`}</TableCell>
+              <TableCell padding="checkbox">{`$${formatAmount(report.credit)}`}</TableCell>
+              <TableCell padding="checkbox">{`$${formatAmount(report.payment)}`}</TableCell>
+              <TableCell padding="checkbox">{`$${formatAmount(report.refund)}`}</TableCell>
               <TableCell
                 className={classes.detailLink}
                 onClick={() => history.push(
@@ -127,21 +128,21 @@ const Reports = ({ reports, ...props }) => {
               Total
             </TableCell>
             <TableCell padding="checkbox" colSpan={1} align="left">
-              {`$${formatAmount(reports.reduce((a, b) => a + b.Total, 0))}`}
+              {`$${formatAmount(reports.reduce((a, b) => a + Number(b.total), 0))}`}
             </TableCell>
             <TableCell padding="checkbox" colSpan={1} align="left">
-              {`$${formatAmount(reports.reduce((a, b) => a + b.Service, 0))}`}
+              {`$${formatAmount(reports.reduce((a, b) => a + Number(b.service), 0))}`}
             </TableCell>
             <TableCell padding="checkbox" colSpan={1} align="left">
-              {`$${formatAmount(reports.reduce((a, b) => a + b.Credit, 0))}`}
+              {`$${formatAmount(reports.reduce((a, b) => a + Number(b.credit), 0))}`}
             </TableCell>
             <TableCell padding="checkbox" colSpan={1} align="left">
-              {`$${formatAmount(reports.reduce((a, b) => a + b.Payment, 0))}`}
+              {`$${formatAmount(reports.reduce((a, b) => a + Number(b.payment), 0))}`}
             </TableCell>
             <TableCell padding="checkbox" colSpan={1} align="left">
               <div style={{ marginLeft: "5px" }}>
                 {`$${formatAmount(reports.reduce(
-                  (a, b) => a + b.Refund,
+                  (a, b) => a + Number(b.refund),
                   0,
                 ))}`}
               </div>

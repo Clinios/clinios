@@ -20,7 +20,7 @@ const bcrypt = require("bcryptjs");
 const moment = require("moment");
 const { validationResult } = require("express-validator");
 const sgMail = require("@sendgrid/mail");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -108,20 +108,19 @@ exports.sendPasswordResetEmail = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
 
-  const db = makeDb(configuration, res);
   // Check where user already signed up or not
   const { email } = req.params;
-  const userRows = await db.query(
-    "SELECT id, firstname, lastname, email, password, sign_dt, email_confirm_dt, created FROM user WHERE email = ? LIMIT 1",
+  const userResponse = await db.query(
+    "SELECT id, firstname, lastname, email, password, sign_dt, email_confirm_dt, created FROM users WHERE email = $1 LIMIT 1",
     [email]
   );
-  if (userRows.length < 1) {
+  if (userResponse.rows.length < 1) {
     errorMessage.message =
       "We couldn't find any record with that email address.";
     return res.status(status.notfound).send(errorMessage);
   }
 
-  const user = userRows[0];
+  const user = userResponse.rows[0];
   if (!user) {
     errorMessage.message = "User not found";
     errorMessage.user = user;
@@ -144,9 +143,9 @@ exports.sendPasswordResetEmail = async (req, res) => {
 
     // update user table for password reset token and expires time
     const userUpdate = await db.query(
-      `UPDATE user SET reset_password_token='${token}', reset_password_expires='${token_expires}', updated= now() WHERE id =${user.id}`
+      `UPDATE users SET reset_password_token='${token}', reset_password_expires='${token_expires}', updated= now() WHERE id =${user.id}`
     );
-    if (userUpdate.affectedRows) {
+    if (userUpdate.rowCount) {
       sendRecoveryEmail(user, res);
     }
   }
@@ -159,18 +158,17 @@ exports.sendPasswordResetEmail = async (req, res) => {
  * @returns {object} response
  */
 exports.receiveNewPassword = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { corporateId, token } = req.params;
   const { password } = req.body;
 
   // find user with reset_password_token AND userId
   // check token expires validity
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
-  const userRows = await db.query(
-    `SELECT id, email, reset_password_token, reset_password_expires FROM user WHERE id=? AND reset_password_token=? AND reset_password_expires > '${now}'`,
+  const userResponse = await db.query(
+    `SELECT id, email, reset_password_token, reset_password_expires FROM users WHERE id=$1 AND reset_password_token=$2 AND reset_password_expires > '${now}'`,
     [corporateId, token]
   );
-  const user = userRows[0];
+  const user = userResponse.rows[0];
 
   if (!user) {
     errorMessage.message = "User not found";
@@ -182,10 +180,10 @@ exports.receiveNewPassword = async (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 8);
 
   const updateUserResponse = await db.query(
-    `UPDATE user SET password='${hashedPassword}', reset_password_token=NULL, reset_password_expires=NULL, updated= now() WHERE id =${user.id}`
+    `UPDATE users SET password='${hashedPassword}', reset_password_token=NULL, reset_password_expires=NULL, updated= now() WHERE id =${user.id}`
   );
 
-  if (updateUserResponse.affectedRows) {
+  if (updateUserResponse.rowCount) {
     successMessage.message = "Password changed succesfullly!";
     return res.status(status.success).send(successMessage);
   }

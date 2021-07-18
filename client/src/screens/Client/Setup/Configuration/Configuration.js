@@ -176,28 +176,27 @@ export default function Configuration() {
     }
   };
 
-  /**
-   *
-   */
   const _onSubmitConfig = async () => {
     setSubmitting(true);
 
     try {
       const _params = {
-        address: formParams.address,
-        address2: formParams.addressLineTwo,
-        city: formParams.city,
-        state: formParams.state,
-        website: formParams.clientWebsite,
-        country: formParams.country,
-        calendar_start_time: moment(calendarStartTime).format("HH:mm:ss"),
-        calendar_end_time: moment(calendarEndTime).format("HH:mm:ss"),
-        email: formParams.email,
-        ein: formParams.ein,
-        npi: formParams.npi,
-        postal: formParams.zipcode,
-        phone: formParams.phone,
-        fax: formParams.fax,
+        data: {
+          address: formParams.address,
+          address2: formParams.addressLineTwo,
+          city: formParams.city,
+          state: formParams.state,
+          website: formParams.clientWebsite,
+          country: formParams.country,
+          calendar_start_time: moment(calendarStartTime).format("HH:mm:ss"),
+          calendar_end_time: moment(calendarEndTime).format("HH:mm:ss"),
+          email: formParams.email,
+          ein: formParams.ein,
+          npi: formParams.npi,
+          postal: formParams.zipcode,
+          phone: formParams.phone,
+          fax: formParams.fax,
+        },
       };
       const response = await ConfigurationService.updateConfig(user.id, _params);
       setSubmitting(false);

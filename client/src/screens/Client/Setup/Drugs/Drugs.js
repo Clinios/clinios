@@ -36,8 +36,10 @@ export default function Drugs() {
   const [favorite, setFavorite] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
   const payload = {
-    searchTerm,
-    checkBox: favorite,
+    data: {
+      searchTerm,
+      checkBox: favorite,
+    },
   };
 
   const fetchSearchDrugs = () => {

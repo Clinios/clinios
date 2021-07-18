@@ -275,6 +275,7 @@ const DocumentsContent = (props) => {
             title={selectedDocument.filename}
             message={(
               <ProcessLab
+                reloadData={() => reloadData()}
                 fromHome={false}
                 userId={user.id}
                 documentId={selectedDocument.id}

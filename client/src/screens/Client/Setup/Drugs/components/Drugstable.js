@@ -75,7 +75,9 @@ const Drugstable = ({ result, fetchSearchDrugs }) => {
 
   const changeHandler = (event, drugId) => {
     const payload = {
-      drug_id: drugId,
+      data: {
+        drug_id: drugId,
+      },
     };
     const { checked } = event.target;
     setState(

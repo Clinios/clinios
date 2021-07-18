@@ -184,7 +184,7 @@ const Billing = () => {
                       <StyledTableCell>{item.account_num || "-"}</StyledTableCell>
                       <StyledTableCell>
                         $
-                        {item?.amount?.toFixed(2)}
+                        {Number(item.amount)?.toFixed(2)}
                       </StyledTableCell>
                       <StyledTableCell
                         className={classes.centered}
@@ -215,7 +215,7 @@ const Billing = () => {
                       >
                         <Typography className={classes.resMessage}>
                           $
-                          {balance?.toFixed(2)}
+                          {Number(balance)?.toFixed(2)}
                         </Typography>
                       </StyledTableCell>
                     </StyledTableRow>

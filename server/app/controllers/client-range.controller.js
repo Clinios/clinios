@@ -1,8 +1,7 @@
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const getClientRanges = async (req, res) => {
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(
       `select cr.id, cr.marker_id, c.name marker_name, cr.seq, cr.compare_item, cr.compare_operator,
@@ -11,112 +10,95 @@ const getClientRanges = async (req, res) => {
     , concat(u2.firstname, ' ', u2.lastname) updated_user 
     from client_range cr
     left join marker c on c.id=cr.marker_id
-    left join user u on u.id=cr.created_user_id
-    left join user u2 on u2.id=cr.updated_user_id
+    left join users u on u.id=cr.created_user_id
+    left join users u2 on u2.id=cr.updated_user_id
     where cr.client_id=${req.client_id}
-    order by c.name, cr.seq
-    `
-    );
+    order by c.name, cr.seq`);
 
-    if (!dbResponse) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     console.log("error:", error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const deleteClientRange = async (req, res) => {
   const { id } = req.params;
   const { marker_name } = req.body.data;
-  const db = makeDb(configuration, res);
   try {
-    const deleteResponse = await db.query(`delete from client_range where id=?`, [id]);
+    const deleteResponse = await db.query(`delete from client_range where id=$1 RETURNING id`, [id]);
 
     await db.query(
       `insert into user_log values (${req.client_id}, ${req.user_id}, now(), null, 'Deleted marker range ${marker_name}')`
     );
 
-    if (!deleteResponse.affectedRows) {
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const resetClientRange = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   try {
     await db.query(`delete from client_range where client_id=${req.client_id}`);
     const insertResponse = await db.query(`insert into client_range
       select null, ${req.client_id}, marker_id, seq, compare_item, compare_operator, compare_to, range_low, range_high, now(), ${req.user_id}, now(), ${req.user_id}
       from client_range 
-      where client_id=1`);
+      where client_id=1 RETURNING id`);
     await db.query(
       `insert into user_log values (${req.client_id}, ${req.user_id}, now(), null, 'Reset all custom marker ranges')`
     );
 
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const updateClientRange = async (req, res) => {
   const { id } = req.params;
-  const db = makeDb(configuration, res);
-
-  const formData = req.body.data;
-  formData.updated = new Date();
-  formData.updated_user_id = req.user_id;
-  
+  const {marker_id, seq, compare_item, compare_operator, compare_to, range_low, range_high} = req.body.data;
   try {
-    const updateResponse = await db.query(`update client_range set ? where id=?`, [formData, id]);
-    if (!updateResponse.affectedRows) {
+    const updateResponse = await db.query(`update client_range set marker_id=$1, seq=$2, compare_item=$3, compare_operator=$4, compare_to=$5,
+     range_low=$6, range_high=$7, updated=now(), updated_user_id=${req.user_id} where id=$8 RETURNING id`,
+      [marker_id, seq, compare_item, compare_operator, compare_to, range_low, range_high, id]);
+
+    if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
       return res.status(status.error).send(errorMessage);
     }
 
-    successMessage.data = updateResponse;
+    successMessage.data = updateResponse.rows;
     successMessage.message = "Update successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Update not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const getClientRange = async (req, res) => {
   const { marker_id, seq, compare_item, compare_operator, compare_to } = req.query;
-
-  const db = makeDb(configuration, res);
   try {
     const dbResponse = await db.query(`
       select cr.marker_id, c.name marker_name, cr.seq, cr.compare_item, cr.compare_operator, cr.compare_to, cr.range_low, cr.range_high
@@ -124,67 +106,55 @@ const getClientRange = async (req, res) => {
       , cr.updated, concat(u2.firstname, ' ', u2.lastname) updated_user
       from client_range cr
       left join marker c on c.id=cr.marker_id
-      left join user u on u.id=cr.created_user_id
-      left join user u2 on u2.id=cr.updated_user_id
+      left join users u on u.id=cr.created_user_id
+      left join users u2 on u2.id=cr.updated_user_id
       where cr.client_id=${req.client_id}
-      and cr.marker_id=?
-      and cr.seq=?
-      and cr.compare_item=?
-      and cr.compare_operator=?
-      and cr.compare_to=?
-    `, [marker_id, seq, compare_item, compare_operator, compare_to]);
+      and cr.marker_id=$1
+      and cr.seq=$2
+      and cr.compare_item=$3
+      and cr.compare_operator=$4
+      and cr.compare_to=$5`,
+      [marker_id, seq, compare_item, compare_operator, compare_to]
+    );
 
-    if (!dbResponse) {
+    if (!dbResponse.rowCount) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (error) {
     console.log("error:", error);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const createClientRange = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const { marker_id } = req.body.data;
-  const client_range = req.body.data;
-  client_range.marker_id = marker_id;
-  client_range.created_user_id = req.user_id;
-  client_range.client_id = req.client_id;
-  client_range.created = new Date();
 
-  delete req.body.data.marker_id; // deleting otherwise request fails
-
+const { marker_id, seq, compare_item, compare_operator, compare_to, range_low, range_high } = req.body.data;
   try {
     const insertResponse = await db.query(
-      "insert into client_range set ?",
-      client_range
+      `insert into client_range(client_id, marker_id, seq, compare_item, compare_operator, compare_to, range_low, range_high, created, created_user_id) 
+      VALUES(${req.client_id}, $1, $2, $3, $4, $5, $6, $7, now(), ${req.user_id}) RETURNING id, client_id`,
+      [marker_id, seq, compare_item, compare_operator, compare_to, range_low, range_high]
     );
 
-    if (!insertResponse.affectedRows) {
+    if (!insertResponse.rowCount) {
       errorMessage.message = "Insert not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = insertResponse;
+    successMessage.data = insertResponse.rows;
     successMessage.message = "Insert successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Insert not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 const searchTests = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   const { query } = req.query;
   let $sql;
   try {
@@ -194,8 +164,7 @@ const searchTests = async (req, res) => {
       where c.type='L'
       and c.name like '%${query}%'
       order by c.name
-      limit 20
-    `;
+      limit 20`;
 
     const dbResponse = await db.query($sql);
 
@@ -203,14 +172,12 @@ const searchTests = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.error("err:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

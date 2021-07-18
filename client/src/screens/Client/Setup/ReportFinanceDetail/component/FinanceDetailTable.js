@@ -104,7 +104,7 @@ const FinanceDetailTable = ({ financeDetail }) => {
                 </TableCell>
                 <TableCell padding="checkbox">
                   <NumberFormat
-                    value={detail.amount?.toFixed(2)}
+                    value={Number(detail.amount)?.toFixed(2)}
                     displayType="text"
                     thousandSeparator
                     prefix="$"

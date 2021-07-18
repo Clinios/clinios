@@ -57,7 +57,7 @@ const DetailToolTip = (props) => {
         <span className={classes.label}>Price:</span>
         <span className={classes.text}>
           {lab_name === null || lab_id === 2 // Quest
-            ? `$${price.toFixed(2)}`
+            ? `$${Number(price).toFixed(2)}`
             : (
               <a className={classes.link} href={APP_LOGIN_LINK}>
                 Login to see price

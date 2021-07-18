@@ -1,8 +1,7 @@
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const search = async (req, res) => {
-  const db = makeDb(configuration, res);
   const {
     firstname,
     lastname,
@@ -17,11 +16,12 @@ const search = async (req, res) => {
     paymentFrom,
     paymentTo,
   } = req.body.data;
+
   let $sql;
 
   try {
-    $sql = `select distinct p.id, p.firstname, p.middlename, p.lastname, p.city, p.state, p.postal, p.country, p.phone_cell, p.phone_home, p.email, p.gender, p.created
-    from patient p \n`;
+    $sql = `select distinct p.id, p.firstname, p.middlename, p.lastname, p.city, p.state, p.postal, p.country, p.phone_cell,
+     p.phone_home, p.email, p.gender, p.created from patient p \n`;
     if (appointmentFrom || appointmentTo) {
       $sql += `join user_calendar uc on uc.client_id=${req.client_id} and uc.patient_id=p.id \n`;
     }
@@ -35,10 +35,10 @@ const search = async (req, res) => {
       $sql += `join tran t on t.client_id=${req.client_id} and t.patient_id=p.id \n`;
     }
     if (paymentFrom) {
-      $sql += `  and t.dt >= ${paymentFrom} \n`;
+      $sql += `  and t.dt >= '${paymentFrom}' \n`;
     }
     if (paymentTo) {
-      $sql += `  and t.dt <= ${paymentTo} \n`;
+      $sql += `  and t.dt <= '${paymentTo}' \n`;
     }
     $sql += `where p.client_id=${req.client_id} \n`;
     if (firstname) {
@@ -57,10 +57,10 @@ const search = async (req, res) => {
       $sql += `and p.id = ${id} \n`;
     }
     if (patientStatus) {
-      $sql += `and p.status = ${patientStatus}  \n`;
+      $sql += `and p.status = '${patientStatus}'  \n`;
     }
     if (createdFrom) {
-      $sql += `and p.created >= '${createdFrom}' \n`;
+      $sql += `and p.created => '${createdFrom}' \n`;
     }
     if (createdTo) {
       $sql += `and p.created <= '${createdTo}' \n`;
@@ -73,14 +73,12 @@ const search = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

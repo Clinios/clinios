@@ -1,16 +1,14 @@
 const multer = require("multer");
 const fs = require("fs");
-const { configuration, makeDb } = require("../db/db.js");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const getAll = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   try {
     const dbResponse = await db.query(
-      `select h.id, h.filename, h.created, concat(u.firstname, ' ', u.lastname) name, h.client_id
+      `select h.id, h.filename, h.created, concat(u.firstname, ' ', u.lastname) AS name, h.client_id
       from handout h
-      left join user u on u.id=h.created_user_id
+      left join users u on u.id=h.created_user_id
       where h.client_id=${req.client_id}
       order by h.filename
       limit 100`
@@ -20,14 +18,12 @@ const getAll = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -94,7 +90,6 @@ const addHandouts = async (req, res) => {
     }
 
     const uploadedFilename = req.file.originalname.replace(/\s/g, '_');
-    const db = makeDb(configuration, res);
     try {
       const existingHandout = await db.query(
         `select 1
@@ -109,19 +104,14 @@ const addHandouts = async (req, res) => {
         return res.status(status.error).send(errorMessage);
       }
 
-      const handoutData = req.body;
-      handoutData.client_id = req.client_id;
-      handoutData.filename = uploadedFilename;
-      handoutData.created = new Date();
-      handoutData.created_user_id = req.user_id;
+      const { notes } = req.body;
 
-      delete handoutData.patient_id;
-      
       const insertResponse = await db.query(
-        `insert into handout set ?`, [handoutData]
+        `insert into handout(filename, notes, client_id, created, created_user_id) 
+        VALUES($1, $2, ${req.client_id}, now(), ${req.user_id}) RETURNING id`, [uploadedFilename, notes]
       );
 
-      if (!insertResponse.affectedRows) {
+      if (!insertResponse.rowCount) {
         removeFile(req.file);
         errorMessage.message = "Insert not successful";
         return res.status(status.notfound).send(errorMessage);
@@ -134,15 +124,13 @@ const addHandouts = async (req, res) => {
         req.file.path.replace("undefined", req.client_id)
       );
 
-      successMessage.data = insertResponse;
+      successMessage.data = insertResponse.rows;
       successMessage.message = "Insert successful";
       return res.status(status.created).send(successMessage);
     } catch (excepErr) {
       console.log("excepErr", excepErr);
       errorMessage.message = "Insert not successful";
       return res.status(status.error).send(errorMessage);
-    } finally {
-      await db.close();
     }
   });
 };
@@ -150,34 +138,27 @@ const addHandouts = async (req, res) => {
 const deleteHandout = async (req, res) => {
   const { id } = req.params;
 
-  const db = makeDb(configuration, res);
   try {
     // Call DB query without assigning into a variable
-    const deletePatientHandoutResponse = await db.query(
-      `delete from patient_handout where handout_id=${id}`
-    );
+    const deletePatientHandoutResponse = await db.query(`DELETE FROM patient_handout WHERE handout_id=$1 RETURNING handout_id`, [id]);
 
-    const deleteHandoutResponse = await db.query(
-      `delete from handout where id=${id}`
-    );
+    const deleteHandoutResponse = await db.query(`DELETE FROM handout WHERE id=$1 RETURNING id`, [id]);
 
-    if (!deletePatientHandoutResponse.affectedRows) {
+    if (!deletePatientHandoutResponse.rowCount) {
       console.info("Patient Handout deletion not successful");
     }
-    if (!deleteHandoutResponse.affectedRows) {
+    if (!deleteHandoutResponse.rowCount) {
       errorMessage.message = "Handout deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = deleteHandoutResponse;
+    successMessage.data = deleteHandoutResponse.rows;
     successMessage.message = "Delete successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log(err);
     errorMessage.message = "Delete not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

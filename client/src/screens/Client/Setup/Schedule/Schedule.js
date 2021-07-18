@@ -58,7 +58,9 @@ const Schedule = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [fetchingCompleted, setFetchingCompleted] = useState(false);
 
-  const payload = useMemo(() => ({ userId }), [userId]);
+  const payload = useMemo(() => (
+    { data: { userId } }
+  ), [userId]);
 
   const getUserList = () => {
     ScheduleService.getAllUsers().then((res) => {

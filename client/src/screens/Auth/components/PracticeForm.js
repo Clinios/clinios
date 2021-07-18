@@ -114,19 +114,19 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
         {
           value: event.target.value,
           msg: "Too Weak. Must be atleast 8 Characters",
-          param: "user.password",
+          param: "users.password",
         },
       ]);
     } else {
       const updatedErrors = fieldErrors.filter(
-        (error) => error.param !== "user.password",
+        (error) => error.param !== "users.password",
       );
       setFieldErrors(updatedErrors);
     }
   };
 
   const practiceErrors = errors && errors.filter((err) => err.param.includes("client"));
-  const userErrors = errors && errors.filter((err) => err.param.includes("user"));
+  const userErrors = errors && errors.filter((err) => err.param.includes("users"));
 
   const getFieldError = (target, fieldName) => {
     let value = `client.${fieldName}`;
@@ -407,8 +407,8 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
         label="Your Email Address"
         value={email}
         handleOnChange={(event) => setEmail(event.target.value)}
-        handleOnBlur={(event) => handleAjaxValidation(event, "user")}
-        errors={getFieldError("user", "email")}
+        handleOnBlur={(event) => handleAjaxValidation(event, "users")}
+        errors={getFieldError("users", "email")}
         inputProps={{ maxLength: 255 }}
         helperText={`${email.length >= 255 ? "Enter an email between 255 charecter" : ""
         }`}
@@ -447,7 +447,7 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
         value={password}
         handleOnChange={(event) => setPassword(event.target.value)}
         handleOnBlur={(event) => validatePassword(event)}
-        errors={getFieldError("user", "password")}
+        errors={getFieldError("users", "password")}
         inputProps={{ maxLength: 90 }}
         helperText={`${password.length >= 90 ? "Enter a password between 90 charecter" : ""
         }`}

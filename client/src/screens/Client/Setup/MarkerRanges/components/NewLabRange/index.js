@@ -174,7 +174,7 @@ const NewLabRange = (props) => {
   };
 
   useDidMountEffect(() => {
-    if (!searchText.length) {
+    if (searchText && !searchText.length) {
       setSearchTestResults([]);
     }
   }, [searchText]);

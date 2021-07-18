@@ -1,10 +1,10 @@
 const { validationResult } = require("express-validator");
-const { configuration, makeDb } = require("../db/db.js");
+const moment = require("moment");
+const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
 const search = async (req, res) => {
-  const db = makeDb(configuration, res);
-  const { searchTerm, checkBox } = req.body;
+  const { searchTerm, checkBox } = req.body.data;
   let $sql;
 
   try {
@@ -12,10 +12,10 @@ const search = async (req, res) => {
       from drug d
       left join client_drug cd on cd.client_id=1
       and cd.drug_id=d.id
-      left join user u on u.id=cd.updated_user_id
-      where 1 \n`;
+      left join users u on u.id=cd.updated_user_id
+      where true \n`;
     if (searchTerm) {
-      $sql += `and d.name like '%${searchTerm}%' \n`;
+      $sql += `and d.name ILIKE '%${searchTerm}%' \n`;
     }
     if (checkBox === true) {
       $sql += `and cd.favorite = true \n`;
@@ -29,13 +29,12 @@ const search = async (req, res) => {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -45,20 +44,13 @@ const addFavorite = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.bad).send(errorMessage);
   }
-  const db = makeDb(configuration, res);
-  const client_drug = req.body;
-  client_drug.client_id = req.client_id;
-  client_drug.drug_id = req.body.drug_id;
-  client_drug.favorite = true;
-  client_drug.created = new Date();
-  client_drug.created_user_id = req.user_id;
-  client_drug.updated = new Date();
-  client_drug.updated_user_id = req.user_id;
+  const { drug_id } = req.body.data;
 
   try {
     const dbResponse = await db.query(
-      "insert into client_drug set ?",
-      client_drug
+      `insert into client_drug(client_id, drug_id, favorite, created, created_user_id) 
+      VALUES(${req.client_id}, $1, true, '${moment().format('YYYY-MM-DD hh:ss')}', ${req.user_id}) RETURNING client_id, drug_id`,
+      [drug_id]
     );
 
     if (!dbResponse) {
@@ -66,14 +58,13 @@ const addFavorite = async (req, res) => {
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     successMessage.message = "Creation successful";
     return res.status(status.created).send(successMessage);
   } catch (err) {
+    console.log(err);
     errorMessage.message = "Creation not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -83,23 +74,20 @@ const deleteFavorite = async (req, res) => {
     errorMessage.message = errors.array();
     return res.status(status.error).send(errorMessage);
   }
-  const db = makeDb(configuration, res);
+  const { id } = req.params
   try {
-    const deleteResponse = await db.query(
-      `delete from client_drug where client_id=${req.client_id} and drug_id=${req.params.id}`
-    );
-    if (!deleteResponse.affectedRows) {
+    const deleteResponse = await db.query(`delete from client_drug where client_id=${req.client_id} and drug_id=$1 RETURNING client_id, drug_id`, [id]);
+    if (!deleteResponse.rowCount) {
       errorMessage.message = "Deletion not successful";
       return res.status(status.notfound).send(errorMessage);
     }
-    successMessage.data = deleteResponse;
+    successMessage.data = deleteResponse.rows;
     successMessage.message = "Deletion successful";
     return res.status(status.success).send(successMessage);
   } catch (error) {
+    console.log(error);
     errorMessage.message = "Deletion not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

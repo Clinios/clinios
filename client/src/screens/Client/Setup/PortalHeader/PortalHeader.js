@@ -70,7 +70,9 @@ const PortalHeader = () => {
 
   const editPatientPortalHeader = () => {
     PatientPortalHeaderService.editClientPortalHeader(portalId, {
-      header: editedHeader,
+      data: {
+        header: editedHeader,
+      },
     });
   };
 

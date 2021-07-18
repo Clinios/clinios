@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const config = require("../../../config");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -15,14 +15,10 @@ const {
  * @returns {object} response
  */
 exports.signin = async (req, res) => {
-  const db = makeDb(configuration, res);
-
   const { email } = req.body;
-  const rows = await db.query(
-    `select id, admin, firstname, lastname, password from user where email=? and client_id is null`, [email]
-  );
+  const queryResponse = await db.query(`select id, admin, firstname, lastname, password from users where email=$1 and client_id is null`, [email]);
 
-  const user = rows[0];
+  const user = queryResponse.rows[0];
   if (!user) {
     errorMessage.message = "User not found";
     errorMessage.user = user;

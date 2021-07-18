@@ -2,7 +2,7 @@ const Stripe = require("stripe");
 const fs = require("fs");
 const bcrypt = require("bcryptjs");
 const moment = require("moment");
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -10,29 +10,23 @@ const {
 } = require("../../helpers/status");
 
 exports.getClientByCode = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { c } = req.query;
   try {
-    const dbResponse = await db.query(
-      `select id client_id, name, code from client where code='${c}'`
-    );
-    console.log("dbResponse", dbResponse);
+    const dbResponse = await db.query(`select id client_id, name, code from client where code=$1`, [c]);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
-    if (dbResponse.length === 0) {
+    if (dbResponse.rows.length === 0) {
       errorMessage.message = "Something went wrong with your URL!";
       return res.status(status.bad).send(errorMessage);
     }
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
@@ -43,7 +37,6 @@ exports.getClientByCode = async (req, res) => {
  * @returns {object} response
  */
 exports.patientSignup = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { patient } = req.body;
   patient.dob = moment(patient.dob).format("YYYY-MM-DD");
   patient.created = new Date();
@@ -55,10 +48,10 @@ exports.patientSignup = async (req, res) => {
   delete patient.imgBase64;
 
   const existingPatientRows = await db.query(
-    `SELECT 1 FROM patient WHERE client_id=? and  (email=? or ssn=?) LIMIT 1`, [patient.client_id, patient.email, patient.ssn]
+    `SELECT 1 FROM patient WHERE client_id=$1 and  (email=$2 or ssn=$3) LIMIT 1`, [patient.client_id, patient.email, patient.ssn]
   );
 
-  if (existingPatientRows.length > 0) {
+  if (existingPatientRows.rows.length > 0) {
     errorMessage.message = [
       {
         value: JSON.stringify(patient),
@@ -69,11 +62,11 @@ exports.patientSignup = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
 
-  const $sql = `select id, name, stripe_api_key from client where id=?`;
+  const $sql = `select id, name, stripe_api_key from client where id=$1`;
 
   const getStripeResponse = await db.query($sql, [patient.client_id]);
 
-  const stripe = Stripe(getStripeResponse[0].stripe_api_key);
+  const stripe = Stripe(getStripeResponse.rows[0].stripe_api_key);
   // Create customer on stripe.com
   const customer = await stripe.customers.create({
     email: patient.email,
@@ -89,24 +82,25 @@ exports.patientSignup = async (req, res) => {
   });
 
   patient.stripe_customer_id = customer.id;
+
   try {
     const patientResponse = await db.query(
-      "INSERT INTO patient set ?",
-      patient
+      `INSERT INTO patient(firstname, lastname, email, password, client_id, stripe_customer_id, created) VALUES($1, $2, $3, $4, $5, $6, now()) RETURNING id`,
+      [patient.firstname, patient.lastname, patient.email, patient.password, patient.client_id, patient.stripe_customer_id]
     );
 
-    if (!patientResponse.insertId) {
+    if (!patientResponse.rowCount) {
       errorMessage.message = "patient Cannot be registered";
       res.status(status.notfound).send(errorMessage);
     }
 
-    if (patientResponse.insertId) {
+    if (patientResponse.rowCount) {
       // TODO:: Check signature and upload
       if (signature) {
         const base64Data = signature.replace(/^data:image\/png;base64,/, "");
         const dest =
           `${process.env.UPLOAD_DIR}/signature/` +
-          `signature_${patientResponse.insertId}.png`;
+          `signature_${patientResponse.rows[0].id}.png`;
 
         // eslint-disable-next-line prefer-arrow-callback
         fs.writeFile(dest, base64Data, "base64", async function (err) {
@@ -115,51 +109,44 @@ exports.patientSignup = async (req, res) => {
             return res.status(status.error).send(errorMessage);
           }
           if (!err) {
-            const newDb = makeDb(configuration, res);
-            const updateResponse = await newDb.query(
+            const updateResponse = await db.query(
               `update patient
                   set signature='${dest}'
-                  where id=${patientResponse.insertId}
-                `
+                  where id=${patientResponse.rows[0].id}
+                `, [dest]
             );
-            if (!updateResponse.affectedRows) {
+            if (!updateResponse.rows) {
               console.error("There was a problem to save signature");
             }
           }
         });
       }
       successMessage.message = "User succesfullly registered!";
-      successMessage.data = patientResponse;
+      successMessage.data = patientResponse.rows;
       res.status(status.created).send(successMessage);
     }
   } catch (err) {
     // handle the error
+    console.log('error:', err)
     errorMessage.message = err.message;
     res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
 exports.getClientForm = async (req, res) => {
-  const db = makeDb(configuration, res);
   const { clientId } = req.params;
   try {
-    const dbResponse = await db.query(
-      `select cf.id, cf.form from client_form cf where cf.client_id=? and type='S'`, [clientId]
-    );
+    const dbResponse = await db.query(`select cf.id, cf.form from client_form cf where cf.client_id=$1 and type='S'`, [clientId]);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);
     }
 
-    successMessage.data = dbResponse;
+    successMessage.data = dbResponse.rows;
     return res.status(status.created).send(successMessage);
   } catch (err) {
     console.log("err", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };

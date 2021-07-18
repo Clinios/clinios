@@ -1,4 +1,4 @@
-const { configuration, makeDb } = require("../../db/db.js");
+const db = require("../../db");
 const {
   errorMessage,
   successMessage,
@@ -7,7 +7,6 @@ const {
 
 const getCase = async (req, res) => {
   const { supportStatus } = req.query;
-  const db = makeDb(configuration, res);
 
   try {
     let $sql;
@@ -15,16 +14,17 @@ const getCase = async (req, res) => {
       from support s
       left join client c on c.id=s.client_id
       left join case_status cs on cs.id=s.status_id
-      left join user u on u.id=s.created_user_id
+      left join users u on u.id=s.created_user_id
       where s.client_id=${req.client_id}`;
+
     if (supportStatus) {
       $sql += ` and s.status_id = '${supportStatus}'`;
     }
     $sql += ` order by s.created desc limit 100`;
 
-    const rows = await db.query($sql);
+    const supportResponse = await db.query($sql);
 
-    const dbResponse = rows;
+    const dbResponse = supportResponse.rows;
 
     if (!dbResponse) {
       errorMessage.message = "None found";
@@ -36,8 +36,6 @@ const getCase = async (req, res) => {
     console.error("Error:", err);
     errorMessage.message = "Select not successful";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 
