@@ -14,7 +14,7 @@ const getPrescription = async (req, res) => {
 
   let $sql;
   try {
-    $sql = `select pd.created, d.name
+    $sql = `select pd.id, pd.created, d.name
     , concat(ds.strength, ds.unit) strength
     , case when ds.form='T' then 'Tablets' end form
     from patient_drug pd
