@@ -18,9 +18,7 @@ const getAlllabs = async (req, res) => {
   let $sql;
 
   try {
-    $sql = `select l.created, l.filename, l.status
-    from lab l
-    where l.patient_id=$1 `;
+    $sql = `select l.created, l.filename, l.status, l.type from lab l where l.patient_id=$1 `;
 
     if (typeof tab !== "undefined" && tab !== "All") {
       if (tab === "Lab") {
