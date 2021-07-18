@@ -13,7 +13,6 @@ exports.getClientByCode = async (req, res) => {
   const { c } = req.query;
   try {
     const dbResponse = await db.query(`select id client_id, name, code from client where code=$1`, [c]);
-    console.log("dbResponse", dbResponse);
     if (!dbResponse) {
       errorMessage.message = "None found";
       return res.status(status.notfound).send(errorMessage);

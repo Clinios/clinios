@@ -81,12 +81,11 @@ exports.sendPasswordResetEmail = async (req, res) => {
   const data = req.body.patient;
 
   const patientResponse = await db.query(
-    "SELECT id, firstname, lastname, email, password, login_dt, created FROM patient WHERE email = $1 and lastname = $2 LIMIT 1",
-    [email, data.lastname]
+    "SELECT id, firstname, lastname, email, password, login_dt, created FROM patient WHERE email = $1 LIMIT 1",
+    [email]
   );
   if (patientResponse.rows.length < 1) {
-    errorMessage.message =
-      "We couldn't find any record with that email address.";
+    errorMessage.message = "We couldn't find any record with that email address.";
     return res.status(status.notfound).send(errorMessage);
   }
 
