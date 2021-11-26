@@ -6,11 +6,11 @@ const { errorMessage, status } = require("../helpers/status");
 const dbConfig = config.dbconfig;
 
 const configuration = {
-  host: dbConfig.HOST,
-  user: dbConfig.USER,
-  password: dbConfig.PASSWORD,
-  port: dbConfig.PORT,
-  database: dbConfig.DB,
+  host: dbConfig.host,
+  user: dbConfig.user,
+  password: dbConfig.password,
+  port: dbConfig.port,
+  database: dbConfig.database,
 };
 
 function makeDb(databaseConfig, res) {
