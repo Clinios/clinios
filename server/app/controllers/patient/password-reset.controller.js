@@ -78,7 +78,7 @@ const sendRecoveryEmail = async (user, res) => {
 exports.sendPasswordResetEmail = async (req, res) => {
   // Check where user already signed up or not
   const { email } = req.params;
-  const data = req.body.patient;
+  // const data = req.body.patient;
 
   const patientResponse = await db.query(
     "SELECT id, firstname, lastname, email, password, login_dt, created FROM patient WHERE email = $1 LIMIT 1",
@@ -104,7 +104,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
 
     // update user table for password reset token and expires time
     const patientUpdate = await db.query(
-      `UPDATE patient SET reset_password_token='${token}', reset_password_expires='${token_expires}', updated= now() 
+      `UPDATE patient SET reset_password_token='${token}', reset_password_expires='${token_expires}', updated= now()
         WHERE id =${patient.id} RETURNING id`
     );
     if (patientUpdate.rowCount) {
@@ -134,7 +134,7 @@ exports.receiveNewPassword = async (req, res) => {
   // check token expires validity
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
   const patientResponse = await db.query(
-    `SELECT id, email, client_id, reset_password_token, reset_password_expires FROM patient WHERE id=$1 
+    `SELECT id, email, client_id, reset_password_token, reset_password_expires FROM patient WHERE id=$1
     AND reset_password_token=$2 AND reset_password_expires > '${now}'`, [patientId, token]
   );
   const patient = patientResponse.rows[0];
