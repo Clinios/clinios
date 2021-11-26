@@ -19,7 +19,8 @@ Setup:
 
 1. `cd client`
 2. `yarn install`
-3. copy `.env.sample` into `.env` and fill in credentials
+3. `cp /client/env.sample /client/.env`
+4. edit .env and fill in values
 
 To run:
 
@@ -32,8 +33,9 @@ Setup:
 
 1. `cd server`
 2. `yarn install`
-3. copy `.env.sample` into `.env` and fill in credentials
-4. Make sure your database is running on your machine
+3. `cp /server/env.sample /server/.env`
+4. edit .env and fill in database credentials
+5. Make sure your database is running on your machine
 
 To run:
 
