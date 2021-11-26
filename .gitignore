@@ -27,6 +27,8 @@ yarn-error.log*
 /client/node_modules
 /client/.pnp
 /client/.pnp.js
+/client/package-lock.json
+/client/yarn.lock
 
 # testing
 /client/coverage
@@ -46,6 +48,8 @@ yarn-error.log*
 /server/node_modules
 /server/.pnp
 /server/.pnp.js
+/server/package-lock.json
+/server/yarn.lock
 
 # misc
 /server/.DS_Store
