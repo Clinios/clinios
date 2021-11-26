@@ -1,12 +1,12 @@
 const {env} = process;
 
 const config = {
-  db: { /* do not put password or any sensitive info here, done only for demo */
-    host: env.DB_HOST || 'localhost',
-    port: env.DB_PORT || '5432',
-    user: env.DB_USER || 'root',
-    password: env.DB_PASSWORD || 'root',
-    database: env.DB_NAME || 'clinios',
+  db: {
+    host: env.HOST, // || 'localhost',
+    port: env.DB_PORT,
+    user: env.DB_USER || 'postgres',
+    password: env.DB_PASSWORD || '1234',
+    database: env.DB_NAME || 'avon',
   },
   listPerPage: env.LIST_PER_PAGE || 10,
 };

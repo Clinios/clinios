@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const postgres = require("pg");
 const util = require("util");
 const config = require("../../config.js");
 const { errorMessage, status } = require("../helpers/status");
@@ -13,21 +13,8 @@ const configuration = {
   database: dbConfig.DB,
 };
 
-async function withTransaction(db, callback) {
-  try {
-    await db.beginTransaction();
-    await callback();
-    await db.commit();
-  } catch (err) {
-    await db.rollback();
-    throw err;
-  } finally {
-    await db.close();
-  }
-}
-
 function makeDb(databaseConfig, res) {
-  const connection = mysql.createConnection(databaseConfig);
+  const connection = postgres.createConnection(databaseConfig);
   connection.connect(function (error) {
     if (error) {
       console.error(`error connecting: ${error.stack}`);
@@ -59,10 +46,25 @@ function makeDb(databaseConfig, res) {
   };
 }
 
+/*
+async function withTransaction(db, callback) {
+  try {
+    await db.beginTransaction();
+    await callback();
+    await db.commit();
+  } catch (err) {
+    await db.rollback();
+    throw err;
+  } finally {
+    await db.close();
+  }
+}
+*/
+
 const db = {
   configuration,
   makeDb,
-  withTransaction,
+  // withTransaction,
 };
 
 module.exports = db;
