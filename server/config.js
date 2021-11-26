@@ -6,11 +6,11 @@ module.exports = {
   port: process.env.PORT || 5000,
   origin: process.env.ORIGIN || `http://localhost:${exports.port}`,
   dbconfig: {
-    HOST: process.env.HOST,
-    USER: process.env.DBUSER,
-    PASSWORD: process.env.DBPASSWORD,
-    PORT: process.env.DBPORT,
-    DB: process.env.DB,
+    host: process.env.HOST,
+    user: process.env.DBUSER,
+    password: process.env.DBPASSWORD,
+    port: process.env.DBPORT,
+    database: process.env.DB,
   },
   authSecret: process.env.JWT_SECRET,
   emailConfig: {
