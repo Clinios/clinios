@@ -20,7 +20,6 @@ Setup:
 1. `cd client`
 2. `yarn install`
 3. `cp env.example .env`
-4. edit .env and fill in values
 
 To run:
 
