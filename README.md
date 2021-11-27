@@ -40,7 +40,7 @@ To run:
 
 1. `yarn dev` or `npm run dev` for development, `yarn start` for production
 
-## Pull request
+## Pull Requests
 When you are ready with your work please create a git pull request.
 
 It is recommended to test the linter locally before creating pull request:
