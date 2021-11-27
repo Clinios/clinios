@@ -70,5 +70,5 @@ To test email notifications (only for development):
 
 ## Developers
 It is recommended to test linter locally before creating pull request:
-cd /client/
-./node_modules/.bin/eslint ./src/
+`cd /client/`
+`./node_modules/.bin/eslint ./src/`
