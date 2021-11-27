@@ -151,8 +151,7 @@ const ForgetPassword = () => {
           {!success && (
             <>
               <p>
-                It happens to the best of us. Enter your email and we&apos;ll send you
-                reset instructions.
+                Enter your email and we will send you reset instructions.
               </p>
               <form
                 className={classes.form}
