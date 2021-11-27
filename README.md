@@ -40,6 +40,13 @@ To run:
 
 1. `yarn dev` or `npm run dev` for development, `yarn start` for production
 
+## Pull request
+When you are ready with your work please create a git pull request.
+
+It is recommended to test the linter locally before creating pull request:
+1. `cd client`
+2. `./node_modules/.bin/eslint ./src/`
+
 ## Prettier
 
 1. In Visual Studio Code install the Prettier extension.
@@ -67,8 +74,3 @@ To test email notifications (only for development):
 
 1. Get `username` and `password` from `https://ethereal.email/create`
 2. Check emails on `https://ethereal.email/messages`
-
-## Developers
-It is recommended to test linter locally before creating pull request:
-1. `cd client`
-2. `./node_modules/.bin/eslint ./src/`
