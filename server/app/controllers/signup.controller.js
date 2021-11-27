@@ -113,6 +113,9 @@ exports.signup = async (req, res) => {
         : req.connection.remoteAddress;
       // TODO: for localhost ::1 might be taken. Need further test
       user.sign_ip_address = userIP;
+      await pgClient.query(`select setval( pg_get_serial_sequence('users', 'id'),
+        (select max(id) from users)
+      );`);
       const userResponse = await pgClient.query(`INSERT INTO users(firstname, lastname, client_id, email, password, admin, sign_dt, sign_ip_address, created) 
         VALUES ('${user.firstname}', '${user.lastname}', ${clientResponse.rows[0].id}, '${user.email}', '${user.password}', true, now(), '${userIP}', now()) RETURNING id`);
       const clientRows = await pgClient.query(
