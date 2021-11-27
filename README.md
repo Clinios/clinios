@@ -67,3 +67,8 @@ To test email notifications (only for development):
 
 1. Get `username` and `password` from `https://ethereal.email/create`
 2. Check emails on `https://ethereal.email/messages`
+
+## Developers
+It is recommended to test linter locally before creating pull request:
+cd /client/
+./node_modules/.bin/eslint ./src/
