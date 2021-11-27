@@ -102,7 +102,7 @@ const createPatient = async (req, res) => {
   try {
     const insertResponse = await db.query(`insert into patient(firstname, middlename, lastname, status, phone_home, phone_cell,
       phone_work, phone_other, phone_note, email, dob, gender, ssn, password, postal, address, address2, city,
-      insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc, client_id, created, created_user_id) 
+      insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc, client_id, created, created_user_id)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26) RETURNING id`,
        [firstname, middlename, lastname, req.body.data.status, phone_home, phone_cell,
         phone_work, phone_other, phone_note, email, dob, gender, ssn, password, postal, address, address2, city,
@@ -360,7 +360,7 @@ const history = async (req, res) => {
   const { patient_id } = req.params;
   try {
     const dbResponse = await db.query(
-      `select 
+      `select
         ph.created
         ,concat(u.firstname, ' ', u.lastname) created_user
         ,concat(u2.firstname, ' ', u2.lastname) provider
@@ -423,8 +423,8 @@ const getAppointmenthistory = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select concat(p.firstname, ' ', p.lastname) patient, concat(u2.firstname, ' ', u2.lastname) provider,
-       uc.start_dt, uc.end_dt, uc.status , uc.updated, concat(u.firstname, ' ', u.lastname) updated_by from user_calendar uc 
-       left join patient p on p.id=uc.patient_id left join users u on u.id=uc.updated_user_id 
+       uc.start_dt, uc.end_dt, uc.status , uc.updated, concat(u.firstname, ' ', u.lastname) updated_by from user_calendar uc
+       left join patient p on p.id=uc.patient_id left join users u on u.id=uc.updated_user_id
        left join users u2 on u2.id=uc.user_id where uc.patient_id=${patient_id}
        order by uc.start_dt desc limit 40`
     );
@@ -448,7 +448,7 @@ const nextAppointment = async (req, res) => {
   const now = moment().format("YYYY-MM-DD HH:mm:ss");
   try {
     const dbResponse = await db.query(
-      `select 
+      `select
         min(start_dt) start_dt
         from user_calendar
         where patient_id=${patient_id}
@@ -668,7 +668,7 @@ const handoutDelete = async (req, res) => {
     return res.status(status.bad).send(errorMessage);
   }
   const { id, patient_id } = req.params;
-  
+
   try {
     const deleteResponse = await db.query(
       `delete from patient_handout where patient_id=$1 and handout_id=$2`,
@@ -695,7 +695,7 @@ const CreatePatientHandouts = async (req, res) => {
   const {handout_id} = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into patient_handout(patient_id, client_id, handout_id, created, created_user_id) 
+    const insertResponse = await db.query(`insert into patient_handout(patient_id, client_id, handout_id, created, created_user_id)
     VALUES(${patient_id}, ${req.client_id}, ${handout_id}, now(), ${req.user_id}) RETURNING patient_id, handout_id`);
 
     if (!insertResponse.rowCount) {
@@ -1001,8 +1001,8 @@ const createNewBilling = async (req, res) => {
   const { amount, proc_id, type_id, note } = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into tran(amount, proc_id, type_id, note, dt, patient_id, client_id, created, created_user_id) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
+    const insertResponse = await db.query(`insert into tran(amount, proc_id, type_id, note, dt, patient_id, client_id, created, created_user_id)
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
     [amount, proc_id, type_id, note, moment().format('YYYY-MM-DD hh:ss'), patient_id, req.client_id, moment().format('YYYY-MM-DD hh:ss'), req.user_id]);
 
     if (!insertResponse.rowCount) {
@@ -1063,7 +1063,7 @@ const createBilling = async (req, res) => {
   }
 
   try {
-    const insertResponse = await db.query(`insert into tran(dt, type_id, payment_method_id, amount, note, patient_id, client_id, pp_status, pp_return) 
+    const insertResponse = await db.query(`insert into tran(dt, type_id, payment_method_id, amount, note, patient_id, client_id, pp_status, pp_return)
     VALUES (now(), $1, $2, $3, $4, $5, ${req.client_id}, $6, $7) RETURNING id`, [type_id, payment_method_id, amount, note, patient_id, pp_status, pp_return]);
 
     if (!insertResponse.rowCount) {
@@ -1180,7 +1180,7 @@ const createPatientAllergy = async (req, res) => {
       errorMessage.message = "This patient allergy already exists.";
       return res.status(status.notfound).send(errorMessage);
     }
-    const insertResponse = await db.query(`insert into patient_allergy(drug_id, patient_id, client_id, created, created_user_id) 
+    const insertResponse = await db.query(`insert into patient_allergy(drug_id, patient_id, client_id, created, created_user_id)
     VALUES($1, $2, $3, now(), ${req.user_id}) RETURNING drug_id`, [drug_id, patient_id, req.client_id]);
 
     if (!insertResponse.rowCount) {
@@ -1313,7 +1313,7 @@ const createDocuments = async (req, res) => {
         and filename='${uploadedFilename}'
         limit 1`
       );
-    
+
       if (existingLabDocument.rows.length > 0) {
         removeFile(req.file);
         errorMessage.message = "Same file is already in our database system!";
@@ -1321,7 +1321,7 @@ const createDocuments = async (req, res) => {
       }
 
       const insertResponse = await db.query(
-        `insert into lab (client_id, user_id, patient_id, filename, source, status, created, created_user_id) values 
+        `insert into lab (client_id, user_id, patient_id, filename, source, status, created, created_user_id) values
           (${req.client_id}, ${req.user_id}, ${patient_id}, '${uploadedFilename}', 'U', 'R', now(), ${req.user_id}) RETURNING id`
       );
 
@@ -1355,7 +1355,7 @@ const getEncounters = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select e.dt, e.id, e.title, et.name encounter_type, concat(u.firstname, ' ', u.lastname) AS name, notes, treatment
-      from encounter e 
+      from encounter e
       left join encounter_type et on et.id=e.type_id
       left join users u on u.id=e.user_id
       where e.patient_id=$1
@@ -1383,7 +1383,7 @@ const createEncounter = async (req, res) => {
   try {
     const insertResponse = await db.query(`insert into encounter(client_id, user_id, patient_id, dt, title, notes, treatment, type_id, read_dt, created, created_user_id )
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
-     [req.client_id, req.user_id, patient_id, moment(dt).format("YYYY-MM-DD HH:mm:ss"), title, notes, treatment, 
+     [req.client_id, req.user_id, patient_id, moment(dt).format("YYYY-MM-DD HH:mm:ss"), title, notes, treatment,
      type_id, moment(read_dt).format("YYYY-MM-DD HH:mm:ss"), moment().format("YYYY-MM-DD HH:mm:ss"), req.user_id]);
 
     if (!insertResponse.rowCount) {
@@ -1532,7 +1532,7 @@ const createMessage = async (req, res) => {
   const { message, unread_notify_dt } = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into message(client_id, user_id_from, patient_id_to, message, unread_notify_dt, created, created_user_id) 
+    const insertResponse = await db.query(`insert into message(client_id, user_id_from, patient_id_to, message, unread_notify_dt, created, created_user_id)
     VALUES(${req.client_id}, ${req.user_id}, $1, $2, $3, now(), ${req.user_id}) RETURNING id`, [patient_id, message, moment(unread_notify_dt).format("YYYY-MM-DD")]);
 
     if (!insertResponse.rowCount) {
@@ -1696,7 +1696,7 @@ const getRecentDiagnoses = async (req, res) => {
 };
 
 const getFavoriteDiagnoses = async (req, res) => {
- 
+
   try {
     const dbResponse = await db.query(
       `select i.name, i.id, ci.favorite
@@ -1737,7 +1737,7 @@ const searchTests = async (req, res) => {
       where c.type='L'
       and c.name ILIKE '%${text}%'
     `;
-    
+
     if (typeof company_id !== "undefined") {
       $sql += `and lc.id=${company_id} \n`;
     }
@@ -1869,7 +1869,7 @@ const createDiagnoses = async (req, res) => {
 
   try {
     const insertResponse = await db.query(
-      `insert into patient_icd(patient_id, icd_id, active, client_id, user_id, encounter_id, created, created_user_id) 
+      `insert into patient_icd(patient_id, icd_id, active, client_id, user_id, encounter_id, created, created_user_id)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`, [patient_id, icd_id, true, req.client_id, req.user_id, 1, new Date(), req.user_id]);
 
     if (!insertResponse.rowCount) {
@@ -1922,7 +1922,7 @@ const createMedications = async (req, res) => {
   try {
     const insertResponse = await db.query(
       `insert into patient_drug(patient_id, drug_id, drug_frequency_id, drug_strength_id, start_dt, expires,
-         amount, refills, generic, patient_instructions, pharmacy_instructions, created, created_user_id) 
+         amount, refills, generic, patient_instructions, pharmacy_instructions, created, created_user_id)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
           [patient_id, drug_id, drug_frequency_id, drug_strength_id, moment(start_dt).format("YYYY-MM-DD"), expires, amount, refills,
           generic, patient_instructions, pharmacy_instructions, moment().format("YYYY-MM-DD hh:ss"), req.user_id]
@@ -2109,7 +2109,7 @@ const createRequisitions = async (req, res) => {
   const {marker_id} = req.body.data;
 
   try {
-    const insertResponse = await db.query(`insert into patient_proc (client_id, patient_id, proc_id, created, created_user_id) 
+    const insertResponse = await db.query(`insert into patient_proc (client_id, patient_id, proc_id, created, created_user_id)
     VALUES(${req.client_id}, ${patient_id}, '${marker_id}', now(), ${req.user_id}) RETURNING proc_id`);
 
     if (!insertResponse.rowCount) {
@@ -2162,8 +2162,6 @@ const getLayout = async (req, res) => {
     console.log("err", err);
     errorMessage.message = "No Layout found";
     return res.status(status.error).send(errorMessage);
-  } finally {
-    await db.close();
   }
 };
 

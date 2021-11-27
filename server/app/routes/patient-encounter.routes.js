@@ -1,15 +1,10 @@
 const express = require("express");
 const { authJwt, authorization } = require("../middlewares");
-const PatientEncounter = require("../controllers/patient-encounters.controller.js");
+const PatientEncounter = require("../controllers/patient-encounters.controller");
 
 const router = express.Router();
 
 /** encounters */
-router.get(
-  "/patient/:patient_id/encounters",
-  [authJwt.verifyToken],
-  PatientEncounter.getEncounters
-);
 router.post(
   "/patient/:patient_id/encounters",
   [authJwt.verifyToken, authorization.isReadOnly],
