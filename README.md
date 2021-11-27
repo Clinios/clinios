@@ -19,7 +19,7 @@ Setup:
 
 1. `cd client`
 2. `yarn install`
-3. `cp /env.sample .env`
+3. `cp env.example .env`
 4. edit .env and fill in values
 
 To run:
@@ -33,7 +33,7 @@ Setup:
 
 1. `cd server`
 2. `yarn install`
-3. `cp /env.sample .env`
+3. `cp env.example .env`
 4. edit .env and fill in database credentials
 5. Make sure your database is running on your machine
 
