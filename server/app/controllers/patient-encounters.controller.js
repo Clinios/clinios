@@ -670,7 +670,7 @@ const getNewLabFavorites = async (req, res) => {
     let $sql;
 
     $sql = `select c.id, lc.name lab_name, c.name, case when cc.proc_id<>'' then true end favorite
-    from procedure c
+    from proc c
     join client_proc cc on cc.client_id=${req.client_id}
         and cc.proc_id=c.id
     left join lab_company lc on lc.id=c.lab_company_id \n`;
@@ -703,7 +703,7 @@ const getNewLabSearch = async (req, res) => {
     let $sql;
 
     $sql = `select c.id, lc.name lab_name, c.name, case when cc.proc_id<>'' then true end favorite, group_concat(ci.procedure2_id) procedure_items
-    from procedure c left join client_proc cc on cc.client_id=${req.client_id} and cc.proc_id=c.id
+    from proc c left join client_proc cc on cc.client_id=${req.client_id} and cc.proc_id=c.id
     left join lab_company lc on lc.id=c.lab_company_id
     left join proc_item ci on ci.proc_id=c.id
     where c.type='L' /*L=Lab*/
@@ -813,7 +813,7 @@ const getBillingProcedsures = async (req, res) => {
 
   try {
     const $sql = `select c.id, c.name, t.amount, cc.fee
-    from procedure c
+    from proc c
     join client_proc cc on cc.proc_id=c.id
     left join tran t on t.encounter_id=${encounter_id} and t.proc_id=cc.proc_id
     where cc.client_id=1

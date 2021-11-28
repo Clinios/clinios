@@ -160,7 +160,7 @@ const searchTests = async (req, res) => {
   try {
     $sql = `
       select c.id, c.name
-      from procedure c
+      from proc c
       where c.type='L'
       and c.name like '%${query}%'
       order by c.name
