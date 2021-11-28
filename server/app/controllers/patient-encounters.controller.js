@@ -2,34 +2,6 @@ const moment = require("moment");
 const db = require("../db");
 const { errorMessage, successMessage, status } = require("../helpers/status");
 
-const getEncounters = async (req, res) => {
-  const { patient_id } = req.params;
-
-  try {
-    const dbResponse = await db.query(
-      `select e.dt, e.id, e.title, et.name encounter_type, concat(u.firstname, ' ', u.lastname) name, notes, treatment
-      from encounter e 
-      left join encounter_type et on et.id=e.type_id
-      left join user u on u.id=e.user_id
-      where e.client_id=${req.client_id}
-      and e.patient_id=$1
-      order by e.dt desc
-      limit 50`, [patient_id]
-    );
-    if (!dbResponse) {
-      errorMessage.message = "None found";
-      return res.status(status.notfound).send(errorMessage);
-    }
-
-    successMessage.data = dbResponse.rows;
-    return res.status(status.created).send(successMessage);
-  } catch (err) {
-    console.log("err", err);
-    errorMessage.message = "Select not successful";
-    return res.status(status.error).send(errorMessage);
-  }
-};
-
 const getEncountersPrescriptions = async (req, res) => {
 
   try {
@@ -109,7 +81,7 @@ const encountersPrescriptionsEdit = async (req, res) => {
       , pd.generic, pd.patient_instructions, pd.pharmacy_instructions
       from patient_drug pd
       left join drug d on d.id=pd.drug_id
-      left join drug_strength ds on ds.drug_id=d.id 
+      left join drug_strength ds on ds.drug_id=d.id
         and ds.id=pd.drug_strength_id left join drug_frequency df on df.id=pd.drug_frequency_id
       where pd.encounter_id=$1
       and pd.drug_id=1
@@ -142,7 +114,7 @@ const encountersRecentProfiles = async (req, res) => {
         group by drug_id, drug_strength_id, drug_frequency_id, expires, amount, refills, generic, patient_instructions, pharmacy_instructions
         ) pd
         left join drug d on d.id=pd.drug_id
-        left join drug_strength ds on ds.drug_id=d.id 
+        left join drug_strength ds on ds.drug_id=d.id
             and ds.id=pd.drug_strength_id
         left join drug_frequency df on df.id=pd.drug_frequency_id
         order by count desc
@@ -273,7 +245,7 @@ const getDiagnoses = async (req, res) => {
       `select i.name, concat('(', pi.icd_id, ' ICD-10)') id
       from patient_icd pi
       join icd i on i.id=pi.icd_id
-      where pi.encounter_id=$1 
+      where pi.encounter_id=$1
       and pi.active=true
       order by i.name
       limit 20`, [encounter_id]
@@ -300,7 +272,7 @@ const getRecentDiagnoses = async (req, res) => {
       `select i.name, concat('(', pi.icd_id, ' ICD-10)') id
       from patient_icd pi
       join icd i on i.id=pi.icd_id
-      where pi.encounter_id<>$1 
+      where pi.encounter_id<>$1
       and pi.user_id=${req.client_id}
       order by pi.created desc
       limit 20`, [encounter_id]
@@ -392,8 +364,8 @@ const searchDrugAndType = async (req, res) => {
   try {
     const dbResponse = await db.query(
       `select d.name, concat(ds.strength, ds.unit) strength, case when ds.form='T' then 'Tablets' end form
-      from drug d 
-      left join drug_strength ds on ds.drug_id=d.id 
+      from drug d
+      left join drug_strength ds on ds.drug_id=d.id
       where d.name ilike '${text}%'`
     );
 
@@ -669,10 +641,10 @@ const deleteOrderedTests = async (req, res) => {
 };
 
 const getNewLabLaboratories = async (req, res) => {
- 
+
   try {
     const dbResponse = await db.query(
-      `select id, name 
+      `select id, name
       from lab_company
       order by name
       limit 100`
@@ -896,7 +868,7 @@ const createBillingPayment = async (req, res) => {
 
   try {
     const insertResponse = await db.query(
-      `insert into tran (dt, type_id, amount, encounter_id, client_id, patient_id, created, created_user_id) values 
+      `insert into tran (dt, type_id, amount, encounter_id, client_id, patient_id, created, created_user_id) values
         ('${dt}', ${type_id}, ${amount}, ${encounter_id}, ${req.client_id}, ${patient_id}, now(), ${req.user_id}) RETURNING id`
     );
 
@@ -915,7 +887,6 @@ const createBillingPayment = async (req, res) => {
 };
 
 const patientEncounter = {
-  getEncounters,
   getEncountersPrescriptions,
   getEncountersPrescriptionsFrequencies,
   getEncountersPrescriptionsStrength,

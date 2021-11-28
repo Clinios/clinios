@@ -1,7 +1,7 @@
 const express = require("express");
 const { authJwt, authorization } = require("../middlewares");
-const Patient = require("../controllers/patient.controller.js");
-const validation = require("../helpers/validations/patient.js");
+const Patient = require("../controllers/patient.controller");
+const validation = require("../helpers/validations/patient");
 
 const router = express.Router();
 

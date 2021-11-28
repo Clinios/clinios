@@ -1,6 +1,6 @@
 const postgres = require("pg");
 const util = require("util");
-const config = require("../../config.js");
+const config = require("../../config");
 const { errorMessage, status } = require("../helpers/status");
 
 const dbConfig = config.dbconfig;
