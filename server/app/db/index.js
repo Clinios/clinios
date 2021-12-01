@@ -1,7 +1,8 @@
 const { Pool } = require('pg')
-const config = require('../../config')
 
-const pool = new Pool(config.dbconfig)
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+})
 
 module.exports = {
   async query(text, params) {
@@ -11,6 +12,7 @@ module.exports = {
     console.log('executed query', { text, params, duration, rows: res.rowCount })
     return res
   },
+
   async getClient() {
     const client = await pool.connect()
     const {query} = client

@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 
-dotenv.config({ debug: false, override: true });
+dotenv.config({ debug: true, override: true });
 
 module.exports = {
   port: process.env.PORT || 5000,
