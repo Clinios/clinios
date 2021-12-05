@@ -11,7 +11,6 @@ const { errorMessage, successMessage, status } = require("../helpers/status");
  * @returns {object} response
  */
 exports.signin = async (req, res) => {
-  // Check for validation errors
   const response = await db.query(`select u.id, u.admin, u.client_id, u.firstname, u.lastname, u.email,
    u.password, u.sign_dt, u.email_confirm_dt, c.name, c.calendar_start_time, c.calendar_end_time
    from users u
