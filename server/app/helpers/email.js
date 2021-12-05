@@ -59,7 +59,7 @@ const resetPasswordTemplate = (user, url) => {
   const to = user.email;
   const subject = "Password Reset";
   const html = `
-  <p>Hey ${user.firstname || user.email},</p>
+  <p>Hi ${user.firstname || user.email},</p>
   <p>You can use the following link to reset your password.  It will expire in one hour.</p>
   <a href=${url}>${url}</a>
   `;

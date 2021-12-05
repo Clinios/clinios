@@ -34,7 +34,7 @@ const VerificationSuccess = ({ isEmailVerified }) => {
           <>
             <p>Thank you for confirming your email address. </p>
             <p>
-              Your login page would be
+              Your login page is
               {" "}
               <Link href={`${process.env.REACT_APP_SITE_URL}login_client`}>
                 {`${process.env.REACT_APP_SITE_URL}login_client`}

@@ -85,7 +85,7 @@ exports.verifyConfirmation = async (req, res) => {
 
       user.email_confirm_dt = now;
       successMessage.data = user;
-      successMessage.message = "Your Email address successfully verified!";
+      successMessage.message = "Email address successfully verified";
       return res.status(status.success).send(successMessage);
     }
     // Couldn't find the record
