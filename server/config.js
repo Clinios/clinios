@@ -5,7 +5,7 @@ dotenv.config({ debug: true, override: true });
 module.exports = {
   port: process.env.PORT || 5000,
   origin: process.env.ORIGIN || `http://localhost:${exports.port}`,
-  dbconfig: {
+  dbConfig: {
     host: process.env.HOST,
     user: process.env.DBUSER,
     password: process.env.DBPASSWORD,
