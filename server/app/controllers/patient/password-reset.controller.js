@@ -61,7 +61,7 @@ const sendRecoveryEmail = async (user, res) => {
         }
         return res.status(500).json({
           status: "error",
-          message: "Something went wrong while sending an reset email.",
+          message: "Something went wrong while sending a reset email.",
         });
       }
     );
