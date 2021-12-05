@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const config = require("../../config.js");
+const config = require("../../config");
 
 let mailConfig;
 if (process.env.NODE_ENV === "production") {
@@ -36,8 +36,6 @@ const signUpConfirmationTemplate = (user, url) => {
   <p>Thank you for signing up</p>
   <p>To confirm your email address click or copy the following link:</p>
   <a href=${url}>${url}</a>
-
-  <p>–-AvonEHR</p>
   `;
 
   return { from, to, subject, html };

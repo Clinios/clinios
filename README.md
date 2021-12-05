@@ -1,5 +1,3 @@
-# AvonEHR
-
 ## Stack
 
 - React.js

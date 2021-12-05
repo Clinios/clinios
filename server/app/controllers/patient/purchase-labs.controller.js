@@ -54,7 +54,7 @@ const createPurchaseLabs = async (req, res) => {
       });
       formData.customer_id = customer.id;
       // When patient initially signs up, a stripe customer id is created instantly for the doctor.
-      // When patient buys a lab, only then is a stripe corp customer id created for AvonEHR, David May 2021.
+      // When patient buys a lab, only then is a stripe corp customer id created for the corp (corp means my business), David May 2021.
       await db.query(
         `update patient set corp_stripe_customer_id='${customer.id}' where id=${req.user_id}`
       );
