@@ -125,15 +125,15 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
     }
   };
 
-  const practiceErrors = errors && errors.filter((err) => err.param.includes("client"));
-  const userErrors = errors && errors.filter((err) => err.param.includes("user"));
+  const practiceErrors = errors && errors.filter((err) => err?.param.includes("client"));
+  const userErrors = errors && errors.filter((err) => err?.param.includes("user"));
 
   const getFieldError = (target, fieldName) => {
     let value = `client.${fieldName}`;
     if (target) {
       value = `${target}.${fieldName}`;
     }
-    return fieldErrors && fieldErrors.filter((err) => err.param === value);
+    return fieldErrors && fieldErrors.filter((err) => err?.param === value);
   };
   const handleAjaxValidation = (event, target) => {
     if (!event.target) {
