@@ -51,7 +51,7 @@ export default function Footer() {
           {"Copyright © "}
           {" "}
           {new Date().getFullYear()}
-          {" AvonEHR"}
+          {` ${process.env.REACT_APP_SITE_TITLE}`}
           {" "}
           - User
           {" "}
