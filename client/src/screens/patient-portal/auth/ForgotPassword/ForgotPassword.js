@@ -206,8 +206,8 @@ const ForgotPassword = () => {
           </Error>
           {success && (
             <Success
-              header="If that account in our system then we have sent an email with instructions
-              to reset your password!"
+              header="If that account is in our system then we have sent an email with instructions
+              to reset your password"
               loginText="Sign back in"
               client={client}
             />
