@@ -85,7 +85,7 @@ exports.patientSignup = async (req, res) => {
 
   try {
     const patientResponse = await db.query(
-      `INSERT INTO patient(firstname, lastname, email, password, client_id, stripe_customer_id, created) VALUES($1, $2, $3, $4, $5, $6, now()) RETURNING id`,
+      `INSERT INTO patient(firstname, lastname, email, password, client_id, status, stripe_customer_id, created) VALUES($1, $2, $3, $4, $5, 'A', $6, now()) RETURNING id`,
       [patient.firstname, patient.lastname, patient.email, patient.password, patient.client_id, patient.stripe_customer_id]
     );
 

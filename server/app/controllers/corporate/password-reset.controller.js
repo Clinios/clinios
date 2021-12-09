@@ -66,7 +66,7 @@ const sendRecoveryEmail = async (user, res) => {
     const info = await transporter.sendMail(emailTemplate);
     console.info("Sending email:", info);
     successMessage.message =
-      "We have sent an email with instructions to reset your credentionals.";
+      "We have sent an email with instructions to reset your credentials.";
     return res.status(status.success).send(successMessage);
   }
   console.log("process.env.SENDGRID_API_KEY", process.env.SENDGRID_API_KEY);
@@ -76,7 +76,7 @@ const sendRecoveryEmail = async (user, res) => {
       return res.status(200).json({
         status: "success",
         message:
-          "We have sent an email with instructions to reset your credentionals.",
+          "We have sent an email with instructions to reset your credentials.",
       });
     },
     (error) => {

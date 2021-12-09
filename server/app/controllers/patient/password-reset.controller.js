@@ -40,7 +40,7 @@ const sendRecoveryEmail = async (user, res) => {
       }
 
       successMessage.message =
-        "We have sent an email with instructions to reset your credentionals.";
+        "We have sent an email with instructions to reset your credentials.";
       successMessage.data = info;
       return res.status(status.success).send(successMessage);
     });
@@ -51,7 +51,7 @@ const sendRecoveryEmail = async (user, res) => {
         return res.status(200).json({
           status: "success",
           message:
-            "We have sent an email with instructions to reset your credentionals.",
+            "We have sent an email with instructions to reset your credentials.",
         });
       },
       (error) => {
