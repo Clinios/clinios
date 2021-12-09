@@ -465,7 +465,7 @@ const NewOrEditUserModal = ({
                     error={errorChecking.four}
                     helperText={errorChecking.four && errorChecking.four}
                   >
-                    <option aria-label="None" value="" />
+                    {/* <option aria-label="None" value="" /> */}
                     {
                       UserProviderOptions.map((option) => (
                         <option aria-label={option.label} value={option.value}>
