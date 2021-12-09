@@ -225,7 +225,9 @@ const Patient = () => {
         setLayout(layoutResponse);
         setIsLayoutUpdated(true);
         const tempLayout = {
-          layout: JSON.stringify(layoutResponse),
+          data: {
+            layout: JSON.stringify(layoutResponse),
+          }
         };
         setLayoutToSave(tempLayout);
         dispatch(saveLayout(tempLayout));
@@ -332,7 +334,6 @@ const Patient = () => {
     const tempLayout = {
       layout: JSON.stringify(updatedLayout),
     };
-    setLayoutToSave(tempLayout);
   };
 
   const fetchPatientData = () => {
