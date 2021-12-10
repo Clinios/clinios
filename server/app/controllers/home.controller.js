@@ -385,7 +385,7 @@ const getProviders = async (req, res) => {
         group by d.user_id
       ) d on d.user_id=u.id
       where u.client_id=${req.client_id}
-      and u.status='A'
+      /*and u.status='A'*/
       order by name
       limit 100
       `
