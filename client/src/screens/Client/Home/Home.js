@@ -289,7 +289,7 @@ export default function Home() {
           <Typography component="h1" variant="h2" color="textPrimary" className={classes.pageTitle}>
             Home
             {" "}
-            {selectedProvider && `- ${selectedProvider.name}`}
+            {!isEmpty(selectedProvider) && `- ${selectedProvider?.name}`}
           </Typography>
           <FormControl component="div" className={classes.formControl}>
             <p className={classes.formHelperText}>Show Declined</p>

@@ -35,7 +35,7 @@ export default function Footer() {
           {"Copyright © "}
           {" "}
           {new Date().getFullYear()}
-          {` AvonEHR - User ${user.firstname} ${user.lastname}`}
+          {` ${process.env.REACT_APP_SITE_TITLE} - User ${user.firstname} ${user.lastname}`}
         </CustomTypography>
       </Box>
     </Container>

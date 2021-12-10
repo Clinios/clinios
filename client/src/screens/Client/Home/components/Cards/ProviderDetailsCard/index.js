@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import moment from "moment";
 import PropTypes from "prop-types";
 
+import { isEmpty } from "../../../../../../utils/helpers";
 import Dialog from "../../../../../../components/Dialog";
 import Colors from "../../../../../../theme/colors";
 import ProcessLab from "../../../../../Lab";
@@ -143,7 +144,9 @@ const ProviderDetailsCard = ({ selectedProvider, providerDetails, fetchProviderD
           className={classes.titleContainer}
         >
           <Typography className={classes.title}>
-            {`User Details - ${selectedProvider && selectedProvider.name}`}
+            User Details 
+            {" "}
+            {!isEmpty(selectedProvider) && `- ${selectedProvider?.name}`}
           </Typography>
         </Grid>
 
