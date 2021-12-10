@@ -125,8 +125,8 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
     }
   };
 
-  const practiceErrors = errors && errors.filter((err) => err?.param.includes("client"));
-  const userErrors = errors && errors.filter((err) => err?.param.includes("user"));
+  const practiceErrors = Array.isArray(errors) && errors.filter((err) => err?.param.includes("client"));
+  const userErrors = Array.isArray(errors) && errors.filter((err) => err?.param.includes("user"));
 
   const getFieldError = (target, fieldName) => {
     let value = `client.${fieldName}`;
