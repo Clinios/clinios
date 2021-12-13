@@ -82,7 +82,7 @@ const ForgetPassword = () => {
     AuthService.passwordChangeRequest(email).then(
       (response) => {
         setIsLoading(false);
-        enqueueSnackbar(`${email} ${response.data.message}`, {
+        enqueueSnackbar(`${response.data.message}`, {
           variant: "success",
         });
         setErrors([]);

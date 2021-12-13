@@ -63,7 +63,9 @@ const useStyles = makeStyles((theme) => ({
 
 
 function NumberFormatCustom(props) {
-  const { inputRef, onChange, ...other } = props;
+  const {
+    inputRef, onChange, name, ...other
+  } = props;
 
   return (
     <NumberFormat
@@ -72,7 +74,7 @@ function NumberFormatCustom(props) {
       onValueChange={(values) => {
         onChange({
           target: {
-            name: props.name,
+            name,
             value: values.value,
           },
         });

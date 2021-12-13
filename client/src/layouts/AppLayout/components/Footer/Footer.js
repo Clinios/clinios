@@ -18,7 +18,8 @@ export default function Footer() {
     <Container maxWidth="lg" className={classes.container}>
       <Box mt={5} mb={5}>
         <Typography color="textSecondary" className={classes.footerText}>
-          © {process.env.REACT_APP_SITE_TITLE}
+          {`© ${process.env.REACT_APP_SITE_TITLE}`}
+
         </Typography>
       </Box>
     </Container>
