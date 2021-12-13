@@ -227,7 +227,7 @@ const Patient = () => {
         const tempLayout = {
           data: {
             layout: JSON.stringify(layoutResponse),
-          }
+          },
         };
         setLayoutToSave(tempLayout);
         dispatch(saveLayout(tempLayout));
@@ -331,6 +331,7 @@ const Patient = () => {
       const result = _.omit(obj, [...propsToRemove]);
       return result;
     });
+    // eslint-disable-next-line  no-unused-vars
     const tempLayout = {
       layout: JSON.stringify(updatedLayout),
     };

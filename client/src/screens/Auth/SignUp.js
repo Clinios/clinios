@@ -50,11 +50,8 @@ const SignUp = () => {
 
   const sendVerificationEmail = (data) => {
     EmailService.sendEmailVerification(data).then(
-      (response) => {
+      () => {
         setSuccess(true);
-       /*  enqueueSnackbar(`${response.data.message}`, {
-          variant: "success",
-        }); */
       },
       (error) => {
         setSuccess(false);
