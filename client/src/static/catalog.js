@@ -1,7 +1,7 @@
 
-export const APP_LINK = "https://avonehr.com";
+export const APP_LINK = process.env.REACT_APP_LINK;
 
-export const APP_LOGIN_LINK = "https://app.avonehr.com";
+export const APP_LOGIN_LINK = process.env.REACT_APP_LOGIN_LINK;
 
 export const CatalogLabCompanies = [
   {
