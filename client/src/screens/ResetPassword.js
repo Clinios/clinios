@@ -177,7 +177,6 @@ const ResetPassword = () => {
             </div>
           )}
         </div>
-        
       </Grid>
     </Container>
   );
