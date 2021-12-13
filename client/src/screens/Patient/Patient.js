@@ -229,8 +229,8 @@ const Patient = () => {
             layout: JSON.stringify(layoutResponse),
           },
         };
-        setLayoutToSave(tempLayout);
-        dispatch(saveLayout(tempLayout));
+        setLayoutToSave(tempLayout.data);
+        dispatch(saveLayout(layoutResponse));
       }
     });
   };
@@ -333,8 +333,12 @@ const Patient = () => {
     });
     // eslint-disable-next-line  no-unused-vars
     const tempLayout = {
-      layout: JSON.stringify(updatedLayout),
+      data: {
+        layout: JSON.stringify(updatedLayout),
+      },
     };
+    setLayoutToSave(tempLayout);
+    dispatch(saveLayout(tempLayout.data));
   };
 
   const fetchPatientData = () => {
