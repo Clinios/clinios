@@ -98,7 +98,7 @@ const Login = () => {
             variant="h2"
             className={classes.pageTitle}
           >
-            Physician Login
+            Practitioner Login
           </Typography>
           <Error errors={apiErrors} />
 
@@ -110,7 +110,7 @@ const Login = () => {
             <TextField
               value={email}
               variant="outlined"
-              margin="normal"
+              margin="dense"
               required
               fullWidth
               id="email"
@@ -128,7 +128,7 @@ const Login = () => {
             <TextField
               value={password}
               variant="outlined"
-              margin="normal"
+              margin="dense"
               required
               fullWidth
               name="password"

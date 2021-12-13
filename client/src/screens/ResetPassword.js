@@ -121,7 +121,7 @@ const ResetPassword = () => {
             <LockOutlinedIcon className={classes.lockIcon} />
           </Avatar>
           <Typography component="h1" variant="h2" className={classes.pageTitle}>
-            Update your password
+            Update Your Password
           </Typography>
           <Error errors={fieldErrors} />
           {success && (
@@ -136,7 +136,7 @@ const ResetPassword = () => {
                 <TextField
                   value={password}
                   variant="outlined"
-                  margin="normal"
+                  margin="dense"
                   required
                   fullWidth
                   name="password"
@@ -144,13 +144,14 @@ const ResetPassword = () => {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  autoFocus
                   onChange={(event) => setPassword(event.target.value)}
                   onBlur={(event) => validatePasswod(event)}
                 />
                 <TextField
                   value={confirmPassword}
                   variant="outlined"
-                  margin="normal"
+                  margin="dense"
                   required
                   fullWidth
                   name="password"

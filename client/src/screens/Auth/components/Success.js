@@ -53,8 +53,7 @@ const Success = ({ user }) => {
         )}
         <p>Thank you for signing up. </p>
         <p>
-          Please confirm your email address by clicking one of the email just
-          emailed you.
+          Please confirm your email address by clicking the link in the email just sent to you.
         </p>
         <p>
           <Button onClick={() => sendResendEmailRequest()} color="primary">

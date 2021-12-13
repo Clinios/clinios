@@ -153,7 +153,7 @@ const PatientLogin = () => {
             variant="h2"
             className={classes.pageTitle}
           >
-            Patient Sign in
+            Patient Login
           </Typography>
           <Error errors={apiErrors} />
           <form

@@ -134,7 +134,7 @@ const ForgetPassword = () => {
             <LockOutlinedIcon className={classes.lockIcon} />
           </Avatar>
           <Typography component="h1" variant="h2" className={classes.pageTitle}>
-            Forgot password
+            Forgot Password
           </Typography>
           <Error errors={errors}>
             {registrationLink && (
