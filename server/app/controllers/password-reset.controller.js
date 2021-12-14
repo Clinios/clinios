@@ -59,11 +59,20 @@ const sendRecoveryEmail = async (user, res) => {
   const emailTemplate = resetPasswordTemplate(user, url);
 
   if (process.env.NODE_ENV === "development") {
-    const info = await transporter.sendMail(emailTemplate);
-    console.info("Sending email:", info);
-    successMessage.message =
-      "We have sent an email with instructions to reset your credentials.";
-    return res.status(status.success).send(successMessage);
+    try {
+      const info = await transporter.sendMail(emailTemplate);
+      console.info("Sending email:", info);
+      successMessage.message =
+        "We have sent an email with instructions to reset your credentials.";
+      return res.status(status.success).send(successMessage);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Something went wrong while sending a reset email.",
+      });
+    }
+
   }
   console.log("process.env.SENDGRID_API_KEY", process.env.SENDGRID_API_KEY);
   sgMail.send(emailTemplate).then(
@@ -151,7 +160,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
     const userUpdateResponse = await db.query(
       `UPDATE users SET reset_password_token='${token}', reset_password_expires='${token_expires}', updated= now() WHERE id =${user.id}`
     );
-    console.log('userUpdateResponse:', userUpdateResponse)
+  
     if (userUpdateResponse.rowCount) {
       sendRecoveryEmail(user, res);
     }
