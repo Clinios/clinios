@@ -9,8 +9,9 @@ import moment from "moment";
 import PropTypes from "prop-types";
 
 import Dialog from "../../../../../../components/Dialog";
-import Colors from "../../../../../../theme/colors";
 import { isEmpty } from "../../../../../../utils/helpers";
+// eslint-disable-next-line import/order
+import Colors from "../../../../../../theme/colors";
 import ProcessLab from "../../../../../Lab";
 import ProcessMessage from "../../../../../ProcessMessage";
 

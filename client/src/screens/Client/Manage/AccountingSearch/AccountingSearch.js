@@ -71,6 +71,7 @@ function NumberFormatCustom(props) {
 
   return (
     <NumberFormat
+      // eslint-disable-next-line react/destructuring-assignment
       {...other}
       getInputRef={inputRef}
       onValueChange={(values) => {
