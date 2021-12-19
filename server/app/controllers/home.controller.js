@@ -352,22 +352,26 @@ const getUnreadMessages = async (req, res) => {
 const getProviders = async (req, res) => {
   try {
     const dbResponse = await db.query(
-      `select u.id, concat(u.firstname, ' ', u.lastname) "name", u.timezone, d.count, d.dt
+      `/*Users card at upper right*/
+      select u.id, concat(u.firstname, ' ', u.lastname) "name", u.timezone, d.count, d.dt
       from users u
       left join (
         select d.user_id, sum(d.count) count, min(d.dt) dt from (
+        /*Patient Labs*/
         select l.user_id user_id, count(l.id) count, min(l.created) dt
         from lab l
         where l.client_id=${req.client_id}
         and l.status='R' /*R=Requested*/
         group by l.user_id
         union
+        /*Messages from Patients*/
         select m.user_id_to user_id, count(m.id) count, min(m.created) dt
         from message m
         where client_id=${req.client_id}
         and m.status='O' /*O=Open*/
         group by m.user_id_to
         union
+        /*Messages Unread By Patients*/
         select m.user_id_from user_id, count(m.id) count, min(m.unread_notify_dt) dt
         from message m
         where m.client_id=${req.client_id}
@@ -375,6 +379,7 @@ const getProviders = async (req, res) => {
         and m.unread_notify_dt<=current_date
         group by m.user_id_from
         union
+        /*Patient Appointment Requests*/
         select uc.user_id user_id, count(uc.client_id) count, min(uc.created) dt
         from user_calendar uc
         where uc.client_id=${req.client_id}
