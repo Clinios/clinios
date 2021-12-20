@@ -193,6 +193,7 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
         fieldName="name"
         label="Practice Name"
         value={name}
+        autoFocus={true}
         handleOnChange={(event) => setName(event.target.value)}
         handleOnBlur={(event) => handleAjaxValidation(event)}
         errors={getFieldError("client", "name")}

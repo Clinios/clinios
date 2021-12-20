@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import Error from "../../../components/common/Error";
 
 const TextFieldWithError = ({
+  autoFocus,
   fieldName,
   label,
   value,
@@ -20,6 +21,7 @@ const TextFieldWithError = ({
       value={value}
       variant="outlined"
       margin="dense"
+      autoFocus={autoFocus ? autoFocus : false}
       required
       fullWidth
       id={id || fieldName}
