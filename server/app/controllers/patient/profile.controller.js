@@ -55,12 +55,12 @@ const updatePatient = async (req, res) => {
   try {
 
     const updateResponse = await db.query(
-      `update patient set firstname=$1, middlename=$2, lastname=$3, email=$4, gender=$5, dob=$6, preferred_name=$7,
-      referred_by=$8, phone_home=$9, phone_cell=$10, phone_work=$11, phone_note=$12, phone_other=$13, admin_note=$14, medical_note=$15, address=$16,
-      address2=$17, city=$18, postal=$19, state=$20, ssn=$21, height=$22, waist=$23, weight=$24, insurance_name=$25, insurance_group=$26, insurance_member=$27,
-      insurance_phone=$28, insurance_desc=$29, updated=now(), updated_user_id=${req.user_id}
+      `update patient set firstname=$1, middlename=$2, lastname=$3, email=$4, password=$5, gender=$6, dob=$7, preferred_name=$8,
+      referred_by=$9, phone_home=$10, phone_cell=$11, phone_work=$12, phone_note=$13, phone_other=$14, admin_note=$15, medical_note=$16, address=$17,
+      address2=$18, city=$19, postal=$20, state=$21, ssn=$22, height=$23, waist=$24, weight=$25, insurance_name=$26, insurance_group=$27, insurance_member=$28,
+      insurance_phone=$29, insurance_desc=$30, updated=now(), updated_user_id=${req.user_id}
       where id=${req.user_id} RETURNING id`,
-      [firstname, middlename, lastname, email, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work, phone_note, phone_other,
+      [firstname, middlename, lastname, email, formData.password, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work, phone_note, phone_other,
         admin_note, medical_note, address, address2, city, postal, state, ssn, height, waist, weight, insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc]
     );
     if (!updateResponse.rowCount) {
