@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import { Grid } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -15,7 +16,6 @@ import Logo from "../../assets/img/Logo.svg";
 import Error from "../../components/common/Error";
 import AuthService from "../../services/patient_portal/auth.service";
 import Success from "./auth/ForgotPassword/Success";
-import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -180,8 +180,8 @@ const PatientResetPassword = () => {
               </form>
             </div>
           )}
-      </div>
-    </Grid>
+        </div>
+      </Grid>
     </Container>
   );
 };
