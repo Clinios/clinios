@@ -21,7 +21,9 @@ const TextFieldWithError = ({
       value={value}
       variant="outlined"
       margin="dense"
-      autoFocus={autoFocus ? autoFocus : false}
+      autoFocus={
+        autoFocus || false
+      }
       required
       fullWidth
       id={id || fieldName}
@@ -40,10 +42,12 @@ TextFieldWithError.defaultProps = {
   id: null,
   value: null,
   type: null,
+  autoFocus: false,
 };
 
 TextFieldWithError.propTypes = {
   id: PropTypes.string,
+  autoFocus: PropTypes.bool,
   fieldName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   value: PropTypes.string,
