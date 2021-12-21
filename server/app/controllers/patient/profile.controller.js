@@ -39,7 +39,7 @@ const getPatient = async (req, res) => {
 const updatePatient = async (req, res) => {
 
   const { firstname, middlename, lastname, email, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work,
-    phone_note, admin_note, medical_note, address, address2, city, postal, state, height, waist, weight,
+    phone_note, phone_other, admin_note, medical_note, address, address2, city, postal, state, ssn, height, waist, weight,
     insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc } = req.body.data;
   const formData = req.body.data;
   formData.created = new Date();
@@ -55,13 +55,13 @@ const updatePatient = async (req, res) => {
   try {
 
     const updateResponse = await db.query(
-      `update patient set firstname=$1, middlename=$2, lastname=$3, email=$4, gender=$5, dob=$6, preferred_name=$7,
-      referred_by=$8, phone_home=$9, phone_cell=$10, phone_work=$11, phone_note=$12, admin_note=$13, medical_note=$14, address=$15,
-      address2=$16, city=$17, postal=$18, state=$19, height=$20, waist=$21, weight=$22, insurance_name=$23, insurance_group=$24, insurance_member=$25,
-      insurance_phone=$26, insurance_desc=$27, updated=now(), updated_user_id=${req.user_id}
+      `update patient set firstname=$1, middlename=$2, lastname=$3, email=$4, password=$5, gender=$6, dob=$7, preferred_name=$8,
+      referred_by=$9, phone_home=$10, phone_cell=$11, phone_work=$12, phone_note=$13, phone_other=$14, admin_note=$15, medical_note=$16, address=$17,
+      address2=$18, city=$19, postal=$20, state=$21, ssn=$22, height=$23, waist=$24, weight=$25, insurance_name=$26, insurance_group=$27, insurance_member=$28,
+      insurance_phone=$29, insurance_desc=$30, updated=now(), updated_user_id=${req.user_id}
       where id=${req.user_id} RETURNING id`,
-      [firstname, middlename, lastname, email, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work, phone_note,
-        admin_note, medical_note, address, address2, city, postal, state, height, waist, weight, insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc]
+      [firstname, middlename, lastname, email, formData.password, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work, phone_note, phone_other,
+        admin_note, medical_note, address, address2, city, postal, state, ssn, height, waist, weight, insurance_name, insurance_group, insurance_member, insurance_phone, insurance_desc]
     );
     if (!updateResponse.rowCount) {
       errorMessage.message = "Update not successful";
@@ -77,12 +77,12 @@ const updatePatient = async (req, res) => {
 
     // Log into patient_history
     await db.query(`insert into patient_history(id, firstname, middlename, lastname, email, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work,
-      phone_note, admin_note, medical_note, address, address2, city, postal, state, height, waist, weight, insurance_name,
+      phone_note, phone_other, admin_note, medical_note, address, address2, city, postal, state, ssn, height, waist, weight, insurance_name,
       insurance_group, insurance_member, insurance_phone, insurance_desc, created, created_user_id) 
       VALUES(${req.user_id}, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,
-        $20, $21, $22, $23, $24, $25, $26, $27, now(), ${req.user_id})`,
-       [firstname, middlename, lastname, email, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work, phone_note,
-        admin_note, medical_note, address, address2, city, postal, state, height, waist, weight, insurance_name,
+        $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, now(), ${req.user_id})`,
+       [firstname, middlename, lastname, email, gender, dob, preferred_name, referred_by, phone_home, phone_cell, phone_work, phone_note, phone_other,
+        admin_note, medical_note, address, address2, city, postal, state, ssn, height, waist, weight, insurance_name,
         insurance_group, insurance_member, insurance_phone, insurance_desc]);
 
     successMessage.data = updateResponse.rows;
