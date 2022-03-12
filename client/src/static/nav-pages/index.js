@@ -133,14 +133,12 @@ export const client_pages = [
         title: "Forms",
         href: "/setup/forms",
       },
-      /*
       {
         id: 39,
         icon: CodeIcon,
         title: "Handouts",
         href: "/setup/handouts",
       },
-      */
       {
         id: 310,
         icon: CodeIcon,
