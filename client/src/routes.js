@@ -490,6 +490,11 @@ const routes = [
     ],
   },
   {
+    exact: true,
+    path: "/database-status",
+    component: lazy(() => import("./screens/DatabaseStatus")),
+  },
+  {
     path: "*",
     layout: MainLayout,
     routes: [
