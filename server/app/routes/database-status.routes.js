@@ -1,11 +1,11 @@
 const express = require("express");
-const StatusController = require("../controllers/database-status.controller");
+const DatabaseStatusController = require("../controllers/database-status.controller");
 
 const router = express.Router();
 
 router.get(
   "/database-status",
-  StatusController.getDatabaseStatus
+  DatabaseStatusController.getDatabaseStatus
 );
 
 module.exports = router;
