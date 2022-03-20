@@ -96,7 +96,7 @@ app.use(baseAPIPath, require("./app/routes/corporate/myself.routes"));
 app.use(baseAPIPath, require("./app/routes/corporate/password-reset.routes"));
 
 // Database Status
-app.use(baseAPIPath, require("./app/routes/status.routes"));
+app.use(baseAPIPath, require("./app/routes/database-status.routes"));
 
 app.listen(config.port).on("listening", () => {
   console.log(`API is live on ${config.port}`);
