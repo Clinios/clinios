@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_BASE } from "../utils/API_BASE";
 import authHeader from "./auth-header";
 
-class StatusService {
+class DatabaseStatusService {
   getDatabaseStatus() {
     return axios
       .get(`${API_BASE}/database-status`, { headers: authHeader() })
@@ -11,4 +11,4 @@ class StatusService {
   }
 }
 
-export default new StatusService();
+export default new DatabaseStatusService();
