@@ -22,7 +22,7 @@ Setup:
 
 To run:
 
-1. `yarn start` or `npm run dev`
+1. `yarn start`
 2. Open [http://localhost:3000](http://localhost:3000)
 
 ## Backend
@@ -37,7 +37,7 @@ Setup:
 
 To run:
 
-1. `yarn dev` or `npm run dev` for development, `yarn start` for production
+1. `yarn dev` for development or `yarn start` for production
 
 ## Prettier
 
