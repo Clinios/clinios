@@ -11,7 +11,7 @@ const getAgreement = async (req, res) => {
          from contract
          )`
     );
-    const dbResponse = rows[0];
+    const dbResponse = rows.rows[0];
 
     if (!dbResponse) {
       errorMessage.message = "None found";
