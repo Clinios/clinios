@@ -9,7 +9,8 @@
 ## Database
 
 1. Install PostgreSQL
-2. Load file postgres_start.txt
+2. create database avonehr;
+3. psql -d avonehr -f postgres_start.txt
 
 ## Frontend
 
