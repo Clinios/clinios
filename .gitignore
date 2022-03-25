@@ -51,6 +51,7 @@ yarn-error.log*
 /server/node_modules
 /server/.pnp
 /server/.pnp.js
+/client/package-lock.json
 
 # misc
 /server/.DS_Store
