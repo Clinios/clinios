@@ -14,30 +14,20 @@
 
 ## Frontend
 
-Setup:
-
 1. `cd client`
 2. `yarn install`
 3. `cp env.example .env`
-
-To run:
-
-1. `yarn start`
-2. Open [http://localhost:3000](http://localhost:3000)
+4. `yarn start`
+5. Open [http://localhost:3000](http://localhost:3000)
 
 ## Backend
-
-Setup:
 
 1. `cd server`
 2. `yarn install`
 3. `cp env.example .env`
 4. edit .env and fill in database credentials
 5. Make sure your database is running on your machine
-
-To run:
-
-1. `yarn dev` for development or `yarn start` for production
+6. `yarn dev` for development or `yarn start` for production
 
 ## Prettier
 
