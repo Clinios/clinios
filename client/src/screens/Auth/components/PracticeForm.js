@@ -1,3 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable no-console */
+
 import React, { useState, useEffect } from "react";
 
 import Button from "@material-ui/core/Button";
@@ -13,7 +18,9 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 
 import AuthService from "../../../services/auth.service";
+import * as API from "../../../utils/API";
 import { getAcronym, removeSpecialCharFromString } from "../../../utils/helpers";
+import CommonModal from "../../Modal";
 import TextFieldWithError from "./TextFieldWithError";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,14 +73,26 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
   // const [medicalLicenseNumber, setMedicalLicenseNumber] = useState("");
   const [password, setPassword] = useState("");
   const [termsAndConditions, setTermsAndConditions] = useState(false);
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState([]);
+  const [agreement, setAgreement] = useState("");
+
+  const modalTitle = "Customer Aggrement";
 
   useEffect(() => {
     const nameWithoutSpeChar = removeSpecialCharFromString(name);
     const clientCodeAcc = getAcronym(nameWithoutSpeChar.trim());
     setClientCode(clientCodeAcc);
   }, [name]);
+
+  useEffect(() => {
+    async function fetchAgreement() {
+      await API.fetchClientAgreement().then((res) => {
+        setAgreement(res.data.contract);
+      });
+    }
+    fetchAgreement();
+  }, []);
 
   const handleFormSubmission = (e) => {
     e.preventDefault();
@@ -171,16 +190,16 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
       });
   };
 
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   return (
     <form className={classes.form} noValidate onSubmit={(event) => handleFormSubmission(event)}>
-      <Typography
-        component="h3"
-        variant="h4"
-        color="textPrimary"
-        className={classes.formSectionTitle}
-      >
-        Practice Information
-      </Typography>
       {practiceErrors
         // eslint-disable-next-line react/no-array-index-key
         && practiceErrors.map((error, index) => (
@@ -189,6 +208,19 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
             {error.msg}
           </Alert>
         ))}
+      {
+        modalOpen
+          ? <CommonModal title={modalTitle} body={agreement} isModalOpen isModalClose={handleModalClose} />
+          : null
+      }
+      <Typography
+        component="h3"
+        variant="h4"
+        color="textPrimary"
+        className={classes.formSectionTitle}
+      >
+        Practice Information
+      </Typography>
       <TextFieldWithError
         fieldName="name"
         label="Practice Name"
@@ -461,7 +493,9 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
               Check here to indicate that you have read and agree to the terms
               of the
               {" "}
-              <Link href="/agreement">Customer Agreement</Link>
+              <a style={{ color: "#2979ff" }} onClick={handleModalOpen}>
+                Customer Agreement
+              </a>
             </span>
           </div>
         )}
