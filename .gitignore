@@ -31,7 +31,6 @@ yarn-error.log*
 /client/.pnp
 /client/.pnp.js
 /client/package-lock.json
-/client/yarn.lock
 
 # testing
 /client/coverage
@@ -46,13 +45,13 @@ yarn-error.log*
 /client/.env.test.local
 /client/.env.production.local
 /client/.vscode
+/client/.eslintcache
 
 #server
 /server/node_modules
 /server/.pnp
 /server/.pnp.js
-/server/package-lock.json
-/server/yarn.lock
+/client/package-lock.json
 
 # misc
 /server/.DS_Store
