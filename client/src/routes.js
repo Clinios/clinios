@@ -432,12 +432,6 @@ const routes = [
   },
   {
     exact: true,
-    layout: MainLayout,
-    path: "/agreement",
-    component: lazy(() => import("./screens/Agreement")),
-  },
-  {
-    exact: true,
     guard: ClientPortalGuard,
     layout: DashboardLayout,
     path: "/myself",
