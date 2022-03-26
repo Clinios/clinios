@@ -8,6 +8,7 @@ module.exports = {
     const start = Date.now()
     const res = await pool.query(text, params)
     const duration = Date.now() - start
+    console.log('\nquery', { text, params, duration, rows: res.rowCount })
     return res
   },
 
