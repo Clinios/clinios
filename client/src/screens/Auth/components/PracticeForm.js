@@ -77,7 +77,7 @@ const PracticeForm = ({ onFormSubmit, ...props }) => {
   const [fieldErrors, setFieldErrors] = useState([]);
   const [agreement, setAgreement] = useState("");
 
-  const modalTitle = "Customer Aggrement";
+  const modalTitle = "Customer Agreement";
 
   useEffect(() => {
     const nameWithoutSpeChar = removeSpecialCharFromString(name);
